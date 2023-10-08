@@ -6,3 +6,5 @@
 /*.qm
 /DragonLog_*_ui.py
 /temp
+/tools/*.csv
+/README.txt
