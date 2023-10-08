@@ -8,3 +8,4 @@
 /temp
 /tools/*.csv
 /README.txt
+/__version__.py
