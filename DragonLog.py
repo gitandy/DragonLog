@@ -1,11 +1,11 @@
 import os
 import csv
-import string
 import sys
 import json
 import math
+import string
 
-from PyQt6 import QtCore, QtWidgets, QtGui, QtSql
+from PyQt6 import QtCore, QtWidgets, QtSql
 import openpyxl
 from openpyxl.styles import Font
 import maidenhead
@@ -44,7 +44,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.modes = modes
         self.settings = settings
 
-        self.modeComboBox.insertItems(0, modes['AFU'])
+        self.modeComboBox.insertItems(0, modes['AFU'].keys())
         self.bandComboBox.insertItems(0, bands.keys())
 
         self.stationChanged(True)
@@ -81,8 +81,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.freqSpinBox.setSingleStep(self.bands[band][2])
 
         self.modeComboBox.clear()
-        if band == '11 m':
-            self.modeComboBox.insertItems(0, self.modes['CB'])
+        if band == '11m':
+            self.modeComboBox.insertItems(0, self.modes['CB'].keys())
+            self.modeComboBox.setCurrentIndex(0)
             self.powerSpinBox.setMaximum(12)
 
             if self.stationGroupBox.isChecked():
@@ -92,7 +93,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             if self.identityGroupBox.isChecked():
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
         else:
-            self.modeComboBox.insertItems(0, self.modes['AFU'])
+            self.modeComboBox.insertItems(0, self.modes['AFU'].keys())
+            self.modeComboBox.setCurrentIndex(0)
             self.powerSpinBox.setMaximum(1000)
 
             if self.stationGroupBox.isChecked():
