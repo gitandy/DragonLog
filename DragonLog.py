@@ -20,7 +20,13 @@ __author_name__ = 'Andreas Schawo'
 __author_email__ = 'andreas@schawo.de'
 __copyright__ = 'Copyright (c) 2023, Andreas Schawo'
 
-__version__ = 'v0.1'
+import __version__ as version
+
+__version__ = version.__version__
+if version.__branch__:
+    __version__ += '-' + version.__branch__
+if version.__unclean__:
+    __version__ += '-unclean'
 
 
 class DatabaseOpenException(Exception):
