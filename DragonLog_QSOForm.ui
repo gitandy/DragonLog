@@ -83,6 +83,9 @@
            <property name="inputMask">
             <string>DDn</string>
            </property>
+           <property name="text">
+            <string>59</string>
+           </property>
            <property name="placeholderText">
             <string>RST sent</string>
            </property>
@@ -112,6 +115,9 @@
            <property name="inputMask">
             <string>DDn</string>
            </property>
+           <property name="text">
+            <string>59</string>
+           </property>
            <property name="placeholderText">
             <string>RST received</string>
            </property>
@@ -121,6 +127,12 @@
        </item>
        <item>
         <widget class="QComboBox" name="bandComboBox">
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <property name="minimumContentsLength">
+          <number>4</number>
+         </property>
          <property name="placeholderText">
           <string>Band</string>
          </property>
@@ -128,6 +140,12 @@
        </item>
        <item>
         <widget class="QComboBox" name="modeComboBox">
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <property name="minimumContentsLength">
+          <number>2</number>
+         </property>
          <property name="placeholderText">
           <string>Mode</string>
          </property>

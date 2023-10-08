@@ -55,9 +55,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.nameLineEdit.clear()
         self.QTHLineEdit.clear()
         self.locatorLineEdit.clear()
-        # self.RSTSentLineEdit.clear()
-        # self.RSTRcvdLineEdit.clear()
+        self.RSTSentLineEdit.setText('59')
+        self.RSTRcvdLineEdit.setText('59')
         self.remarksTextEdit.clear()
+
+        if self.bandComboBox.currentIndex() < 0:
+            self.bandComboBox.setCurrentIndex(0)
+        if self.modeComboBox.currentIndex() < 0:
+            self.modeComboBox.setCurrentIndex(0)
 
     def reset(self):
         self.autoDateCheckBox.setEnabled(True)
