@@ -81,10 +81,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.setWindowTitle(self.default_title)
 
     def bandChanged(self, band: str):
-        self.freqSpinBox.setValue(int((self.bands[band][0] + self.bands[band][1]) / 2))
-        self.freqSpinBox.setMinimum(int(self.bands[band][0]))
-        self.freqSpinBox.setMaximum(int(self.bands[band][1]))
-        self.freqSpinBox.setSingleStep(self.bands[band][2])
+        self.freqDoubleSpinBox.setValue((self.bands[band][0] + self.bands[band][1]) / 2)
+        self.freqDoubleSpinBox.setMinimum(self.bands[band][0])
+        self.freqDoubleSpinBox.setMaximum(self.bands[band][1])
+        self.freqDoubleSpinBox.setSingleStep(self.bands[band][2])
 
         self.modeComboBox.clear()
         if band == '11m':
@@ -390,7 +390,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.qso_form.RSTRcvdLineEdit.text(),
                 self.qso_form.bandComboBox.currentText(),
                 self.qso_form.modeComboBox.currentText(),
-                self.qso_form.freqSpinBox.value(),
+                self.qso_form.freqDoubleSpinBox.value(),
                 self.qso_form.powerSpinBox.value(),
                 self.qso_form.ownQTHLineEdit.text(),
                 self.qso_form.ownLocatorLineEdit.text(),
@@ -493,8 +493,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.__sql_cols__.index('band'))))
             self.qso_form.modeComboBox.setCurrentText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('mode'))))
-            self.qso_form.freqSpinBox.setValue(int(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('freq')))))
+            self.qso_form.freqDoubleSpinBox.setValue(self.QSOTableView.model().data(i.siblingAtColumn(
+                self.__sql_cols__.index('freq'))))
             self.qso_form.powerSpinBox.setValue(int(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('power')))))
             self.qso_form.ownQTHLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
@@ -524,7 +524,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.qso_form.RSTRcvdLineEdit.text(),
                     self.qso_form.bandComboBox.currentText(),
                     self.qso_form.modeComboBox.currentText(),
-                    self.qso_form.freqSpinBox.value(),
+                    self.qso_form.freqDoubleSpinBox.value(),
                     self.qso_form.powerSpinBox.value(),
                     self.qso_form.ownQTHLineEdit.text(),
                     self.qso_form.ownLocatorLineEdit.text(),
