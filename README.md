@@ -1,6 +1,7 @@
 # DragonLog
 
 DragonLog is a logging program to log hamradio QSOs.
+Beside logging for ham radio you can also log CB radio QSOs.
 
 ## First start
 
@@ -26,4 +27,4 @@ If automatic time is selected, the time gets updated at saving the QSO.
 Currently only export is supported
 * Excel format
 * CSV format (Excel style with separator ;)
-* ADIF 3.x format 
+* ADIF 3.x format (CB QSOs are skipped automatically)

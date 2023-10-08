@@ -50,7 +50,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.modes = modes
         self.settings = settings
 
-        self.modeComboBox.insertItems(0, modes['AFU'].keys())
+        #self.modeComboBox.insertItems(0, modes['AFU'].keys())
         self.bandComboBox.insertItems(0, bands.keys())
 
         self.stationChanged(True)
@@ -64,6 +64,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.RSTSentLineEdit.setText('59')
         self.RSTRcvdLineEdit.setText('59')
         self.remarksTextEdit.clear()
+
+        if bool(self.settings.value('station_cb/cb_by_default', 0)):
+            self.bandComboBox.setCurrentText('11m')
 
         if self.bandComboBox.currentIndex() < 0:
             self.bandComboBox.setCurrentIndex(0)
@@ -285,6 +288,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings_form.callsignCBLineEdit.setText(self.settings.value('station_cb/callSign', ''))
         self.settings_form.radioCBLineEdit.setText(self.settings.value('station_cb/radio', ''))
         self.settings_form.antennaCBLineEdit.setText(self.settings.value('station_cb/antenna', ''))
+        self.settings_form.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
 
         if self.settings_form.exec():
             self.settings.setValue('station/callSign', self.settings_form.callsignLineEdit.text())
@@ -296,6 +300,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.setValue('station_cb/callSign', self.settings_form.callsignCBLineEdit.text())
             self.settings.setValue('station_cb/radio', self.settings_form.radioCBLineEdit.text())
             self.settings.setValue('station_cb/antenna', self.settings_form.antennaCBLineEdit.text())
+            self.settings.setValue('station_cb/cb_by_default', int(self.settings_form.cbDefaultCheckBox.isChecked()))
 
             print('Changed settings')
         else:
@@ -657,6 +662,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 raise Exception(query.lastError().text())
 
             while query.next():
+                band = query.value(self.__sql_cols__.index('band'))
+
+                if band == '11m':
+                    continue
+
                 qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
 
                 af.write(self._adif_tag_('qso_date', qso_date.replace('-', '')))
@@ -668,7 +678,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 af.write('\n')  # Insert a linebreak for readability
                 af.write(self._adif_tag_('rst_sent', query.value(self.__sql_cols__.index('rst_sent'))))
                 af.write(self._adif_tag_('rst_rcvd', query.value(self.__sql_cols__.index('rst_rcvd'))))
-                af.write(self._adif_tag_('band', query.value(self.__sql_cols__.index('band')).replace(' ', '').upper()))
+                af.write(self._adif_tag_('band', band.upper()))
                 af.write(self._adif_tag_('mode', query.value(self.__sql_cols__.index('mode'))))
                 af.write(self._adif_tag_('freq', f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.3f}'))
                 af.write(self._adif_tag_('tx_pwr', query.value(self.__sql_cols__.index('power'))))
