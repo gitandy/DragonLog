@@ -186,75 +186,107 @@
       <translation>QSO-Log (*.qlog);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="638" />
+      <location filename="DragonLog.py" line="637" />
       <location filename="DragonLog.py" line="367" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="427" />
+      <location filename="DragonLog.py" line="426" />
       <source>Log multi QSOs</source>
       <translation>Mehrfach QSOs eingeben</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="435" />
+      <location filename="DragonLog.py" line="434" />
       <source>Delete QSO</source>
       <translation>QSO löschen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="436" />
+      <location filename="DragonLog.py" line="435" />
       <source>Do you really want to delete the selected QSO(s)?</source>
       <translation>Wollen sie die selektierten QSOs wirklich löschen?</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="516" />
+      <location filename="DragonLog.py" line="514" />
       <source>Change QSO</source>
       <translation>QSO ändern</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="563" />
+      <location filename="DragonLog.py" line="560" />
       <source>Select export file</source>
-      <translation>Export speichern</translation>
+      <translation>Exportdatei speichern</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="565" />
-      <source>Excel-File (*.xlsx);;CSV-File (*.csv);;ADIF 3.0 (*.adi)</source>
-      <translation>Excel-Datei (*.xlsx);;CSV-Datei (*.csv);;ADIF 3.0 (*.adi)</translation>
+      <location filename="DragonLog.py" line="707" />
+      <location filename="DragonLog.py" line="567" />
+      <location filename="DragonLog.py" line="562" />
+      <source>Excel-File (*.xlsx)</source>
+      <translation>Excel-Datei (*.xlsx)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="600" />
+      <location filename="DragonLog.py" line="709" />
+      <location filename="DragonLog.py" line="702" />
+      <location filename="DragonLog.py" line="569" />
+      <location filename="DragonLog.py" line="563" />
+      <source>CSV-File (*.csv)</source>
+      <translation>CSV-Datei (*.csv)</translation>
+    </message>
+    <message>
+      <location filename="DragonLog.py" line="711" />
+      <location filename="DragonLog.py" line="571" />
+      <location filename="DragonLog.py" line="564" />
+      <source>ADIF 3.0 (*.adi)</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="DragonLog.py" line="599" />
       <source>Exported QSO log</source>
       <translation>Exportiere QSO log</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="704" />
+      <location filename="DragonLog.py" line="699" />
+      <source>Select import file</source>
+      <translation>Importdatei öffnen</translation>
+    </message>
+    <message>
+      <location filename="DragonLog.py" line="744" />
+      <location filename="DragonLog.py" line="738" />
+      <source>Log import CSV</source>
+      <translation>Log Import CSV</translation>
+    </message>
+    <message>
+      <location filename="DragonLog.py" line="759" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="723" />
+      <location filename="DragonLog.py" line="778" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="738" />
+      <location filename="DragonLog.py" line="793" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="739" />
+      <location filename="DragonLog.py" line="794" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="740" />
+      <location filename="DragonLog.py" line="795" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="747" />
+      <location filename="DragonLog.py" line="802" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
+    </message>
+    <message>
+      <source>Excel-File (*.xlsx);;CSV-File (*.csv);;ADIF 3.0 (*.adi)</source>
+      <translation type="vanished">Excel-Datei (*.xlsx);;CSV-Datei (*.csv);;ADIF 3.0 (*.adi)</translation>
     </message>
     <message>
       <source>QSO-Log (*.sqlite);;All Files (*.*)</source>

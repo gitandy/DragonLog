@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1200</width>
     <height>600</height>
    </rect>
   </property>
@@ -45,7 +45,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1200</width>
      <height>22</height>
     </rect>
    </property>
@@ -129,9 +129,6 @@
    </property>
   </action>
   <action name="actionImport">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons/fileimport.png</normaloff>icons/fileimport.png</iconset>
@@ -407,6 +404,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionImport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>logImport()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -417,7 +430,7 @@
   <slot>changeQSO()</slot>
   <slot>showSettings()</slot>
   <slot>export()</slot>
-  <slot>import()</slot>
+  <slot>logImport()</slot>
   <slot>logMultiQSOs()</slot>
   <slot>showHelp()</slot>
  </slots>

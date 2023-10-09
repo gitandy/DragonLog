@@ -50,7 +50,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.modes = modes
         self.settings = settings
 
-        #self.modeComboBox.insertItems(0, modes['AFU'].keys())
+        # self.modeComboBox.insertItems(0, modes['AFU'].keys())
         self.bandComboBox.insertItems(0, bands.keys())
 
         self.stationChanged(True)
@@ -414,7 +414,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 raise Exception(query.lastError().text())
 
             self.__db_con__.commit()
-
             self.QSOTableView.model().select()
             self.QSOTableView.resizeColumnsToContents()
         else:
@@ -455,10 +454,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 if query.lastError().text():
                     raise Exception(query.lastError().text())
 
-                self.__db_con__.commit()
-
-                self.QSOTableView.model().select()
-                self.QSOTableView.resizeColumnsToContents()
+            self.__db_con__.commit()
+            self.QSOTableView.model().select()
+            self.QSOTableView.resizeColumnsToContents()
 
     def changeQSO(self):
         done_ids = []
@@ -548,28 +546,29 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 query.exec()
                 if query.lastError().text():
                     raise Exception(query.lastError().text())
-
-                self.__db_con__.commit()
-
-                self.QSOTableView.model().select()
-                self.QSOTableView.resizeColumnsToContents()
             else:
                 print(f'Changing QSO(s) aborted')
                 break
+
+        self.__db_con__.commit()
+        self.QSOTableView.model().select()
+        self.QSOTableView.resizeColumnsToContents()
 
     def export(self):
         res = QtWidgets.QFileDialog.getSaveFileName(
             self,
             self.tr('Select export file'),
             self.lastExportDir,
-            self.tr('Excel-File (*.xlsx);;CSV-File (*.csv);;ADIF 3.0 (*.adi)'))
+            self.tr('Excel-File (*.xlsx)') + ';;' +
+            self.tr('CSV-File (*.csv)') + ';;' +
+            self.tr('ADIF 3.0 (*.adi)'))
 
         if res[0]:
-            if res[1] == 'Excel-File (*.xlsx)':
+            if res[1] == self.tr('Excel-File (*.xlsx)'):
                 self.exportExcel(res[0])
-            elif res[1] == 'CSV-File (*.csv)':
+            elif res[1] == self.tr('CSV-File (*.csv)'):
                 self.exportCSV(res[0])
-            elif res[1] == 'ADIF 3.0 (*.adi)':
+            elif res[1] == self.tr('ADIF 3.0 (*.adi)'):
                 self.exportADI(res[0])
 
             self.lastExportDir = os.path.dirname(res[0])
@@ -693,6 +692,62 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                          query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')))
 
                 af.write('<eor>\n\n')  # Insert end of row
+
+    def logImport(self):
+        res = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr('Select import file'),
+            self.settings.value('lastImportDir', os.path.abspath(os.curdir)),
+            # self.tr('Excel-File (*.xlsx)') + ';;' +
+            self.tr('CSV-File (*.csv)')  # + ';;' +
+            # self.tr('ADIF 3.0 (*.adi)')
+        )
+
+        if res[0]:
+            if res[1] == self.tr('Excel-File (*.xlsx)'):
+                self.logImportExcel(res[0])
+            elif res[1] == self.tr('CSV-File (*.csv)'):
+                self.logImportCSV(res[0])
+            elif res[1] == self.tr('ADIF 3.0 (*.adi)'):
+                self.logImportADI(res[0])
+
+            self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
+
+    def logImportCSV(self, file):
+        print('Importing from CSV...')
+
+        with open(file, newline='', encoding='utf-8') as cf:
+            reader = csv.reader(cf, delimiter=';', dialect=csv.excel)
+
+            ln = 0
+            for row in reader:
+                ln += 1
+                if ln == 1:
+                    continue
+
+                if len(row) >= len(self.__sql_cols__) and row[1]:
+                    query = QtSql.QSqlQuery(self.__db_con__)
+                    query.prepare(self.__db_insert_stmnt__)
+
+                    for i, val in enumerate(row[1:]):
+                        query.bindValue(i, val)
+                    query.exec()
+                    if query.lastError().text():
+                        QtWidgets.QMessageBox.warning(
+                            self,
+                            self.tr('Log import CSV'),
+                            f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
+                        )
+                else:
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        self.tr('Log import CSV'),
+                        f'Row {ln} has too few columns.\nSkipped row.'
+                    )
+
+            self.__db_con__.commit()
+            self.QSOTableView.model().select()
+            self.QSOTableView.resizeColumnsToContents()
 
     # noinspection PyPep8Naming
     def showHelp(self):
