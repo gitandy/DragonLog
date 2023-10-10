@@ -81,206 +81,206 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="DragonLog.py" line="251" />
+      <location filename="DragonLog.py" line="247" />
       <source>QSO</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="252" />
+      <location filename="DragonLog.py" line="248" />
       <source>Date/Time</source>
       <translation>Datum/Zeit</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="253" />
+      <location filename="DragonLog.py" line="249" />
       <source>Own call sign</source>
       <translation>Eigenes Rufzeichen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="254" />
+      <location filename="DragonLog.py" line="250" />
       <source>Call sign</source>
       <translation>Rufzeichen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="255" />
+      <location filename="DragonLog.py" line="251" />
       <source>Name</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="256" />
+      <location filename="DragonLog.py" line="252" />
       <source>QTH</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="257" />
+      <location filename="DragonLog.py" line="253" />
       <source>Locator</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="258" />
+      <location filename="DragonLog.py" line="254" />
       <source>RST sent</source>
       <translation>RST gesendet</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="259" />
+      <location filename="DragonLog.py" line="255" />
       <source>RST rcvd</source>
       <translation>RST empfangen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="260" />
+      <location filename="DragonLog.py" line="256" />
       <source>Band</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="261" />
+      <location filename="DragonLog.py" line="257" />
       <source>Mode</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="262" />
+      <location filename="DragonLog.py" line="258" />
       <source>Frequency</source>
       <translation>Frequenz</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="263" />
+      <location filename="DragonLog.py" line="259" />
       <source>Power</source>
       <translation>Leistung</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="264" />
+      <location filename="DragonLog.py" line="260" />
       <source>Own QTH</source>
       <translation>Eigener QTH</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="265" />
+      <location filename="DragonLog.py" line="261" />
       <source>Own Locator</source>
       <translation>Eigener Locator</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="266" />
+      <location filename="DragonLog.py" line="262" />
       <source>Radio</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="267" />
+      <location filename="DragonLog.py" line="263" />
       <source>Antenna</source>
       <translation>Antenne</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="268" />
+      <location filename="DragonLog.py" line="264" />
       <source>Remarks</source>
       <translation>Bemerkungen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="269" />
+      <location filename="DragonLog.py" line="265" />
       <source>Distance</source>
       <translation>Entfernung</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="327" />
+      <location filename="DragonLog.py" line="310" />
       <source>Select file</source>
       <translation>Datenbank öffnen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="329" />
+      <location filename="DragonLog.py" line="312" />
       <source>QSO-Log (*.qlog);;All Files (*.*)</source>
       <translation>QSO-Log (*.qlog);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="650" />
-      <location filename="DragonLog.py" line="380" />
+      <location filename="DragonLog.py" line="632" />
+      <location filename="DragonLog.py" line="362" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="439" />
+      <location filename="DragonLog.py" line="421" />
       <source>Log multi QSOs</source>
       <translation>Mehrfach QSOs eingeben</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="447" />
+      <location filename="DragonLog.py" line="429" />
       <source>Delete QSO</source>
       <translation>QSO löschen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="448" />
+      <location filename="DragonLog.py" line="430" />
       <source>Do you really want to delete the selected QSO(s)?</source>
       <translation>Wollen sie die selektierten QSOs wirklich löschen?</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="527" />
+      <location filename="DragonLog.py" line="509" />
       <source>Change QSO</source>
       <translation>QSO ändern</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="573" />
+      <location filename="DragonLog.py" line="555" />
       <source>Select export file</source>
       <translation>Exportdatei speichern</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="720" />
-      <location filename="DragonLog.py" line="580" />
-      <location filename="DragonLog.py" line="575" />
+      <location filename="DragonLog.py" line="702" />
+      <location filename="DragonLog.py" line="562" />
+      <location filename="DragonLog.py" line="557" />
       <source>Excel-File (*.xlsx)</source>
       <translation>Excel-Datei (*.xlsx)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="722" />
-      <location filename="DragonLog.py" line="715" />
-      <location filename="DragonLog.py" line="582" />
-      <location filename="DragonLog.py" line="576" />
+      <location filename="DragonLog.py" line="704" />
+      <location filename="DragonLog.py" line="697" />
+      <location filename="DragonLog.py" line="564" />
+      <location filename="DragonLog.py" line="558" />
       <source>CSV-File (*.csv)</source>
       <translation>CSV-Datei (*.csv)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="724" />
-      <location filename="DragonLog.py" line="584" />
-      <location filename="DragonLog.py" line="577" />
+      <location filename="DragonLog.py" line="706" />
+      <location filename="DragonLog.py" line="566" />
+      <location filename="DragonLog.py" line="559" />
       <source>ADIF 3.0 (*.adi)</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="612" />
+      <location filename="DragonLog.py" line="594" />
       <source>Exported QSO log</source>
       <translation>Exportiere QSO log</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="712" />
+      <location filename="DragonLog.py" line="694" />
       <source>Select import file</source>
       <translation>Importdatei öffnen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="757" />
-      <location filename="DragonLog.py" line="751" />
+      <location filename="DragonLog.py" line="739" />
+      <location filename="DragonLog.py" line="733" />
       <source>Log import CSV</source>
       <translation>Log Import CSV</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="772" />
+      <location filename="DragonLog.py" line="754" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="791" />
+      <location filename="DragonLog.py" line="773" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="806" />
+      <location filename="DragonLog.py" line="788" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="807" />
+      <location filename="DragonLog.py" line="789" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="808" />
+      <location filename="DragonLog.py" line="790" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="815" />
+      <location filename="DragonLog.py" line="797" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>

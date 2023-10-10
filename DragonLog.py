@@ -231,10 +231,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_dialog = None
 
         self.settings = QtCore.QSettings(self.tr(__prog_name__))
-        self.lastDatabase = None
-        self.lastImportDir = None
-        self.lastExportDir = None
-        self.loadSettings()
 
         with open(os.path.join(app_path, 'bands.json')) as bj:
             self.bands: dict = json.load(bj)
@@ -276,22 +272,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if file:
             print(f'Opening database from commandline {file}...')
             self.connectDB(file)
-        elif self.lastDatabase:
-            print(f'Opening last database {self.lastDatabase}...')
-            self.connectDB(self.lastDatabase)
-
-    def loadSettings(self):
-        self.lastDatabase = self.settings.value('lastDatabase', None)
-        self.lastExportDir = self.settings.value('lastExportDir', os.path.abspath(os.curdir))
-        self.lastImportDir = self.settings.value('lastImportDir', os.path.abspath(os.curdir))
-
-    def storeSettings(self):
-        if self.lastDatabase:
-            self.settings.setValue('lastDatabase', os.path.abspath(self.lastDatabase))
-        else:
-            self.settings.setValue('lastDatabase', None)
-        self.settings.setValue('lastExportDir', os.path.abspath(self.lastExportDir))
-        self.settings.setValue('lastImportDir', os.path.abspath(self.lastImportDir))
+        elif self.settings.value('lastDatabase', None):
+            print(f'Opening last database {self.settings.value("lastDatabase", None)}...')
+            self.connectDB(self.settings.value('lastDatabase', None))
 
     def showSettings(self):
         self.settings_form.callsignLineEdit.setText(self.settings.value('station/callSign', ''))
@@ -325,7 +308,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         res = QtWidgets.QFileDialog.getSaveFileName(
             self,
             self.tr('Select file'),
-            self.lastDatabase,
+            self.settings.value('lastDatabase', None),
             self.tr('QSO-Log (*.qlog);;All Files (*.*)'),
             options=QtWidgets.QFileDialog.Option.DontConfirmOverwrite)
 
@@ -368,12 +351,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.QSOTableView.resizeColumnsToContents()
 
             print(f'Opened database {db_file}')
-            self.lastDatabase = db_file
+            self.settings.setValue('lastDatabase', db_file)
             self.setWindowTitle(__prog_name__ + ' - ' + db_file)
         except DatabaseOpenException as exc:
-            if db_file == self.lastDatabase:
-                self.lastDatabase = None
-                self.storeSettings()
+            if db_file == self.settings.value('lastDatabase', None):
+                self.settings.setValue('lastDatabase', None)
 
             QtWidgets.QMessageBox.critical(
                 self,
@@ -571,7 +553,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         res = QtWidgets.QFileDialog.getSaveFileName(
             self,
             self.tr('Select export file'),
-            self.lastExportDir,
+            self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
             self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)') + ';;' +
             self.tr('ADIF 3.0 (*.adi)'))
@@ -584,7 +566,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             elif res[1] == self.tr('ADIF 3.0 (*.adi)'):
                 self.exportADI(res[0])
 
-            self.lastExportDir = os.path.dirname(res[0])
+            self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
     def exportCSV(self, file):
         print('Exporting to CSV...')
@@ -816,7 +798,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def closeEvent(self, e):
         print(f'Quiting {__prog_name__}...')
-        self.storeSettings()
         self.__db_con__.close()
         e.accept()
 
