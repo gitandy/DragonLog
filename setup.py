@@ -6,6 +6,7 @@ include_files = ['DragonLog_de.qm',
                  'icons',
                  'bands.json',
                  'modes.json',
+                 'cb_channels.json',
                  'README.md',
                  ]
 

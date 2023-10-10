@@ -40,7 +40,7 @@ class DatabaseWriteException(Exception):
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     # TODO: Colour rows with AFU call differently
 
-    def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings):
+    def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, cb_channels: dict):
         super().__init__(parent)
         self.setupUi(self)
 
@@ -50,7 +50,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.modes = modes
         self.settings = settings
 
-        # self.modeComboBox.insertItems(0, modes['AFU'].keys())
+        self.cb_channels = cb_channels
+        self.channelComboBox.insertItems(0, cb_channels.keys())
+
         self.bandComboBox.insertItems(0, bands.keys())
 
         self.stationChanged(True)
@@ -91,9 +93,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.modeComboBox.clear()
         if band == '11m':
-            self.modeComboBox.insertItems(0, self.modes['CB'].keys())
-            self.modeComboBox.setCurrentIndex(0)
             self.powerSpinBox.setMaximum(12)
+            self.channelComboBox.setVisible(True)
+            self.channelLabel.setVisible(True)
+            self.channelComboBox.setCurrentIndex(-1)
+            self.channelComboBox.setCurrentIndex(0)
 
             if self.stationGroupBox.isChecked():
                 self.radioLineEdit.setText(self.settings.value('station_cb/radio', ''))
@@ -105,6 +109,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.modeComboBox.insertItems(0, self.modes['AFU'].keys())
             self.modeComboBox.setCurrentIndex(0)
             self.powerSpinBox.setMaximum(1000)
+            self.channelComboBox.setVisible(False)
+            self.channelLabel.setVisible(False)
 
             if self.stationGroupBox.isChecked():
                 self.radioLineEdit.setText(self.settings.value('station/radio', ''))
@@ -133,6 +139,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
             else:
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
+
+    def channelChanged(self, ch):
+        if ch:
+            self.freqDoubleSpinBox.setValue(self.cb_channels[ch]['freq'])
+            self.modeComboBox.clear()
+            self.modeComboBox.insertItems(0, self.cb_channels[ch]['modes'])
+            self.modeComboBox.setCurrentIndex(0)
 
     def exec(self) -> int:
         if self.lastpos:
@@ -227,7 +240,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.bands: dict = json.load(bj)
         with open(os.path.join(app_path, 'modes.json')) as mj:
             self.modes: dict = json.load(mj)
-        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings)
+        with open(os.path.join(app_path, 'cb_channels.json')) as cj:
+            self.cb_channels: dict = json.load(cj)
+        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.cb_channels)
         self.keep_logging = False
 
         self.settings_form = Settings(self)
@@ -344,8 +359,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                     self.__header_map__[c])
 
             self.QSOTableView.setModel(model)
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('freq'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('power'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_qth'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_locator'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('radio'))
