@@ -24,7 +24,7 @@ def build_modes(src, dst):
                 continue
 
             smodes = m[1].replace(' ', '').split(',') if m[1].strip() else []
-            modes['AFU'][m[0]] = smodes
+            modes['AFU'][m[0].strip()] = smodes
 
     with open(dst, 'w') as bjf:
         print('Writing modes...')

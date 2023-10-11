@@ -1,25 +1,25 @@
 {
   "AFU": {
-    "AM ": [],
-    "ARDOP ": [],
-    "ATV ": [],
-    "CHIP ": [
+    "AM": [],
+    "ARDOP": [],
+    "ATV": [],
+    "CHIP": [
       "CHIP64",
       "CHIP128"
     ],
-    "CLO ": [],
-    "CONTESTI ": [],
-    "CW ": [
+    "CLO": [],
+    "CONTESTI": [],
+    "CW": [
       "PCW"
     ],
-    "DIGITALVOICE ": [
+    "DIGITALVOICE": [
       "C4FM",
       "DMR",
       "DSTAR",
       "FREEDV",
       "M17"
     ],
-    "DOMINO ": [
+    "DOMINO": [
       "DOM-M",
       "DOM4",
       "DOM5",
@@ -32,17 +32,17 @@
       "DOMINOEX",
       "DOMINOF"
     ],
-    "DYNAMIC ": [
+    "DYNAMIC": [
       "VARAHF",
       "VARASATELLITE",
       "VARAFM1200",
       "VARAFM9600"
     ],
-    "FAX ": [],
-    "FM ": [],
-    "FSK441 ": [],
-    "FT8 ": [],
-    "HELL ": [
+    "FAX": [],
+    "FM": [],
+    "FSK441": [],
+    "FT8": [],
+    "HELL": [
       "FMHELL",
       "FSKHELL",
       "HELL80",
@@ -52,11 +52,11 @@
       "PSKHELL",
       "SLOWHELL"
     ],
-    "ISCAT ": [
+    "ISCAT": [
       "ISCAT-A",
       "ISCAT-B"
     ],
-    "JT4 ": [
+    "JT4": [
       "JT4A",
       "JT4B",
       "JT4C",
@@ -65,8 +65,8 @@
       "JT4F",
       "JT4G"
     ],
-    "JT6M ": [],
-    "JT9 ": [
+    "JT6M": [],
+    "JT9": [
       "JT9-1",
       "JT9-2",
       "JT9-5",
@@ -85,15 +85,15 @@
       "JT9H",
       "JT9HFAST"
     ],
-    "JT44 ": [],
-    "JT65 ": [
+    "JT44": [],
+    "JT65": [
       "JT65A",
       "JT65B",
       "JT65B2",
       "JT65C",
       "JT65C2"
     ],
-    "MFSK ": [
+    "MFSK": [
       "FSQCALL",
       "FST4",
       "FST4W",
@@ -112,9 +112,9 @@
       "MFSK128MFSK128L",
       "Q65"
     ],
-    "MSK144 ": [],
-    "MT63 ": [],
-    "OLIVIA ": [
+    "MSK144": [],
+    "MT63": [],
+    "OLIVIA": [
       "OLIVIA4/125",
       "OLIVIA4/250",
       "OLIVIA8/250",
@@ -123,20 +123,20 @@
       "OLIVIA16/1000",
       "OLIVIA32/1000"
     ],
-    "OPERA ": [
+    "OPERA": [
       "OPERA-BEACON",
       "OPERA-QSO"
     ],
-    "PAC ": [
+    "PAC": [
       "PAC2",
       "PAC3",
       "PAC4"
     ],
-    "PAX ": [
+    "PAX": [
       "PAX2"
     ],
-    "PKT ": [],
-    "PSK ": [
+    "PKT": [],
+    "PSK": [
       "8PSK125",
       "8PSK125F",
       "8PSK125FL",
@@ -198,31 +198,31 @@
       "QPSK500",
       "SIM31"
     ],
-    "PSK2K ": [],
-    "Q15 ": [],
-    "QRA64 ": [
+    "PSK2K": [],
+    "Q15": [],
+    "QRA64": [
       "QRA64A",
       "QRA64B",
       "QRA64C",
       "QRA64D",
       "QRA64E"
     ],
-    "ROS ": [
+    "ROS": [
       "ROS-EME",
       "ROS-HF",
       "ROS-MF"
     ],
-    "RTTY ": [
+    "RTTY": [
       "ASCI"
     ],
-    "RTTYM ": [],
-    "SSB ": [
+    "RTTYM": [],
+    "SSB": [
       "LSB",
       "USB"
     ],
-    "SSTV ": [],
-    "T10 ": [],
-    "THOR ": [
+    "SSTV": [],
+    "T10": [],
+    "THOR": [
       "THOR-M",
       "THOR4",
       "THOR5",
@@ -235,7 +235,7 @@
       "THOR50X2",
       "THOR100"
     ],
-    "THRB ": [
+    "THRB": [
       "THRBX",
       "THRBX1",
       "THRBX2",
@@ -244,16 +244,16 @@
       "THROB2",
       "THROB4"
     ],
-    "TOR ": [
+    "TOR": [
       "AMTORFEC",
       "GTOR",
       "NAVTEX",
       "SITORB"
     ],
-    "V4 ": [],
-    "VOI ": [],
-    "WINMOR ": [],
-    "WSPR ": []
+    "V4": [],
+    "VOI": [],
+    "WINMOR": [],
+    "WSPR": []
   },
   "CB": {
     "FM": [],
