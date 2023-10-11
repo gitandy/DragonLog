@@ -3,3 +3,4 @@ PyQt6
 openpyxl
 maidenhead
 cx-Freeze
+xmlschema

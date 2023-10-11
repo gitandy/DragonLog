@@ -27,7 +27,7 @@ Export
 Following formats are supported for export
 * Excel format
 * CSV format (Excel style with separator ; and local encoding)
-* ADIF 3.x format (CB QSOs are skipped automatically)
+* ADIF 3 format (ADI/ADX) (CB QSOs are skipped automatically)
 
 Import 
 ------

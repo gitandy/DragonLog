@@ -1,15 +1,17 @@
 import os
 import csv
 import sys
-import datetime
 import json
 import math
 import string
+import datetime
+from xml.etree.ElementTree import ElementTree
 
 from PyQt6 import QtCore, QtWidgets, QtSql
 import openpyxl
 from openpyxl.styles import Font
 import maidenhead
+import xmlschema
 
 import DragonLog_MainWindow_ui
 import DragonLog_QSOForm_ui
@@ -270,6 +272,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         )
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
+
+        self.adx_export_schema = xmlschema.XMLSchema(os.path.join(app_path, 'adx314.xsd'))
+        self.adx_import_schema = xmlschema.XMLSchema(os.path.join(app_path, 'adx314generic.xsd'))
 
         self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
@@ -645,15 +650,18 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
             self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3 (*.adi)'))
+            self.tr('ADIF 3 (*.adi *.adx)'))
 
         if res[0]:
             if res[1] == self.tr('Excel-File (*.xlsx)'):
                 self.exportExcel(res[0])
             elif res[1] == self.tr('CSV-File (*.csv)'):
                 self.exportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3 (*.adi)'):
-                self.exportADI(res[0])
+            elif res[1] == self.tr('ADIF 3 (*.adi *.adx)'):
+                if os.path.splitext(res[0])[-1] == '.adx':
+                    self.exportADX(res[0])
+                else:
+                    self.exportADI(res[0])
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
@@ -738,7 +746,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                      self._adif_tag_('PROGRAMID', __prog_name__) + \
                      self._adif_tag_('PROGRAMVERSION', __version__) + \
                      '\n<eoh>\n\n'
-            
+
             af.write(header)
 
             # Write content
@@ -779,6 +787,69 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
                 af.write('<eor>\n\n')  # Insert end of row
 
+    def exportADX(self, file):
+        print('Exporting to ADX...')
+
+        doc = {
+            'HEADER':
+            {
+                'ADIF_VER': '3.1.4',
+                'PROGRAMID': __prog_name__,
+                'PROGRAMVERSION': __version__
+            },
+            'RECORDS': {'RECORD': []},
+        }
+
+        query = self.__db_con__.exec(self.__db_select_stmnt__)
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        while query.next():
+            band = query.value(self.__sql_cols__.index('band'))
+
+            if band == '11m':
+                continue
+
+            qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
+
+            record = {'QSO_DATE': qso_date.replace('-', ''),
+                      'TIME_ON': qso_time.replace(':', '')[:4]}
+
+            if query.value(self.__sql_cols__.index('call_sign')):
+                record['CALL'] = query.value(self.__sql_cols__.index('call_sign'))
+            if query.value(self.__sql_cols__.index('name')):
+                record['NAME'] = query.value(self.__sql_cols__.index('name'))
+            if query.value(self.__sql_cols__.index('qth')):
+                record['QTH'] = query.value(self.__sql_cols__.index('qth'))
+            if query.value(self.__sql_cols__.index('locator')):
+                record['GRIDSQUARE'] = query.value(self.__sql_cols__.index('locator'))
+            if query.value(self.__sql_cols__.index('rst_sent')):
+                record['RST_SENT'] = query.value(self.__sql_cols__.index('rst_sent'))
+            if query.value(self.__sql_cols__.index('rst_rcvd')):
+                record['RST_RCVD'] = query.value(self.__sql_cols__.index('rst_rcvd'))
+            if band:
+                record['BAND'] = band.upper()
+            if query.value(self.__sql_cols__.index('mode')):
+                record['MODE'] = query.value(self.__sql_cols__.index('mode'))
+            record['FREQ'] = f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.3f}'
+            record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
+            if query.value(self.__sql_cols__.index('own_callsign')):
+                record['STATION_CALLSIGN'] = query.value(self.__sql_cols__.index('own_callsign'))
+            if query.value(self.__sql_cols__.index('own_locator')):
+                record['MY_GRIDSQUARE'] = query.value(self.__sql_cols__.index('own_locator'))
+            if query.value(self.__sql_cols__.index('radio')):
+                record['MY_RIG'] = query.value(self.__sql_cols__.index('radio'))
+            if query.value(self.__sql_cols__.index('antenna')):
+                record['MY_ANTENNA'] = query.value(self.__sql_cols__.index('antenna'))
+            if query.value(self.__sql_cols__.index('dist')):
+                record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
+            if query.value(self.__sql_cols__.index('remarks')):
+                record['NOTES'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
+
+            doc['RECORDS']['RECORD'].append(record)
+
+        ElementTree(self.adx_export_schema.encode(doc)).write(file, xml_declaration=True, encoding='utf-8')
+
     def logImport(self):
         res = QtWidgets.QFileDialog.getOpenFileName(
             self,
@@ -786,7 +857,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.value('lastImportDir', os.path.abspath(os.curdir)),
             # self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)')  # + ';;' +
-            # self.tr('ADIF 3.0 (*.adi)')
+            # self.tr('ADIF 3 (*.adi)')
         )
 
         if res[0]:

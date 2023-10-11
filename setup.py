@@ -8,6 +8,8 @@ include_files = ['DragonLog_de.qm',
                  'modes.json',
                  'cb_channels.json',
                  'README.md',
+                 'adx314.xsd',
+                 'adx314generic.xsd',
                  ]
 
 if sys.platform == 'win32':
