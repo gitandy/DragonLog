@@ -1,6 +1,7 @@
 import os
 import csv
 import sys
+import datetime
 import json
 import math
 import string
@@ -173,7 +174,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'own_callsign', 'call_sign', 'name', 'qth', 'locator', 'rst_sent', 'rst_rcvd',
-                    'band', 'mode', 'freq', 'power', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
+                    'band', 'mode', 'freq', 'channel', 'power', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks',
+                    'dist')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -188,6 +190,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "band"    TEXT,
                             "mode"   TEXT,
                             "freq"  REAL,
+                            "channel"  INTEGER,
                             "power"  REAL,
                             "own_qth"   TEXT,
                             "own_locator" TEXT,
@@ -256,6 +259,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Band'),
             self.tr('Mode'),
             self.tr('Frequency'),
+            self.tr('Channel'),
             self.tr('Power'),
             self.tr('Own QTH'),
             self.tr('Own Locator'),
@@ -316,6 +320,77 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             print(f'Selected database {res[0]}')
             self.connectDB(res[0])
 
+    def checkDB(self, db_file):
+        # Check database for missing cols
+        res = self.__db_con__.exec('SELECT GROUP_CONCAT(NAME,",") as columns FROM PRAGMA_TABLE_INFO("qsos")')
+        res.next()
+        db_cols = res.value('columns')
+        db_cols_l = db_cols.split(',')
+        missing_cols = False
+        for col in self.__sql_cols__:
+            if col not in db_cols_l:
+                missing_cols = True
+                break
+
+        if missing_cols:
+            path, db_name = os.path.split(db_file)
+            bck_name = os.path.join(path, datetime.date.today().strftime('%Y-%m-%d') + ' ' + db_name)
+
+            QtWidgets.QMessageBox.warning(self, self.tr('Database structure out-dated'),
+                                          self.tr('The database structure is out-dated and needs a conversion\n\n'
+                                                  'A backup will be generated:') + f'\n"{bck_name}"',
+                                          )
+
+            # Create backup
+            self.__db_con__.close()
+            os.rename(db_file, bck_name)
+
+            # Open new DB
+            self.__db_con__.setDatabaseName(db_file)
+            if self.__db_con__.lastError().text():
+                raise DatabaseOpenException(self.__db_con__.lastError().text())
+            self.__db_con__.open()
+            self.__db_con__.exec(self.__db_create_stmnt__)
+            if self.__db_con__.lastError().text():
+                raise DatabaseOpenException(self.__db_con__.lastError().text())
+
+            # Open backup
+            db_con_bck = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'backup')
+            db_con_bck.setDatabaseName(bck_name)
+            if db_con_bck.lastError().text():
+                raise DatabaseOpenException(db_con_bck.lastError().text())
+            db_con_bck.open()
+            self.__db_con__.exec(self.__db_create_stmnt__)
+            if self.__db_con__.lastError().text():
+                raise DatabaseOpenException(self.__db_con__.lastError().text())
+
+            q_read = db_con_bck.exec(f'SELECT {db_cols} FROM qsos')
+            if q_read.lastError().text():
+                raise Exception(q_read.lastError().text())
+
+            insert_stmnt = f'INSERT INTO qsos ({db_cols}) ' \
+                           'VALUES (' + ",".join(["?"] * len(db_cols_l)) + ')'
+
+            while q_read.next():
+                row = []
+                for i in range(len(db_cols_l)):
+                    row.append(q_read.value(i))
+
+                q_write = QtSql.QSqlQuery(self.__db_con__)
+                q_write.prepare(insert_stmnt)
+                for i, val in enumerate(row):
+                    q_write.bindValue(i, val)
+                q_write.exec()
+                if q_write.lastError().text():
+                    raise Exception(q_write.lastError().text())
+
+            self.__db_con__.commit()
+            db_con_bck.close()
+
+            QtWidgets.QMessageBox.information(self, self.tr('Database conversion'),
+                                              self.tr('Database conversion finished')
+                                              )
+
     def connectDB(self, db_file):
         try:
             if self.__db_con__.isOpen():
@@ -324,14 +399,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.setDatabaseName(db_file)
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
-
             self.__db_con__.open()
-
-            # TODO: Check table structure and warn/fix
-
             self.__db_con__.exec(self.__db_create_stmnt__)
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
+
+            self.checkDB(db_file)
 
             model = QtSql.QSqlTableModel(self, self.__db_con__)
             model.setTable('qsos')
@@ -379,6 +452,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 date_time = self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text()
 
+            band = self.qso_form.bandComboBox.currentText()
+
             values = (
                 date_time,
                 self.qso_form.ownCallSignLineEdit.text(),
@@ -388,9 +463,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.qso_form.locatorLineEdit.text(),
                 self.qso_form.RSTSentLineEdit.text(),
                 self.qso_form.RSTRcvdLineEdit.text(),
-                self.qso_form.bandComboBox.currentText(),
+                band,
                 self.qso_form.modeComboBox.currentText(),
                 self.qso_form.freqDoubleSpinBox.value(),
+                int(self.qso_form.channelComboBox.currentText()) if band == '11m' else '-',
                 self.qso_form.powerSpinBox.value(),
                 self.qso_form.ownQTHLineEdit.text(),
                 self.qso_form.ownLocatorLineEdit.text(),
@@ -487,12 +563,22 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.__sql_cols__.index('rst_sent'))))
             self.qso_form.RSTRcvdLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('rst_rcvd'))))
-            self.qso_form.bandComboBox.setCurrentText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('band'))))
+
+            band = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('band')))
+            self.qso_form.bandComboBox.setCurrentText(band)
+
             self.qso_form.modeComboBox.setCurrentText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('mode'))))
             self.qso_form.freqDoubleSpinBox.setValue(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('freq'))))
+
+            if band == '11m':
+                self.qso_form.channelComboBox.setCurrentIndex(-1)
+                channel = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('channel')))
+                self.qso_form.channelComboBox.setCurrentText(str(channel) if channel else '1')
+            else:
+                self.qso_form.channelComboBox.setCurrentIndex(-1)
+
             self.qso_form.powerSpinBox.setValue(int(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('power')))))
             self.qso_form.ownQTHLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
@@ -511,6 +597,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if self.qso_form.exec():
                 print(f'Changing QSO {qso_id}...')
 
+                band = self.qso_form.bandComboBox.currentText()
+
                 values = (
                     self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text(),
                     self.qso_form.ownCallSignLineEdit.text(),
@@ -520,9 +608,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.qso_form.locatorLineEdit.text(),
                     self.qso_form.RSTSentLineEdit.text(),
                     self.qso_form.RSTRcvdLineEdit.text(),
-                    self.qso_form.bandComboBox.currentText(),
+                    band,
                     self.qso_form.modeComboBox.currentText(),
                     self.qso_form.freqDoubleSpinBox.value(),
+                    int(self.qso_form.channelComboBox.currentText()) if band == '11m' else '-',
                     self.qso_form.powerSpinBox.value(),
                     self.qso_form.ownQTHLineEdit.text(),
                     self.qso_form.ownLocatorLineEdit.text(),
