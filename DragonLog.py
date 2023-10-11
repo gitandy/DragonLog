@@ -645,14 +645,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
             self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3.0 (*.adi)'))
+            self.tr('ADIF 3 (*.adi)'))
 
         if res[0]:
             if res[1] == self.tr('Excel-File (*.xlsx)'):
                 self.exportExcel(res[0])
             elif res[1] == self.tr('CSV-File (*.csv)'):
                 self.exportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3.0 (*.adi)'):
+            elif res[1] == self.tr('ADIF 3 (*.adi)'):
                 self.exportADI(res[0])
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
@@ -724,7 +724,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     @staticmethod
     def _adif_tag_(ttype, content):
         if content:
-            return f'<{ttype}:{len(str(content))}>{content} '
+            return f'<{ttype.upper()}:{len(str(content))}>{content} '
 
         return ''
 
@@ -733,10 +733,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         with open(file, 'w', newline='\n') as af:
             # Write header
-            header = f'ADIF Export by DragonLog\n' \
-                     f'<ADIF_VER:5>3.1.4 <PROGRAMID:{len(__prog_name__)}>{__prog_name__} ' \
-                     f'<PROGRAMVERSION:{len(__version__)}>{__version__}\n' \
-                     f'<eoh>\n\n'
+            header = 'ADIF Export by DragonLog\n' + \
+                     self._adif_tag_('ADIF_VER', '3.1.4') + \
+                     self._adif_tag_('PROGRAMID', __prog_name__) + \
+                     self._adif_tag_('PROGRAMVERSION', __version__) + \
+                     '\n<eoh>\n\n'
+            
             af.write(header)
 
             # Write content
