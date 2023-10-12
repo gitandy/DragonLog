@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Get version info..."
 VERSION=$(git describe --tags)
