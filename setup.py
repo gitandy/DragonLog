@@ -8,6 +8,7 @@ include_files = ['DragonLog_de.qm',
                  'modes.json',
                  'cb_channels.json',
                  'README.md',
+                 'README.txt',
                  'adx314.xsd',
                  'adx314generic.xsd',
                  ]
@@ -61,7 +62,7 @@ bdist_msi_options = {
 
 executables = [
     Executable('DragonLog.py',
-               target_name='DragonLog.exe',
+               target_name='DragonLog',
                base=base,
                icon='icons/logo.ico',
                shortcut_name=__prog_name__,
