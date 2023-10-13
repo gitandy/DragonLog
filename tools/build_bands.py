@@ -32,4 +32,4 @@ def build_bands(src, dst):
 
 
 if __name__ == '__main__':
-    build_bands('bands.csv', '../bands.json')
+    build_bands('bands.csv', '../data/bands.json')

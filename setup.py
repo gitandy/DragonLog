@@ -4,13 +4,10 @@ from DragonLog import __prog_name__, __prog_desc__, __version__, __author_name__
 
 include_files = ['DragonLog_de.qm',
                  'icons',
-                 'bands.json',
-                 'modes.json',
-                 'cb_channels.json',
+                 'data',
                  'README.md',
                  'README.txt',
-                 'adx314.xsd',
-                 'adx314generic.xsd',
+                 'LICENCE.txt',
                  ]
 
 if sys.platform == 'win32':

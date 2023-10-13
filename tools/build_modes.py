@@ -32,4 +32,4 @@ def build_modes(src, dst):
 
 
 if __name__ == '__main__':
-    build_modes('modes.csv', '../modes.json')
+    build_modes('modes.csv', '../data/modes.json')

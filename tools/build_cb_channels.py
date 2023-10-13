@@ -26,4 +26,4 @@ def build_cb_channels(src, dst):
 
 
 if __name__ == '__main__':
-    build_cb_channels('cb_channels.csv', '../cb_channels.json')
+    build_cb_channels('cb_channels.csv', '../data/cb_channels.json')

@@ -230,6 +230,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             return 0
 
+    @staticmethod
+    def searchFile(name):
+        file = QtCore.QFile(name)
+        if file.exists():
+            return file.fileName()
+
     def __init__(self, file=None, app_path='.'):
         super().__init__()
 
@@ -242,11 +248,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.settings = QtCore.QSettings(self.tr(__prog_name__))
 
-        with open(os.path.join(app_path, 'bands.json')) as bj:
+        with open(self.searchFile('data:bands.json')) as bj:
             self.bands: dict = json.load(bj)
-        with open(os.path.join(app_path, 'modes.json')) as mj:
+        with open(self.searchFile('data:modes.json')) as mj:
             self.modes: dict = json.load(mj)
-        with open(os.path.join(app_path, 'cb_channels.json')) as cj:
+        with open(self.searchFile('data:cb_channels.json')) as cj:
             self.cb_channels: dict = json.load(cj)
         self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.cb_channels)
         self.keep_logging = False
@@ -278,8 +284,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
 
-        self.adx_export_schema = xmlschema.XMLSchema(os.path.join(app_path, 'adx314.xsd'))
-        self.adx_import_schema = xmlschema.XMLSchema(os.path.join(app_path, 'adx314generic.xsd'))
+        self.adx_export_schema = xmlschema.XMLSchema(self.searchFile('data:adif/adx314.xsd'))
+        self.adx_import_schema = xmlschema.XMLSchema(self.searchFile('data:adif/adx314generic.xsd'))
 
         self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
@@ -1002,6 +1008,7 @@ def main():
     app_path = os.path.dirname(args[0])
 
     QtCore.QDir.addSearchPath('icons', app_path + '/icons')
+    QtCore.QDir.addSearchPath('data', app_path + '/data')
 
     dl = DragonLog(file, app_path)
     dl.show()
