@@ -54,7 +54,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.settings = settings
 
         self.cb_channels = cb_channels
-        self.channelComboBox.insertItems(0, cb_channels.keys())
+        self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
 
         self.bandComboBox.insertItems(0, bands.keys())
 
@@ -69,6 +69,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.RSTSentLineEdit.setText('59')
         self.RSTRcvdLineEdit.setText('59')
         self.remarksTextEdit.clear()
+        self.powerSpinBox.setValue(0)
 
         if bool(self.settings.value('station_cb/cb_by_default', 0)):
             self.bandComboBox.setCurrentText('11m')
@@ -89,8 +90,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.setWindowTitle(self.default_title)
 
     def bandChanged(self, band: str):
-        self.freqDoubleSpinBox.setValue((self.bands[band][0] + self.bands[band][1]) / 2)
-        self.freqDoubleSpinBox.setMinimum(self.bands[band][0])
+        self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
+        self.freqDoubleSpinBox.setValue(self.bands[band][0] - self.bands[band][2])
         self.freqDoubleSpinBox.setMaximum(self.bands[band][1])
         self.freqDoubleSpinBox.setSingleStep(self.bands[band][2])
 
@@ -99,6 +100,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.powerSpinBox.setMaximum(12)
             self.channelComboBox.setVisible(True)
             self.channelLabel.setVisible(True)
+            self.freqDoubleSpinBox.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
             self.channelComboBox.setCurrentIndex(0)
 
@@ -114,6 +116,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.powerSpinBox.setMaximum(1000)
             self.channelComboBox.setVisible(False)
             self.channelLabel.setVisible(False)
+            self.freqDoubleSpinBox.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
                 self.radioLineEdit.setText(self.settings.value('station/radio', ''))
@@ -127,7 +130,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.ownQTHLineEdit.setText(self.settings.value('station/QTH', ''))
             self.ownLocatorLineEdit.setText(self.settings.value('station/locator', ''))
 
-            if self.bandComboBox.currentText() == '11 m':
+            if self.bandComboBox.currentText() == '11m':
                 self.radioLineEdit.setText(self.settings.value('station_cb/radio', ''))
                 self.antennaLineEdit.setText(self.settings.value('station_cb/antenna', ''))
             else:
@@ -138,17 +141,19 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         if checked:
             self.ownNameLineEdit.setText(self.settings.value('station/name', ''))
 
-            if self.bandComboBox.currentText() == '11 m':
+            if self.bandComboBox.currentText() == '11m':
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
             else:
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
 
     def channelChanged(self, ch):
-        if ch:
+        if ch and ch != '-':
             self.freqDoubleSpinBox.setValue(self.cb_channels[ch]['freq'])
             self.modeComboBox.clear()
             self.modeComboBox.insertItems(0, self.cb_channels[ch]['modes'])
             self.modeComboBox.setCurrentIndex(0)
+        else:
+            self.freqDoubleSpinBox.setValue(self.bands['11m'][0] - self.bands['11m'][2])
 
     def exec(self) -> int:
         if self.lastpos:
@@ -470,9 +475,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.qso_form.RSTRcvdLineEdit.text(),
                 band,
                 self.qso_form.modeComboBox.currentText(),
-                self.qso_form.freqDoubleSpinBox.value(),
-                int(self.qso_form.channelComboBox.currentText()) if band == '11m' else '-',
-                self.qso_form.powerSpinBox.value(),
+                self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >= self.bands[band][0] else '',
+                self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
+                self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
                 self.qso_form.ownQTHLineEdit.text(),
                 self.qso_form.ownLocatorLineEdit.text(),
                 self.qso_form.radioLineEdit.text(),
@@ -574,18 +579,26 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.qso_form.modeComboBox.setCurrentText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('mode'))))
-            self.qso_form.freqDoubleSpinBox.setValue(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('freq'))))
+
+            try:
+                freq = float(self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('freq'))))
+            except ValueError:
+                freq = self.bands[band][0] - self.bands[band][2]
+            self.qso_form.freqDoubleSpinBox.setValue(freq)
 
             if band == '11m':
                 self.qso_form.channelComboBox.setCurrentIndex(-1)
                 channel = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('channel')))
-                self.qso_form.channelComboBox.setCurrentText(str(channel) if channel else '1')
+                self.qso_form.channelComboBox.setCurrentText(str(channel) if channel else '-')
             else:
                 self.qso_form.channelComboBox.setCurrentIndex(-1)
 
-            self.qso_form.powerSpinBox.setValue(int(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('power')))))
+            try:
+                power = int(self.QSOTableView.model().data(i.siblingAtColumn(
+                    self.__sql_cols__.index('power'))))
+            except ValueError:
+                power = 0
+            self.qso_form.powerSpinBox.setValue(power)
             self.qso_form.ownQTHLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('own_qth'))))
             self.qso_form.ownLocatorLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
@@ -615,9 +628,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.qso_form.RSTRcvdLineEdit.text(),
                     band,
                     self.qso_form.modeComboBox.currentText(),
-                    self.qso_form.freqDoubleSpinBox.value(),
-                    int(self.qso_form.channelComboBox.currentText()) if band == '11m' else '-',
-                    self.qso_form.powerSpinBox.value(),
+                    self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >= self.bands[band][0] else '',
+                    self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
+                    self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
                     self.qso_form.ownQTHLineEdit.text(),
                     self.qso_form.ownLocatorLineEdit.text(),
                     self.qso_form.radioLineEdit.text(),
@@ -773,7 +786,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 af.write(self._adif_tag_('rst_rcvd', query.value(self.__sql_cols__.index('rst_rcvd'))))
                 af.write(self._adif_tag_('band', band.upper()))
                 af.write(self._adif_tag_('mode', query.value(self.__sql_cols__.index('mode'))))
-                af.write(self._adif_tag_('freq', f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.3f}'))
+                freq = query.value(self.__sql_cols__.index("freq"))
+                af.write(self._adif_tag_('freq', f'{ freq / 1000:0.3f}' if freq else ''))
                 af.write(self._adif_tag_('tx_pwr', query.value(self.__sql_cols__.index('power'))))
                 af.write('\n')  # Insert a linebreak for readability
                 af.write(self._adif_tag_('station_callsign', query.value(self.__sql_cols__.index('own_callsign'))))
@@ -831,8 +845,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['BAND'] = band.upper()
             if query.value(self.__sql_cols__.index('mode')):
                 record['MODE'] = query.value(self.__sql_cols__.index('mode'))
-            record['FREQ'] = f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.3f}'
-            record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
+            if query.value(self.__sql_cols__.index("freq")):
+                record['FREQ'] = f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.3f}'
+            if query.value(self.__sql_cols__.index('power')):
+                record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
             if query.value(self.__sql_cols__.index('own_callsign')):
                 record['STATION_CALLSIGN'] = query.value(self.__sql_cols__.index('own_callsign'))
             if query.value(self.__sql_cols__.index('own_locator')):

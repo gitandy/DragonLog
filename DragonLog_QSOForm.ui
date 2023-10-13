@@ -151,6 +151,9 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="specialValueText">
+            <string>n.a.</string>
+           </property>
            <property name="suffix">
             <string> W</string>
            </property>
@@ -159,9 +162,6 @@
            </property>
            <property name="maximum">
             <number>1000</number>
-           </property>
-           <property name="value">
-            <number>4</number>
            </property>
           </widget>
          </item>
@@ -222,6 +222,12 @@
        </item>
        <item>
         <widget class="QDoubleSpinBox" name="freqDoubleSpinBox">
+         <property name="specialValueText">
+          <string>n.a.</string>
+         </property>
+         <property name="accelerated">
+          <bool>true</bool>
+         </property>
          <property name="suffix">
           <string> kHz</string>
          </property>
