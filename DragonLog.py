@@ -21,7 +21,7 @@ __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
 __author_name__ = 'Andreas Schawo'
 __author_email__ = 'andreas@schawo.de'
-__copyright__ = 'Copyright (c) 2023, Andreas Schawo'
+__copyright__ = 'Copyright 2023 by Andreas Schawo,licensed under CC BY-SA 4.0'
 
 import __version__ as version
 
@@ -923,6 +923,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             helpLabel = QtWidgets.QLabel(scrollAreaWidgetContents)
             helpLabel.setTextFormat(QtCore.Qt.TextFormat.MarkdownText)
             helpLabel.setWordWrap(True)
+            helpLabel.setOpenExternalLinks(True)
             verticalLayout_2.addWidget(helpLabel)
             scrollArea.setWidget(scrollAreaWidgetContents)
             verticalLayout.addWidget(scrollArea)
@@ -943,15 +944,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_dialog.show()
 
     def showAbout(self):
+        # TODO: Add licenses maidenhead, openpyxl, xmlschema
         cr = sys.copyright.replace('\n\n', '\n')
 
         QtWidgets.QMessageBox.about(
             self,
             f'{__prog_name__} - {self.tr("About")}',
-            f'{self.tr("Version")}: {__version__}\n' +
-            f'{self.tr("Author")}: {__author_name__} <{__author_email__}>\n{__copyright__}' +
-            f'\n\nPython {sys.version.split()[0]}: {cr}' +
-            '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho' +
+            f'{self.tr("Version")}: {__version__}\n'
+            f'{self.tr("Author")}: {__author_name__} <{__author_email__}>\n{__copyright__}'
+            f'\n\nPython {sys.version.split()[0]}: {cr}'
+            f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl'
+            '\nmaidenhead: Copyright (c) 2018 Michael Hirsch, Ph.D.' +
+            f'\nxmlschema {xmlschema.__version__}: Copyright (c), 2016-2022, '
+            f'SISSA (Scuola Internazionale Superiore di Studi Avanzati)'
+            '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nDragon icon by Icons8 https://icons8.com'
         )
 

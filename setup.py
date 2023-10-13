@@ -53,7 +53,7 @@ msi_ext = [
 ]
 
 bdist_msi_options = {
-    'upgrade_code': '{7F56886F-6EFB-3808-B7DE-FE9FF862094F}',
+    'upgrade_code': '{D6D9A26C-4DFC-46B3-905D-B556D091B62B}',
     'data': msi_data,
     'summary_data': msi_sum,
     'extensions': msi_ext,

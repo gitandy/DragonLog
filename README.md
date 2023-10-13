@@ -36,3 +36,7 @@ The import file is expected to have the same format and column order as the expo
 So best practice is to export a QSO with the current program version and adjust the import file.
 
 Empty rows are skipped. A row is considered empty if the date/time is missing.
+
+Copyright
+---------
+DragonLog &copy; 2023 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
