@@ -4,7 +4,9 @@ import sys
 import json
 import math
 import string
+import socket
 import datetime
+import subprocess
 from xml.etree.ElementTree import ElementTree
 
 from PyQt6 import QtCore, QtWidgets, QtSql
@@ -40,10 +42,172 @@ class DatabaseWriteException(Exception):
     pass
 
 
+class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
+    def __init__(self, parent, settings):
+        super().__init__(parent)
+        self.setupUi(self)
+
+        self.settings = settings
+        self.rig_ids = None
+        self.rigs = None
+        self.rigctld_path = None
+        self.rigctld = None
+        self.rig_caps = []
+
+        if self.settings.value('cat/lasthamlibdir', None):
+            self.init_hamlib(self.settings.value('cat/lasthamlibdir', None))
+
+        self.checkHamlibTimer = QtCore.QTimer(self)
+        self.checkHamlibTimer.timeout.connect(self.checkRigctld)
+
+    def calcLocator(self):
+        self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
+                                                          self.longitudeDoubleSpinBox.value(),
+                                                          4))
+
+    def checkRigctld(self):
+        if self.rigctld and self.rigctld.poll():
+            print('rigctld died unexpectedly')
+            self.ctrlRigctldPushButton.setText(self.tr('Start'))
+            self.rig_caps = []
+            self.checkHamlibTimer.stop()
+
+    def isRigctldActive(self):
+        return self.ctrlRigctldPushButton.isChecked()
+
+    @staticmethod
+    def __is_exe__(path):
+        return os.path.isfile(path) and os.access(path, os.X_OK)
+
+    def chooseHamlibPath(self):
+        hl_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            self.tr('Choose hamlib directory'),
+            self.settings.value('cat/lasthamlibdir', None)
+        )
+
+        self.init_hamlib(hl_dir)
+
+    def init_hamlib(self, hl_dir):
+        if hl_dir:
+            rigctld_path = os.path.join(hl_dir, 'bin/rigctld.exe')
+            if self.__is_exe__(rigctld_path):
+                res = subprocess.run([rigctld_path, '-l'], capture_output=True)
+                stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
+                if res.returncode != 0 or not stdout:
+                    self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
+                    self.settings.setValue('cat/lasthamlibdir', '')
+                    self.hamlibPathLineEdit.setText('')
+
+                first = True
+                rig_pos = 0
+                mfr_pos = 0
+                model_pos = 0
+                end_pos = 0
+                self.rigs = {}
+                self.rig_ids = {}
+                for rig in stdout.split('\n'):
+                    if first:
+                        first = False
+                        rig_pos = rig.index('Rig #')
+                        mfr_pos = rig.index('Mfg')
+                        model_pos = rig.index('Model')
+                        end_pos = rig.index('Version')
+                        continue
+                    elif not rig.strip():  # Empty line
+                        continue
+
+                    rig_id = rig[rig_pos:mfr_pos - 1].strip()
+                    mfr_name = rig[mfr_pos:model_pos - 1].strip()
+                    model_name = rig[model_pos:end_pos - 1].strip()
+
+                    self.rig_ids[f'{mfr_name}/{model_name}'] = rig_id
+                    if mfr_name in self.rigs:
+                        self.rigs[mfr_name].append(model_name)
+                    else:
+                        self.rigs[mfr_name] = [model_name]
+
+                self.manufacturerComboBox.clear()
+                self.manufacturerComboBox.insertItems(0, self.rigs.keys())
+                if self.settings.value('cat/rigMfr', None):
+                    self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
+                else:
+                    self.manufacturerComboBox.setCurrentIndex(0)
+
+                self.settings.setValue('cat/lasthamlibdir', hl_dir)
+                self.hamlibPathLineEdit.setText(hl_dir)
+                self.checkHamlibLabel.setText('')
+                self.rigctld_path = rigctld_path
+            else:
+                self.checkHamlibLabel.setText(self.tr('Directory does not contain the hamlib executable'))
+                self.settings.setValue('cat/lasthamlibdir', '')
+                self.hamlibPathLineEdit.setText('')
+
+    def mfrChanged(self, mfr):
+        self.modelComboBox.clear()
+        self.modelComboBox.insertItems(0, self.rigs[mfr])
+
+        if self.settings.value('cat/rigModel', None):
+            self.modelComboBox.setCurrentText(self.settings.value('cat/rigModel'))
+
+    def collectRigCaps(self, rig_id):
+        res = subprocess.run([self.rigctld_path, f'--model={rig_id}', '-u'], capture_output=True)
+        stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
+        self.rig_caps = []
+        for ln in stdout.split('\n'):
+            if ln.startswith('Can '):
+                cap, able = ln.split(':')
+                if able.strip() == 'Y':
+                    self.rig_caps.append(cap[4:])
+
+    def ctrlRigctld(self, start):
+        if start:
+            rig_id = self.rig_ids[self.manufacturerComboBox.currentText() + '/' + self.modelComboBox.currentText()]
+
+            self.collectRigCaps(rig_id)
+
+            self.rigctld = subprocess.Popen([self.rigctld_path,
+                                             f'--model={rig_id}',
+                                             f'--rig-file={self.catInterfaceLineEdit.text().strip()}',
+                                             f'--serial-speed={self.catBaudComboBox.currentText()}',
+                                             '--listen-addr=127.0.0.1'])
+            if self.rigctld.poll():
+                self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
+            else:
+                self.checkHamlibRunLabel.setText('')
+                self.ctrlRigctldPushButton.setText(self.tr('Stop'))
+                print(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
+                self.checkHamlibTimer.start(1000)
+        else:
+            self.checkHamlibTimer.stop()
+            if not self.rigctld.poll():
+                os.kill(self.rigctld.pid, 9)
+                print('Killed rigctld')
+            self.ctrlRigctldPushButton.setText(self.tr('Start'))
+            self.rig_caps = []
+
+    def exec(self):
+        # TODO: Load other settings here too
+        print('Loading settings...')
+        self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
+        self.catBaudComboBox.setCurrentText(self.settings.value('cat/baud', ''))
+        return super().exec()
+
+    def accept(self):
+        # TODO: Store other settings here too
+        print('Saving Settings...')
+        self.settings.setValue('cat/interface', self.catInterfaceLineEdit.text())
+        self.settings.setValue('cat/baud', self.catBaudComboBox.currentText())
+        self.settings.setValue('cat/rigMfr', self.manufacturerComboBox.currentText())
+        self.settings.setValue('cat/rigModel', self.modelComboBox.currentText())
+        super().accept()
+
+
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     # TODO: Colour rows with AFU call differently
 
-    def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, cb_channels: dict):
+    def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
+                 cb_channels: dict):
         super().__init__(parent)
         self.setupUi(self)
 
@@ -52,6 +216,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.bands = bands
         self.modes = modes
         self.settings = settings
+        self.settings_form = settings_form
 
         self.cb_channels = cb_channels
         self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
@@ -60,6 +225,61 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.stationChanged(True)
         self.identityChanged(True)
+
+        self.rig_modes = {'USB': 'SSB',
+                          'LSB': 'SSB',
+                          'CW': 'CW',
+                          'CWR': 'CW',
+                          'RTTY': 'RTTY',
+                          'RTTYR': 'RTTY',
+                          'AM': 'AM',
+                          'FM': 'FM',
+                          'WFM': 'FM',
+                          }
+
+        self.refreshTimer = QtCore.QTimer(self)
+        self.refreshTimer.timeout.connect(self.refreshRigData)
+
+    # noinspection PyBroadException
+    def refreshRigData(self):
+        if self.settings_form.isRigctldActive():
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect(('127.0.0.1', 4532))
+
+                s.sendall(b'\\get_freq\n')
+                freq_s = s.recv(1024).decode('utf-8')
+                try:
+                    freq = float(freq_s) / 1000
+                    for b in self.bands:
+                        if freq < self.bands[b][1]:
+                            if freq > self.bands[b][0]:
+                                self.bandComboBox.setCurrentText(b)
+                                self.freqDoubleSpinBox.setValue(freq)
+                            break
+                except Exception:
+                    pass
+
+                s.sendall(b'\\get_mode\n')
+                mode_s = s.recv(1024).decode('utf-8').strip()
+                try:
+                    mode, passband = [v.strip() for v in mode_s.split('\n')]
+                    if mode in self.rig_modes:
+                        self.modeComboBox.setCurrentText(self.rig_modes[mode])
+                except Exception:
+                    pass
+
+                if 'get power2mW' in self.settings_form.rig_caps:
+                    s.sendall(b'\\power2mW\n')
+                    pwr_s = s.recv(1024).decode('utf-8')
+                    try:
+                        pwr = int(float(pwr_s)*1000+.9)
+                        self.powerSpinBox.setValue(pwr)
+                    except Exception:
+                        pass
+                else:
+                    self.powerSpinBox.setValue(0)
+        else:
+            self.refreshTimer.stop()
 
     def clear(self):
         self.callSignLineEdit.clear()
@@ -161,22 +381,15 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.callSignLineEdit.setFocus()
 
+        if self.settings_form.isRigctldActive():
+            self.refreshTimer.start(500)
+
         return super().exec()
 
     def hideEvent(self, e):
         self.lastpos = self.pos()
+        self.refreshTimer.stop()
         e.accept()
-
-
-class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setupUi(self)
-
-    def calcLocator(self):
-        self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
-                                                          self.longitudeDoubleSpinBox.value(),
-                                                          4))
 
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
@@ -254,10 +467,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.modes: dict = json.load(mj)
         with open(self.searchFile('data:cb_channels.json')) as cj:
             self.cb_channels: dict = json.load(cj)
-        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.cb_channels)
-        self.keep_logging = False
 
-        self.settings_form = Settings(self)
+        self.settings_form = Settings(self, self.settings)
+
+        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form, self.cb_channels)
+        self.keep_logging = False
 
         self.__headers__ = (
             self.tr('QSO'),
@@ -481,7 +695,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.qso_form.RSTRcvdLineEdit.text(),
                 band,
                 self.qso_form.modeComboBox.currentText(),
-                self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >= self.bands[band][0] else '',
+                self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >= self.bands[band][
+                    0] else '',
                 self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
                 self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
                 self.qso_form.ownQTHLineEdit.text(),
@@ -634,7 +849,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.qso_form.RSTRcvdLineEdit.text(),
                     band,
                     self.qso_form.modeComboBox.currentText(),
-                    self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >= self.bands[band][0] else '',
+                    self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >=
+                                                               self.bands[band][0] else '',
                     self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
                     self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
                     self.qso_form.ownQTHLineEdit.text(),
@@ -793,7 +1009,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 af.write(self._adif_tag_('band', band.upper()))
                 af.write(self._adif_tag_('mode', query.value(self.__sql_cols__.index('mode'))))
                 freq = query.value(self.__sql_cols__.index("freq"))
-                af.write(self._adif_tag_('freq', f'{ freq / 1000:0.3f}' if freq else ''))
+                af.write(self._adif_tag_('freq', f'{freq / 1000:0.3f}' if freq else ''))
                 af.write(self._adif_tag_('tx_pwr', query.value(self.__sql_cols__.index('power'))))
                 af.write('\n')  # Insert a linebreak for readability
                 af.write(self._adif_tag_('station_callsign', query.value(self.__sql_cols__.index('own_callsign'))))
@@ -812,11 +1028,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         doc = {
             'HEADER':
-            {
-                'ADIF_VER': '3.1.4',
-                'PROGRAMID': __prog_name__,
-                'PROGRAMVERSION': __version__
-            },
+                {
+                    'ADIF_VER': '3.1.4',
+                    'PROGRAMID': __prog_name__,
+                    'PROGRAMVERSION': __version__
+                },
             'RECORDS': {'RECORD': []},
         }
 
