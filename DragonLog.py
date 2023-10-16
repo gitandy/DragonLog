@@ -518,8 +518,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             print(f'Opening database from commandline {file}...')
             self.connectDB(file)
         elif self.settings.value('lastDatabase', None):
-            print(f'Opening last database {self.settings.value("lastDatabase", None)}...')
-            self.connectDB(self.settings.value('lastDatabase', None))
+            if os.path.isfile(self.settings.value('lastDatabase', None)):
+                print(f'Opening last database {self.settings.value("lastDatabase", None)}...')
+                self.connectDB(self.settings.value('lastDatabase', None))
+            else:
+                print(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
 
     def showSettings(self):
         self.settings_form.callsignLineEdit.setText(self.settings.value('station/callSign', ''))
@@ -633,6 +636,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                               )
 
     def connectDB(self, db_file):
+        db_file = os.path.abspath(db_file)
         try:
             if self.__db_con__.isOpen():
                 self.__db_con__.close()
@@ -1193,7 +1197,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_dialog.show()
 
     def showAbout(self):
-        # TODO: Add licenses maidenhead, openpyxl, xmlschema
         cr = sys.copyright.replace('\n\n', '\n')
 
         QtWidgets.QMessageBox.about(
