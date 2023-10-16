@@ -193,19 +193,41 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.rig_caps = []
 
     def exec(self):
-        # TODO: Load other settings here too
         print('Loading settings...')
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
         self.catBaudComboBox.setCurrentText(self.settings.value('cat/baud', ''))
+
+        self.callsignLineEdit.setText(self.settings.value('station/callSign', ''))
+        self.QTHLineEdit.setText(self.settings.value('station/QTH', ''))
+        self.locatorLineEdit.setText(self.settings.value('station/locator', ''))
+        self.radioLineEdit.setText(self.settings.value('station/radio', ''))
+        self.antennaLineEdit.setText(self.settings.value('station/antenna', ''))
+
+        self.callsignCBLineEdit.setText(self.settings.value('station_cb/callSign', ''))
+        self.radioCBLineEdit.setText(self.settings.value('station_cb/radio', ''))
+        self.antennaCBLineEdit.setText(self.settings.value('station_cb/antenna', ''))
+        self.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
+
         return super().exec()
 
     def accept(self):
-        # TODO: Store other settings here too
         print('Saving Settings...')
         self.settings.setValue('cat/interface', self.catInterfaceLineEdit.text())
         self.settings.setValue('cat/baud', self.catBaudComboBox.currentText())
         self.settings.setValue('cat/rigMfr', self.manufacturerComboBox.currentText())
         self.settings.setValue('cat/rigModel', self.modelComboBox.currentText())
+
+        self.settings.setValue('station/callSign', self.callsignLineEdit.text())
+        self.settings.setValue('station/QTH', self.QTHLineEdit.text())
+        self.settings.setValue('station/locator', self.locatorLineEdit.text())
+        self.settings.setValue('station/radio', self.radioLineEdit.text())
+        self.settings.setValue('station/antenna', self.antennaLineEdit.text())
+
+        self.settings.setValue('station_cb/callSign', self.callsignCBLineEdit.text())
+        self.settings.setValue('station_cb/radio', self.radioCBLineEdit.text())
+        self.settings.setValue('station_cb/antenna', self.antennaCBLineEdit.text())
+        self.settings.setValue('station_cb/cb_by_default', int(self.cbDefaultCheckBox.isChecked()))
+
         super().accept()
 
 
@@ -551,32 +573,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 print(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
 
     def showSettings(self):
-        self.settings_form.callsignLineEdit.setText(self.settings.value('station/callSign', ''))
-        self.settings_form.QTHLineEdit.setText(self.settings.value('station/QTH', ''))
-        self.settings_form.locatorLineEdit.setText(self.settings.value('station/locator', ''))
-        self.settings_form.radioLineEdit.setText(self.settings.value('station/radio', ''))
-        self.settings_form.antennaLineEdit.setText(self.settings.value('station/antenna', ''))
-
-        self.settings_form.callsignCBLineEdit.setText(self.settings.value('station_cb/callSign', ''))
-        self.settings_form.radioCBLineEdit.setText(self.settings.value('station_cb/radio', ''))
-        self.settings_form.antennaCBLineEdit.setText(self.settings.value('station_cb/antenna', ''))
-        self.settings_form.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
-
-        if self.settings_form.exec():
-            self.settings.setValue('station/callSign', self.settings_form.callsignLineEdit.text())
-            self.settings.setValue('station/QTH', self.settings_form.QTHLineEdit.text())
-            self.settings.setValue('station/locator', self.settings_form.locatorLineEdit.text())
-            self.settings.setValue('station/radio', self.settings_form.radioLineEdit.text())
-            self.settings.setValue('station/antenna', self.settings_form.antennaLineEdit.text())
-
-            self.settings.setValue('station_cb/callSign', self.settings_form.callsignCBLineEdit.text())
-            self.settings.setValue('station_cb/radio', self.settings_form.radioCBLineEdit.text())
-            self.settings.setValue('station_cb/antenna', self.settings_form.antennaCBLineEdit.text())
-            self.settings.setValue('station_cb/cb_by_default', int(self.settings_form.cbDefaultCheckBox.isChecked()))
-
-            print('Changed settings')
-        else:
-            print('Settings aborted')
+        self.settings_form.exec()
 
     def selectDB(self):
         res = QtWidgets.QFileDialog.getSaveFileName(
