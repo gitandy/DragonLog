@@ -9,7 +9,7 @@ import datetime
 import subprocess
 from xml.etree.ElementTree import ElementTree
 
-from PyQt6 import QtCore, QtWidgets, QtSql
+from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import openpyxl
 from openpyxl.styles import Font
 import maidenhead
@@ -210,8 +210,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
-    # TODO: Colour rows with AFU call differently
-
     def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
                  cb_channels: dict):
         super().__init__(parent)
@@ -398,6 +396,30 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         e.accept()
 
 
+class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
+    def __init__(self, color_map, column):
+        super(BackgroundBrushDelegate, self).__init__()
+
+        self.color_map = color_map
+        self.column = column
+
+    def getColor(self, value):
+        color = [255, 255, 255, 0]  # white as fallback
+
+        if value in self.color_map:
+            color = self.color_map[value]
+        elif 'default' in self.color_map:
+            color = self.color_map['default']
+
+        return color
+
+    def initStyleOption(self, option: QtWidgets.QStyleOptionViewItem, index: QtCore.QModelIndex):
+        super().initStyleOption(option, index)
+
+        option.backgroundBrush = QtGui.QBrush(
+            QtGui.QColor(*self.getColor(index.model().data(index.siblingAtColumn(self.column)))))
+
+
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'own_callsign', 'call_sign', 'name', 'qth', 'locator', 'rst_sent', 'rst_rcvd',
                     'band', 'mode', 'freq', 'channel', 'power', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks',
@@ -478,6 +500,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.modes: dict = json.load(mj)
         with open(self.searchFile('data:cb_channels.json')) as cj:
             self.cb_channels: dict = json.load(cj)
+
+        with open(self.searchFile('data:color_map.json')) as cmj:
+            color_map: dict = json.load(cmj)
+        self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
 
         self.settings_form = Settings(self, self.settings, self.hamlib_status)
 
