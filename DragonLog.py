@@ -43,7 +43,7 @@ class DatabaseWriteException(Exception):
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
-    def __init__(self, parent, settings):
+    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel):
         super().__init__(parent)
         self.setupUi(self)
 
@@ -53,6 +53,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.rigctld_path = None
         self.rigctld = None
         self.rig_caps = []
+        self.rig_status = rig_status
 
         if self.settings.value('cat/lasthamlibdir', None):
             self.init_hamlib(self.settings.value('cat/lasthamlibdir', None))
@@ -71,6 +72,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
             self.rig_caps = []
             self.checkHamlibTimer.stop()
+            self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
 
     def isRigctldActive(self):
         return self.ctrlRigctldPushButton.isChecked()
@@ -173,17 +175,21 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                              '--listen-addr=127.0.0.1'])
             if self.rigctld.poll():
                 self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
+                self.ctrlRigctldPushButton.setChecked(False)
+                self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
             else:
                 self.checkHamlibRunLabel.setText('')
                 self.ctrlRigctldPushButton.setText(self.tr('Stop'))
                 print(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
                 self.checkHamlibTimer.start(1000)
+                self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
         else:
             self.checkHamlibTimer.stop()
             if not self.rigctld.poll():
                 os.kill(self.rigctld.pid, 9)
                 print('Killed rigctld')
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
+            self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
             self.rig_caps = []
 
     def exec(self):
@@ -461,6 +467,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.settings = QtCore.QSettings(self.tr(__prog_name__))
 
+        self.dummy_status = QtWidgets.QLabel()
+        self.statusBar().addPermanentWidget(self.dummy_status)
+        self.hamlib_status = QtWidgets.QLabel(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
+        self.statusBar().addPermanentWidget(self.hamlib_status)
+
         with open(self.searchFile('data:bands.json')) as bj:
             self.bands: dict = json.load(bj)
         with open(self.searchFile('data:modes.json')) as mj:
@@ -468,7 +479,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         with open(self.searchFile('data:cb_channels.json')) as cj:
             self.cb_channels: dict = json.load(cj)
 
-        self.settings_form = Settings(self, self.settings)
+        self.settings_form = Settings(self, self.settings, self.hamlib_status)
 
         self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form, self.cb_channels)
         self.keep_logging = False
