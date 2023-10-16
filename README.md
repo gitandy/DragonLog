@@ -37,6 +37,23 @@ So best practice is to export a QSO with the current program version and adjust 
 
 Empty rows are skipped. A row is considered empty if the date/time is missing.
 
+Hamlib integration
+------------------
+You can use hamlib to interact with your radio. 
+
+The QSO logging form automatically updates radio information:
+* frequency (and band)
+* mode
+* power
+
+On the CAT settings tab you have to select your hamlib installation directory.
+Hamlib can be downloaded at https://github.com/Hamlib/Hamlib/releases.
+DragonLog is tested against version 4.5.5.
+
+After selecting your radio and interface settings you can press the start button to start the communication.
+
+Currently DragonLog can only configure radios with serial interface.
+
 Copyright
 ---------
 DragonLog &copy; 2023 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
