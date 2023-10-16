@@ -84,8 +84,8 @@
     </message>
     <message>
       <location filename="DragonLog_Settings.ui" line="0" />
-      <source>Hamlib path</source>
-      <translation>Hamlib-Pfad</translation>
+      <source>Hamlib rigctld</source>
+      <translation />
     </message>
     <message>
       <location filename="DragonLog_Settings.ui" line="0" />
@@ -156,6 +156,10 @@
       <location filename="DragonLog_Settings.ui" line="0" />
       <source>Interface</source>
       <translation>Schnittstelle</translation>
+    </message>
+    <message>
+      <source>Hamlib path</source>
+      <translation type="vanished">Hamlib-Pfad</translation>
     </message>
   </context>
   <context>
@@ -698,55 +702,63 @@ Ein Backup wird erstellt:</translation>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="DragonLog_Settings.py" line="157" />
-      <location filename="DragonLog_Settings.py" line="38" />
+      <location filename="DragonLog_Settings.py" line="167" />
+      <location filename="DragonLog_Settings.py" line="50" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="158" />
-      <location filename="DragonLog_Settings.py" line="151" />
-      <location filename="DragonLog_Settings.py" line="145" />
-      <location filename="DragonLog_Settings.py" line="41" />
+      <location filename="DragonLog_Settings.py" line="168" />
+      <location filename="DragonLog_Settings.py" line="161" />
+      <location filename="DragonLog_Settings.py" line="155" />
+      <location filename="DragonLog_Settings.py" line="53" />
       <source>Hamlib</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="158" />
-      <location filename="DragonLog_Settings.py" line="145" />
-      <location filename="DragonLog_Settings.py" line="41" />
+      <location filename="DragonLog_Settings.py" line="168" />
+      <location filename="DragonLog_Settings.py" line="155" />
+      <location filename="DragonLog_Settings.py" line="53" />
       <source>inactiv</source>
       <translation>inaktiv</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="53" />
-      <source>Choose hamlib directory</source>
-      <translation>hamlib-Pfad wählen</translation>
+      <location filename="DragonLog_Settings.py" line="65" />
+      <source>Choose hamlib rigctld executable</source>
+      <translation>Hamlib rigctld wählen</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="66" />
+      <location filename="DragonLog_Settings.py" line="73" />
+      <source>Selected file is not the executable</source>
+      <translation>Die gewählte Datei ist nicht ausführbar</translation>
+    </message>
+    <message>
+      <location filename="DragonLog_Settings.py" line="80" />
       <source>Error executing rigctld</source>
       <translation>Fehler beim Ausführen von rigctld</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="110" />
-      <source>Directory does not contain the hamlib executable</source>
-      <translation>Pfad beinhaltet nicht die Ausführbaren hamlib-Dateien</translation>
-    </message>
-    <message>
-      <location filename="DragonLog_Settings.py" line="143" />
+      <location filename="DragonLog_Settings.py" line="153" />
       <source>rigctld did not start properly</source>
       <translation>rigctld konnte nicht gestartet werden</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="148" />
+      <location filename="DragonLog_Settings.py" line="158" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="151" />
+      <location filename="DragonLog_Settings.py" line="161" />
       <source>activ</source>
       <translation>aktiv</translation>
+    </message>
+    <message>
+      <source>Directory does not contain the hamlib executable</source>
+      <translation type="vanished">Pfad beinhaltet nicht die Ausführbaren hamlib-Dateien</translation>
+    </message>
+    <message>
+      <source>Choose hamlib directory</source>
+      <translation type="vanished">hamlib-Pfad wählen</translation>
     </message>
   </context>
 </TS>

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import platform
 
 import maidenhead
 from PyQt6 import QtWidgets, QtCore
@@ -21,8 +22,19 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.rig_caps = []
         self.rig_status = rig_status
 
-        if self.settings.value('cat/lasthamlibdir', None):
-            self.init_hamlib(self.settings.value('cat/lasthamlibdir', None))
+        if platform.system() == 'Windows':
+            if self.settings.value('cat/rigctldPath', None):
+                if self.__is_exe__(self.settings.value('cat/rigctldPath')):
+                    self.init_hamlib(self.settings.value('cat/rigctldPath'))
+                else:
+                    self.settings.setValue('cat/rigctldPath', '')
+                    self.hamlibPathLineEdit.setText('')
+        else:
+            self.rigctldPathLabel.setVisible(False)
+            self.hamlibPathLineEdit.setVisible(False)
+            self.hamlibPathToolButton.setVisible(False)
+            self.checkHamlibLabel.setVisible(False)
+            self.init_hamlib('rigctld')
 
         self.checkHamlibTimer = QtCore.QTimer(self)
         self.checkHamlibTimer.timeout.connect(self.checkRigctld)
@@ -48,68 +60,66 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         return os.path.isfile(path) and os.access(path, os.X_OK)
 
     def chooseHamlibPath(self):
-        hl_dir = QtWidgets.QFileDialog.getExistingDirectory(
+        rigctld_path = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr('Choose hamlib directory'),
-            self.settings.value('cat/lasthamlibdir', None)
+            self.tr('Choose hamlib rigctld executable'),
+            self.settings.value('cat/rigctldPath', None),
+            'rigctld.exe (rigctld.exe)'
         )
 
-        self.init_hamlib(hl_dir)
+        if self.__is_exe__(rigctld_path[0]):
+            self.init_hamlib(rigctld_path[0])
+        else:
+            self.checkHamlibLabel.setText(self.tr('Selected file is not the executable'))
 
-    def init_hamlib(self, hl_dir):
-        if hl_dir:
-            rigctld_path = os.path.join(hl_dir, 'bin/rigctld.exe')
-            if self.__is_exe__(rigctld_path):
-                res = subprocess.run([rigctld_path, '-l'], capture_output=True)
-                stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
-                if res.returncode != 0 or not stdout:
-                    self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
-                    self.settings.setValue('cat/lasthamlibdir', '')
-                    self.hamlibPathLineEdit.setText('')
-
-                first = True
-                rig_pos = 0
-                mfr_pos = 0
-                model_pos = 0
-                end_pos = 0
-                self.rigs = {}
-                self.rig_ids = {}
-                for rig in stdout.split('\n'):
-                    if first:
-                        first = False
-                        rig_pos = rig.index('Rig #')
-                        mfr_pos = rig.index('Mfg')
-                        model_pos = rig.index('Model')
-                        end_pos = rig.index('Version')
-                        continue
-                    elif not rig.strip():  # Empty line
-                        continue
-
-                    rig_id = rig[rig_pos:mfr_pos - 1].strip()
-                    mfr_name = rig[mfr_pos:model_pos - 1].strip()
-                    model_name = rig[model_pos:end_pos - 1].strip()
-
-                    self.rig_ids[f'{mfr_name}/{model_name}'] = rig_id
-                    if mfr_name in self.rigs:
-                        self.rigs[mfr_name].append(model_name)
-                    else:
-                        self.rigs[mfr_name] = [model_name]
-
-                self.manufacturerComboBox.clear()
-                self.manufacturerComboBox.insertItems(0, self.rigs.keys())
-                if self.settings.value('cat/rigMfr', None):
-                    self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
-                else:
-                    self.manufacturerComboBox.setCurrentIndex(0)
-
-                self.settings.setValue('cat/lasthamlibdir', hl_dir)
-                self.hamlibPathLineEdit.setText(hl_dir)
-                self.checkHamlibLabel.setText('')
-                self.rigctld_path = rigctld_path
-            else:
-                self.checkHamlibLabel.setText(self.tr('Directory does not contain the hamlib executable'))
-                self.settings.setValue('cat/lasthamlibdir', '')
+    def init_hamlib(self, rigctld_path):
+        if rigctld_path:
+            res = subprocess.run([rigctld_path, '-l'], capture_output=True)
+            stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
+            if res.returncode != 0 or not stdout:
+                self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
+                self.settings.setValue('cat/rigctldPath', '')
                 self.hamlibPathLineEdit.setText('')
+
+            first = True
+            rig_pos = 0
+            mfr_pos = 0
+            model_pos = 0
+            end_pos = 0
+            self.rigs = {}
+            self.rig_ids = {}
+            for rig in stdout.split('\n'):
+                if first:
+                    first = False
+                    rig_pos = rig.index('Rig #')
+                    mfr_pos = rig.index('Mfg')
+                    model_pos = rig.index('Model')
+                    end_pos = rig.index('Version')
+                    continue
+                elif not rig.strip():  # Empty line
+                    continue
+
+                rig_id = rig[rig_pos:mfr_pos - 1].strip()
+                mfr_name = rig[mfr_pos:model_pos - 1].strip()
+                model_name = rig[model_pos:end_pos - 1].strip()
+
+                self.rig_ids[f'{mfr_name}/{model_name}'] = rig_id
+                if mfr_name in self.rigs:
+                    self.rigs[mfr_name].append(model_name)
+                else:
+                    self.rigs[mfr_name] = [model_name]
+
+            self.manufacturerComboBox.clear()
+            self.manufacturerComboBox.insertItems(0, self.rigs.keys())
+            if self.settings.value('cat/rigMfr', None):
+                self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
+            else:
+                self.manufacturerComboBox.setCurrentIndex(0)
+
+            self.settings.setValue('cat/rigctldPath', rigctld_path)
+            self.hamlibPathLineEdit.setText(rigctld_path)
+            self.checkHamlibLabel.setText('')
+            self.rigctld_path = rigctld_path
 
     def mfrChanged(self, mfr):
         self.modelComboBox.clear()

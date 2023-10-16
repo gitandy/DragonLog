@@ -46,13 +46,21 @@ The QSO logging form automatically updates radio information:
 * mode
 * power
 
-On the CAT settings tab you have to select your hamlib installation directory.
 Hamlib can be downloaded at https://github.com/Hamlib/Hamlib/releases.
 DragonLog is tested against version 4.5.5.
 
 After selecting your radio and interface settings you can press the start button to start the communication.
 
-Currently DragonLog can only configure radios with serial interface.
+Currently, DragonLog can only configure radios with serial interface.
+
+### On Windows
+Unpack or install your hamlib release.
+On the CAT settings tab you have to select your hamlib unpack/installation directory.
+
+### On Linux
+You have to compile the hamlib release first. 
+Download the release .tar.gz (not source), unpack, ./configure, make, make install.
+The rigctld should be in /usr/local/bin and thus on your path.
 
 Copyright
 ---------

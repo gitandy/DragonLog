@@ -241,9 +241,9 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout_3">
        <item row="1" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="rigctldPathLabel">
          <property name="text">
-          <string>Hamlib path</string>
+          <string>Hamlib rigctld</string>
          </property>
         </widget>
        </item>
