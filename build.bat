@@ -35,7 +35,7 @@ pyuic6 DragonLog_MainWindow.ui -o DragonLog_MainWindow_ui.py
 pyuic6 DragonLog_QSOForm.ui -o DragonLog_QSOForm_ui.py
 pyuic6 DragonLog_Settings.ui -o DragonLog_Settings_ui.py
 
-pylupdate6 DragonLog.py DragonLog_MainWindow.ui DragonLog_QSOForm.ui DragonLog_Settings.ui -ts DragonLog_de.ts
+pylupdate6 DragonLog.py DragonLog_MainWindow.ui DragonLog_QSOForm.ui DragonLog_Settings.ui DragonLog_QSOForm.py DragonLog_Settings.py -ts DragonLog_de.ts
 lrelease DragonLog_de.ts -qm DragonLog_de.qm
 
 echo.
