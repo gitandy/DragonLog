@@ -139,6 +139,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.statusBar().addPermanentWidget(self.dummy_status)
         self.hamlib_status = QtWidgets.QLabel(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
         self.statusBar().addPermanentWidget(self.hamlib_status)
+        self.hamlib_error = QtWidgets.QLabel('')
+        self.statusBar().addPermanentWidget(self.hamlib_error)
 
         with open(self.searchFile('data:bands.json')) as bj:
             self.bands: dict = json.load(bj)
@@ -153,7 +155,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.settings_form = Settings(self, self.settings, self.hamlib_status)
 
-        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form, self.cb_channels)
+        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
+                                self.cb_channels, self.hamlib_error)
         self.keep_logging = False
 
         self.__headers__ = (
@@ -383,6 +386,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             print('Logging aborted')
             self.keep_logging = False
+
+        self.hamlib_error.setText('')
 
     def logMultiQSOs(self):
         self.keep_logging = True
@@ -866,6 +871,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def closeEvent(self, e):
         print(f'Quiting {__prog_name__}...')
         self.__db_con__.close()
+        self.settings_form.ctrlRigctld(False)
         e.accept()
 
 

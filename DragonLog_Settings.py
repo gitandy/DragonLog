@@ -48,6 +48,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         if self.rigctld and self.rigctld.poll():
             print('rigctld died unexpectedly')
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
+            self.ctrlRigctldPushButton.setChecked(False)
             self.rig_caps = []
             self.checkHamlibTimer.stop()
             self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
