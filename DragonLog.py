@@ -67,9 +67,13 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
-    __sql_cols__ = ('id', 'date_time', 'own_callsign', 'call_sign', 'name', 'qth', 'locator', 'rst_sent', 'rst_rcvd',
-                    'band', 'mode', 'freq', 'channel', 'power', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks',
-                    'dist')
+    __sql_cols__ = ('id', 'date_time', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
+                    'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
+                    'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
+
+    __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME', 'QTH', 'GRIDSQUARE',
+                    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', '#CHANNEL#', 'TX_PWR',
+                    'MY_CITY', 'MY_GRIDSQUARE', 'MY_RIG', 'MY_ANTENNA', 'NOTES', 'DISTANCE')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -647,6 +651,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                      self._adif_tag_('ADIF_VER', '3.1.4') + \
                      self._adif_tag_('PROGRAMID', __prog_name__) + \
                      self._adif_tag_('PROGRAMVERSION', __version__) + \
+                     self._adif_tag_('CREATED_TIMESTAMP',
+                                     QtCore.QDateTime.currentDateTimeUtc().toString('yyyyMMdd HHmmss')) + \
                      '\n<eoh>\n\n'
 
             af.write(header)
@@ -665,7 +671,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
 
                 af.write(self._adif_tag_('qso_date', qso_date.replace('-', '')))
-                af.write(self._adif_tag_('time_on', qso_time.replace(':', '')[:4]))
+                af.write(self._adif_tag_('time_on', qso_time.replace(':', '')))
                 af.write(self._adif_tag_('call', query.value(self.__sql_cols__.index('call_sign'))))
                 af.write(self._adif_tag_('name', query.value(self.__sql_cols__.index('name'))))
                 af.write(self._adif_tag_('qth', query.value(self.__sql_cols__.index('qth'))))
@@ -680,6 +686,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 af.write(self._adif_tag_('tx_pwr', query.value(self.__sql_cols__.index('power'))))
                 af.write('\n')  # Insert a linebreak for readability
                 af.write(self._adif_tag_('station_callsign', query.value(self.__sql_cols__.index('own_callsign'))))
+                af.write(self._adif_tag_('my_city', query.value(self.__sql_cols__.index('own_qth'))))
                 af.write(self._adif_tag_('my_gridsquare', query.value(self.__sql_cols__.index('own_locator'))))
                 af.write(self._adif_tag_('my_rig', query.value(self.__sql_cols__.index('radio'))))
                 af.write(self._adif_tag_('my_antenna', query.value(self.__sql_cols__.index('antenna'))))
@@ -698,7 +705,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 {
                     'ADIF_VER': '3.1.4',
                     'PROGRAMID': __prog_name__,
-                    'PROGRAMVERSION': __version__
+                    'PROGRAMVERSION': __version__,
+                    'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString('yyyyMMdd HHmmss')
                 },
             'RECORDS': {'RECORD': []},
         }
@@ -716,7 +724,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
 
             record = {'QSO_DATE': qso_date.replace('-', ''),
-                      'TIME_ON': qso_time.replace(':', '')[:4]}
+                      'TIME_ON': qso_time.replace(':', '')}
 
             if query.value(self.__sql_cols__.index('call_sign')):
                 record['CALL'] = query.value(self.__sql_cols__.index('call_sign'))
@@ -740,6 +748,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
             if query.value(self.__sql_cols__.index('own_callsign')):
                 record['STATION_CALLSIGN'] = query.value(self.__sql_cols__.index('own_callsign'))
+            if query.value(self.__sql_cols__.index('own_qth')):
+                record['MY_CITY'] = query.value(self.__sql_cols__.index('own_qth'))
             if query.value(self.__sql_cols__.index('own_locator')):
                 record['MY_GRIDSQUARE'] = query.value(self.__sql_cols__.index('own_locator'))
             if query.value(self.__sql_cols__.index('radio')):
@@ -761,17 +771,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Select import file'),
             self.settings.value('lastImportDir', os.path.abspath(os.curdir)),
             # self.tr('Excel-File (*.xlsx)') + ';;' +
-            self.tr('CSV-File (*.csv)')  # + ';;' +
-            # self.tr('ADIF 3 (*.adi)')
+            self.tr('CSV-File (*.csv)') + ';;' +
+            self.tr('ADIF 3 (*.adx)')
         )
 
         if res[0]:
-            if res[1] == self.tr('Excel-File (*.xlsx)'):
-                self.logImportExcel(res[0])
-            elif res[1] == self.tr('CSV-File (*.csv)'):
+            # if res[1] == self.tr('Excel-File (*.xlsx)'):
+            #     self.logImportExcel(res[0])
+            if res[1] == self.tr('CSV-File (*.csv)'):
                 self.logImportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3.0 (*.adi)'):
-                self.logImportADI(res[0])
+            elif res[1] == self.tr('ADIF 3 (*.adx)'):
+                self.logImportADX(res[0])
 
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
 
@@ -807,9 +817,58 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         f'Row {ln} has too few columns.\nSkipped row.'
                     )
 
-            self.__db_con__.commit()
-            self.QSOTableView.model().select()
-            self.QSOTableView.resizeColumnsToContents()
+        self.__db_con__.commit()
+        self.QSOTableView.model().select()
+        self.QSOTableView.resizeColumnsToContents()
+
+    def logImportADX(self, file):
+        print('Importing from ADX...')
+
+        doc = self.adx_import_schema.to_dict(file, decimal_type=str)
+
+        for i, r in enumerate(doc['RECORDS']['RECORD'], 1):
+            values = [''] * (len(self.__sql_cols__)-1)
+
+            if 'QSO_DATE' not in r or 'TIME_ON' not in r:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr('Log import ADX'),
+                    f'QSO date/time missing in record {i}.\nSkipped record.'
+                )
+                continue
+
+            date = r['QSO_DATE'][0]
+            timex = r['TIME_ON'][0]
+            time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
+            values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
+
+            for p in r:
+                if p in ('QSO_DATE', 'TIME_ON'):
+                    continue
+
+                if p == 'BAND':
+                    values[self.__adx_cols__.index(p)] = r[p][0].lower()
+                elif p == 'FREQ':
+                    values[self.__adx_cols__.index(p)] = str(float(r[p][0])*1000)
+                else:
+                    values[self.__adx_cols__.index(p)] = r[p][0]
+
+            query = QtSql.QSqlQuery(self.__db_con__)
+            query.prepare(self.__db_insert_stmnt__)
+
+            for j, val in enumerate(values):
+                query.bindValue(j, val)
+            query.exec()
+            if query.lastError().text():
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr('Log import CSV'),
+                    f'Record {i} import error ("{query.lastError().text()}").\nSkipped record.'
+                )
+
+        self.__db_con__.commit()
+        self.QSOTableView.model().select()
+        self.QSOTableView.resizeColumnsToContents()
 
     # noinspection PyPep8Naming
     def showHelp(self):
