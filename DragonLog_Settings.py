@@ -162,7 +162,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
         else:
             self.checkHamlibTimer.stop()
-            if not self.rigctld.poll():
+            if self.rigctld and not self.rigctld.poll():
                 os.kill(self.rigctld.pid, 9)
                 print('Killed rigctld')
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
