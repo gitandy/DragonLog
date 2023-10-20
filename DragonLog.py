@@ -69,11 +69,11 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
-                    'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
+                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
 
     __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME', 'QTH', 'GRIDSQUARE',
                     'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', '#CHANNEL#', 'TX_PWR',
-                    'MY_CITY', 'MY_GRIDSQUARE', 'MY_RIG', 'MY_ANTENNA', 'NOTES', 'DISTANCE')
+                    'MY_NAME', 'MY_CITY', 'MY_GRIDSQUARE', 'MY_RIG', 'MY_ANTENNA', 'NOTES', 'DISTANCE')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -90,6 +90,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "freq"  REAL,
                             "channel"  INTEGER,
                             "power"  REAL,
+                            "own_name"  TEXT,
                             "own_qth"   TEXT,
                             "own_locator" TEXT,
                             "radio"   TEXT,
@@ -178,6 +179,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Frequency'),
             self.tr('Channel'),
             self.tr('Power'),
+            self.tr('Own Name'),
             self.tr('Own QTH'),
             self.tr('Own Locator'),
             self.tr('Radio'),
@@ -314,6 +316,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                     self.__header_map__[c])
 
             self.QSOTableView.setModel(model)
+            self.QSOTableView.hideColumn(self.__sql_cols__.index('own_name'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_qth'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_locator'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('radio'))
@@ -368,6 +371,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     0] else '',
                 self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
                 self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
+                self.qso_form.ownNameLineEdit.LineEdit.text(),
                 self.qso_form.ownQTHLineEdit.text(),
                 self.qso_form.ownLocatorLineEdit.text(),
                 self.qso_form.radioLineEdit.text(),
@@ -491,6 +495,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             except ValueError:
                 power = 0
             self.qso_form.powerSpinBox.setValue(power)
+            self.qso_form.ownNameLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
+                self.__sql_cols__.index('own_name'))))
             self.qso_form.ownQTHLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('own_qth'))))
             self.qso_form.ownLocatorLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
@@ -524,6 +530,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                                self.bands[band][0] else '',
                     self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
                     self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
+                    self.qso_form.ownNameLineEdit.text(),
                     self.qso_form.ownQTHLineEdit.text(),
                     self.qso_form.ownLocatorLineEdit.text(),
                     self.qso_form.radioLineEdit.text(),
@@ -686,6 +693,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 af.write(self._adif_tag_('tx_pwr', query.value(self.__sql_cols__.index('power'))))
                 af.write('\n')  # Insert a linebreak for readability
                 af.write(self._adif_tag_('station_callsign', query.value(self.__sql_cols__.index('own_callsign'))))
+                af.write(self._adif_tag_('my_name', query.value(self.__sql_cols__.index('own_name'))))
                 af.write(self._adif_tag_('my_city', query.value(self.__sql_cols__.index('own_qth'))))
                 af.write(self._adif_tag_('my_gridsquare', query.value(self.__sql_cols__.index('own_locator'))))
                 af.write(self._adif_tag_('my_rig', query.value(self.__sql_cols__.index('radio'))))
@@ -748,6 +756,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
             if query.value(self.__sql_cols__.index('own_callsign')):
                 record['STATION_CALLSIGN'] = query.value(self.__sql_cols__.index('own_callsign'))
+            if query.value(self.__sql_cols__.index('own_name')):
+                record['MY_NAME'] = query.value(self.__sql_cols__.index('own_name'))
             if query.value(self.__sql_cols__.index('own_qth')):
                 record['MY_CITY'] = query.value(self.__sql_cols__.index('own_qth'))
             if query.value(self.__sql_cols__.index('own_locator')):
