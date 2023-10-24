@@ -356,17 +356,19 @@ Ein Backup wird erstellt:</translation>
       <translation>Excel-Datei (*.xlsx)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="756" />
-      <location filename="DragonLog.py" line="749" />
+      <location filename="DragonLog.py" line="757" />
+      <location filename="DragonLog.py" line="750" />
       <location filename="DragonLog.py" line="573" />
       <location filename="DragonLog.py" line="567" />
       <source>CSV-File (*.csv)</source>
       <translation>CSV-Datei (*.csv)</translation>
     </message>
     <message>
+      <location filename="DragonLog.py" line="759" />
+      <location filename="DragonLog.py" line="751" />
       <location filename="DragonLog.py" line="575" />
       <location filename="DragonLog.py" line="568" />
-      <source>ADIF 3 (*.adi *.adif *.adx)</source>
+      <source>ADIF 3 (*.adx *.adi *.adif)</source>
       <translation />
     </message>
     <message>
@@ -375,57 +377,55 @@ Ein Backup wird erstellt:</translation>
       <translation>Exportiere QSO log</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="746" />
+      <location filename="DragonLog.py" line="747" />
       <source>Select import file</source>
       <translation>Importdatei öffnen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="758" />
-      <location filename="DragonLog.py" line="750" />
-      <source>ADIF 3 (*.adx)</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="DragonLog.py" line="843" />
-      <location filename="DragonLog.py" line="791" />
-      <location filename="DragonLog.py" line="785" />
+      <location filename="DragonLog.py" line="792" />
+      <location filename="DragonLog.py" line="786" />
       <source>Log import CSV</source>
       <translation>Log Import CSV</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="810" />
-      <source>Log import ADX</source>
-      <translation>Log Import ADX</translation>
+      <location filename="DragonLog.py" line="857" />
+      <location filename="DragonLog.py" line="824" />
+      <source>Log import ADIF</source>
+      <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="858" />
+      <location filename="DragonLog.py" line="876" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="878" />
+      <location filename="DragonLog.py" line="896" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="893" />
+      <location filename="DragonLog.py" line="911" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="894" />
+      <location filename="DragonLog.py" line="912" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="895" />
+      <location filename="DragonLog.py" line="913" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="907" />
+      <location filename="DragonLog.py" line="925" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
+    </message>
+    <message>
+      <source>Log import ADX</source>
+      <translation type="vanished">Log Import ADX</translation>
     </message>
     <message>
       <source>Excel-File (*.xlsx);;CSV-File (*.csv);;ADIF 3.0 (*.adi)</source>

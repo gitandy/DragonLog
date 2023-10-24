@@ -43,7 +43,7 @@ Import
 
 Following formats are supported for export
 * CSV format (Excel style with separator ; and UTF-8 encoding)
-* ADIF 3 format (ADX)
+* ADIF 3 format (ADX, ADI)
 
 ### CSV format import
 The import file is expected to have the same format and column order as the exported CSV file (Excel style but UTF-8).
@@ -52,7 +52,7 @@ So best practice is to export a QSO with the current program version and adjust 
 Empty rows are skipped. A row is considered empty if the date/time is missing.
 
 ### ADIF format import
-UTF-8 content (*_INTL fields) are prefered over ASCII counterparts.
+UTF-8 content (*_INTL fields) are prefered over ASCII counterparts when importing ADX files.
 
 Hamlib integration
 ------------------

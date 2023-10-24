@@ -565,14 +565,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
             self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3 (*.adi *.adif *.adx)'))
+            self.tr('ADIF 3 (*.adx *.adi *.adif)'))
 
         if res[0]:
             if res[1] == self.tr('Excel-File (*.xlsx)'):
                 self.exportExcel(res[0])
             elif res[1] == self.tr('CSV-File (*.csv)'):
                 self.exportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3 (*.adi *.adif *.adx)'):
+            elif res[1] == self.tr('ADIF 3 (*.adx *.adi *.adif)'):
                 self.exportADIF(res[0])
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
@@ -643,7 +643,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 str(e))
 
     @staticmethod
-    def replaceUmlautsLigatures(text:str):
+    def replaceUmlautsLigatures(text: str):
         text = text.replace('Ä', 'Ae')
         text = text.replace('Ö', 'Oe')
         text = text.replace('Ü', 'Ue')
@@ -725,7 +725,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('dist')):
                 record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
             if query.value(self.__sql_cols__.index('remarks')):
-                record['NOTES'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
+                record['NOTES'] = self.replaceUmlautsLigatures(
+                    query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
                 record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
 
             records.append(record)
@@ -747,7 +748,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.value('lastImportDir', os.path.abspath(os.curdir)),
             # self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3 (*.adx)')
+            self.tr('ADIF 3 (*.adx *.adi *.adif)')
         )
 
         if res[0]:
@@ -755,8 +756,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             #     self.logImportExcel(res[0])
             if res[1] == self.tr('CSV-File (*.csv)'):
                 self.logImportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3 (*.adx)'):
-                self.logImportADX(res[0])
+            elif res[1] == self.tr('ADIF 3 (*.adx *.adi *.adif)'):
+                self.logImportADIF(res[0])
 
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
 
@@ -795,25 +796,38 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.__db_con__.commit()
         self.QSOTableView.model().select()
         self.QSOTableView.resizeColumnsToContents()
+        print(f'Imported {ln - 1} QSOs from "{file}"')
 
-    def logImportADX(self, file):
-        print('Importing from ADX...')
+    def logImportADIF(self, file):
+        print('Importing from ADIF...')
 
-        doc = self.adx_import_schema.to_dict(file, decimal_type=str)
+        is_adx: bool = os.path.splitext(file)[-1] == '.adx'
 
-        for i, r in enumerate(doc['RECORDS']['RECORD'], 1):
-            values = [''] * (len(self.__sql_cols__)-1)
+        if is_adx:
+            records: list = self.adx_import_schema.to_dict(file, decimal_type=str)['RECORDS']['RECORD']
+        else:
+            with open(file, encoding='ascii') as af:
+                adi = af.read()
+            records: list = adif_file.adi2dict(adi)['RECORDS']
+
+        # align access to adx and adi records
+        def rec_data(rec, param):
+            return rec[param][0] if is_adx else rec[param]
+
+        imported = 0
+        for i, r in enumerate(records, 1):
+            values = [''] * (len(self.__sql_cols__) - 1)
 
             if 'QSO_DATE' not in r or 'TIME_ON' not in r:
                 QtWidgets.QMessageBox.warning(
                     self,
-                    self.tr('Log import ADX'),
+                    self.tr('Log import ADIF'),
                     f'QSO date/time missing in record {i}.\nSkipped record.'
                 )
                 continue
 
-            date = r['QSO_DATE'][0]
-            timex = r['TIME_ON'][0]
+            date = rec_data(r, 'QSO_DATE')
+            timex = rec_data(r, 'TIME_ON')
             time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
             values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
 
@@ -822,14 +836,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     continue
 
                 if p == 'BAND':
-                    values[self.__adx_cols__.index(p)] = r[p][0].lower()
+                    values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()
                 elif p == 'FREQ':
-                    values[self.__adx_cols__.index(p)] = str(float(r[p][0])*1000)
+                    values[self.__adx_cols__.index(p)] = str(float(rec_data(r, p)) * 1000)
                 else:
                     if p in self.__adx_cols__:
-                        values[self.__adx_cols__.index(p)] = r[p][0]
+                        values[self.__adx_cols__.index(p)] = rec_data(r, p)
                     elif p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL is defined
-                        values[self.__adx_cols__.index(p + '_INTL')] = r[p][0]
+                        values[self.__adx_cols__.index(p + '_INTL')] = rec_data(r, p)
 
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
@@ -840,13 +854,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.lastError().text():
                 QtWidgets.QMessageBox.warning(
                     self,
-                    self.tr('Log import CSV'),
+                    self.tr('Log import ADIF'),
                     f'Record {i} import error ("{query.lastError().text()}").\nSkipped record.'
                 )
+
+            imported = i
 
         self.__db_con__.commit()
         self.QSOTableView.model().select()
         self.QSOTableView.resizeColumnsToContents()
+
+        print(f'Imported {imported} QSOs from "{file}"')
 
     # noinspection PyPep8Naming
     def showHelp(self):
