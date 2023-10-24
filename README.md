@@ -29,13 +29,30 @@ Following formats are supported for export
 * CSV format (Excel style with separator ; and local encoding)
 * ADIF 3 format (ADI/ADX) (CB QSOs are skipped automatically)
 
+### ADIF format export
+ADX should be prefered over ADI as UTF-8 is supported. 
+For ADX where UTF-8 (*_INTL fields) is supported additionally the ASCII counterpart is exported.
+
+For ADX ASCII only fields (all ADI fields) all german umlauts and ligatures are converted 
+automatically to suiting counterparts. 
+
+.adif is an alternative for .adi (as specified).
+
 Import 
 ------
+
+Following formats are supported for export
+* CSV format (Excel style with separator ; and UTF-8 encoding)
+* ADIF 3 format (ADX)
+
 ### CSV format import
 The import file is expected to have the same format and column order as the exported CSV file (Excel style but UTF-8).
 So best practice is to export a QSO with the current program version and adjust the import file.
 
 Empty rows are skipped. A row is considered empty if the date/time is missing.
+
+### ADIF format import
+UTF-8 content (*_INTL fields) are prefered over ASCII counterparts.
 
 Hamlib integration
 ------------------

@@ -12,6 +12,7 @@ import openpyxl
 from openpyxl.styles import Font
 import maidenhead
 import xmlschema
+import adif_file
 
 import DragonLog_MainWindow_ui
 
@@ -71,9 +72,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
 
-    __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME', 'QTH', 'GRIDSQUARE',
+    __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
                     'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', '#CHANNEL#', 'TX_PWR',
-                    'MY_NAME', 'MY_CITY', 'MY_GRIDSQUARE', 'MY_RIG', 'MY_ANTENNA', 'NOTES', 'DISTANCE')
+                    'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
+                    'DISTANCE')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -563,18 +565,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
             self.tr('Excel-File (*.xlsx)') + ';;' +
             self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3 (*.adi *.adx)'))
+            self.tr('ADIF 3 (*.adi *.adif *.adx)'))
 
         if res[0]:
             if res[1] == self.tr('Excel-File (*.xlsx)'):
                 self.exportExcel(res[0])
             elif res[1] == self.tr('CSV-File (*.csv)'):
                 self.exportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3 (*.adi *.adx)'):
-                if os.path.splitext(res[0])[-1] == '.adx':
-                    self.exportADX(res[0])
-                else:
-                    self.exportADI(res[0])
+            elif res[1] == self.tr('ADIF 3 (*.adi *.adif *.adx)'):
+                self.exportADIF(res[0])
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
@@ -628,6 +627,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         xl_ws.auto_filter.ref = f'A1:{string.ascii_uppercase[len(self.__headers__) - 1]}1'
 
         # Fit size to content is not available so set fixed approximations
+        # Fixme: fix to current column layout
         col_widths = (10, 20, 15, 15, 25, 25, 15, 10, 10, 10, 10, 15, 10, 25, 15, 25, 25, 40, 10)
         for c, w in zip(string.ascii_uppercase[:len(col_widths)], col_widths):
             xl_ws.column_dimensions[c].width = w
@@ -643,70 +643,18 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 str(e))
 
     @staticmethod
-    def _adif_tag_(ttype, content):
-        if content:
-            return f'<{ttype.upper()}:{len(str(content))}>{content} '
+    def replaceUmlautsLigatures(text:str):
+        text = text.replace('Ä', 'Ae')
+        text = text.replace('Ö', 'Oe')
+        text = text.replace('Ü', 'Ue')
+        text = text.replace('ä', 'ae')
+        text = text.replace('ö', 'oe')
+        text = text.replace('ü', 'ue')
+        text = text.replace('ß', 'ss')
+        return text
 
-        return ''
-
-    def exportADI(self, file):
-        print('Exporting to ADI...')
-
-        with open(file, 'w', newline='\n') as af:
-            # Write header
-            header = 'ADIF Export by DragonLog\n' + \
-                     self._adif_tag_('ADIF_VER', '3.1.4') + \
-                     self._adif_tag_('PROGRAMID', __prog_name__) + \
-                     self._adif_tag_('PROGRAMVERSION', __version__) + \
-                     self._adif_tag_('CREATED_TIMESTAMP',
-                                     QtCore.QDateTime.currentDateTimeUtc().toString('yyyyMMdd HHmmss')) + \
-                     '\n<eoh>\n\n'
-
-            af.write(header)
-
-            # Write content
-            query = self.__db_con__.exec(self.__db_select_stmnt__)
-            if query.lastError().text():
-                raise Exception(query.lastError().text())
-
-            while query.next():
-                band = query.value(self.__sql_cols__.index('band'))
-
-                if band == '11m':
-                    continue
-
-                qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
-
-                af.write(self._adif_tag_('qso_date', qso_date.replace('-', '')))
-                af.write(self._adif_tag_('time_on', qso_time.replace(':', '')))
-                af.write(self._adif_tag_('call', query.value(self.__sql_cols__.index('call_sign'))))
-                af.write(self._adif_tag_('name', query.value(self.__sql_cols__.index('name'))))
-                af.write(self._adif_tag_('qth', query.value(self.__sql_cols__.index('qth'))))
-                af.write(self._adif_tag_('gridsquare', query.value(self.__sql_cols__.index('locator'))))
-                af.write('\n')  # Insert a linebreak for readability
-                af.write(self._adif_tag_('rst_sent', query.value(self.__sql_cols__.index('rst_sent'))))
-                af.write(self._adif_tag_('rst_rcvd', query.value(self.__sql_cols__.index('rst_rcvd'))))
-                af.write(self._adif_tag_('band', band.upper()))
-                af.write(self._adif_tag_('mode', query.value(self.__sql_cols__.index('mode'))))
-                freq = query.value(self.__sql_cols__.index("freq"))
-                af.write(self._adif_tag_('freq', f'{freq / 1000:0.3f}' if freq else ''))
-                af.write(self._adif_tag_('tx_pwr', query.value(self.__sql_cols__.index('power'))))
-                af.write('\n')  # Insert a linebreak for readability
-                af.write(self._adif_tag_('station_callsign', query.value(self.__sql_cols__.index('own_callsign'))))
-                af.write(self._adif_tag_('my_name', query.value(self.__sql_cols__.index('own_name'))))
-                af.write(self._adif_tag_('my_city', query.value(self.__sql_cols__.index('own_qth'))))
-                af.write(self._adif_tag_('my_gridsquare', query.value(self.__sql_cols__.index('own_locator'))))
-                af.write(self._adif_tag_('my_rig', query.value(self.__sql_cols__.index('radio'))))
-                af.write(self._adif_tag_('my_antenna', query.value(self.__sql_cols__.index('antenna'))))
-                af.write(self._adif_tag_('distance', query.value(self.__sql_cols__.index('dist'))))
-                af.write('\n')  # Insert a linebreak for readability
-                af.write(self._adif_tag_('notes',
-                                         query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')))
-
-                af.write('<eor>\n\n')  # Insert end of row
-
-    def exportADX(self, file):
-        print('Exporting to ADX...')
+    def exportADIF(self, file):
+        print('Exporting to ADIF...')
 
         doc = {
             'HEADER':
@@ -716,8 +664,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'PROGRAMVERSION': __version__,
                     'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString('yyyyMMdd HHmmss')
                 },
-            'RECORDS': {'RECORD': []},
+            'RECORDS': None,
         }
+
+        records = []
 
         query = self.__db_con__.exec(self.__db_select_stmnt__)
         if query.lastError().text():
@@ -737,9 +687,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('call_sign')):
                 record['CALL'] = query.value(self.__sql_cols__.index('call_sign'))
             if query.value(self.__sql_cols__.index('name')):
-                record['NAME'] = query.value(self.__sql_cols__.index('name'))
+                record['NAME'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('name')))
+                record['NAME_INTL'] = query.value(self.__sql_cols__.index('name'))
             if query.value(self.__sql_cols__.index('qth')):
-                record['QTH'] = query.value(self.__sql_cols__.index('qth'))
+                record['QTH'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('qth')))
+                record['QTH_INTL'] = query.value(self.__sql_cols__.index('qth'))
             if query.value(self.__sql_cols__.index('locator')):
                 record['GRIDSQUARE'] = query.value(self.__sql_cols__.index('locator'))
             if query.value(self.__sql_cols__.index('rst_sent')):
@@ -757,23 +709,36 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('own_callsign')):
                 record['STATION_CALLSIGN'] = query.value(self.__sql_cols__.index('own_callsign'))
             if query.value(self.__sql_cols__.index('own_name')):
-                record['MY_NAME'] = query.value(self.__sql_cols__.index('own_name'))
+                record['MY_NAME'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('own_name')))
+                record['MY_NAME_INTL'] = query.value(self.__sql_cols__.index('own_name'))
             if query.value(self.__sql_cols__.index('own_qth')):
-                record['MY_CITY'] = query.value(self.__sql_cols__.index('own_qth'))
+                record['MY_CITY'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('own_qth')))
+                record['MY_CITY_INTL'] = query.value(self.__sql_cols__.index('own_qth'))
             if query.value(self.__sql_cols__.index('own_locator')):
                 record['MY_GRIDSQUARE'] = query.value(self.__sql_cols__.index('own_locator'))
             if query.value(self.__sql_cols__.index('radio')):
-                record['MY_RIG'] = query.value(self.__sql_cols__.index('radio'))
+                record['MY_RIG'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('radio')))
+                record['MY_RIG_INTL'] = query.value(self.__sql_cols__.index('radio'))
             if query.value(self.__sql_cols__.index('antenna')):
-                record['MY_ANTENNA'] = query.value(self.__sql_cols__.index('antenna'))
+                record['MY_ANTENNA'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('antenna')))
+                record['MY_ANTENNA_INTL'] = query.value(self.__sql_cols__.index('antenna'))
             if query.value(self.__sql_cols__.index('dist')):
                 record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
             if query.value(self.__sql_cols__.index('remarks')):
-                record['NOTES'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
+                record['NOTES'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
+                record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
 
-            doc['RECORDS']['RECORD'].append(record)
+            records.append(record)
 
-        ElementTree(self.adx_export_schema.encode(doc)).write(file, xml_declaration=True, encoding='utf-8')
+        if os.path.splitext(file)[-1] == '.adx':
+            doc['RECORDS'] = {'RECORD': records}
+            ElementTree(self.adx_export_schema.encode(doc)).write(file, xml_declaration=True, encoding='utf-8')
+        else:
+            doc['RECORDS'] = records
+            with open(file, 'w', encoding='ascii') as af:
+                af.write(adif_file.dict2adi(doc, 'ADIF Export by DragonLog'))
+
+        print(f'Saved "{file}"')
 
     def logImport(self):
         res = QtWidgets.QFileDialog.getOpenFileName(
@@ -861,7 +826,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 elif p == 'FREQ':
                     values[self.__adx_cols__.index(p)] = str(float(r[p][0])*1000)
                 else:
-                    values[self.__adx_cols__.index(p)] = r[p][0]
+                    if p in self.__adx_cols__:
+                        values[self.__adx_cols__.index(p)] = r[p][0]
+                    elif p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL is defined
+                        values[self.__adx_cols__.index(p + '_INTL')] = r[p][0]
 
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
@@ -929,7 +897,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl'
             '\nmaidenhead: Copyright (c) 2018 Michael Hirsch, Ph.D.' +
             f'\nxmlschema {xmlschema.__version__}: Copyright (c), 2016-2022, '
-            f'SISSA (Scuola Internazionale Superiore di Studi Avanzati)'
+            f'SISSA (Scuola Internazionale Superiore di Studi Avanzati)' +
+            f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nDragon icon by Icons8 https://icons8.com'
         )

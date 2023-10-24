@@ -4,3 +4,4 @@ openpyxl
 maidenhead
 cx-Freeze
 xmlschema
+PyADIF-File
