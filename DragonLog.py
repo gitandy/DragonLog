@@ -73,7 +73,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
 
     __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
-                    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', '#CHANNEL#', 'TX_PWR',
+                    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CHANNEL', 'TX_PWR',
                     'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
                     'DISTANCE')
 
@@ -568,6 +568,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('ADIF 3 (*.adx *.adi *.adif)'))
 
         if res[0]:
+            # TODO: Use case instead?
             if res[1] == self.tr('Excel-File (*.xlsx)'):
                 self.exportExcel(res[0])
             elif res[1] == self.tr('CSV-File (*.csv)'):
@@ -656,6 +657,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def exportADIF(self, file):
         print('Exporting to ADIF...')
 
+        is_adx: bool = os.path.splitext(file)[-1] == '.adx'
+
         doc = {
             'HEADER':
                 {
@@ -676,7 +679,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         while query.next():
             band = query.value(self.__sql_cols__.index('band'))
 
-            if band == '11m':
+            if band == '11m' and not self.settings.value('station_cb/cb_exp_adif', 0):
                 continue
 
             qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
@@ -699,7 +702,24 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('rst_rcvd')):
                 record['RST_RCVD'] = query.value(self.__sql_cols__.index('rst_rcvd'))
             if band:
-                record['BAND'] = band.upper()
+                if band == '11m':
+                    if is_adx:
+                        record['APP'] = [{'@PROGRAMID': 'DRAGONLOG',
+                                          '@FIELDNAME': 'CBQSO',
+                                          '@TYPE': 'B',
+                                          '$': 'Y'}, ]
+                        if query.value(self.__sql_cols__.index("channel")):
+                            record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
+                                                  '@FIELDNAME': 'CHANNEL',
+                                                  '@TYPE': 'N',
+                                                  '$': str(query.value(self.__sql_cols__.index("channel")))})
+                    else:
+                        record['BAND'] = band.upper()
+                        record['APP_DRAGONLOG_CBQSO'] = 'Y'
+                        if query.value(self.__sql_cols__.index("channel")):
+                            record['APP_DRAGONLOG_CHANNEL'] = query.value(self.__sql_cols__.index("channel"))
+                else:
+                    record['BAND'] = band.upper()
             if query.value(self.__sql_cols__.index('mode')):
                 record['MODE'] = query.value(self.__sql_cols__.index('mode'))
             if query.value(self.__sql_cols__.index("freq")):
@@ -752,6 +772,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         )
 
         if res[0]:
+            # TODO: Use case instead?
             # if res[1] == self.tr('Excel-File (*.xlsx)'):
             #     self.logImportExcel(res[0])
             if res[1] == self.tr('CSV-File (*.csv)'):
@@ -832,17 +853,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
 
             for p in r:
-                if p in ('QSO_DATE', 'TIME_ON'):
+                # TODO: Use case instead
+                if p in ('QSO_DATE', 'TIME_ON'):  # Skip date and time as they are already imported above
                     continue
 
                 if p == 'BAND':
                     values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()
                 elif p == 'FREQ':
                     values[self.__adx_cols__.index(p)] = str(float(rec_data(r, p)) * 1000)
+                elif p == 'APP':  # Only for ADX as ADI App fields are recognised the standard way
+                    for af in r[p]:
+                        af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
+                        if af_param in self.__adx_cols__:
+                            values[self.__adx_cols__.index(af_param)] = af['$']
+                        elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
+                            values[self.__adx_cols__.index('BAND')] = '11m'
                 else:
                     if p in self.__adx_cols__:
                         values[self.__adx_cols__.index(p)] = rec_data(r, p)
-                    elif p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL is defined
+                    elif p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
                         values[self.__adx_cols__.index(p + '_INTL')] = rec_data(r, p)
 
             query = QtSql.QSqlQuery(self.__db_con__)

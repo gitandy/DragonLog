@@ -185,6 +185,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.radioCBLineEdit.setText(self.settings.value('station_cb/radio', ''))
         self.antennaCBLineEdit.setText(self.settings.value('station_cb/antenna', ''))
         self.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
+        self.expCBQSOsCheckBox.setChecked(bool(self.settings.value('station_cb/cb_exp_adif', 0)))
 
         return super().exec()
 
@@ -206,5 +207,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('station_cb/radio', self.radioCBLineEdit.text())
         self.settings.setValue('station_cb/antenna', self.antennaCBLineEdit.text())
         self.settings.setValue('station_cb/cb_by_default', int(self.cbDefaultCheckBox.isChecked()))
+        self.settings.setValue('station_cb/cb_exp_adif', int(self.expCBQSOsCheckBox.isChecked()))
 
         super().accept()
