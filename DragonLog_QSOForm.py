@@ -47,13 +47,17 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.refreshTimer.timeout.connect(self.refreshRigData)
 
         self.palette_default = QtGui.QPalette()
-        self.palette_default.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(255, 255, 255))
+        self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                      QtGui.QColor(255, 255, 255))
         self.palette_ok = QtGui.QPalette()
-        self.palette_ok.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(204, 255, 204))
+        self.palette_ok.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                 QtGui.QColor(204, 255, 204))
         self.palette_empty = QtGui.QPalette()
-        self.palette_empty.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(255, 255, 204))
+        self.palette_empty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                    QtGui.QColor(255, 255, 204))
         self.palette_faulty = QtGui.QPalette()
-        self.palette_faulty.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(255, 204, 204))
+        self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                     QtGui.QColor(255, 204, 204))
 
     # noinspection PyBroadException
     def refreshRigData(self):
@@ -252,6 +256,20 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         else:
             self.locatorLineEdit.setPalette(self.palette_faulty)
 
+    def ownCallSignChanged(self, txt):
+        if not txt:
+            self.ownCallSignLineEdit.setPalette(self.palette_empty)
+        else:
+            self.ownCallSignLineEdit.setPalette(self.palette_ok)
+
+    def ownLocatorChanged(self, txt):
+        if not txt:
+            self.ownLocatorLineEdit.setPalette(self.palette_empty)
+        elif re.fullmatch(self.REGEX_LOCATOR, txt):
+            self.ownLocatorLineEdit.setPalette(self.palette_ok)
+        else:
+            self.ownLocatorLineEdit.setPalette(self.palette_faulty)
+
     def exec(self) -> int:
         if self.lastpos:
             self.move(self.lastpos)
@@ -265,6 +283,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.locatorChanged(self.locatorLineEdit.text())
         self.rstSentChanged(self.RSTSentLineEdit.text())
         self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
+        self.ownCallSignChanged(self.ownCallSignLineEdit.text())
+        self.ownLocatorChanged(self.ownLocatorLineEdit.text())
 
         return super().exec()
 

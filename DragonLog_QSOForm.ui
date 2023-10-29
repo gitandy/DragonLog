@@ -20,33 +20,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLineEdit" name="callSignLineEdit">
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>255</green>
-               <blue>204</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>255</green>
-               <blue>204</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled/>
-          </palette>
-         </property>
          <property name="placeholderText">
           <string>Call sign</string>
          </property>
@@ -72,33 +45,6 @@
        </item>
        <item>
         <widget class="QLineEdit" name="locatorLineEdit">
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>255</green>
-               <blue>204</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>255</green>
-               <blue>204</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled/>
-          </palette>
-         </property>
          <property name="placeholderText">
           <string>Locator</string>
          </property>
@@ -131,33 +77,6 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="palette">
-            <palette>
-             <active>
-              <colorrole role="Base">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>255</red>
-                 <green>255</green>
-                 <blue>204</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </active>
-             <inactive>
-              <colorrole role="Base">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>255</red>
-                 <green>255</green>
-                 <blue>204</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </inactive>
-             <disabled/>
-            </palette>
-           </property>
            <property name="text">
             <string>59</string>
            </property>
@@ -186,33 +105,6 @@
              <width>100</width>
              <height>16777215</height>
             </size>
-           </property>
-           <property name="palette">
-            <palette>
-             <active>
-              <colorrole role="Base">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>255</red>
-                 <green>255</green>
-                 <blue>204</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </active>
-             <inactive>
-              <colorrole role="Base">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>255</red>
-                 <green>255</green>
-                 <blue>204</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </inactive>
-             <disabled/>
-            </palette>
            </property>
            <property name="text">
             <string>59</string>
@@ -823,14 +715,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>RSTRcvdLineEdit</sender>
-   <signal>textChanged(QString)</signal>
+   <sender>ownLocatorLineEdit</sender>
+   <signal>textEdited(QString)</signal>
    <receiver>QSOFormDialog</receiver>
-   <slot>rstRcvdChanged(QString)</slot>
+   <slot>ownLocatorChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>247</x>
-     <y>82</y>
+     <x>469</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -839,14 +731,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>RSTSentLineEdit</sender>
-   <signal>textChanged(QString)</signal>
+   <sender>ownCallSignLineEdit</sender>
+   <signal>textEdited(QString)</signal>
    <receiver>QSOFormDialog</receiver>
-   <slot>rstSentChanged(QString)</slot>
+   <slot>ownCallSignChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>82</y>
+     <x>168</x>
+     <y>174</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -865,6 +757,6 @@
   <slot>locatorChanged(QString)</slot>
   <slot>ownLocatorChanged(QString)</slot>
   <slot>callSignChanged(QString)</slot>
-  <slot>ownCallsignChanged(QString)</slot>
+  <slot>ownCallSignChanged(QString)</slot>
  </slots>
 </ui>

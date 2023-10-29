@@ -52,11 +52,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="locatorLineEdit">
-         <property name="inputMask">
-          <string>AA99AA00</string>
-         </property>
-        </widget>
+        <widget class="QLineEdit" name="locatorLineEdit"/>
        </item>
        <item row="4" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -568,11 +564,110 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>locatorLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>locatorChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>locatorLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>locatorChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignCBLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>callSignCBChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>callSignChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignCBLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>callSignCBChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>callSignChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>calcLocator()</slot>
   <slot>chooseHamlibPath()</slot>
   <slot>ctrlRigctld(bool)</slot>
   <slot>mfrChanged(QString)</slot>
+  <slot>locatorChanged(QString)</slot>
+  <slot>callSignChanged(QString)</slot>
+  <slot>callSignCBChanged(QString)</slot>
  </slots>
 </ui>

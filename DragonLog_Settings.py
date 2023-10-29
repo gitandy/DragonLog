@@ -1,15 +1,18 @@
 import os
+import re
 import subprocess
 import sys
 import platform
 
 import maidenhead
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore, QtGui
 
 import DragonLog_Settings_ui
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
+    REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
+
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel):
         super().__init__(parent)
         self.setupUi(self)
@@ -38,6 +41,19 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.checkHamlibTimer = QtCore.QTimer(self)
         self.checkHamlibTimer.timeout.connect(self.checkRigctld)
+
+        self.palette_default = QtGui.QPalette()
+        self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                      QtGui.QColor(255, 255, 255))
+        self.palette_ok = QtGui.QPalette()
+        self.palette_ok.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                 QtGui.QColor(204, 255, 204))
+        self.palette_empty = QtGui.QPalette()
+        self.palette_empty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                    QtGui.QColor(255, 255, 204))
+        self.palette_faulty = QtGui.QPalette()
+        self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                     QtGui.QColor(255, 204, 204))
 
     def calcLocator(self):
         self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
@@ -168,6 +184,26 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
             self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
             self.rig_caps = []
+
+    def locatorChanged(self, txt):
+        if not txt:
+            self.locatorLineEdit.setPalette(self.palette_empty)
+        elif re.fullmatch(self.REGEX_LOCATOR, txt):
+            self.locatorLineEdit.setPalette(self.palette_ok)
+        else:
+            self.locatorLineEdit.setPalette(self.palette_faulty)
+
+    def callSignChanged(self, txt):
+        if not txt:
+            self.callsignLineEdit.setPalette(self.palette_empty)
+        else:
+            self.callsignLineEdit.setPalette(self.palette_ok)
+
+    def callSignCBChanged(self, txt):
+        if not txt:
+            self.callsignCBLineEdit.setPalette(self.palette_empty)
+        else:
+            self.callsignCBLineEdit.setPalette(self.palette_ok)
 
     def exec(self):
         print('Loading settings...')
