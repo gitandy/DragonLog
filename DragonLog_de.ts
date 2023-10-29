@@ -557,15 +557,15 @@ Ein Backup wird erstellt:</translation>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="DragonLog_QSOForm.py" line="100" />
-      <location filename="DragonLog_QSOForm.py" line="92" />
-      <location filename="DragonLog_QSOForm.py" line="75" />
-      <location filename="DragonLog_QSOForm.py" line="56" />
+      <location filename="DragonLog_QSOForm.py" line="113" />
+      <location filename="DragonLog_QSOForm.py" line="105" />
+      <location filename="DragonLog_QSOForm.py" line="88" />
+      <location filename="DragonLog_QSOForm.py" line="69" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="DragonLog_QSOForm.py" line="112" />
+      <location filename="DragonLog_QSOForm.py" line="125" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
     </message>
@@ -594,23 +594,12 @@ Ein Backup wird erstellt:</translation>
     </message>
     <message>
       <location filename="DragonLog_QSOForm.ui" line="0" />
-      <source>AA99aa00</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="DragonLog_QSOForm.ui" line="0" />
       <source>Locator</source>
       <translation />
     </message>
     <message>
       <location filename="DragonLog_QSOForm.ui" line="0" />
       <source>RST Tx</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="DragonLog_QSOForm.ui" line="0" />
-      <location filename="DragonLog_QSOForm.ui" line="0" />
-      <source>DDn</source>
       <translation />
     </message>
     <message>
@@ -699,11 +688,6 @@ Ein Backup wird erstellt:</translation>
       <location filename="DragonLog_QSOForm.ui" line="0" />
       <source>Own QTH</source>
       <translation>Eigener QTH</translation>
-    </message>
-    <message>
-      <location filename="DragonLog_QSOForm.ui" line="0" />
-      <source>AA99AA00</source>
-      <translation />
     </message>
     <message>
       <location filename="DragonLog_QSOForm.ui" line="0" />

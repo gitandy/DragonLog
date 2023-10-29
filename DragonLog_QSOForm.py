@@ -1,12 +1,16 @@
+import re
 import socket
 
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore, QtGui
 
 import DragonLog_QSOForm_ui
 from DragonLog_Settings import Settings
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
+    REGEX_RSTFIELD = re.compile(r'[1-5][1-9][1-9aAcCkKmMsSxX]?')
+    REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
+
     def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
                  cb_channels: dict, hamlib_error: QtWidgets.QLabel):
         super().__init__(parent)
@@ -41,6 +45,15 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.refreshTimer = QtCore.QTimer(self)
         self.refreshTimer.timeout.connect(self.refreshRigData)
+
+        self.palette_default = QtGui.QPalette()
+        self.palette_default.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(255, 255, 255))
+        self.palette_ok = QtGui.QPalette()
+        self.palette_ok.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(204, 255, 204))
+        self.palette_empty = QtGui.QPalette()
+        self.palette_empty.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(255, 255, 204))
+        self.palette_faulty = QtGui.QPalette()
+        self.palette_faulty.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(255, 204, 204))
 
     # noinspection PyBroadException
     def refreshRigData(self):
@@ -209,6 +222,36 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         else:
             self.freqDoubleSpinBox.setValue(self.bands['11m'][0] - self.bands['11m'][2])
 
+    def rstRcvdChanged(self, txt):
+        if not txt:
+            self.RSTRcvdLineEdit.setPalette(self.palette_empty)
+        elif re.fullmatch(self.REGEX_RSTFIELD, txt):
+            self.RSTRcvdLineEdit.setPalette(self.palette_ok)
+        else:
+            self.RSTRcvdLineEdit.setPalette(self.palette_faulty)
+
+    def rstSentChanged(self, txt):
+        if not txt:
+            self.RSTSentLineEdit.setPalette(self.palette_empty)
+        elif re.fullmatch(self.REGEX_RSTFIELD, txt):
+            self.RSTSentLineEdit.setPalette(self.palette_ok)
+        else:
+            self.RSTSentLineEdit.setPalette(self.palette_faulty)
+
+    def callSignChanged(self, txt):
+        if not txt:
+            self.callSignLineEdit.setPalette(self.palette_empty)
+        else:
+            self.callSignLineEdit.setPalette(self.palette_ok)
+
+    def locatorChanged(self, txt):
+        if not txt:
+            self.locatorLineEdit.setPalette(self.palette_empty)
+        elif re.fullmatch(self.REGEX_LOCATOR, txt):
+            self.locatorLineEdit.setPalette(self.palette_ok)
+        else:
+            self.locatorLineEdit.setPalette(self.palette_faulty)
+
     def exec(self) -> int:
         if self.lastpos:
             self.move(self.lastpos)
@@ -217,6 +260,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         if self.settings_form.isRigctldActive():
             self.refreshTimer.start(500)
+
+        self.callSignChanged(self.callSignLineEdit.text())
+        self.locatorChanged(self.locatorLineEdit.text())
+        self.rstSentChanged(self.RSTSentLineEdit.text())
+        self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
 
         return super().exec()
 
