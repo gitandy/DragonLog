@@ -110,7 +110,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     @staticmethod
     def calc_distance(mh_pos1: str, mh_pos2: str):
-        if mh_pos1 and mh_pos2:
+        # noinspection PyBroadException
+        try:
             pos1 = maidenhead.to_location(mh_pos1, True)
             pos2 = maidenhead.to_location(mh_pos2, True)
 
@@ -121,7 +122,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             return int(6371.01 * math.acos(
                 math.sin(mlat) * math.sin(plat) + math.cos(mlat) * math.cos(plat) * math.cos(mlon - plon)))
-        else:
+        except Exception:
+            print(f'Exception calcing distance between "{mh_pos1}" amd "{mh_pos2}"')
             return 0
 
     @staticmethod
@@ -373,7 +375,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     0] else '',
                 self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
                 self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
-                self.qso_form.ownNameLineEdit.LineEdit.text(),
+                self.qso_form.ownNameLineEdit.text(),
                 self.qso_form.ownQTHLineEdit.text(),
                 self.qso_form.ownLocatorLineEdit.text(),
                 self.qso_form.radioLineEdit.text(),
