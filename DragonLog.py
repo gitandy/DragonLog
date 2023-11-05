@@ -561,22 +561,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.QSOTableView.resizeColumnsToContents()
 
     def export(self):
+        exp_formats = {
+            self.tr('Excel-File (*.xlsx)'): self.exportExcel,
+            self.tr('CSV-File (*.csv)'): self.exportCSV,
+            self.tr('ADIF 3 (*.adx *.adi *.adif)'): self.exportADIF,
+        }
+
         res = QtWidgets.QFileDialog.getSaveFileName(
             self,
             self.tr('Select export file'),
             self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
-            self.tr('Excel-File (*.xlsx)') + ';;' +
-            self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3 (*.adx *.adi *.adif)'))
+            ';;'.join(exp_formats.keys()))
 
         if res[0]:
-            # TODO: Use case instead?
-            if res[1] == self.tr('Excel-File (*.xlsx)'):
-                self.exportExcel(res[0])
-            elif res[1] == self.tr('CSV-File (*.csv)'):
-                self.exportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3 (*.adx *.adi *.adif)'):
-                self.exportADIF(res[0])
+            exp_formats[res[1]](res[0])
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
@@ -764,23 +762,21 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         print(f'Saved "{file}"')
 
     def logImport(self):
+        imp_formats = {
+            # self.tr('Excel-File (*.xlsx)'): self.logImportExcel,
+            self.tr('CSV-File (*.csv)'): self.logImportCSV,
+            self.tr('ADIF 3 (*.adx *.adi *.adif)'): self.logImportADIF,
+        }
+
         res = QtWidgets.QFileDialog.getOpenFileName(
             self,
             self.tr('Select import file'),
             self.settings.value('lastImportDir', os.path.abspath(os.curdir)),
-            # self.tr('Excel-File (*.xlsx)') + ';;' +
-            self.tr('CSV-File (*.csv)') + ';;' +
-            self.tr('ADIF 3 (*.adx *.adi *.adif)')
+            ';;'.join(imp_formats.keys())
         )
 
         if res[0]:
-            # TODO: Use case instead?
-            # if res[1] == self.tr('Excel-File (*.xlsx)'):
-            #     self.logImportExcel(res[0])
-            if res[1] == self.tr('CSV-File (*.csv)'):
-                self.logImportCSV(res[0])
-            elif res[1] == self.tr('ADIF 3 (*.adx *.adi *.adif)'):
-                self.logImportADIF(res[0])
+            imp_formats[res[1]](res[0])
 
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
 
