@@ -388,38 +388,38 @@ Ein Backup wird erstellt:</translation>
       <translation>Log Import CSV</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="884" />
+      <location filename="DragonLog.py" line="882" />
       <location filename="DragonLog.py" line="843" />
       <source>Log import ADIF</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="903" />
+      <location filename="DragonLog.py" line="901" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="923" />
+      <location filename="DragonLog.py" line="921" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="938" />
+      <location filename="DragonLog.py" line="936" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="939" />
+      <location filename="DragonLog.py" line="937" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="940" />
+      <location filename="DragonLog.py" line="938" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="952" />
+      <location filename="DragonLog.py" line="950" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>

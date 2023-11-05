@@ -851,25 +851,23 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
 
             for p in r:
-                # TODO: Use case instead
-                if p in ('QSO_DATE', 'TIME_ON'):  # Skip date and time as they are already imported above
-                    continue
-
-                if p == 'BAND':
-                    values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()
-                elif p == 'FREQ':
-                    values[self.__adx_cols__.index(p)] = str(float(rec_data(r, p)) * 1000)
-                elif p == 'APP':  # Only for ADX as ADI App fields are recognised the standard way
-                    for af in r[p]:
-                        af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
-                        if af_param in self.__adx_cols__:
-                            values[self.__adx_cols__.index(af_param)] = af['$']
-                        elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
-                            values[self.__adx_cols__.index('BAND')] = '11m'
-                else:
-                    if p in self.__adx_cols__:
+                match p:
+                    case 'QSO_DATE' | 'TIME_ON':  # Skip date and time as they are already imported above
+                        continue
+                    case 'BAND':
+                        values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()
+                    case 'FREQ':
+                        values[self.__adx_cols__.index(p)] = str(float(rec_data(r, p)) * 1000)
+                    case 'APP':  # Only for ADX as ADI App fields are recognised the standard way
+                        for af in r[p]:
+                            af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
+                            if af_param in self.__adx_cols__:
+                                values[self.__adx_cols__.index(af_param)] = af['$']
+                            elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
+                                values[self.__adx_cols__.index('BAND')] = '11m'
+                    case p if p in self.__adx_cols__:
                         values[self.__adx_cols__.index(p)] = rec_data(r, p)
-                    elif p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
+                    case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
                         values[self.__adx_cols__.index(p + '_INTL')] = rec_data(r, p)
 
             query = QtSql.QSqlQuery(self.__db_con__)
