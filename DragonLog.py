@@ -581,8 +581,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def exportCSV(self, file):
         print('Exporting to CSV...')
 
-        with open(file, 'w', newline='') as cf:
-            writer = csv.writer(cf, delimiter=';', dialect=csv.excel)
+        with open(file, 'w', newline='', encoding='utf-8') as cf:
+            writer = csv.writer(cf)
 
             # Write header
             writer.writerow(self.__headers__)
@@ -789,7 +789,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         print('Importing from CSV...')
 
         with open(file, newline='', encoding='utf-8') as cf:
-            reader = csv.reader(cf, delimiter=';', dialect=csv.excel)
+            reader = csv.reader(cf)
 
             ln = 0
             for row in reader:

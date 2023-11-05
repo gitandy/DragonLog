@@ -25,9 +25,9 @@ If automatic time is selected, the time gets updated at saving the QSO.
 Export
 ------
 Following formats are supported for export
-* Excel format
-* CSV format (Excel style with separator ; and local encoding)
-* ADIF 3 format (ADI/ADX) (CB QSOs are skipped automatically)
+* Excel file
+* CSV format (UTF-8 encoding)
+* ADIF 3 format (ADI/ADX)
 
 ### ADIF format export
 ADX should be prefered over ADI as UTF-8 is supported. 
@@ -42,11 +42,11 @@ Import
 ------
 
 Following formats are supported for export
-* CSV format (Excel style with separator ; and UTF-8 encoding)
+* CSV format (UTF-8 encoding)
 * ADIF 3 format (ADX, ADI)
 
 ### CSV format import
-The import file is expected to have the same format and column order as the exported CSV file (Excel style but UTF-8).
+The import file is expected to have the same format and column order as the exported CSV file.
 So best practice is to export a QSO with the current program version and adjust the import file.
 
 Empty rows are skipped. A row is considered empty if the date/time is missing.
@@ -75,9 +75,9 @@ Unpack or install your hamlib release.
 On the CAT settings tab you have to select your hamlib unpack/installation directory.
 
 ### On Linux
-You have to compile the hamlib release first. 
+If no package is available for your distribution you have to compile the hamlib release first. 
 Download the release .tar.gz (not source), unpack, ./configure, make, make install.
-The rigctld should be in /usr/local/bin and thus on your path.
+The rigctld is assumed to be in /usr/local/bin and thus on your path.
 
 Copyright
 ---------
