@@ -768,7 +768,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def logImport(self):
         imp_formats = {
-            # self.tr('Excel-File (*.xlsx)'): self.logImportExcel,
+            self.tr('Excel-File (*.xlsx)'): self.logImportExcel,
             self.tr('CSV-File (*.csv)'): self.logImportCSV,
             self.tr('ADIF 3 (*.adx *.adi *.adif)'): self.logImportADIF,
         }
@@ -785,6 +785,45 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
 
+    def logImportExcel(self, file):
+        print('Importing from Excel...')
+
+        xl_wb = openpyxl.load_workbook(file, read_only=True, data_only=True)
+        xl_ws = xl_wb.active
+
+        ln = 0
+        for row in xl_ws.iter_rows():
+            ln += 1
+            if ln == 1:  # Skip header
+                continue
+
+            row = list(row)
+
+            if len(row) >= len(self.__sql_cols__) and row[1].value:
+                query = QtSql.QSqlQuery(self.__db_con__)
+                query.prepare(self.__db_insert_stmnt__)
+
+                for i, cell in enumerate(row[1:]):
+                    query.bindValue(i, cell.value)
+                query.exec()
+                if query.lastError().text():
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        self.tr('Log import Excel'),
+                        f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
+                    )
+            else:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr('Log import Excel'),
+                    f'Row {ln} has too few columns.\nSkipped row.'
+                )
+
+        self.__db_con__.commit()
+        self.QSOTableView.model().select()
+        self.QSOTableView.resizeColumnsToContents()
+        print(f'Imported {ln - 1} QSOs from "{file}"')
+
     def logImportCSV(self, file):
         print('Importing from CSV...')
 
@@ -794,7 +833,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             ln = 0
             for row in reader:
                 ln += 1
-                if ln == 1:
+                if ln == 1:  # Skip header
                     continue
 
                 if len(row) >= len(self.__sql_cols__) and row[1]:

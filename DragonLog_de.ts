@@ -350,6 +350,7 @@ Ein Backup wird erstellt:</translation>
       <translation>QSO ändern</translation>
     </message>
     <message>
+      <location filename="DragonLog.py" line="771" />
       <location filename="DragonLog.py" line="565" />
       <source>Excel-File (*.xlsx)</source>
       <translation>Excel-Datei (*.xlsx)</translation>
@@ -382,44 +383,50 @@ Ein Backup wird erstellt:</translation>
       <translation>Importdatei öffnen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="816" />
-      <location filename="DragonLog.py" line="810" />
+      <location filename="DragonLog.py" line="818" />
+      <location filename="DragonLog.py" line="812" />
+      <source>Log import Excel</source>
+      <translation>Log Import Excel</translation>
+    </message>
+    <message>
+      <location filename="DragonLog.py" line="855" />
+      <location filename="DragonLog.py" line="849" />
       <source>Log import CSV</source>
       <translation>Log Import CSV</translation>
     </message>
     <message>
+      <location filename="DragonLog.py" line="926" />
       <location filename="DragonLog.py" line="887" />
-      <location filename="DragonLog.py" line="848" />
       <source>Log import ADIF</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="906" />
+      <location filename="DragonLog.py" line="945" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="926" />
+      <location filename="DragonLog.py" line="965" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="941" />
+      <location filename="DragonLog.py" line="980" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="942" />
+      <location filename="DragonLog.py" line="981" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="943" />
+      <location filename="DragonLog.py" line="982" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="955" />
+      <location filename="DragonLog.py" line="994" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>

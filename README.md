@@ -42,12 +42,13 @@ Import
 ------
 
 Following formats are supported for export
+* Excel file
 * CSV format (UTF-8 encoding)
 * ADIF 3 format (ADX, ADI)
 
-### CSV format import
-The import file is expected to have the same format and column order as the exported CSV file.
-So best practice is to export a QSO with the current program version and adjust the import file.
+### Excel/CSV import
+The import file is expected to have the same structure and column order as exported by DragonLog.
+So best practice is to export QSOs with the current program version and adjust the import file.
 
 Empty rows are skipped. A row is considered empty if the date/time is missing.
 
