@@ -609,10 +609,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         xl_ws.title = 'QSOs'
         xl_ws.freeze_panes = 'A2'
 
+        col_widths = []
+
         # Write header
         column = 1
         for h in self.__headers__:
             cell = xl_ws.cell(column=column, row=1, value=h)
+            col_widths.append(len(h))  # Initialise width approximation
             cell.font = Font(bold=True)
             column += 1
 
@@ -621,17 +624,19 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         row = 2
         while query.next():
             for col in range(len(self.__headers__)):
-                xl_ws.cell(column=col + 1, row=row, value=query.value(col))
+                val = query.value(col)
+                xl_ws.cell(column=col + 1, row=row, value=val)
+                val_len = len(str(val))
+                if col_widths[col] < val_len:
+                    col_widths[col] = val_len
             row += 1
 
         # Set auto filter
         xl_ws.auto_filter.ref = f'A1:{string.ascii_uppercase[len(self.__headers__) - 1]}1'
 
-        # Fit size to content is not available so set fixed approximations
-        # Fixme: fix to current column layout
-        col_widths = (10, 20, 15, 15, 25, 25, 15, 10, 10, 10, 10, 15, 10, 25, 15, 25, 25, 40, 10)
+        # Fit size to content width approximation
         for c, w in zip(string.ascii_uppercase[:len(col_widths)], col_widths):
-            xl_ws.column_dimensions[c].width = w
+            xl_ws.column_dimensions[c].width = w + 5  # Add 5 due to Excel filter drop down
 
         # Finally save
         try:
