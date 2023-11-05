@@ -3,6 +3,10 @@ DragonLog
 DragonLog is a logging program to log hamradio QSOs.
 Beside logging for ham radio you can also log CB radio QSOs.
 
+![Screenshot in german translation](https://github.com/gitandy/DragonLog/blob/master/icons/Screenshot.png?raw=true)
+
+*Screenshot in german translation*
+
 First start
 -----------
 Before you can start to log QSOs a database has to be selected.
