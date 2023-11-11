@@ -73,7 +73,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
 
     __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
-                    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CHANNEL', 'TX_PWR',
+                    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
                     'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
                     'DISTANCE')
 
@@ -690,10 +690,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             qso_date, qso_time = query.value(self.__sql_cols__.index('date_time')).split()
 
             record = {'QSO_DATE': qso_date.replace('-', ''),
-                      'TIME_ON': qso_time.replace(':', '')}
+                      'TIME_ON': qso_time.replace(':', ''),
+                      'APP': []}
 
             if query.value(self.__sql_cols__.index('call_sign')):
-                record['CALL'] = query.value(self.__sql_cols__.index('call_sign'))
+                if band == '11m' and is_adx:
+                    record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
+                                          '@FIELDNAME': 'CBCALL',
+                                          '@TYPE': 'I',
+                                          '$': query.value(self.__sql_cols__.index('call_sign'))})
+                else:
+                    record['CALL'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('call_sign')))
             if query.value(self.__sql_cols__.index('name')):
                 record['NAME'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('name')))
                 record['NAME_INTL'] = query.value(self.__sql_cols__.index('name'))
@@ -709,20 +716,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if band:
                 if band == '11m':
                     if is_adx:
-                        record['APP'] = [{'@PROGRAMID': 'DRAGONLOG',
-                                          '@FIELDNAME': 'CBQSO',
-                                          '@TYPE': 'B',
-                                          '$': 'Y'}, ]
+                        record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
+                                              '@FIELDNAME': 'CBQSO',
+                                              '@TYPE': 'B',
+                                              '$': 'Y'})
                         if query.value(self.__sql_cols__.index("channel")):
                             record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
-                                                  '@FIELDNAME': 'CHANNEL',
+                                                  '@FIELDNAME': 'CBCHANNEL',
                                                   '@TYPE': 'N',
                                                   '$': str(query.value(self.__sql_cols__.index("channel")))})
                     else:
                         record['BAND'] = band.upper()
                         record['APP_DRAGONLOG_CBQSO'] = 'Y'
                         if query.value(self.__sql_cols__.index("channel")):
-                            record['APP_DRAGONLOG_CHANNEL'] = query.value(self.__sql_cols__.index("channel"))
+                            record['APP_DRAGONLOG_CBCHANNEL'] = query.value(self.__sql_cols__.index("channel"))
                 else:
                     record['BAND'] = band.upper()
             if query.value(self.__sql_cols__.index('mode')):
@@ -732,7 +739,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('power')):
                 record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
             if query.value(self.__sql_cols__.index('own_callsign')):
-                record['STATION_CALLSIGN'] = query.value(self.__sql_cols__.index('own_callsign'))
+                if band == '11m' and is_adx:
+                    record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
+                                          '@FIELDNAME': 'CBOWNCALL',
+                                          '@TYPE': 'I',
+                                          '$': query.value(self.__sql_cols__.index('own_callsign'))})
+                else:
+                    record['STATION_CALLSIGN'] = self.replaceUmlautsLigatures(
+                        query.value(self.__sql_cols__.index('own_callsign')))
             if query.value(self.__sql_cols__.index('own_name')):
                 record['MY_NAME'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('own_name')))
                 record['MY_NAME_INTL'] = query.value(self.__sql_cols__.index('own_name'))
@@ -753,6 +767,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['NOTES'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
                 record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
+
+            if not record['APP']:
+                record.pop('APP')
 
             records.append(record)
 
@@ -893,7 +910,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             for p in r:
                 match p:
-                    case 'QSO_DATE' | 'TIME_ON':  # Skip date and time as they are already imported above
+                    case 'QSO_DATE' | 'TIME_ON' | 'APP_DRAGONLOG_CBQSO':
                         continue
                     case 'BAND':
                         values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()
@@ -904,6 +921,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
                             if af_param in self.__adx_cols__:
                                 values[self.__adx_cols__.index(af_param)] = af['$']
+                            elif af_param == 'APP_DRAGONLOG_CBCALL':
+                                values[self.__adx_cols__.index('CALL')] = af['$']
+                            elif af_param == 'APP_DRAGONLOG_CBOWNCALL':
+                                values[self.__adx_cols__.index('STATION_CALLSIGN')] = af['$']
                             elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
                                 values[self.__adx_cols__.index('BAND')] = '11m'
                     case p if p in self.__adx_cols__:
