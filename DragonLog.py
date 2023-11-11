@@ -761,8 +761,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             ElementTree(self.adx_export_schema.encode(doc)).write(file, xml_declaration=True, encoding='utf-8')
         else:
             doc['RECORDS'] = records
-            with open(file, 'w', encoding='ascii') as af:
-                af.write(adif_file.dict2adi(doc, 'ADIF Export by DragonLog'))
+            adif_file.dump_adi(file, doc, 'ADIF Export by DragonLog')
 
         print(f'Saved "{file}"')
 
@@ -869,9 +868,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if is_adx:
             records: list = self.adx_import_schema.to_dict(file, decimal_type=str)['RECORDS']['RECORD']
         else:
-            with open(file, encoding='ascii') as af:
-                adi = af.read()
-            records: list = adif_file.adi2dict(adi)['RECORDS']
+            records: list = adif_file.load_adi(file)['RECORDS']
 
         # align access to adx and adi records
         def rec_data(rec, param):
