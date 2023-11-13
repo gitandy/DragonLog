@@ -554,15 +554,15 @@ Ein Backup wird erstellt:</translation>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="DragonLog_QSOForm.py" line="117" />
-      <location filename="DragonLog_QSOForm.py" line="109" />
-      <location filename="DragonLog_QSOForm.py" line="92" />
-      <location filename="DragonLog_QSOForm.py" line="73" />
+      <location filename="DragonLog_QSOForm.py" line="118" />
+      <location filename="DragonLog_QSOForm.py" line="110" />
+      <location filename="DragonLog_QSOForm.py" line="93" />
+      <location filename="DragonLog_QSOForm.py" line="74" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="DragonLog_QSOForm.py" line="129" />
+      <location filename="DragonLog_QSOForm.py" line="130" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
     </message>
@@ -725,53 +725,53 @@ Ein Backup wird erstellt:</translation>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="DragonLog_Settings.py" line="184" />
-      <location filename="DragonLog_Settings.py" line="66" />
+      <location filename="DragonLog_Settings.py" line="185" />
+      <location filename="DragonLog_Settings.py" line="67" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="185" />
-      <location filename="DragonLog_Settings.py" line="178" />
-      <location filename="DragonLog_Settings.py" line="172" />
-      <location filename="DragonLog_Settings.py" line="70" />
+      <location filename="DragonLog_Settings.py" line="186" />
+      <location filename="DragonLog_Settings.py" line="179" />
+      <location filename="DragonLog_Settings.py" line="173" />
+      <location filename="DragonLog_Settings.py" line="71" />
       <source>Hamlib</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="185" />
-      <location filename="DragonLog_Settings.py" line="172" />
-      <location filename="DragonLog_Settings.py" line="70" />
+      <location filename="DragonLog_Settings.py" line="186" />
+      <location filename="DragonLog_Settings.py" line="173" />
+      <location filename="DragonLog_Settings.py" line="71" />
       <source>inactiv</source>
       <translation>inaktiv</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="82" />
+      <location filename="DragonLog_Settings.py" line="83" />
       <source>Choose hamlib rigctld executable</source>
       <translation>Hamlib rigctld wählen</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="90" />
+      <location filename="DragonLog_Settings.py" line="91" />
       <source>Selected file is not the executable</source>
       <translation>Die gewählte Datei ist nicht ausführbar</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="97" />
+      <location filename="DragonLog_Settings.py" line="98" />
       <source>Error executing rigctld</source>
       <translation>Fehler beim Ausführen von rigctld</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="170" />
+      <location filename="DragonLog_Settings.py" line="171" />
       <source>rigctld did not start properly</source>
       <translation>rigctld konnte nicht gestartet werden</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="175" />
+      <location filename="DragonLog_Settings.py" line="176" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="178" />
+      <location filename="DragonLog_Settings.py" line="179" />
       <source>activ</source>
       <translation>aktiv</translation>
     </message>

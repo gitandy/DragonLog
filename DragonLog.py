@@ -106,7 +106,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         ["?"] * (len(__sql_cols__) - 1)) + ')'
     __db_update_stmnt__ = 'UPDATE qsos SET ' + "=?,".join(__sql_cols__[1:]) + '=? ' \
                                                                               'WHERE id = ?'
-    __db_select_stmnt__ = f'SELECT * FROM qsos'
+    __db_select_stmnt__ = 'SELECT * FROM qsos'
 
     @staticmethod
     def calc_distance(mh_pos1: str, mh_pos2: str):
@@ -362,8 +362,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             values = (
                 date_time,
-                self.qso_form.ownCallSignLineEdit.text(),
-                self.qso_form.callSignLineEdit.text(),
+                self.qso_form.ownCallSignLineEdit.text().upper() if band != '11m' else self.qso_form.ownCallSignLineEdit.text(),
+                self.qso_form.callSignLineEdit.text().upper() if band != '11m' else self.qso_form.callSignLineEdit.text(),
                 self.qso_form.nameLineEdit.text(),
                 self.qso_form.QTHLineEdit.text(),
                 self.qso_form.locatorLineEdit.text(),
@@ -521,8 +521,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
                 values = (
                     self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text(),
-                    self.qso_form.ownCallSignLineEdit.text(),
-                    self.qso_form.callSignLineEdit.text(),
+                    self.qso_form.ownCallSignLineEdit.text().upper() if band != '11m' else self.qso_form.ownCallSignLineEdit.text(),
+                    self.qso_form.callSignLineEdit.text().upper() if band != '11m' else self.qso_form.callSignLineEdit.text(),
                     self.qso_form.nameLineEdit.text(),
                     self.qso_form.QTHLineEdit.text(),
                     self.qso_form.locatorLineEdit.text(),
@@ -553,7 +553,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 if query.lastError().text():
                     raise Exception(query.lastError().text())
             else:
-                print(f'Changing QSO(s) aborted')
+                print('Changing QSO(s) aborted')
                 break
 
         self.__db_con__.commit()
