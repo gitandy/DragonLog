@@ -11,6 +11,7 @@ import DragonLog_Settings_ui
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
+    REGEX_CALL = re.compile(r'([a-zA-Z0-9]{1,3}?/)?[a-zA-Z0-9]{1,3}?[0-9][a-zA-Z0-9]{0,3}?[a-zA-Z](/[aAmMpP]{1,2}?)?')
     REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
 
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel):
@@ -196,8 +197,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     def callSignChanged(self, txt):
         if not txt:
             self.callsignLineEdit.setPalette(self.palette_empty)
-        else:
+        elif re.fullmatch(self.REGEX_CALL, txt):
             self.callsignLineEdit.setPalette(self.palette_ok)
+        else:
+            self.callsignLineEdit.setPalette(self.palette_faulty)
 
     def callSignCBChanged(self, txt):
         if not txt:

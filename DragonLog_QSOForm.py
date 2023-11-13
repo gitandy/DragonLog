@@ -8,6 +8,7 @@ from DragonLog_Settings import Settings
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
+    REGEX_CALL = re.compile(r'([a-zA-Z0-9]{1,3}?/)?[a-zA-Z0-9]{1,3}?[0-9][a-zA-Z0-9]{0,3}?[a-zA-Z](/[aAmMpP]{1,2}?)?')
     REGEX_RSTFIELD = re.compile(r'[1-5][1-9][1-9aAcCkKmMsSxX]?')
     REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
 
@@ -245,8 +246,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def callSignChanged(self, txt):
         if not txt:
             self.callSignLineEdit.setPalette(self.palette_empty)
-        else:
+        elif re.fullmatch(self.REGEX_CALL, txt):
             self.callSignLineEdit.setPalette(self.palette_ok)
+        elif self.bandComboBox.currentText() == '11m':
+            self.callSignLineEdit.setPalette(self.palette_ok)
+        else:
+            self.callSignLineEdit.setPalette(self.palette_faulty)
 
     def locatorChanged(self, txt):
         if not txt:
@@ -259,8 +264,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def ownCallSignChanged(self, txt):
         if not txt:
             self.ownCallSignLineEdit.setPalette(self.palette_empty)
-        else:
+        elif re.fullmatch(self.REGEX_CALL, txt):
             self.ownCallSignLineEdit.setPalette(self.palette_ok)
+        elif self.bandComboBox.currentText() == '11m':
+            self.ownCallSignLineEdit.setPalette(self.palette_ok)
+        else:
+            self.ownCallSignLineEdit.setPalette(self.palette_faulty)
 
     def ownLocatorChanged(self, txt):
         if not txt:
