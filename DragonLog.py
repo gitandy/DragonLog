@@ -68,11 +68,11 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
-    __sql_cols__ = ('id', 'date_time', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
+    __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
 
-    __adx_cols__ = ('QSO_DATE/TIME_ON', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
+    __adx_cols__ = ('QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF','STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
                     'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
                     'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
                     'DISTANCE')
@@ -80,6 +80,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
                             "date_time"   NUMERIC,
+                            "date_time_off"   NUMERIC,
                             "own_callsign" TEXT,
                             "call_sign"  TEXT,
                             "name"  TEXT,
@@ -170,7 +171,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__headers__ = (
             self.tr('QSO'),
-            self.tr('Date/Time'),
+            self.tr('Date/Time start'),
+            self.tr('Date/Time end'),
             self.tr('Own call sign'),
             self.tr('Call sign'),
             self.tr('Name'),
@@ -320,6 +322,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                     self.__header_map__[c])
 
             self.QSOTableView.setModel(model)
+            self.QSOTableView.hideColumn(self.__sql_cols__.index('date_time_off'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_name'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_qth'))
             self.QSOTableView.hideColumn(self.__sql_cols__.index('own_locator'))
@@ -348,20 +351,23 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         dt = QtCore.QDateTime.currentDateTimeUtc()
         self.qso_form.dateEdit.setDate(dt.date())
+        self.qso_form.dateOnEdit.setDate(dt.date())
         self.qso_form.timeEdit.setTime(dt.time())
+        self.qso_form.timeOnEdit.setTime(dt.time())
 
         if self.qso_form.exec():
             print('Logging QSO...')
 
             if self.qso_form.autoDateCheckBox.isChecked():
-                date_time = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
+                date_time_off = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
             else:
-                date_time = self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text()
+                date_time_off = self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text()
 
             band = self.qso_form.bandComboBox.currentText()
 
             values = (
-                date_time,
+                self.qso_form.dateOnEdit.text() + ' ' + self.qso_form.timeOnEdit.text(),
+                date_time_off,
                 self.qso_form.ownCallSignLineEdit.text().upper() if band != '11m' else self.qso_form.ownCallSignLineEdit.text(),
                 self.qso_form.callSignLineEdit.text().upper() if band != '11m' else self.qso_form.callSignLineEdit.text(),
                 self.qso_form.nameLineEdit.text(),
@@ -457,8 +463,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.qso_form.identityGroupBox.setCheckable(False)
 
             date, time = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('date_time'))).split()
-            self.qso_form.dateEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
-            self.qso_form.timeEdit.setTime(QtCore.QTime.fromString(time))
+            self.qso_form.dateOnEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
+            self.qso_form.timeOnEdit.setTime(QtCore.QTime.fromString(time))
+
+            if self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('date_time_off'))):
+                date_off, time_off = self.QSOTableView.model().data(i.siblingAtColumn(
+                    self.__sql_cols__.index('date_time_off'))).split()
+            else:
+                date_off, time_off = date, time
+            self.qso_form.dateEdit.setDate(QtCore.QDate.fromString(date_off, 'yyyy-MM-dd'))
+            self.qso_form.timeEdit.setTime(QtCore.QTime.fromString(time_off))
+
             self.qso_form.ownCallSignLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('own_callsign'))))
             self.qso_form.callSignLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
@@ -520,6 +535,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 band = self.qso_form.bandComboBox.currentText()
 
                 values = (
+                    self.qso_form.dateOnEdit.text() + ' ' + self.qso_form.timeOnEdit.text(),
                     self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text(),
                     self.qso_form.ownCallSignLineEdit.text().upper() if band != '11m' else self.qso_form.ownCallSignLineEdit.text(),
                     self.qso_form.callSignLineEdit.text().upper() if band != '11m' else self.qso_form.callSignLineEdit.text(),
@@ -692,6 +708,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             record = {'QSO_DATE': qso_date.replace('-', ''),
                       'TIME_ON': qso_time.replace(':', ''),
                       'APP': []}
+
+            if query.value(self.__sql_cols__.index('date_time_off')):
+                qso_date_off, qso_time_off = query.value(self.__sql_cols__.index('date_time_off')).split()
+                record['QSO_DATE_OFF'] = qso_date_off.replace('-', '')
+                record['TIME_OFF'] = qso_time_off.replace(':', '')
 
             if query.value(self.__sql_cols__.index('call_sign')):
                 if band == '11m' and is_adx:
@@ -908,9 +929,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
             values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
 
+            if 'TIME_OFF' in r:
+                date_off = rec_data(r, 'QSO_DATE_OFF') if 'QSO_DATE_OFF' in r else date  # Fallback
+                timex_off = rec_data(r, 'TIME_OFF')
+                time_off = f'{timex_off[:2]}:{timex_off[2:4]}' if len(timex_off) == 4 else f'{timex_off[:2]}:{timex_off[2:4]}:{timex_off[4:6]}'
+                values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
+            else:
+                values[1] = values[0]
+
             for p in r:
                 match p:
-                    case 'QSO_DATE' | 'TIME_ON' | 'APP_DRAGONLOG_CBQSO':
+                    case 'QSO_DATE' | 'TIME_ON' | 'QSO_DATE_OFF' | 'TIME_OFF' | 'APP_DRAGONLOG_CBQSO':
                         continue
                     case 'BAND':
                         values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()

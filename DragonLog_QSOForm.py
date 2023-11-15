@@ -47,6 +47,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.refreshTimer = QtCore.QTimer(self)
         self.refreshTimer.timeout.connect(self.refreshRigData)
 
+        self.timeTimer = QtCore.QTimer(self)
+        self.timeTimer.timeout.connect(self.refreshTime)
+
         self.palette_default = QtGui.QPalette()
         self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
                                       QtGui.QColor(255, 255, 255))
@@ -59,6 +62,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.palette_faulty = QtGui.QPalette()
         self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
                                      QtGui.QColor(255, 204, 204))
+
+    def refreshTime(self):
+        if self.autoDateCheckBox.isChecked():
+            dt = QtCore.QDateTime.currentDateTimeUtc()
+            self.dateEdit.setDate(dt.date())
+            self.timeEdit.setTime(dt.time())
 
     # noinspection PyBroadException
     def refreshRigData(self):
@@ -120,7 +129,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                             return
 
                         try:
-                            pwr = int(int(pwr_s)/1000+.9)
+                            pwr = int(int(pwr_s) / 1000 + .9)
                             self.powerSpinBox.setValue(pwr)
                         except Exception:
                             pass
@@ -295,9 +304,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.ownCallSignChanged(self.ownCallSignLineEdit.text())
         self.ownLocatorChanged(self.ownLocatorLineEdit.text())
 
+        self.timeTimer.start(1000)
+
         return super().exec()
 
     def hideEvent(self, e):
         self.lastpos = self.pos()
         self.refreshTimer.stop()
+        self.timeTimer.stop()
         e.accept()
