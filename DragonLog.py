@@ -163,12 +163,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             color_map: dict = json.load(cmj)
         self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
 
-        self.settings_form = Settings(self, self.settings, self.hamlib_status)
-
-        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
-                                self.cb_channels, self.hamlib_error)
-        self.keep_logging = False
-
         self.__headers__ = (
             self.tr('QSO'),
             self.tr('Date/Time start'),
@@ -195,6 +189,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         )
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
+
+        self.settings_form = Settings(self, self.settings, self.hamlib_status)
+
+        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
+                                self.cb_channels, self.hamlib_error)
+        self.keep_logging = False
 
         self.adx_export_schema = xmlschema.XMLSchema(self.searchFile('data:adif/adx314.xsd'))
         self.adx_import_schema = xmlschema.XMLSchema(self.searchFile('data:adif/adx314generic.xsd'))

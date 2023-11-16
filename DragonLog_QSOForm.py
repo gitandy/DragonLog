@@ -1,17 +1,13 @@
-import re
 import socket
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 import DragonLog_QSOForm_ui
 from DragonLog_Settings import Settings
+from DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
-    REGEX_CALL = re.compile(r'([a-zA-Z0-9]{1,3}?/)?[a-zA-Z0-9]{1,3}?[0-9][a-zA-Z0-9]{0,3}?[a-zA-Z](/[aAmMpP]{1,2}?)?')
-    REGEX_RSTFIELD = re.compile(r'[1-5][1-9][1-9aAcCkKmMsSxX]?')
-    REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
-
     def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
                  cb_channels: dict, hamlib_error: QtWidgets.QLabel):
         super().__init__(parent)
@@ -239,7 +235,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def rstRcvdChanged(self, txt):
         if not txt:
             self.RSTRcvdLineEdit.setPalette(self.palette_empty)
-        elif re.fullmatch(self.REGEX_RSTFIELD, txt):
+        elif check_format(REGEX_RSTFIELD, txt):
             self.RSTRcvdLineEdit.setPalette(self.palette_ok)
         else:
             self.RSTRcvdLineEdit.setPalette(self.palette_faulty)
@@ -247,7 +243,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def rstSentChanged(self, txt):
         if not txt:
             self.RSTSentLineEdit.setPalette(self.palette_empty)
-        elif re.fullmatch(self.REGEX_RSTFIELD, txt):
+        elif check_format(REGEX_RSTFIELD, txt):
             self.RSTSentLineEdit.setPalette(self.palette_ok)
         else:
             self.RSTSentLineEdit.setPalette(self.palette_faulty)
@@ -255,7 +251,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def callSignChanged(self, txt):
         if not txt:
             self.callSignLineEdit.setPalette(self.palette_empty)
-        elif re.fullmatch(self.REGEX_CALL, txt):
+        elif check_format(REGEX_CALL, txt):
             self.callSignLineEdit.setPalette(self.palette_ok)
         elif self.bandComboBox.currentText() == '11m':
             self.callSignLineEdit.setPalette(self.palette_ok)
@@ -265,7 +261,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def locatorChanged(self, txt):
         if not txt:
             self.locatorLineEdit.setPalette(self.palette_empty)
-        elif re.fullmatch(self.REGEX_LOCATOR, txt):
+        elif check_format(REGEX_LOCATOR, txt):
             self.locatorLineEdit.setPalette(self.palette_ok)
         else:
             self.locatorLineEdit.setPalette(self.palette_faulty)
@@ -273,7 +269,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def ownCallSignChanged(self, txt):
         if not txt:
             self.ownCallSignLineEdit.setPalette(self.palette_empty)
-        elif re.fullmatch(self.REGEX_CALL, txt):
+        elif check_format(REGEX_CALL, txt):
             self.ownCallSignLineEdit.setPalette(self.palette_ok)
         elif self.bandComboBox.currentText() == '11m':
             self.ownCallSignLineEdit.setPalette(self.palette_ok)
@@ -283,7 +279,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def ownLocatorChanged(self, txt):
         if not txt:
             self.ownLocatorLineEdit.setPalette(self.palette_empty)
-        elif re.fullmatch(self.REGEX_LOCATOR, txt):
+        elif check_format(REGEX_LOCATOR, txt):
             self.ownLocatorLineEdit.setPalette(self.palette_ok)
         else:
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
