@@ -1,7 +1,7 @@
 import os
-import subprocess
 import sys
 import platform
+import subprocess
 
 import maidenhead
 from PyQt6 import QtWidgets, QtCore, QtGui
@@ -11,7 +11,7 @@ from DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
-    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel):
+    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: list):
         super().__init__(parent)
         self.setupUi(self)
 
@@ -52,6 +52,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.palette_faulty = QtGui.QPalette()
         self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
                                      QtGui.QColor(255, 204, 204))
+
+        self.columns = cols
 
     def calcLocator(self):
         self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
@@ -205,6 +207,20 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         else:
             self.callsignCBLineEdit.setPalette(self.palette_ok)
 
+    def hideCol(self):
+        for item in self.colShowListWidget.selectedItems():
+            self.colHideListWidget.insertItem(0, item.text())
+            self.colShowListWidget.takeItem(self.colShowListWidget.row(item))
+
+        self.colHideListWidget.sortItems()
+
+    def showCol(self):
+        for item in self.colHideListWidget.selectedItems():
+            self.colShowListWidget.insertItem(0, item.text())
+            self.colHideListWidget.takeItem(self.colHideListWidget.row(item))
+
+        self.colShowListWidget.sortItems()
+
     def exec(self):
         print('Loading settings...')
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
@@ -222,6 +238,18 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.antennaCBLineEdit.setText(self.settings.value('station_cb/antenna', ''))
         self.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
         self.expCBQSOsCheckBox.setChecked(bool(self.settings.value('station_cb/cb_exp_adif', 0)))
+
+        self.colHideListWidget.clear()
+        self.colShowListWidget.clear()
+        h_cols = self.settings.value('ui/hidden_cols', '').split(',')
+        for i, c in enumerate(self.columns, 1):
+            if c not in h_cols:
+                self.colShowListWidget.addItem(f'{i:02d} - {c}')
+            elif c in h_cols:
+                self.colHideListWidget.addItem(f'{i:02d} - {c}')
+
+        self.colShowListWidget.sortItems()
+        self.colHideListWidget.sortItems()
 
         return super().exec()
 
@@ -244,5 +272,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('station_cb/antenna', self.antennaCBLineEdit.text())
         self.settings.setValue('station_cb/cb_by_default', int(self.cbDefaultCheckBox.isChecked()))
         self.settings.setValue('station_cb/cb_exp_adif', int(self.expCBQSOsCheckBox.isChecked()))
+
+        self.settings.setValue('ui/hidden_cols',
+                               ','.join([i.text().split('-')[1].strip() for i in
+                                         self.colHideListWidget.findItems('.*',
+                                                                          QtCore.Qt.MatchFlag.MatchRegularExpression)]))
 
         super().accept()

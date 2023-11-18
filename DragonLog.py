@@ -190,7 +190,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
 
-        self.settings_form = Settings(self, self.settings, self.hamlib_status)
+        self.settings_form = Settings(self, self.settings, self.hamlib_status, self.__headers__)
 
         self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
                                 self.cb_channels, self.hamlib_error)
@@ -212,7 +212,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 print(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
 
     def showSettings(self):
-        self.settings_form.exec()
+        if self.settings_form.exec():
+            self.refreshTableView()
 
     def selectDB(self):
         res = QtWidgets.QFileDialog.getSaveFileName(
@@ -322,15 +323,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                     self.__header_map__[c])
 
             self.QSOTableView.setModel(model)
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('date_time_off'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('own_name'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('own_qth'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('own_locator'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('radio'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('antenna'))
-            self.QSOTableView.hideColumn(self.__sql_cols__.index('remarks'))
-            self.QSOTableView.sortByColumn(1, QtCore.Qt.SortOrder.AscendingOrder)
-            self.QSOTableView.resizeColumnsToContents()
+
+            self.refreshTableView()
 
             print(f'Opened database {db_file}')
             self.settings.setValue('lastDatabase', db_file)
@@ -343,6 +337,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self,
                 f'{__prog_name__} - {self.tr("Error")}',
                 str(exc))
+
+    def refreshTableView(self):
+        hidden_cols = self.settings.value('ui/hidden_cols', '').split(',')
+        for i, col in enumerate(self.__headers__):
+            if col in hidden_cols:
+                self.QSOTableView.hideColumn(i)
+            else:
+                self.QSOTableView.showColumn(i)
+
+        self.QSOTableView.sortByColumn(1, QtCore.Qt.SortOrder.AscendingOrder)
+        self.QSOTableView.resizeColumnsToContents()
 
     def logQSO(self):
         self.qso_form.clear()

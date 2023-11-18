@@ -168,6 +168,31 @@
       <translation>Schnittstelle</translation>
     </message>
     <message>
+      <location filename="DragonLog_Settings.ui" line="0" />
+      <source>User interface</source>
+      <translation>Anwendung</translation>
+    </message>
+    <message>
+      <location filename="DragonLog_Settings.ui" line="0" />
+      <source>Columns to show</source>
+      <translation>Spalten anzeigen</translation>
+    </message>
+    <message>
+      <location filename="DragonLog_Settings.ui" line="0" />
+      <source>&gt;</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="DragonLog_Settings.ui" line="0" />
+      <source>&lt;</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="DragonLog_Settings.ui" line="0" />
+      <source>Columns to hide</source>
+      <translation>Spalten verstecken</translation>
+    </message>
+    <message>
       <source>Hamlib path</source>
       <translation type="vanished">Hamlib-Pfad</translation>
     </message>
@@ -295,22 +320,22 @@
       <translation>Entfernung</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="220" />
+      <location filename="DragonLog.py" line="221" />
       <source>Select file</source>
       <translation>Datenbank öffnen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="222" />
+      <location filename="DragonLog.py" line="223" />
       <source>QSO-Log (*.qlog);;All Files (*.*)</source>
       <translation>QSO-Log (*.qlog);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="245" />
+      <location filename="DragonLog.py" line="246" />
       <source>Database structure out-dated</source>
       <translation>Datenbankstruktur veraltet</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="246" />
+      <location filename="DragonLog.py" line="247" />
       <source>The database structure is out-dated and needs a conversion
 
 A backup will be generated:</source>
@@ -319,119 +344,119 @@ A backup will be generated:</source>
 Ein Backup wird erstellt:</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="296" />
+      <location filename="DragonLog.py" line="297" />
       <source>Database conversion</source>
       <translation>Datenbankkonvertierung</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="297" />
+      <location filename="DragonLog.py" line="298" />
       <source>Database conversion finished</source>
       <translation>Datenbankkonvertierung abgeschlossen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="664" />
-      <location filename="DragonLog.py" line="344" />
+      <location filename="DragonLog.py" line="669" />
+      <location filename="DragonLog.py" line="338" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="413" />
+      <location filename="DragonLog.py" line="418" />
       <source>Log multi QSOs</source>
       <translation>Mehrfach QSOs eingeben</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="421" />
+      <location filename="DragonLog.py" line="426" />
       <source>Delete QSO</source>
       <translation>QSO löschen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="422" />
+      <location filename="DragonLog.py" line="427" />
       <source>Do you really want to delete the selected QSO(s)?</source>
       <translation>Wollen sie die selektierten QSOs wirklich löschen?</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="530" />
+      <location filename="DragonLog.py" line="535" />
       <source>Change QSO</source>
       <translation>QSO ändern</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="808" />
-      <location filename="DragonLog.py" line="581" />
+      <location filename="DragonLog.py" line="813" />
+      <location filename="DragonLog.py" line="586" />
       <source>Excel-File (*.xlsx)</source>
       <translation>Excel-Datei (*.xlsx)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="809" />
-      <location filename="DragonLog.py" line="582" />
+      <location filename="DragonLog.py" line="814" />
+      <location filename="DragonLog.py" line="587" />
       <source>CSV-File (*.csv)</source>
       <translation>CSV-Datei (*.csv)</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="810" />
-      <location filename="DragonLog.py" line="583" />
+      <location filename="DragonLog.py" line="815" />
+      <location filename="DragonLog.py" line="588" />
       <source>ADIF 3 (*.adx *.adi *.adif)</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="588" />
+      <location filename="DragonLog.py" line="593" />
       <source>Select export file</source>
       <translation>Exportdatei speichern</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="620" />
+      <location filename="DragonLog.py" line="625" />
       <source>Exported QSO log</source>
       <translation>Exportiere QSO log</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="815" />
+      <location filename="DragonLog.py" line="820" />
       <source>Select import file</source>
       <translation>Importdatei öffnen</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="855" />
-      <location filename="DragonLog.py" line="849" />
+      <location filename="DragonLog.py" line="860" />
+      <location filename="DragonLog.py" line="854" />
       <source>Log import Excel</source>
       <translation>Log Import Excel</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="892" />
-      <location filename="DragonLog.py" line="886" />
+      <location filename="DragonLog.py" line="897" />
+      <location filename="DragonLog.py" line="891" />
       <source>Log import CSV</source>
       <translation>Log Import CSV</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="973" />
-      <location filename="DragonLog.py" line="922" />
+      <location filename="DragonLog.py" line="978" />
+      <location filename="DragonLog.py" line="927" />
       <source>Log import ADIF</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="992" />
+      <location filename="DragonLog.py" line="997" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="1012" />
+      <location filename="DragonLog.py" line="1017" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="1027" />
+      <location filename="DragonLog.py" line="1032" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="1028" />
+      <location filename="DragonLog.py" line="1033" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog.py" line="1029" />
+      <location filename="DragonLog.py" line="1034" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="DragonLog.py" line="1041" />
+      <location filename="DragonLog.py" line="1046" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
@@ -746,53 +771,53 @@ Ein Backup wird erstellt:</translation>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="DragonLog_Settings.py" line="182" />
-      <location filename="DragonLog_Settings.py" line="64" />
+      <location filename="DragonLog_Settings.py" line="184" />
+      <location filename="DragonLog_Settings.py" line="66" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="183" />
-      <location filename="DragonLog_Settings.py" line="176" />
-      <location filename="DragonLog_Settings.py" line="170" />
-      <location filename="DragonLog_Settings.py" line="68" />
+      <location filename="DragonLog_Settings.py" line="185" />
+      <location filename="DragonLog_Settings.py" line="178" />
+      <location filename="DragonLog_Settings.py" line="172" />
+      <location filename="DragonLog_Settings.py" line="70" />
       <source>Hamlib</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="183" />
-      <location filename="DragonLog_Settings.py" line="170" />
-      <location filename="DragonLog_Settings.py" line="68" />
+      <location filename="DragonLog_Settings.py" line="185" />
+      <location filename="DragonLog_Settings.py" line="172" />
+      <location filename="DragonLog_Settings.py" line="70" />
       <source>inactiv</source>
       <translation>inaktiv</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="80" />
+      <location filename="DragonLog_Settings.py" line="82" />
       <source>Choose hamlib rigctld executable</source>
       <translation>Hamlib rigctld wählen</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="88" />
+      <location filename="DragonLog_Settings.py" line="90" />
       <source>Selected file is not the executable</source>
       <translation>Die gewählte Datei ist nicht ausführbar</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="95" />
+      <location filename="DragonLog_Settings.py" line="97" />
       <source>Error executing rigctld</source>
       <translation>Fehler beim Ausführen von rigctld</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="168" />
+      <location filename="DragonLog_Settings.py" line="170" />
       <source>rigctld did not start properly</source>
       <translation>rigctld konnte nicht gestartet werden</translation>
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="173" />
+      <location filename="DragonLog_Settings.py" line="175" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="DragonLog_Settings.py" line="176" />
+      <location filename="DragonLog_Settings.py" line="178" />
       <source>activ</source>
       <translation>aktiv</translation>
     </message>
