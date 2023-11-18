@@ -54,6 +54,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                      QtGui.QColor(255, 204, 204))
 
         self.columns = cols
+        self.sortComboBox.insertItems(0, cols)
 
     def calcLocator(self):
         self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
@@ -239,6 +240,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
         self.expCBQSOsCheckBox.setChecked(bool(self.settings.value('station_cb/cb_exp_adif', 0)))
 
+        self.sortComboBox.setCurrentText(self.settings.value('ui/sort_col', self.tr('Date/Time start')))
+
         self.colHideListWidget.clear()
         self.colShowListWidget.clear()
         h_cols = self.settings.value('ui/hidden_cols', '').split(',')
@@ -273,6 +276,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('station_cb/cb_by_default', int(self.cbDefaultCheckBox.isChecked()))
         self.settings.setValue('station_cb/cb_exp_adif', int(self.expCBQSOsCheckBox.isChecked()))
 
+        self.settings.setValue('ui/sort_col', self.sortComboBox.currentText())
         self.settings.setValue('ui/hidden_cols',
                                ','.join([i.text().split('-')[1].strip() for i in
                                          self.colHideListWidget.findItems('.*',
