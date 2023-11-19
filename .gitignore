@@ -2,10 +2,10 @@
 /dist
 /venv
 /.idea
-/__pycache__
-/*.qm
-/DragonLog_*_ui.py
+__pycache__
+*.qm
+DragonLog_*_ui.py
 /temp
 /tools/*.csv
 /README.txt
-/__version__.py
+__version__.py

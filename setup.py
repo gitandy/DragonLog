@@ -2,8 +2,7 @@ import sys
 from cx_Freeze import setup, Executable
 from DragonLog import __prog_name__, __prog_desc__, __version__, __author_name__, __author_email__, __copyright__
 
-include_files = ['DragonLog_de.qm',
-                 'icons',
+include_files = ['icons',
                  'data',
                  'README.md',
                  'README.txt',
@@ -58,7 +57,7 @@ bdist_msi_options = {
 }
 
 executables = [
-    Executable('DragonLog.py',
+    Executable('src/DragonLog.py',
                target_name='DragonLog',
                base=base,
                icon='icons/logo.ico',

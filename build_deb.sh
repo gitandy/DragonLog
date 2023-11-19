@@ -18,7 +18,7 @@ SIZE=$(du -s dragonlog_${VERSION}_linux_amd64/opt/DragonLog | awk '{print $1}')
 
 cat << EOF > dragonlog_${VERSION}_linux_amd64/DEBIAN/control
 Package: DragonLog
-Version: 0.2
+Version: ${VERSION[@]:1}
 Architecture: amd64
 Maintainer: Andreas Schawo <andreas@schawo.de>
 Section: hamradio

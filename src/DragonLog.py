@@ -72,10 +72,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
 
-    __adx_cols__ = ('QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF','STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
-                    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
-                    'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
-                    'DISTANCE')
+    __adx_cols__ = (
+    'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
+    'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
+    'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
+    'DISTANCE')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -346,10 +347,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 self.QSOTableView.showColumn(i)
 
-        self.QSOTableView.sortByColumn(self.__headers__.index(self.settings.value('ui/sort_col',
-                                                                                  self.tr('Date/Time start'))),
-                                       QtCore.Qt.SortOrder.AscendingOrder)
-        
+        if self.settings.value('ui/sort_col', self.tr('Date/Time start')) in self.__headers__:
+            self.QSOTableView.sortByColumn(self.__headers__.index(self.settings.value('ui/sort_col',
+                                                                                      self.tr('Date/Time start'))),
+                                           QtCore.Qt.SortOrder.AscendingOrder)
+
         self.QSOTableView.resizeColumnsToContents()
 
     def logQSO(self):
@@ -940,7 +942,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if 'TIME_OFF' in r:
                 date_off = rec_data(r, 'QSO_DATE_OFF') if 'QSO_DATE_OFF' in r else date  # Fallback
                 timex_off = rec_data(r, 'TIME_OFF')
-                time_off = f'{timex_off[:2]}:{timex_off[2:4]}' if len(timex_off) == 4 else f'{timex_off[:2]}:{timex_off[2:4]}:{timex_off[4:6]}'
+                time_off = f'{timex_off[:2]}:{timex_off[2:4]}' if len(
+                    timex_off) == 4 else f'{timex_off[:2]}:{timex_off[2:4]}:{timex_off[4:6]}'
                 values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
             else:
                 values[1] = values[0]
@@ -993,7 +996,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     # noinspection PyPep8Naming
     def showHelp(self):
         if not self.help_dialog:
-            with open(os.path.join(self.app_path, 'README.md')) as hf:
+            with open(self.searchFile('help:README.md')) as hf:
                 help_text = hf.read()
 
             self.help_dialog = QtWidgets.QDialog(self)
@@ -1057,8 +1060,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
+    app_path = os.path.dirname(sys.argv[0])
+
     translator = QtCore.QTranslator(app)
-    translator.load(os.path.abspath(os.path.dirname(sys.argv[0])) + '/DragonLog_' + QtCore.QLocale.system().name())
+    if not translator.load(
+            os.path.abspath(app_path + '/data/i18n/DragonLog_' + QtCore.QLocale.system().name())):
+        translator.load(
+            os.path.abspath(app_path + '/../data/i18n/DragonLog_' + QtCore.QLocale.system().name()))
     app.installTranslator(translator)
 
     file = None
@@ -1068,10 +1076,12 @@ def main():
         if not (os.path.isfile(file) and os.path.splitext(file)[-1] in ('.qlog', '.sqlite')):
             file = None
 
-    app_path = os.path.dirname(args[0])
-
     QtCore.QDir.addSearchPath('icons', app_path + '/icons')
+    QtCore.QDir.addSearchPath('icons', os.path.abspath(app_path + '/../icons'))
     QtCore.QDir.addSearchPath('data', app_path + '/data')
+    QtCore.QDir.addSearchPath('data', os.path.abspath(app_path + '/../data'))
+    QtCore.QDir.addSearchPath('help', app_path + '/')
+    QtCore.QDir.addSearchPath('help', os.path.abspath(app_path + '/..'))
 
     dl = DragonLog(file, app_path)
     dl.show()
