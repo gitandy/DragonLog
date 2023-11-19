@@ -20,6 +20,7 @@ echo -------- >> README.txt
 echo >> README.txt
 git tag -n20 --sort=-v:tag >> README.txt
 
+export PYTHONPATH=src
 source ./venv/bin/activate
 
 echo
@@ -31,6 +32,8 @@ pyuic6 DragonLog_Settings.ui -o ../src/DragonLog_Settings_ui.py
 cd ..
 
 pylupdate6 DragonLog.py DragonLog_MainWindow.ui DragonLog_QSOForm.ui DragonLog_Settings.ui DragonLog_QSOForm.py DragonLog_Settings.py -ts DragonLog_de.ts
+
+mkdir -p data/i18n
 /usr/lib/qt6/bin/lrelease i18n/DragonLog_de.ts -qm data/i18n/DragonLog_de.qm
 
 echo
