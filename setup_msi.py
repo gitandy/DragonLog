@@ -1,26 +1,16 @@
 import sys
 from cx_Freeze import setup, Executable
-from DragonLog import __prog_name__, __prog_desc__, __version__, __author_name__, __author_email__, __copyright__
+from dragonlog.DragonLog import __prog_name__, __prog_desc__, __version__, __author_name__, __author_email__, __copyright__
 
-include_files = ['icons',
-                 'data',
-                 'README.md',
-                 'README.txt',
-                 'LICENCE.txt',
-                 ]
 
-if sys.platform == 'win32':
-    include_files.append('venv/Lib/site-packages/qt6_applications/Qt/plugins/platforms')
-    include_files.append('venv/Lib/site-packages/qt6_applications/Qt/plugins/styles')
-    base = 'Win32GUI'
-else:
-    base = None
+base = 'Win32GUI'
 
 build_exe_options = {
-    'packages': [],
-    'excludes': ['tkinter',
+    'packages': ['dragonlog'],
+    'excludes': ['tkinter', 
+                 'unittest',
                  ],
-    'include_files': include_files,
+    'zip_include_packages': ["encodings", "PyQt6"]
 }
 
 msi_data = {
@@ -28,7 +18,7 @@ msi_data = {
         (__prog_name__, None, None, __prog_desc__, 'IconId', None),
     ],
     'Icon': [
-        ('IconId', 'icons/logo.ico'),
+        ('IconId', 'dragonlog/icons/logo.ico'),
     ],
 }
 
@@ -57,22 +47,16 @@ bdist_msi_options = {
 }
 
 executables = [
-    Executable('src/DragonLog.py',
+    Executable('main.py',
                target_name='DragonLog',
                base=base,
-               icon='icons/logo.ico',
+               icon='dragonlog/icons/logo.ico',
                shortcut_name=__prog_name__,
                shortcut_dir='DesktopFolder',
                copyright=__copyright__)
 ]
 
-setup(name=__prog_name__,
-      version=__version__[1:].split('-')[0],
-      author=__author_name__,
-      author_email=__author_email__,
-      license=__copyright__,
-      description=__prog_desc__,
-      options={
+setup(options={
           'build_exe': build_exe_options,
           'bdist_msi': bdist_msi_options,
       },

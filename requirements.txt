@@ -2,6 +2,5 @@ PyQt6
 #PyQt6-tools
 openpyxl
 maidenhead
-cx-Freeze
 xmlschema
 PyADIF-File>=0.4.1

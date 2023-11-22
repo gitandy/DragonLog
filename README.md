@@ -7,6 +7,27 @@ Beside logging for ham radio you can also log CB radio QSOs.
 
 *Screenshot in german translation*
 
+Installation
+------------
+The installation requires a python installation (>= 3.9).
+    
+    # python3 -m pip install DragonLog
+
+If you want to be able to export/import to/from Excel files install the extra packages
+
+    # python3 -m pip install DragonLog[extra]
+
+Run as
+
+    # python3 -m dragonlog
+
+Or if your python scripts folder is on PATH you can start DragonLog with 
+
+    # DragonLog
+
+
+For windows there is also an installable MSI and ZIP package available for convenience.
+
 First start
 -----------
 Before you can start to log QSOs a database has to be selected.
@@ -31,7 +52,7 @@ Export
 Following formats are supported for export
 * Excel file
 * CSV format (UTF-8 encoding)
-* ADIF 3 format (ADI/ADX)
+* [ADIF 3](https://adif.org/) format (ADI/ADX)
 
 ### ADIF format export
 ADX should be prefered over ADI as UTF-8 is supported. 
@@ -48,7 +69,7 @@ Import
 Following formats are supported for export
 * Excel file
 * CSV format (UTF-8 encoding)
-* ADIF 3 format (ADX, ADI)
+* [ADIF 3](https://adif.org/) format (ADI/ADX)
 
 ### Excel/CSV import
 The import file is expected to have the same structure and column order as exported by DragonLog.

@@ -1,0 +1,40 @@
+[project]
+name = "DragonLog"
+dynamic = ["version"]
+authors = [
+  { name="Andreas Schawo", email="andreas@schawo.de" },
+]
+description = "Log QSO for Ham radio"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["PyQt6", "maidenhead", "xmlschema", "PyADIF-File>=0.4.1"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Other Audience",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Ham Radio",
+]
+
+[project.optional-dependencies]
+extra=["openpyxl"]
+
+[project.urls]
+"Homepage" = "https://github.com/gitandy/DragonLog"
+"Bug Tracker" = "https://github.com/gitandy/DragonLog/issues"
+
+[project.scripts]
+"DragonLog" = "dragonlog.DragonLog:main"
+
+[tool.setuptools]
+packages = ["dragonlog"]
+
+[tool.setuptools.package-data]
+dragonlog = ["data/**", "icons/**"]
+
+[tool.setuptools.dynamic]
+version = {attr = "dragonlog.__version__.__version__"}
