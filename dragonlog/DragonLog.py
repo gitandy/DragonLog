@@ -3,7 +3,6 @@ import csv
 import sys
 import json
 import math
-import string
 import datetime
 from xml.etree.ElementTree import ElementTree
 
@@ -666,11 +665,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             row += 1
 
         # Set auto filter
-        xl_ws.auto_filter.ref = f'A1:{string.ascii_uppercase[len(self.__headers__) - 1]}1'
+        xl_ws.auto_filter.ref = f'A1:{openpyxl.utils.get_column_letter(len(self.__headers__))}1'
 
         # Fit size to content width approximation
-        for c, w in zip(string.ascii_uppercase[:len(col_widths)], col_widths):
-            xl_ws.column_dimensions[c].width = w + 5  # Add 5 due to Excel filter drop down
+        for c, w in zip(range(1, len(col_widths)+1), col_widths):
+            # Add 5 due to Excel filter drop down
+            xl_ws.column_dimensions[openpyxl.utils.get_column_letter(c)].width = w + 5
 
         # Finally save
         try:
