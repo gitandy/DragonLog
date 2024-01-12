@@ -1096,11 +1096,12 @@ def main():
 
 
 # Get old behaviour on printing a traceback on exceptions
+sys._excepthook = sys.excepthook
 def except_hook(cls, exception, traceback):
-    sys.__excepthook__(cls, exception, traceback)
+    sys._excepthook(cls, exception, traceback)
+    sys.exit(1)
+sys.excepthook = except_hook
 
 
 if __name__ == '__main__':
-    sys.excepthook = except_hook
-
     main()
