@@ -128,7 +128,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                     self.rigs[mfr_name] = [model_name]
 
             self.manufacturerComboBox.clear()
-            self.manufacturerComboBox.insertItems(0, self.rigs.keys())
+            self.manufacturerComboBox.insertItems(0, sorted(self.rigs.keys()))
             if self.settings.value('cat/rigMfr', None):
                 self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
             else:
@@ -141,7 +141,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
     def mfrChanged(self, mfr):
         self.modelComboBox.clear()
-        self.modelComboBox.insertItems(0, self.rigs[mfr])
+        self.modelComboBox.insertItems(0, sorted(self.rigs[mfr]))
 
         if self.settings.value('cat/rigModel', None):
             self.modelComboBox.setCurrentText(self.settings.value('cat/rigModel'))
