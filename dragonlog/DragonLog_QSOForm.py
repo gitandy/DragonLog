@@ -39,6 +39,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                           'FM': 'FM',
                           'WFM': 'FM',
                           }
+        self.__last_mode__ = ''
+
 
         self.refreshTimer = QtCore.QTimer(self)
         self.refreshTimer.timeout.connect(self.refreshRigData)
@@ -101,13 +103,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
                     try:
                         mode, passband = [v.strip() for v in mode_s.split('\n')]
-                        if mode in self.rig_modes:
+                        if mode in self.rig_modes and mode != self.__last_mode__:
                             self.modeComboBox.setCurrentText(self.rig_modes[mode])
+                            self.__last_mode__ = mode
                     except Exception:
                         pass
 
                     # Get power
-                    if 'get level' in self.settings_form.rig_caps and 'get power2mW' in self.settings_form.rig_caps:
+                    if 'get level' in self.settings_form.rig_caps and 'get power2mw' in self.settings_form.rig_caps:
                         # Get power level
                         s.sendall(b'\\get_level RFPOWER\n')
                         pwrlvl_s = s.recv(1024).decode('utf-8').strip()
@@ -117,7 +120,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                             return
 
                         # Convert level to W
-                        s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n')
+                        s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n'.encode())
                         pwr_s = s.recv(1024).decode('utf-8').strip()
                         if pwr_s.startswith('RPRT'):
                             self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])

@@ -154,7 +154,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             if ln.startswith('Can '):
                 cap, able = ln.split(':')
                 if able.strip() == 'Y':
-                    self.rig_caps.append(cap[4:])
+                    self.rig_caps.append(cap[4:].lower())
 
     def ctrlRigctld(self, start):
         if start:
