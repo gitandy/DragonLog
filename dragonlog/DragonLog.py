@@ -359,6 +359,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.QSOTableView.resizeColumnsToContents()
 
+    def ctrlHamlib(self):
+        self.settings_form.ctrlRigctld(True)
+
     def logQSO(self):
         self.qso_form.clear()
         if not self.keep_logging:

@@ -86,6 +86,23 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSelect_DB_TB"/>
+   <addaction name="actionSettings_TB"/>
+   <addaction name="actionStart_hamlib_TB"/>
+   <addaction name="separator"/>
+   <addaction name="actionLog_QSO_TB"/>
+   <addaction name="actionLog_multi_QSOs_TB"/>
+  </widget>
   <action name="actionLog_QSO">
    <property name="icon">
     <iconset>
@@ -98,7 +115,25 @@
     <string>Ctrl+L</string>
    </property>
   </action>
+  <action name="actionLog_QSO_TB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:edit_add.png</normaloff>icons:edit_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Log QSO...</string>
+   </property>
+  </action>
   <action name="actionSelect_DB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:db.png</normaloff>icons:db.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select database...</string>
+   </property>
+  </action>
+  <action name="actionSelect_DB_TB">
    <property name="icon">
     <iconset>
      <normaloff>icons:db.png</normaloff>icons:db.png</iconset>
@@ -188,6 +223,15 @@
     <string>Settings</string>
    </property>
   </action>
+  <action name="actionSettings_TB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:gear.png</normaloff>icons:gear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
   <action name="actionLog_multi_QSOs">
    <property name="icon">
     <iconset>
@@ -200,6 +244,15 @@
     <string>Ctrl+Shift+L</string>
    </property>
   </action>
+  <action name="actionLog_multi_QSOs_TB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:edit_addmulti.png</normaloff>icons:edit_addmulti.png</iconset>
+   </property>
+   <property name="text">
+    <string>Log multi QSOs...</string>
+   </property>
+  </action>
   <action name="actionHelp">
    <property name="icon">
     <iconset>
@@ -207,6 +260,15 @@
    </property>
    <property name="text">
     <string>Help</string>
+   </property>
+  </action>
+  <action name="actionStart_hamlib_TB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:player_play.png</normaloff>icons:player_play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start hamlib</string>
    </property>
   </action>
  </widget>
@@ -246,6 +308,22 @@
   </connection>
   <connection>
    <sender>actionLog_QSO</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>logQSO()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLog_QSO_TB</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>logQSO()</slot>
@@ -341,6 +419,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionSettings_TB</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionExport</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -358,6 +452,22 @@
   </connection>
   <connection>
    <sender>actionLog_multi_QSOs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>logMultiQSOs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLog_multi_QSOs_TB</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>logMultiQSOs()</slot>
@@ -420,6 +530,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionStart_hamlib_TB</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>ctrlHamlib()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSelect_DB_TB</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectDB()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -433,5 +575,6 @@
   <slot>logImport()</slot>
   <slot>logMultiQSOs()</slot>
   <slot>showHelp()</slot>
+  <slot>ctrlHamlib()</slot>
  </slots>
 </ui>

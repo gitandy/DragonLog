@@ -158,30 +158,32 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
     def ctrlRigctld(self, start):
         if start:
-            rig_id = self.rig_ids[self.manufacturerComboBox.currentText() + '/' + self.modelComboBox.currentText()]
+            if not self.rigctld:
+                rig_id = self.rig_ids[self.manufacturerComboBox.currentText() + '/' + self.modelComboBox.currentText()]
 
-            self.collectRigCaps(rig_id)
+                self.collectRigCaps(rig_id)
 
-            self.rigctld = subprocess.Popen([self.rigctld_path,
-                                             f'--model={rig_id}',
-                                             f'--rig-file={self.catInterfaceLineEdit.text().strip()}',
-                                             f'--serial-speed={self.catBaudComboBox.currentText()}',
-                                             '--listen-addr=127.0.0.1'])
-            if self.rigctld.poll():
-                self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
-                self.ctrlRigctldPushButton.setChecked(False)
-                self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
-            else:
-                self.checkHamlibRunLabel.setText('')
-                self.ctrlRigctldPushButton.setText(self.tr('Stop'))
-                print(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
-                self.checkHamlibTimer.start(1000)
-                self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
+                self.rigctld = subprocess.Popen([self.rigctld_path,
+                                                 f'--model={rig_id}',
+                                                 f'--rig-file={self.catInterfaceLineEdit.text().strip()}',
+                                                 f'--serial-speed={self.catBaudComboBox.currentText()}',
+                                                 '--listen-addr=127.0.0.1'])
+                if self.rigctld.poll():
+                    self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
+                    self.ctrlRigctldPushButton.setChecked(False)
+                    self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
+                else:
+                    self.checkHamlibRunLabel.setText('')
+                    self.ctrlRigctldPushButton.setText(self.tr('Stop'))
+                    print(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
+                    self.checkHamlibTimer.start(1000)
+                    self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
         else:
             self.checkHamlibTimer.stop()
             if self.rigctld and not self.rigctld.poll():
                 os.kill(self.rigctld.pid, 9)
                 print('Killed rigctld')
+            self.rigctld = None
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
             self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
             self.rig_caps = []
