@@ -4,12 +4,11 @@ import sys
 import json
 import math
 import datetime
-from xml.etree.ElementTree import ElementTree
 
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import maidenhead
-import xmlschema
 import adif_file
+from adif_file import adi, adx
 
 OPTION_OPENPYXL = False
 try:
@@ -201,9 +200,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
                                 self.cb_channels, self.hamlib_error)
         self.keep_logging = False
-
-        self.adx_export_schema = xmlschema.XMLSchema(self.searchFile('data:adif/adx314.xsd'))
-        self.adx_import_schema = xmlschema.XMLSchema(self.searchFile('data:adif/adx314generic.xsd'))
 
         self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
@@ -815,12 +811,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             records.append(record)
 
+        doc['RECORDS'] = records
         if os.path.splitext(file)[-1] == '.adx':
-            doc['RECORDS'] = {'RECORD': records}
-            ElementTree(self.adx_export_schema.encode(doc)).write(file, xml_declaration=True, encoding='utf-8')
+            adx.dump(file, doc)
         else:
-            doc['RECORDS'] = records
-            adif_file.dump_adi(file, doc, 'ADIF Export by DragonLog')
+            adi.dump(file, doc, 'ADIF Export by DragonLog')
 
         print(f'Saved "{file}"')
 
@@ -927,13 +922,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
 
         if is_adx:
-            records: list = self.adx_import_schema.to_dict(file, decimal_type=str)['RECORDS']['RECORD']
+            records: list = adx.load(file)['RECORDS']
         else:
-            records: list = adif_file.load_adi(file)['RECORDS']
-
-        # align access to adx and adi records
-        def rec_data(rec, param):
-            return rec[param][0] if is_adx else rec[param]
+            records: list = adi.load(file)['RECORDS']
 
         imported = 0
         for i, r in enumerate(records, 1):
@@ -947,14 +938,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 )
                 continue
 
-            date = rec_data(r, 'QSO_DATE')
-            timex = rec_data(r, 'TIME_ON')
+            date = r['QSO_DATE']
+            timex = r['TIME_ON']
             time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
             values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
 
             if 'TIME_OFF' in r:
-                date_off = rec_data(r, 'QSO_DATE_OFF') if 'QSO_DATE_OFF' in r else date  # Fallback
-                timex_off = rec_data(r, 'TIME_OFF')
+                date_off = r['QSO_DATE_OFF'] if 'QSO_DATE_OFF' in r else date  # Fallback
+                timex_off = r['TIME_OFF']
                 time_off = f'{timex_off[:2]}:{timex_off[2:4]}' if len(
                     timex_off) == 4 else f'{timex_off[:2]}:{timex_off[2:4]}:{timex_off[4:6]}'
                 values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
@@ -966,9 +957,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     case 'QSO_DATE' | 'TIME_ON' | 'QSO_DATE_OFF' | 'TIME_OFF' | 'APP_DRAGONLOG_CBQSO':
                         continue
                     case 'BAND':
-                        values[self.__adx_cols__.index(p)] = rec_data(r, p).lower()
+                        values[self.__adx_cols__.index(p)] = r[p].lower()
                     case 'FREQ':
-                        values[self.__adx_cols__.index(p)] = str(float(rec_data(r, p)) * 1000)
+                        values[self.__adx_cols__.index(p)] = str(float(r[p]) * 1000)
                     case 'APP':  # Only for ADX as ADI App fields are recognised the standard way
                         for af in r[p]:
                             af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
@@ -981,9 +972,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
                                 values[self.__adx_cols__.index('BAND')] = '11m'
                     case p if p in self.__adx_cols__:
-                        values[self.__adx_cols__.index(p)] = rec_data(r, p)
+                        values[self.__adx_cols__.index(p)] = r[p]
                     case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
-                        values[self.__adx_cols__.index(p + '_INTL')] = rec_data(r, p)
+                        values[self.__adx_cols__.index(p + '_INTL')] = r[p]
 
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
@@ -1056,8 +1047,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             f'\n\nPython {sys.version.split()[0]}: {cr}' +
             op_txt +
             '\nmaidenhead: Copyright (c) 2018 Michael Hirsch, Ph.D.' +
-            f'\nxmlschema {xmlschema.__version__}: Copyright (c), 2016-2022, '
-            f'SISSA (Scuola Internazionale Superiore di Studi Avanzati)' +
             f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nDragon icon by Icons8 https://icons8.com'

@@ -2,5 +2,4 @@ PyQt6
 #PyQt6-tools
 openpyxl
 maidenhead
-xmlschema
-PyADIF-File>=0.4.1
+PyADIF-File==1.0
