@@ -519,8 +519,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.qso_form.channelComboBox.setCurrentIndex(-1)
                 channel = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('channel')))
                 self.qso_form.channelComboBox.setCurrentText(str(channel) if channel else '-')
-            else:
-                self.qso_form.channelComboBox.setCurrentIndex(-1)
 
             try:
                 power = int(self.QSOTableView.model().data(i.siblingAtColumn(
