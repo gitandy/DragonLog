@@ -47,12 +47,27 @@ The displayed form can be handled the easiest if you use TAB key to jump from fi
 
 If automatic time is selected, the time gets updated at saving the QSO.
 
+QSOs can be edited by double-clicking on an entry in the database view.
+
+### Automatic log import
+If you want to automatically log QSOs from other programms i.e. WSJT-X or JS8Call 
+DragonLog can watch an ADIF file for changes and import new logs as they are created.
+
+Starting file watching opens a file dialog where you have to point to the log in question.
+Check the manual of the other program to find the correct path.
+
+If you want to use the worked before feature of the other program consider to export your 
+QSOs beforehand.
+Dragonlog will only import QSOs which are not already included in the current database.
+
 Export
 ------
 Following formats are supported for export
+* [ADIF 3](https://adif.org/) format (ADI/ADX)
 * Excel file
 * CSV format (UTF-8 encoding)
-* [ADIF 3](https://adif.org/) format (ADI/ADX)
+
+ADIF ADX is the best choice for creating a backup.
 
 ### ADIF format export
 ADX should be prefered over ADI as UTF-8 is supported. 
@@ -65,11 +80,10 @@ automatically to suiting counterparts.
 
 Import 
 ------
-
 Following formats are supported for export
+* [ADIF 3](https://adif.org/) format (ADI/ADX)
 * Excel file
 * CSV format (UTF-8 encoding)
-* [ADIF 3](https://adif.org/) format (ADI/ADX)
 
 ### Excel/CSV import
 The import file is expected to have the same structure and column order as exported by DragonLog.
@@ -107,4 +121,4 @@ The rigctld is assumed to be in /usr/local/bin and thus on your path.
 
 Copyright
 ---------
-DragonLog &copy; 2023 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
+DragonLog &copy; 2023-2024 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 

@@ -71,6 +71,8 @@
     <addaction name="separator"/>
     <addaction name="actionDelete_log_entry"/>
     <addaction name="actionChange_log_entry"/>
+    <addaction name="separator"/>
+    <addaction name="actionWatch_file_for_QSOs"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -102,6 +104,8 @@
    <addaction name="separator"/>
    <addaction name="actionLog_QSO_TB"/>
    <addaction name="actionLog_multi_QSOs_TB"/>
+   <addaction name="separator"/>
+   <addaction name="actionWatch_file_for_QSOs_TB"/>
   </widget>
   <action name="actionLog_QSO">
    <property name="icon">
@@ -269,6 +273,33 @@
    </property>
    <property name="text">
     <string>Start hamlib</string>
+   </property>
+  </action>
+  <action name="actionWatch_file_for_QSOs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:watch.png</normaloff>icons:watch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Watch file for QSOs...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionWatch_file_for_QSOs_TB">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:watch.png</normaloff>icons:watch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Watch file for QSOs...</string>
    </property>
   </action>
  </widget>
@@ -562,6 +593,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionWatch_file_for_QSOs</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>ctrlWatching(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWatch_file_for_QSOs_TB</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>ctrlWatching(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -576,5 +639,6 @@
   <slot>logMultiQSOs()</slot>
   <slot>showHelp()</slot>
   <slot>ctrlHamlib()</slot>
+  <slot>ctrlWatching(bool)</slot>
  </slots>
 </ui>

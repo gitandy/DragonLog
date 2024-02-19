@@ -107,6 +107,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "dist" INTEGER
                         );'''
 
+    __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
+                                    "date_time",
+                                    "call_sign"
+                                )'''
+
     __db_insert_stmnt__ = 'INSERT INTO qsos (' + ",".join(__sql_cols__[1:]) + ') ' \
                                                                               'VALUES (' + ",".join(
         ["?"] * (len(__sql_cols__) - 1)) + ')'
@@ -152,6 +157,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.dummy_status = QtWidgets.QLabel()
         self.statusBar().addPermanentWidget(self.dummy_status)
+        self.watch_status = QtWidgets.QLabel(self.tr('Watching file') + ': ' + self.tr('inactiv'))
+        self.statusBar().addPermanentWidget(self.watch_status)
         self.hamlib_status = QtWidgets.QLabel(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
         self.statusBar().addPermanentWidget(self.hamlib_status)
         self.hamlib_error = QtWidgets.QLabel('')
@@ -212,6 +219,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.connectDB(self.settings.value('lastDatabase', None))
             else:
                 print(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
+
+        self.watchTimer = QtCore.QTimer(self)
+        self.watchTimer.timeout.connect(self.watchFile)
+        self.watchPos = 0
+        self.watchFileName = ''
 
     def showSettings(self):
         if self.settings_form.exec():
@@ -311,6 +323,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
             self.__db_con__.open()
             self.__db_con__.exec(self.__db_create_stmnt__)
+            self.__db_con__.exec(self.__db_create_idx_stmnt__)
+
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
 
@@ -969,6 +983,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
         else:
             values[1] = values[0]
+
+        values[self.__sql_cols__.index('channel') - 1] = '-'
+
         for p in r:
             match p:
                 case 'QSO_DATE' | 'TIME_ON' | 'QSO_DATE_OFF' | 'TIME_OFF' | 'APP_DRAGONLOG_CBQSO':
@@ -996,7 +1013,85 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
                     if p + '_INTL' in self.__adx_cols__:
                         values[self.__adx_cols__.index(p + '_INTL')] = r[p]
+
         return values
+
+    def watchFile(self):
+        with open(self.watchFileName, encoding='ASCII') as adi_f:
+            adi_str = adi_f.read()
+
+        added = False
+
+        for i, rec in enumerate(adi.loadi(adi_str, self.watchPos)):
+            if i == 0:
+                continue
+
+            self.watchPos += 1
+
+            if 'QSO_DATE' not in rec or 'TIME_ON' not in rec or 'CALL' not  in rec:
+                print(f'QSO date, time or call missing in record #{self.watchPos+1} from watched file. Skipped.')
+                continue
+
+            adi_time = rec['TIME_ON']
+            adi_date = rec['QSO_DATE']
+            time = f'{adi_time[:2]}:{adi_time[2:4]}' if len(
+                adi_time) == 4 else f'{adi_time[:2]}:{adi_time[2:4]}:{adi_time[4:6]}'
+            timestamp = f'{adi_date[:4]}-{adi_date[4:6]}-{adi_date[6:8]} {time}'
+
+            if not self.findQSO(timestamp, rec['CALL']):
+                print(f'Adding QSO #{i} from "{self.watchFileName}" to logbook...')
+
+                query = QtSql.QSqlQuery(self.__db_con__)
+                query.prepare(self.__db_insert_stmnt__)
+
+                for j, val in enumerate(self._build_values_adiimport_(rec)):
+                    query.bindValue(j, val)
+                query.exec()
+                if query.lastError().text():
+                    print(f'Record #{self.watchPos+1} import error from watched file ("{query.lastError().text()}").'
+                          'Skipped.')
+
+                self.__db_con__.commit()
+                added = True
+
+        if added:
+            self.QSOTableView.model().select()
+            self.QSOTableView.resizeColumnsToContents()
+
+    def findQSO(self, timestamp, call):
+        query = self.__db_con__.exec(f'SELECT date_time, call_sign from qsos '
+                                     f'where date_time="{timestamp}" and call_sign="{call}"')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        return query.next()
+
+    def ctrlWatching(self, start):
+        if start:
+            res = QtWidgets.QFileDialog.getOpenFileName(
+                self,
+                self.tr('Select file to watch'),
+                self.settings.value('lastWatchDir', os.path.abspath(os.curdir)),
+                self.tr('ADIF 3 (*.adi *.adif)')
+            )
+
+            if res[0]:
+                self.settings.setValue('lastWatchDir', os.path.dirname(res[0]))
+                self.watchFileName = res[0]
+                self.watchPos = 0
+                self.watchFile()  # Read file once before looping
+                self.watchTimer.start(2000)
+                self.watch_status.setText(self.tr('Watching file') + f': {os.path.basename(res[0])}')
+                self.actionWatch_file_for_QSOs.setChecked(True)
+                self.actionWatch_file_for_QSOs_TB.setChecked(True)
+            else:
+                self.actionWatch_file_for_QSOs.setChecked(False)
+                self.actionWatch_file_for_QSOs_TB.setChecked(False)
+        else:
+            self.watchTimer.stop()
+            self.watch_status.setText(self.tr('Watching file') + ': ' + self.tr('inactiv'))
+            self.actionWatch_file_for_QSOs.setChecked(False)
+            self.actionWatch_file_for_QSOs_TB.setChecked(False)
 
     # noinspection PyPep8Naming
     def showHelp(self):
