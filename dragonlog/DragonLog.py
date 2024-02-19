@@ -926,8 +926,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         imported = 0
         for i, r in enumerate(records, 1):
-            values = [''] * (len(self.__sql_cols__) - 1)
-
             if 'QSO_DATE' not in r or 'TIME_ON' not in r:
                 QtWidgets.QMessageBox.warning(
                     self,
@@ -936,49 +934,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 )
                 continue
 
-            date = r['QSO_DATE']
-            timex = r['TIME_ON']
-            time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
-            values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
-
-            if 'TIME_OFF' in r:
-                date_off = r['QSO_DATE_OFF'] if 'QSO_DATE_OFF' in r else date  # Fallback
-                timex_off = r['TIME_OFF']
-                time_off = f'{timex_off[:2]}:{timex_off[2:4]}' if len(
-                    timex_off) == 4 else f'{timex_off[:2]}:{timex_off[2:4]}:{timex_off[4:6]}'
-                values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
-            else:
-                values[1] = values[0]
-
-            for p in r:
-                match p:
-                    case 'QSO_DATE' | 'TIME_ON' | 'QSO_DATE_OFF' | 'TIME_OFF' | 'APP_DRAGONLOG_CBQSO':
-                        continue
-                    case 'BAND':
-                        values[self.__adx_cols__.index(p)] = r[p].lower()
-                    case 'FREQ':
-                        values[self.__adx_cols__.index(p)] = str(float(r[p]) * 1000)
-                    case 'APP':  # Only for ADX as ADI App fields are recognised the standard way
-                        for af in r[p]:
-                            af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
-                            if af_param in self.__adx_cols__:
-                                values[self.__adx_cols__.index(af_param)] = af['$']
-                            elif af_param == 'APP_DRAGONLOG_CBCALL':
-                                values[self.__adx_cols__.index('CALL')] = af['$']
-                            elif af_param == 'APP_DRAGONLOG_CBOWNCALL':
-                                values[self.__adx_cols__.index('STATION_CALLSIGN')] = af['$']
-                            elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
-                                values[self.__adx_cols__.index('BAND')] = '11m'
-                    case p if p in self.__adx_cols__:
-                        values[self.__adx_cols__.index(p)] = r[p]
-                    case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
-                        if p + '_INTL' in self.__adx_cols__:
-                            values[self.__adx_cols__.index(p + '_INTL')] = r[p]
-
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
 
-            for j, val in enumerate(values):
+            for j, val in enumerate(self._build_values_adiimport_(r)):
                 query.bindValue(j, val)
             query.exec()
             if query.lastError().text():
@@ -987,14 +946,57 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.tr('Log import ADIF'),
                     f'Record {i} import error ("{query.lastError().text()}").\nSkipped record.'
                 )
-
-            imported = i
+            else:
+                imported += 1
 
         self.__db_con__.commit()
         self.QSOTableView.model().select()
         self.QSOTableView.resizeColumnsToContents()
 
         print(f'Imported {imported} QSOs from "{file}"')
+
+    def _build_values_adiimport_(self, r):
+        values = [''] * (len(self.__sql_cols__) - 1)
+        date = r['QSO_DATE']
+        timex = r['TIME_ON']
+        time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
+        values[0] = f'{date[:4]}-{date[4:6]}-{date[6:8]} {time}'
+        if 'TIME_OFF' in r:
+            date_off = r['QSO_DATE_OFF'] if 'QSO_DATE_OFF' in r else date  # Fallback
+            timex_off = r['TIME_OFF']
+            time_off = f'{timex_off[:2]}:{timex_off[2:4]}' if len(
+                timex_off) == 4 else f'{timex_off[:2]}:{timex_off[2:4]}:{timex_off[4:6]}'
+            values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
+        else:
+            values[1] = values[0]
+        for p in r:
+            match p:
+                case 'QSO_DATE' | 'TIME_ON' | 'QSO_DATE_OFF' | 'TIME_OFF' | 'APP_DRAGONLOG_CBQSO':
+                    continue
+                case 'BAND':
+                    values[self.__adx_cols__.index(p)] = r[p].lower()
+                case 'FREQ':
+                    values[self.__adx_cols__.index(p)] = str(float(r[p]) * 1000)
+                case 'APP':  # Only for ADX as ADI App fields are recognised the standard way
+                    for af in r[p]:
+                        af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
+                        if af_param in self.__adx_cols__:
+                            values[self.__adx_cols__.index(af_param)] = af['$']
+                        elif af_param == 'APP_DRAGONLOG_CBCALL':
+                            values[self.__adx_cols__.index('CALL')] = af['$']
+                        elif af_param == 'APP_DRAGONLOG_CBOWNCALL':
+                            values[self.__adx_cols__.index('STATION_CALLSIGN')] = af['$']
+                        elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
+                            values[self.__adx_cols__.index('BAND')] = '11m'
+                case 'OPERATOR':
+                    if not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']:
+                        values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
+                case p if p in self.__adx_cols__:
+                    values[self.__adx_cols__.index(p)] = r[p]
+                case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
+                    if p + '_INTL' in self.__adx_cols__:
+                        values[self.__adx_cols__.index(p + '_INTL')] = r[p]
+        return values
 
     # noinspection PyPep8Naming
     def showHelp(self):
