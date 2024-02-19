@@ -446,7 +446,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     continue
                 done_ids.append(qso_id)
 
-                print(f'Deleting QSO "{qso_id}"...')
+                print(f'Deleting QSO #{qso_id}...')
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare('DELETE FROM qsos where id == ?')
                 query.bindValue(0, qso_id)
