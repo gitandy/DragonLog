@@ -974,7 +974,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     case p if p in self.__adx_cols__:
                         values[self.__adx_cols__.index(p)] = r[p]
                     case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
-                        values[self.__adx_cols__.index(p + '_INTL')] = r[p]
+                        if p + '_INTL' in self.__adx_cols__:
+                            values[self.__adx_cols__.index(p + '_INTL')] = r[p]
 
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
