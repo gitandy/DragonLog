@@ -22,6 +22,7 @@ except ImportError:
 from . import DragonLog_MainWindow_ui
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
+from .DragonLog_AppSelect import AppSelect
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -993,7 +994,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 case 'BAND':
                     values[self.__adx_cols__.index(p)] = r[p].lower()
                 case 'FREQ':
-                    values[self.__adx_cols__.index(p)] = str(float(r[p]) * 1000)
+                    freq = r[p].replace(',', '.')  # Workaround for wrong export from fldigi
+                    values[self.__adx_cols__.index(p)] = str(float(freq) * 1000)
+                case 'MODE':
+                    if r[p] in self.modes['AFU'] or r[p] in self.modes['CB']:
+                        values[self.__adx_cols__.index(p)] = r[p]
+                    else:  # Workaround for wrong mode export from fldigi
+                        # TODO: store in submode if Dragonlog supports submodes
+                        for m in self.modes['AFU']:
+                            if r[p] in self.modes['AFU'][m]:
+                                values[self.__adx_cols__.index(p)] = m
+                                break
                 case 'APP':  # Only for ADX as ADI App fields are recognised the standard way
                     for af in r[p]:
                         af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
