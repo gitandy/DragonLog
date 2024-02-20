@@ -221,6 +221,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 print(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
 
+        self.watchAppSelect = AppSelect(self, f'{self.tr(__prog_name__)} - {self.tr("Watch application log")}',
+                                        self.settings)
         self.watchTimer = QtCore.QTimer(self)
         self.watchTimer.timeout.connect(self.watchFile)
         self.watchPos = 0
@@ -1079,30 +1081,34 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def ctrlWatching(self, start):
         if start:
-            res = QtWidgets.QFileDialog.getOpenFileName(
-                self,
-                self.tr('Select file to watch'),
-                self.settings.value('lastWatchDir', os.path.abspath(os.curdir)),
-                self.tr('ADIF 3 (*.adi *.adif)')
-            )
+            app_res = self.watchAppSelect.exec()
+            if app_res:
+                res = QtWidgets.QFileDialog.getOpenFileName(
+                    self,
+                    self.tr('Select file to watch'),
+                    app_res[1],
+                    self.tr('ADIF 3 (*.adi *.adif)')
+                )
 
-            if res[0]:
-                self.settings.setValue('lastWatchDir', os.path.dirname(res[0]))
-                self.watchFileName = res[0]
-                self.watchPos = 0
-                self.watchFile()  # Read file once before looping
-                self.watchTimer.start(2000)
-                self.watch_status.setText(self.tr('Watching file') + f': {os.path.basename(res[0])}')
-                self.actionWatch_file_for_QSOs.setChecked(True)
-                self.actionWatch_file_for_QSOs_TB.setChecked(True)
-            else:
-                self.actionWatch_file_for_QSOs.setChecked(False)
-                self.actionWatch_file_for_QSOs_TB.setChecked(False)
+                if res[0]:
+                    if app_res[0] == 'Other':
+                        self.settings.setValue('lastWatchFile', res[0])
+                    else:
+                        self.settings.setValue(f'lastWatchFile{app_res[0]}', res[0])
+                    self.watchFileName = res[0]
+                    self.watchPos = 0
+                    self.watchFile()  # Read file once before looping
+                    self.watchTimer.start(2000)
+                    self.watch_status.setText(self.tr('Watching file') + f': {os.path.basename(res[0])}')
+                    self.actionWatch_file_for_QSOs.setChecked(True)
+                    self.actionWatch_file_for_QSOs_TB.setChecked(True)
+                    return
         else:
             self.watchTimer.stop()
             self.watch_status.setText(self.tr('Watching file') + ': ' + self.tr('inactiv'))
-            self.actionWatch_file_for_QSOs.setChecked(False)
-            self.actionWatch_file_for_QSOs_TB.setChecked(False)
+
+        self.actionWatch_file_for_QSOs.setChecked(False)
+        self.actionWatch_file_for_QSOs_TB.setChecked(False)
 
     # noinspection PyPep8Naming
     def showHelp(self):
