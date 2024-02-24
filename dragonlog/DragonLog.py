@@ -75,12 +75,12 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
-                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'dist')
+                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'comments', 'dist')
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
-        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL',
+        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL', 'COMMENT_INTL',
         'DISTANCE')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
@@ -105,6 +105,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "radio"   TEXT,
                             "antenna"   TEXT,
                             "remarks"   TEXT,
+                            "comments"   TEXT,
                             "dist" INTEGER
                         );'''
 
@@ -197,7 +198,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Own Locator'),
             self.tr('Radio'),
             self.tr('Antenna'),
-            self.tr('Remarks'),
+            self.tr('Notes'),
+            self.tr('Comments'),
             self.tr('Distance'),
         )
 
@@ -418,6 +420,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.qso_form.radioLineEdit.text(),
                 self.qso_form.antennaLineEdit.text(),
                 self.qso_form.remarksTextEdit.toPlainText().strip(),
+                self.qso_form.commentsTextEdit.toPlainText().strip(),
                 self.calc_distance(self.qso_form.locatorLineEdit.text(), self.qso_form.ownLocatorLineEdit.text())
             )
 
@@ -555,6 +558,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.__sql_cols__.index('antenna'))))
             self.qso_form.remarksTextEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
                 self.__sql_cols__.index('remarks'))))
+            self.qso_form.commentsTextEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
+                self.__sql_cols__.index('comments'))))
 
             self.qso_form.setWindowTitle(self.tr('Change QSO') + f' #{qso_id}')
 
@@ -585,6 +590,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.qso_form.radioLineEdit.text(),
                     self.qso_form.antennaLineEdit.text(),
                     self.qso_form.remarksTextEdit.toPlainText().strip(),
+                    self.qso_form.commentsTextEdit.toPlainText().strip(),
                     self.calc_distance(self.qso_form.locatorLineEdit.text(), self.qso_form.ownLocatorLineEdit.text()),
                     qso_id,
                 )
@@ -820,6 +826,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['NOTES'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
                 record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
+            if query.value(self.__sql_cols__.index('comments')):
+                record['COMMENT'] = self.replaceUmlautsLigatures(
+                    query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n'))
+                record['COMMENT_INTL'] = query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n')
 
             if not record['APP']:
                 record.pop('APP')
