@@ -1021,6 +1021,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 case 'OPERATOR':
                     if not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']:
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
+                case 'GUEST_OP':
+                    if (not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']) and \
+                        (not 'OPERATOR' in r or not r['OPERATOR']):
+                        values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
                 case p if p in self.__adx_cols__:
                     values[self.__adx_cols__.index(p)] = r[p]
                 case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
