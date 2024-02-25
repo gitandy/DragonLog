@@ -269,7 +269,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             # Create backup
             self.__db_con__.close()
-            os.rename(db_file, bck_name)
+            try:
+                os.rename(db_file, bck_name)
+            except FileExistsError:
+                QtWidgets.QMessageBox.critical(self, self.tr('Database backup error'),
+                                              self.tr('A database backup could not be created.\n'
+                                                      'The file already exists.'))
+                self.close()
+                return False
 
             # Open new DB
             self.__db_con__.setDatabaseName(db_file)
@@ -317,6 +324,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                               self.tr('Database conversion finished')
                                               )
 
+        return True
+
     def connectDB(self, db_file):
         db_file = os.path.abspath(db_file)
         try:
@@ -333,7 +342,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
 
-            self.checkDB(db_file)
+            if not self.checkDB(db_file):
+                return
 
             model = QtSql.QSqlTableModel(self, self.__db_con__)
             model.setTable('qsos')
