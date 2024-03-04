@@ -832,7 +832,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['MY_ANTENNA_INTL'] = query.value(self.__sql_cols__.index('antenna'))
             if query.value(self.__sql_cols__.index('dist')):
                 record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
-            if query.value(self.__sql_cols__.index('remarks')):
+            if query.value(self.__sql_cols__.index('remarks')) and bool(self.settings.value('imp_exp/own_notes_adif', 0)):
                 record['NOTES'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
                 record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
@@ -992,7 +992,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         print(f'Imported {imported} QSOs from "{file}"')
 
-    def _build_values_adiimport_(self, r):
+    def _build_values_adiimport_(self, r, use_cfg_id=False, use_cfg_station=False):
         values = [''] * (len(self.__sql_cols__) - 1)
         date = r['QSO_DATE']
         timex = r['TIME_ON']
@@ -1006,6 +1006,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             values[1] = f'{date_off[:4]}-{date_off[4:6]}-{date_off[6:8]} {time_off}'
         else:
             values[1] = values[0]
+
+        if use_cfg_id:
+            values[self.__sql_cols__.index('own_callsign') - 1] = self.settings.value('station/callSign', '')
+            values[self.__sql_cols__.index('own_name') - 1] = self.settings.value('station/name', '')
+
+        if use_cfg_station:
+            values[self.__sql_cols__.index('radio') - 1] = self.settings.value('station/radio', '')
+            values[self.__sql_cols__.index('antenna') - 1] = self.settings.value('station/antenna', '')
+            values[self.__sql_cols__.index('own_qth') - 1] = self.settings.value('station/QTH', '')
+            values[self.__sql_cols__.index('own_locator') - 1] = self.settings.value('station/own_locator', '')
 
         values[self.__sql_cols__.index('channel') - 1] = '-'
 
@@ -1081,7 +1091,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare(self.__db_insert_stmnt__)
 
-                for j, val in enumerate(self._build_values_adiimport_(rec)):
+                for j, val in enumerate(self._build_values_adiimport_(rec,
+                                                                      bool(self.settings.value('imp_exp/use_id_watch', 0)),
+                                                                      bool(self.settings.value('imp_exp/use_station_watch', 0)))):
                     query.bindValue(j, val)
                 query.exec()
                 if query.lastError().text():

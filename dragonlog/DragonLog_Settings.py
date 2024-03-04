@@ -256,6 +256,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.colShowListWidget.sortItems()
         self.colHideListWidget.sortItems()
 
+        self.expOwnNotesADIFCheckBox.setChecked(bool(self.settings.value('imp_exp/own_notes_adif', 0)))
+        self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
+        self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
+
         return super().exec()
 
     def accept(self):
@@ -283,5 +287,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                ','.join([i.text().split('-')[1].strip() for i in
                                          self.colHideListWidget.findItems('.*',
                                                                           QtCore.Qt.MatchFlag.MatchRegularExpression)]))
+
+        self.settings.setValue('imp_exp/own_notes_adif', int(self.expOwnNotesADIFCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
+
 
         super().accept()

@@ -202,18 +202,48 @@
       <source>Columns to hide</source>
       <translation>Spalten verstecken</translation>
     </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Import/Export</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Export</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Export own notes to ADIF</source>
+      <translation>Exportiere eigene Notizen in ADIF</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Watch File</source>
+      <translation>Dateiüberwachung</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Use configured ID for missing values</source>
+      <translation>Verwende die konfigurierte ID bei fehlenden Werten</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Use configured Station for missing values</source>
+      <translation>Verwende die konfigurierte Station bei fehlenden Werten</translation>
+    </message>
   </context>
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1132" />
-      <location filename="..\dragonlog\DragonLog.py" line="1126" />
+      <location filename="..\dragonlog\DragonLog.py" line="1144" />
+      <location filename="..\dragonlog\DragonLog.py" line="1138" />
       <location filename="..\dragonlog\DragonLog.py" line="162" />
       <source>Watching file</source>
       <translation>Dateiüberwachung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1132" />
+      <location filename="..\dragonlog\DragonLog.py" line="1144" />
       <location filename="..\dragonlog\DragonLog.py" line="164" />
       <location filename="..\dragonlog\DragonLog.py" line="162" />
       <source>inactiv</source>
@@ -470,42 +500,42 @@ Die Datei existiert bereits.</translation>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1112" />
+      <location filename="..\dragonlog\DragonLog.py" line="1124" />
       <source>Select file to watch</source>
       <translation>Zu überwachende Datei wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1114" />
+      <location filename="..\dragonlog\DragonLog.py" line="1126" />
       <source>ADIF 3 (*.adi *.adif)</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1144" />
+      <location filename="..\dragonlog\DragonLog.py" line="1156" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1164" />
+      <location filename="..\dragonlog\DragonLog.py" line="1176" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1181" />
+      <location filename="..\dragonlog\DragonLog.py" line="1193" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1182" />
+      <location filename="..\dragonlog\DragonLog.py" line="1194" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1183" />
+      <location filename="..\dragonlog\DragonLog.py" line="1195" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1193" />
+      <location filename="..\dragonlog\DragonLog.py" line="1205" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
