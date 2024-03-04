@@ -491,6 +491,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def changeQSO(self):
         done_ids = []
+        self.qso_form.setChangeMode()
 
         for i in self.QSOTableView.selectedIndexes():
             qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
@@ -620,6 +621,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.__db_con__.commit()
         self.QSOTableView.model().select()
         self.QSOTableView.resizeColumnsToContents()
+        self.qso_form.setChangeMode(False)
 
     def export(self):
         exp_formats = {
@@ -1102,6 +1104,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             raise Exception(query.lastError().text())
 
         return query.next()
+
+    def workedBefore(self, call):
+        query = self.__db_con__.exec(f'SELECT call_sign from qsos '
+                                     f'where call_sign LIKE"%{call}%"')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        worked = []
+        while query.next():
+            call = query.value(0)
+            if not call in worked:
+                worked.append(call)
+
+        return worked
 
     def ctrlWatching(self, start):
         if start:
