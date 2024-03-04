@@ -267,9 +267,13 @@
    </property>
   </action>
   <action name="actionStart_hamlib_TB">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons:player_play.png</normaloff>icons:player_play.png</iconset>
+     <normaloff>icons:player_play.png</normaloff>
+     <normalon>icons:player_stop.png</normalon>icons:player_play.png</iconset>
    </property>
    <property name="text">
     <string>Start hamlib</string>
@@ -563,9 +567,9 @@
   </connection>
   <connection>
    <sender>actionStart_hamlib_TB</sender>
-   <signal>triggered()</signal>
+   <signal>triggered(bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>ctrlHamlib()</slot>
+   <slot>ctrlHamlib(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -638,7 +642,7 @@
   <slot>logImport()</slot>
   <slot>logMultiQSOs()</slot>
   <slot>showHelp()</slot>
-  <slot>ctrlHamlib()</slot>
+  <slot>ctrlHamlib(bool)</slot>
   <slot>ctrlWatching(bool)</slot>
  </slots>
 </ui>

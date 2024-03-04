@@ -171,10 +171,15 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 if self.rigctld.poll():
                     self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
                     self.ctrlRigctldPushButton.setChecked(False)
+                    self.parent().actionStart_hamlib_TB.setChecked(False)
+                    self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
                     self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
                 else:
                     self.checkHamlibRunLabel.setText('')
+                    self.ctrlRigctldPushButton.setChecked(True)
                     self.ctrlRigctldPushButton.setText(self.tr('Stop'))
+                    self.parent().actionStart_hamlib_TB.setChecked(True)
+                    self.parent().actionStart_hamlib_TB.setText(self.tr('Stop hamlib'))
                     print(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
                     self.checkHamlibTimer.start(1000)
                     self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
@@ -184,7 +189,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 os.kill(self.rigctld.pid, 9)
                 print('Killed rigctld')
             self.rigctld = None
+            self.ctrlRigctldPushButton.setChecked(False)
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
+            self.parent().actionStart_hamlib_TB.setChecked(False)
+            self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
             self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
             self.rig_caps = []
 
