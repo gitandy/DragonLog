@@ -65,6 +65,27 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.palette_worked.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
                                      QtGui.QColor(204, 204, 255))
 
+        self.worked_dialog: QtWidgets.QListWidget = None
+        self._create_worked_dlg_()
+
+    def _create_worked_dlg_(self):
+        self.worked_dialog = QtWidgets.QListWidget(self)
+        self.worked_dialog.setMinimumHeight(100)
+        self.worked_dialog.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+        self.worked_dialog.setSortingEnabled(True)
+
+    def setWorkedBefore(self, worked: list = None):
+        self.worked_dialog.clear()
+        if worked:
+            self.worked_dialog.addItems(worked)
+            call_edit_pos = self.callSignLineEdit.pos()
+            call_edit_pos.setX(call_edit_pos.x())
+            call_edit_pos.setY(call_edit_pos.y()+self.callSignLineEdit.height())
+            self.worked_dialog.move(call_edit_pos)
+            self.worked_dialog.show()
+        else:
+            self.worked_dialog.hide()
+
     def refreshTime(self):
         if self.autoDateCheckBox.isChecked():
             dt = QtCore.QDateTime.currentDateTimeUtc()
@@ -259,13 +280,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.RSTSentLineEdit.setPalette(self.palette_faulty)
 
     def callSignChanged(self, txt):
-        self.callSignLineEdit.setToolTip('')
+        self.setWorkedBefore()
         if not txt:
             self.callSignLineEdit.setPalette(self.palette_empty)
         elif check_format(REGEX_CALL, txt):
             worked = self.parent().workedBefore(check_call(txt)[1])
             if not self.__change_mode__ and worked:
-                self.callSignLineEdit.setToolTip(self.tr('Worked before')+':\n'+'\n'.join(worked))
+                self.setWorkedBefore(worked)
                 self.callSignLineEdit.setPalette(self.palette_worked)
             else:
                 self.callSignLineEdit.setPalette(self.palette_ok)

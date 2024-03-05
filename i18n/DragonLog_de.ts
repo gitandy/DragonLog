@@ -646,22 +646,17 @@ Die Datei existiert bereits.</translation>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="130" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="122" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="104" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="85" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="151" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="143" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="125" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="106" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="142" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="163" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
-    </message>
-    <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="268" />
-      <source>Worked before</source>
-      <translation type="unfinished" />
     </message>
   </context>
   <context>
