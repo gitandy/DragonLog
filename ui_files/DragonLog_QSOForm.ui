@@ -791,6 +791,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>callSignLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>setWorkedBefore()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -803,5 +819,6 @@
   <slot>ownLocatorChanged(QString)</slot>
   <slot>callSignChanged(QString)</slot>
   <slot>ownCallSignChanged(QString)</slot>
+  <slot>setWorkedBefore()</slot>
  </slots>
 </ui>

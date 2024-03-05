@@ -4,7 +4,7 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 
 from . import DragonLog_QSOForm_ui
 from .DragonLog_Settings import Settings
-from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format
+from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -41,6 +41,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                           }
         self.__last_mode__ = ''
 
+        self.__change_mode__ = False
 
         self.refreshTimer = QtCore.QTimer(self)
         self.refreshTimer.timeout.connect(self.refreshRigData)
@@ -60,6 +61,30 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.palette_faulty = QtGui.QPalette()
         self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
                                      QtGui.QColor(255, 204, 204))
+        self.palette_worked = QtGui.QPalette()
+        self.palette_worked.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                     QtGui.QColor(204, 204, 255))
+
+        self.worked_dialog: QtWidgets.QListWidget = None
+        self._create_worked_dlg_()
+
+    def _create_worked_dlg_(self):
+        self.worked_dialog = QtWidgets.QListWidget(self)
+        self.worked_dialog.setMinimumHeight(100)
+        self.worked_dialog.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+        self.worked_dialog.setSortingEnabled(True)
+
+    def setWorkedBefore(self, worked: list = None):
+        self.worked_dialog.clear()
+        if worked:
+            self.worked_dialog.addItems(worked)
+            call_edit_pos = self.callSignLineEdit.pos()
+            call_edit_pos.setX(call_edit_pos.x())
+            call_edit_pos.setY(call_edit_pos.y()+self.callSignLineEdit.height())
+            self.worked_dialog.move(call_edit_pos)
+            self.worked_dialog.show()
+        else:
+            self.worked_dialog.hide()
 
     def refreshTime(self):
         if self.autoDateCheckBox.isChecked():
@@ -169,6 +194,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.setWindowTitle(self.default_title)
 
+    def setChangeMode(self, activate=True):
+        self.__change_mode__ = activate
+
     def bandChanged(self, band: str):
         self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
         self.freqDoubleSpinBox.setValue(self.bands[band][0] - self.bands[band][2])
@@ -252,10 +280,16 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.RSTSentLineEdit.setPalette(self.palette_faulty)
 
     def callSignChanged(self, txt):
+        self.setWorkedBefore()
         if not txt:
             self.callSignLineEdit.setPalette(self.palette_empty)
         elif check_format(REGEX_CALL, txt):
-            self.callSignLineEdit.setPalette(self.palette_ok)
+            worked = self.parent().workedBefore(check_call(txt)[1])
+            if not self.__change_mode__ and worked:
+                self.setWorkedBefore(worked)
+                self.callSignLineEdit.setPalette(self.palette_worked)
+            else:
+                self.callSignLineEdit.setPalette(self.palette_ok)
         elif self.bandComboBox.currentText() == '11m':
             self.callSignLineEdit.setPalette(self.palette_ok)
         else:
