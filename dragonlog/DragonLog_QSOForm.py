@@ -186,8 +186,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
     def reset(self):
         self.autoDateCheckBox.setEnabled(True)
-        self.stationGroupBox.setCheckable(True)
-        self.identityGroupBox.setCheckable(True)
         self.autoDateCheckBox.setChecked(True)
         self.stationGroupBox.setChecked(True)
         self.identityGroupBox.setChecked(True)
@@ -196,6 +194,25 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
     def setChangeMode(self, activate=True):
         self.__change_mode__ = activate
+
+        if activate:
+            self.stationGroupBox.setChecked(False)
+            self.stationGroupBox.setCheckable(False)
+            self.stationGroupBox.setTitle(self.tr('Station'))
+            self.identityGroupBox.setChecked(False)
+            self.identityGroupBox.setCheckable(False)
+            self.identityGroupBox.setTitle(self.tr('Identity'))
+            self.autoDateCheckBox.setChecked(False)
+            self.autoDateCheckBox.setEnabled(False)
+        else:
+            self.stationGroupBox.setCheckable(True)
+            self.stationGroupBox.setTitle(self.tr('Configured station'))
+            self.stationGroupBox.setChecked(True)
+            self.identityGroupBox.setCheckable(True)
+            self.identityGroupBox.setTitle(self.tr('Configured identity'))
+            self.identityGroupBox.setChecked(True)
+            self.autoDateCheckBox.setChecked(True)
+            self.autoDateCheckBox.setEnabled(True)
 
     def bandChanged(self, band: str):
         self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])

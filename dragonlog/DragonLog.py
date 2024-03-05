@@ -500,13 +500,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 continue
             done_ids.append(qso_id)
 
-            self.qso_form.autoDateCheckBox.setChecked(False)
-            self.qso_form.stationGroupBox.setChecked(False)
-            self.qso_form.identityGroupBox.setChecked(False)
-            self.qso_form.autoDateCheckBox.setEnabled(False)
-            self.qso_form.stationGroupBox.setCheckable(False)
-            self.qso_form.identityGroupBox.setCheckable(False)
-
             date, time = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('date_time'))).split()
             self.qso_form.dateOnEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
             self.qso_form.timeOnEdit.setTime(QtCore.QTime.fromString(time))
