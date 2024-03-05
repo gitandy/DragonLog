@@ -676,35 +676,35 @@ Die Datei existiert bereits.</translation>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="151" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="143" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="125" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="106" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="156" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="148" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="130" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="111" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="163" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="168" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="201" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="206" />
       <source>Station</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="204" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="209" />
       <source>Identity</source>
       <translation>ID</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="209" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="215" />
       <source>Configured station</source>
       <translation>Konfigurierte Station</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="212" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="218" />
       <source>Configured identity</source>
       <translation>Konfigurierte ID</translation>
     </message>
@@ -846,18 +846,23 @@ Die Datei existiert bereits.</translation>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>HH:mm:ss</source>
+      <source>yyyy-MM-dd</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Automatically</source>
-      <translation>Automatisch</translation>
+      <source>Now</source>
+      <translation>Jetzt</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>End</source>
+      <translation>Ende</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>yyyy-MM-dd</source>
+      <source>HH:mm:ss</source>
       <translation />
     </message>
     <message>
@@ -867,8 +872,8 @@ Die Datei existiert bereits.</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>End</source>
-      <translation>Ende</translation>
+      <source>Automatically</source>
+      <translation>Automatisch</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />

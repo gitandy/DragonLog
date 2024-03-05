@@ -92,6 +92,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.dateEdit.setDate(dt.date())
             self.timeEdit.setTime(dt.time())
 
+    def setStartTimeNow(self):
+        dt = QtCore.QDateTime.currentDateTimeUtc()
+        self.dateOnEdit.setDate(dt.date())
+        self.timeOnEdit.setTime(dt.time())
+
     # noinspection PyBroadException
     def refreshRigData(self):
         if self.settings_form.isRigctldActive():
@@ -204,6 +209,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.identityGroupBox.setTitle(self.tr('Identity'))
             self.autoDateCheckBox.setChecked(False)
             self.autoDateCheckBox.setEnabled(False)
+            self.timeNowPushButton.setEnabled(False)
         else:
             self.stationGroupBox.setCheckable(True)
             self.stationGroupBox.setTitle(self.tr('Configured station'))
@@ -213,6 +219,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.identityGroupBox.setChecked(True)
             self.autoDateCheckBox.setChecked(True)
             self.autoDateCheckBox.setEnabled(True)
+            self.timeNowPushButton.setEnabled(True)
 
     def bandChanged(self, band: str):
         self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])

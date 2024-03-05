@@ -355,40 +355,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,2">
-       <item row="1" column="2">
-        <widget class="QTimeEdit" name="timeEdit">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="displayFormat">
-          <string>HH:mm:ss</string>
-         </property>
-         <property name="currentSectionIndex">
-          <number>1</number>
-         </property>
-         <property name="timeSpec">
-          <enum>Qt::UTC</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QTimeEdit" name="timeOnEdit">
-         <property name="displayFormat">
-          <string>HH:mm:ss</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3">
-        <widget class="QCheckBox" name="autoDateCheckBox">
-         <property name="text">
-          <string>Automatically</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
+      <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,2,0">
        <item row="1" column="1">
         <widget class="QDateEdit" name="dateEdit">
          <property name="enabled">
@@ -415,10 +382,16 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_3">
+       <item row="0" column="3">
+        <widget class="QPushButton" name="timeNowPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
-          <string>Start</string>
+          <string>Now</string>
          </property>
         </widget>
        </item>
@@ -428,6 +401,72 @@
           <string>End</string>
          </property>
         </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QTimeEdit" name="timeEdit">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="displayFormat">
+          <string>HH:mm:ss</string>
+         </property>
+         <property name="currentSectionIndex">
+          <number>1</number>
+         </property>
+         <property name="timeSpec">
+          <enum>Qt::UTC</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QTimeEdit" name="timeOnEdit">
+         <property name="displayFormat">
+          <string>HH:mm:ss</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QCheckBox" name="autoDateCheckBox">
+         <property name="text">
+          <string>Automatically</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>200</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="4">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>200</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -807,6 +846,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>timeNowPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>setStartTimeNow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -820,5 +875,6 @@
   <slot>callSignChanged(QString)</slot>
   <slot>ownCallSignChanged(QString)</slot>
   <slot>setWorkedBefore()</slot>
+  <slot>setStartTimeNow()</slot>
  </slots>
 </ui>
