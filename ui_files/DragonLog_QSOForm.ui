@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
+    <width>563</width>
     <height>477</height>
    </rect>
   </property>
@@ -17,36 +17,39 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLineEdit" name="callSignLineEdit">
-         <property name="placeholderText">
-          <string>Call sign</string>
-         </property>
-        </widget>
-       </item>
-       <item>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="1">
         <widget class="QLineEdit" name="nameLineEdit">
          <property name="placeholderText">
           <string>Name</string>
          </property>
         </widget>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="callSignLineEdit">
+         <property name="placeholderText">
+          <string>Call sign</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <widget class="QLineEdit" name="QTHLineEdit">
          <property name="placeholderText">
           <string>QTH</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="1">
         <widget class="QLineEdit" name="locatorLineEdit">
          <property name="placeholderText">
           <string>Locator</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="searchCallbookPushButton">
+         <property name="text">
+          <string>Callbook</string>
          </property>
         </widget>
        </item>
@@ -862,6 +865,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>searchCallbookPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>searchCallbook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>514</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>281</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -876,5 +895,6 @@
   <slot>ownCallSignChanged(QString)</slot>
   <slot>setWorkedBefore()</slot>
   <slot>setStartTimeNow()</slot>
+  <slot>searchCallbook()</slot>
  </slots>
 </ui>

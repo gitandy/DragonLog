@@ -3,3 +3,6 @@ PyQt6
 openpyxl
 maidenhead
 PyADIF-File==1.0
+requests
+xmltodict
+keyring

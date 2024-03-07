@@ -5,6 +5,7 @@ import subprocess
 
 import maidenhead
 from PyQt6 import QtWidgets, QtCore, QtGui
+import keyring
 
 from . import DragonLog_Settings_ui
 from .DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
@@ -268,7 +269,13 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
+        self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
+
         return super().exec()
+
+    def callbookPassword(self):
+        return keyring.get_password('DragonLog',
+                                    self.settings.value('callbook/username', ''))
 
     def accept(self):
         print('Saving Settings...')
@@ -300,5 +307,11 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
 
+        self.settings.setValue('callbook/username', self.callbookUserLineEdit.text())
+        if self.callbookUserLineEdit.text() and self.callbookPasswdLineEdit.text():
+            keyring.set_password('DragonLog',
+                                 self.callbookUserLineEdit.text(),
+                                 self.callbookPasswdLineEdit.text())
+        self.callbookPasswdLineEdit.clear()
 
         super().accept()

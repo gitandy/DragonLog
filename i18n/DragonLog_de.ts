@@ -232,6 +232,26 @@
       <source>Use configured Station for missing values</source>
       <translation>Verwende die konfigurierte Station bei fehlenden Werten</translation>
     </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Callbook</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Credentials</source>
+      <translation>Anmeldedaten</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Username</source>
+      <translation>Benutzername</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Password</source>
+      <translation>Passwort</translation>
+    </message>
   </context>
   <context>
     <name>DragonLog</name>
@@ -676,35 +696,35 @@ Die Datei existiert bereits.</translation>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="156" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="148" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="130" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="111" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="158" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="150" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="132" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="113" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="168" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="170" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="206" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="208" />
       <source>Station</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="209" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="211" />
       <source>Identity</source>
       <translation>ID</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="215" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="217" />
       <source>Configured station</source>
       <translation>Konfigurierte Station</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="218" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="220" />
       <source>Configured identity</source>
       <translation>Konfigurierte ID</translation>
     </message>
@@ -718,13 +738,13 @@ Die Datei existiert bereits.</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Call sign</source>
-      <translation>Rufzeichen</translation>
+      <source>Name</source>
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Name</source>
-      <translation />
+      <source>Call sign</source>
+      <translation>Rufzeichen</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
@@ -734,6 +754,11 @@ Die Datei existiert bereits.</translation>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Locator</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Callbook</source>
       <translation />
     </message>
     <message>
@@ -893,69 +918,69 @@ Die Datei existiert bereits.</translation>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="193" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="67" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="194" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="68" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="196" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="185" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="176" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="71" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="197" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="186" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="177" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="72" />
       <source>Hamlib</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="196" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="176" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="71" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="197" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="177" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="72" />
       <source>inactiv</source>
       <translation>inaktiv</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="83" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="84" />
       <source>Choose hamlib rigctld executable</source>
       <translation>Hamlib rigctld wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="91" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="92" />
       <source>Selected file is not the executable</source>
       <translation>Die gewählte Datei ist nicht ausführbar</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="98" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="99" />
       <source>Error executing rigctld</source>
       <translation>Fehler beim Ausführen von rigctld</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="172" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="173" />
       <source>rigctld did not start properly</source>
       <translation>rigctld konnte nicht gestartet werden</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="195" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="175" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="196" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="176" />
       <source>Start hamlib</source>
       <translation>Starte Hamlib</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="180" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="181" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="182" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="183" />
       <source>Stop hamlib</source>
       <translation>Stoppe Hamlib</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="185" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="186" />
       <source>activ</source>
       <translation>aktiv</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="253" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="254" />
       <source>Date/Time start</source>
       <translation>Datum/Zeit Start</translation>
     </message>

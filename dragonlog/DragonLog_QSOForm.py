@@ -1,5 +1,7 @@
 import socket
 
+import requests
+import xmltodict
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 from . import DragonLog_QSOForm_ui
@@ -233,6 +235,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.channelComboBox.setVisible(True)
             self.channelLabel.setVisible(True)
             self.freqDoubleSpinBox.setEnabled(False)
+            self.searchCallbookPushButton.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
             self.channelComboBox.setCurrentIndex(0)
 
@@ -249,6 +252,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.channelComboBox.setVisible(False)
             self.channelLabel.setVisible(False)
             self.freqDoubleSpinBox.setEnabled(True)
+            self.searchCallbookPushButton.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
                 self.radioLineEdit.setText(self.settings.value('station/radio', ''))
@@ -344,6 +348,53 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.ownLocatorLineEdit.setPalette(self.palette_ok)
         else:
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
+
+    def _hamqth_get_session_(self, username, passwd):
+        r = requests.get('https://www.hamqth.com/xml.php', params={'u': username, 'p': passwd})
+
+        if r.status_code == 200:
+            doc = xmltodict.parse(r.text)
+            match doc:
+                case {'HamQTH': {'session': {'error': error}}}:
+                    print(f"HamQTH error: {error}")
+                case {'HamQTH': {'session': {'session_id': session_id}}}:
+                    return session_id
+                case _:
+                    print('HamQTH error: Unknown data format')
+        else:
+            print(f'HamQTH error: HTTP-Error {r.status_code}')
+
+    def _hamqth_get_data_(self, session, callsign):
+        r = requests.get('https://www.hamqth.com/xml.php', params={'id': session,
+                                                                      'prg': 'DragonLog',
+                                                                 'callsign': callsign})
+
+        if r.status_code == 200:
+            doc = xmltodict.parse(r.text)
+            match doc:
+                case {'HamQTH': {'session': {'error': error}}}:
+                    print(f"HamQTH error: {error}")
+                case {'HamQTH': {'search': data}}:
+                    return data
+                case _:
+                    print('HamQTH error: Unknown data format')
+        else:
+            print(f'HamQTH error: HTTP-Error {r.status_code}')
+
+    def searchCallbook(self):
+        session_id = self._hamqth_get_session_(self.settings.value('callbook/username', ''),
+                                               self.settings_form.callbookPassword())
+
+        if session_id:
+            data = self._hamqth_get_data_(session_id, self.callSignLineEdit.text())
+            if data:
+                if 'nick' in data and not self.nameLineEdit.text().strip():
+                    self.nameLineEdit.setText(data['nick'])
+                if 'grid' in data and not self.locatorLineEdit.text().strip():
+                    self.locatorLineEdit.setText(data['grid'])
+                if 'qth' in data and not self.QTHLineEdit.text().strip():
+                    self.QTHLineEdit.setText(data['qth'])
+                print('Fetched data from callbook')
 
     def exec(self) -> int:
         if self.lastpos:
