@@ -1192,6 +1192,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.help_dialog.show()
 
+    @property
+    def programName(self):
+        return __prog_name__
+
+    @property
+    def programVersion(self):
+        return __version__
+
     def showAbout(self):
         cr = sys.copyright.replace('\n\n', '\n')
 

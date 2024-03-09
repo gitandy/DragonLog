@@ -274,7 +274,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         return super().exec()
 
     def callbookPassword(self):
-        return keyring.get_password('DragonLog',
+        return keyring.get_password('HamQTH.com',
                                     self.settings.value('callbook/username', ''))
 
     def accept(self):
@@ -309,7 +309,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.settings.setValue('callbook/username', self.callbookUserLineEdit.text())
         if self.callbookUserLineEdit.text() and self.callbookPasswdLineEdit.text():
-            keyring.set_password('DragonLog',
+            keyring.set_password('HamQTH.com',
                                  self.callbookUserLineEdit.text(),
                                  self.callbookPasswdLineEdit.text())
         self.callbookPasswdLineEdit.clear()

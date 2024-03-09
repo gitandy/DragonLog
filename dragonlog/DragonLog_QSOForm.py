@@ -1,12 +1,11 @@
 import socket
 
-import requests
-import xmltodict
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 from . import DragonLog_QSOForm_ui
 from .DragonLog_Settings import Settings
 from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
+from .DragonLog_CallBook import CallBook, CallBookType, CallBookData, SessionExpiredException
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -69,6 +68,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
+
+        self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}' )
 
     def _create_worked_dlg_(self):
         self.worked_dialog = QtWidgets.QListWidget(self)
@@ -349,52 +350,34 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         else:
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
 
-    def _hamqth_get_session_(self, username, passwd):
-        r = requests.get('https://www.hamqth.com/xml.php', params={'u': username, 'p': passwd})
-
-        if r.status_code == 200:
-            doc = xmltodict.parse(r.text)
-            match doc:
-                case {'HamQTH': {'session': {'error': error}}}:
-                    print(f"HamQTH error: {error}")
-                case {'HamQTH': {'session': {'session_id': session_id}}}:
-                    return session_id
-                case _:
-                    print('HamQTH error: Unknown data format')
-        else:
-            print(f'HamQTH error: HTTP-Error {r.status_code}')
-
-    def _hamqth_get_data_(self, session, callsign):
-        r = requests.get('https://www.hamqth.com/xml.php', params={'id': session,
-                                                                      'prg': 'DragonLog',
-                                                                 'callsign': callsign})
-
-        if r.status_code == 200:
-            doc = xmltodict.parse(r.text)
-            match doc:
-                case {'HamQTH': {'session': {'error': error}}}:
-                    print(f"HamQTH error: {error}")
-                case {'HamQTH': {'search': data}}:
-                    return data
-                case _:
-                    print('HamQTH error: Unknown data format')
-        else:
-            print(f'HamQTH error: HTTP-Error {r.status_code}')
-
     def searchCallbook(self):
-        session_id = self._hamqth_get_session_(self.settings.value('callbook/username', ''),
-                                               self.settings_form.callbookPassword())
+            try:
+                if not self.callbook.is_loggedin:
+                    self.callbook.login(self.settings.value('callbook/username', ''),
+                                                   self.settings_form.callbookPassword())
+                    print('Logged into callbook')
 
-        if session_id:
-            data = self._hamqth_get_data_(session_id, self.callSignLineEdit.text())
-            if data:
-                if 'nick' in data and not self.nameLineEdit.text().strip():
-                    self.nameLineEdit.setText(data['nick'])
-                if 'grid' in data and not self.locatorLineEdit.text().strip():
-                    self.locatorLineEdit.setText(data['grid'])
-                if 'qth' in data and not self.QTHLineEdit.text().strip():
-                    self.QTHLineEdit.setText(data['qth'])
-                print('Fetched data from callbook')
+                data: CallBookData = None
+                for _ in range(2):
+                    try:
+                        data = self.callbook.get_dataset(self.callSignLineEdit.text())
+                        break
+                    except SessionExpiredException:
+                        print('Callbook session expired')
+                        self.callbook.login(self.settings.value('callbook/username', ''),
+                                            self.settings_form.callbookPassword())
+
+                if data:
+                    if data.nickname and not self.nameLineEdit.text().strip():
+                        self.nameLineEdit.setText(data.nickname)
+                    if data.locator and not self.locatorLineEdit.text().strip():
+                        self.locatorLineEdit.setText(data.locator)
+                    if data.qth and not self.QTHLineEdit.text().strip():
+                        self.QTHLineEdit.setText(data.qth)
+                    print('Fetched data from callbook')
+            except Exception as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
+                                              self.tr('During callbook search an error occured') + f':\n{exc}')
 
     def exec(self) -> int:
         if self.lastpos:
