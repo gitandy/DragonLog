@@ -7,6 +7,24 @@ Beside logging for ham radio you can also log CB radio QSOs.
 
 *Screenshot in german translation*
 
+Features
+--------
+* predefined fields for logging
+* log multiple QSOs
+* edit logs
+* input validation for callsign, RST, locator
+* show worked before if a callsign is already logged
+* distance calculation
+* automatic time
+* callbook search and log upload
+* hamlib integration (band, frequency, mode, power)
+* watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
+* ADIF adi/adx export/import
+* Excel/CSV export/import
+* log 11m band QSOs
+* UTF-8 (i.e. use german umlauts)
+* convert german umlauts for ADIF export
+
 Installation
 ------------
 The installation requires a python installation (>= 3.9).
@@ -45,7 +63,10 @@ use a log loop to enter multiple QSOs via Ctrl+Shift+L.
 
 The displayed form can be handled the easiest if you use TAB key to jump from field to field.
 
-If automatic time is selected, the time gets updated at saving the QSO.
+DragonLog can retreive additional OM data from HamQTH.com callbook and upload the QSO.
+The password is stored in the systems key vault.
+
+If automatic time is selected, the end time gets updated at saving the QSO.
 
 QSOs can be edited by double-clicking on an entry in the database view.
 
