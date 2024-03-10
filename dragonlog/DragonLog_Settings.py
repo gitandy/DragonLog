@@ -10,6 +10,12 @@ import keyring
 from . import DragonLog_Settings_ui
 from .DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
 
+# Fix problems with importing win32 in frozen executable
+if getattr(sys, 'frozen', False):
+    import win32timezone
+    from keyring.backends import Windows
+    keyring.set_keyring(Windows.WinVaultKeyring())
+
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: list):
