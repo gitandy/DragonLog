@@ -5,7 +5,7 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .DragonLog_Settings import Settings
 from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
-from .DragonLog_CallBook import CallBook, CallBookType, CallBookData, SessionExpiredException
+from .DragonLog_CallBook import CallBook, CallBookType, CallBookData, SessionExpiredException, MissingADIFFieldException, LoginException
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -69,7 +69,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
 
-        self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}' )
+        self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}')
 
     def _create_worked_dlg_(self):
         self.worked_dialog = QtWidgets.QListWidget(self)
@@ -83,7 +83,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.worked_dialog.addItems(worked)
             call_edit_pos = self.callSignLineEdit.pos()
             call_edit_pos.setX(call_edit_pos.x())
-            call_edit_pos.setY(call_edit_pos.y()+self.callSignLineEdit.height())
+            call_edit_pos.setY(call_edit_pos.y() + self.callSignLineEdit.height())
             self.worked_dialog.move(call_edit_pos)
             self.worked_dialog.show()
         else:
@@ -237,6 +237,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.channelLabel.setVisible(True)
             self.freqDoubleSpinBox.setEnabled(False)
             self.searchCallbookPushButton.setEnabled(False)
+            self.uploadPushButton.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
             self.channelComboBox.setCurrentIndex(0)
 
@@ -254,6 +255,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.channelLabel.setVisible(False)
             self.freqDoubleSpinBox.setEnabled(True)
             self.searchCallbookPushButton.setEnabled(True)
+            self.uploadPushButton.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
                 self.radioLineEdit.setText(self.settings.value('station/radio', ''))
@@ -351,33 +353,94 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
 
     def searchCallbook(self):
-            try:
-                if not self.callbook.is_loggedin:
+        try:
+            if not self.callbook.is_loggedin:
+                self.callbook.login(self.settings.value('callbook/username', ''),
+                                    self.settings_form.callbookPassword())
+                print('Logged into callbook')
+
+            data: CallBookData = None
+            for _ in range(2):
+                try:
+                    data = self.callbook.get_dataset(self.callSignLineEdit.text())
+                    break
+                except SessionExpiredException:
+                    print('Callbook session expired')
                     self.callbook.login(self.settings.value('callbook/username', ''),
-                                                   self.settings_form.callbookPassword())
-                    print('Logged into callbook')
+                                        self.settings_form.callbookPassword())
 
-                data: CallBookData = None
-                for _ in range(2):
-                    try:
-                        data = self.callbook.get_dataset(self.callSignLineEdit.text())
-                        break
-                    except SessionExpiredException:
-                        print('Callbook session expired')
-                        self.callbook.login(self.settings.value('callbook/username', ''),
-                                            self.settings_form.callbookPassword())
+            if data:
+                if data.nickname and not self.nameLineEdit.text().strip():
+                    self.nameLineEdit.setText(data.nickname)
+                if data.locator and not self.locatorLineEdit.text().strip():
+                    self.locatorLineEdit.setText(data.locator)
+                if data.qth and not self.QTHLineEdit.text().strip():
+                    self.QTHLineEdit.setText(data.qth)
+                print(f'Fetched data from callbook {self.callbook.callbook_type.name}')
+        except LoginException:
+            QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
+                                          self.tr('Login failed for user') + ': ' + self.settings.value('callbook/username', ''))
+        except Exception as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
+                                          self.tr('During callbook search an error occured') + f':\n{exc}')
 
-                if data:
-                    if data.nickname and not self.nameLineEdit.text().strip():
-                        self.nameLineEdit.setText(data.nickname)
-                    if data.locator and not self.locatorLineEdit.text().strip():
-                        self.locatorLineEdit.setText(data.locator)
-                    if data.qth and not self.QTHLineEdit.text().strip():
-                        self.QTHLineEdit.setText(data.qth)
-                    print('Fetched data from callbook')
-            except Exception as exc:
-                QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
-                                              self.tr('During callbook search an error occured') + f':\n{exc}')
+    def uploadLog(self):
+        record = {
+            'QSO_DATE': self.dateOnEdit.text().replace('-', ''),
+            'TIME_ON': self.timeOnEdit.text().replace(':', ''),
+            'TIME_OFF': self.timeEdit.text().replace(':', ''),
+            'BAND': self.bandComboBox.currentText(),
+            'MODE': self.modeComboBox.currentText(),
+        }
+
+        if self.ownCallSignLineEdit.text():
+            record['STATION_CALLSIGN'] = self.ownCallSignLineEdit.text().upper()
+        if self.callSignLineEdit.text():
+            record['CALL'] = self.callSignLineEdit.text().upper()
+        if self.nameLineEdit.text():
+            record['NAME'] = self.nameLineEdit.text()
+        if self.QTHLineEdit.text():
+            record['QTH'] = self.QTHLineEdit.text()
+        if self.locatorLineEdit.text():
+            record['GRIDSQUARE'] = self.locatorLineEdit.text()
+        if self.RSTSentLineEdit.text():
+            record['RST_SENT'] = self.RSTSentLineEdit.text()
+        if self.RSTRcvdLineEdit.text():
+            record['RST_RCVD'] = self.RSTRcvdLineEdit.text()
+        if self.freqDoubleSpinBox.value() >= self.bands[self.bandComboBox.currentText()][0]:
+            record['FREQ'] = self.freqDoubleSpinBox.value()
+        if self.powerSpinBox.value() > 0:
+            record['TX_PWR'] = self.powerSpinBox.value()
+        if self.ownLocatorLineEdit.text():
+            record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
+        if self.remarksTextEdit.toPlainText().strip():
+            record['NOTES'] = self.remarksTextEdit.toPlainText().strip()
+        if self.commentsTextEdit.toPlainText().strip():
+            record['COMMENTS'] = self.commentsTextEdit.toPlainText().strip()
+
+        try:
+            self.callbook.upload_log(self.settings.value('callbook/username', ''),
+                                     self.settings_form.callbookPassword(),
+                                     {'HEADER':
+                                         {
+                                             'ADIF_VER': '3.1.4',
+                                             'PROGRAMID': self.parent().programName,
+                                             'PROGRAMVERSION': self.parent().programVersion,
+                                             'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
+                                                 'yyyyMMdd HHmmss')
+                                         },
+                                         'RECORDS': [record]},
+                                     not bool(self.settings.value('imp_exp/own_notes_adif', 0)))
+
+            print(f'Uploaded log to {self.callbook.callbook_type.name}')
+        except LoginException:
+            QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                          self.tr('Login failed for user') + ': ' + self.settings.value('callbook/username', ''))
+        except MissingADIFFieldException as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                          self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
+
+        self.accept()
 
     def exec(self) -> int:
         if self.lastpos:

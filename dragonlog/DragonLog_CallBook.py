@@ -3,6 +3,7 @@ from enum import Enum, auto
 
 import requests
 import xmltodict
+from adif_file import adi
 
 
 class CallBookType(Enum):
@@ -27,6 +28,13 @@ class LoginException(Exception):
 
 class SessionExpiredException(Exception):
     pass
+
+class QSORejectedException(Exception):
+    pass
+
+class MissingADIFFieldException(Exception):
+    pass
+
 
 class CallBook:
     def __init__(self, callbook_type: CallBookType, program: str):
@@ -56,7 +64,29 @@ class CallBook:
             self.__session__ = ''
             raise exc
 
-    def _hamqth_request_(self, params: dict):
+    @property
+    def required_fields(self):
+        match self.__callbook_type__:
+            case CallBookType.HamQTH:
+                return 'QSO_DATE', 'TIME_ON', 'CALL', 'MODE', 'BAND', 'RST_SENT', 'RST_RCVD'
+            case _:
+                return ()
+
+    def upload_log(self, username:str , password:str, adif_data:dict, no_notes:bool=True):
+        for field in self.required_fields:
+            if field not in adif_data['RECORDS'][0]:
+                raise MissingADIFFieldException(field)
+
+        adif_data = adif_data.copy()
+        if no_notes and 'NOTES' in adif_data['RECORDS'][0]:
+            adif_data.pop('NOTES')
+        adif_data['RECORDS'] = [adif_data['RECORDS'][0]]
+
+        match self.__callbook_type__:
+            case CallBookType.HamQTH:
+                return self._hamqth_upload_(username, password, adi.dumps(adif_data, 'ADIF Export by DragonLog'))
+
+    def _hamqth_get_(self, params: dict):
         r = requests.get('https://www.hamqth.com/xml.php', params=params)
 
         if r.status_code == 200:
@@ -66,7 +96,7 @@ class CallBook:
 
     def _hamqth_login_(self, username: str, password: str) -> str:
         try:
-            res = self._hamqth_request_({'u': username, 'p': password})
+            res = self._hamqth_get_({'u': username, 'p': password})
         except CommunicationException as exc:
             raise LoginException(str(exc))
 
@@ -80,7 +110,7 @@ class CallBook:
 
     def _hamqth_get_data_(self, callsign: str) -> CallBookData:
         try:
-            res = self._hamqth_request_({'id': self.__session__,
+            res = self._hamqth_get_({'id': self.__session__,
                                          'prg': self.__program_str__,
                                          'callsign': callsign})
         except CommunicationException as exc:
@@ -102,3 +132,24 @@ class CallBook:
                     )
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')
+
+    def _hamqth_upload_(self, username: str, password: str, adif: str):
+        data = {
+            'u': username,
+            'p': password,
+            'adif': adif,
+            'prg': self.__program_str__,
+            'cmd': 'insert'
+        }
+
+        r = requests.post('https://www.hamqth.com/qso_realtime.php', data=data)
+
+        if r.status_code == 200:
+            return
+        elif r.status_code in (400, 500):
+            raise QSORejectedException(r.text)
+        elif r.status_code == 403:
+            raise LoginException(r.text)
+        else:
+            raise CommunicationException(f'HamQTH error: HTTP-Error {r.status_code}')
+
