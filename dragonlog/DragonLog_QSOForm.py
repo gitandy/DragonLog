@@ -1,5 +1,7 @@
+import math
 import socket
 
+import maidenhead
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 from . import DragonLog_QSOForm_ui
@@ -351,6 +353,116 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.ownLocatorLineEdit.setPalette(self.palette_ok)
         else:
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
+
+    @staticmethod
+    def calc_distance(mh_pos1: str, mh_pos2: str):
+        # noinspection PyBroadException
+        try:
+            pos1 = maidenhead.to_location(mh_pos1, True)
+            pos2 = maidenhead.to_location(mh_pos2, True)
+
+            mlat = math.radians(pos1[0])
+            mlon = math.radians(pos1[1])
+            plat = math.radians(pos2[0])
+            plon = math.radians(pos2[1])
+
+            return int(6371.01 * math.acos(
+                math.sin(mlat) * math.sin(plat) + math.cos(mlat) * math.cos(plat) * math.cos(mlon - plon)))
+        except Exception:
+            print(f'Exception calcing distance between "{mh_pos1}" amd "{mh_pos2}"')
+            return 0
+
+    @property
+    def values(self) -> tuple:
+        """Retreiving all values from the form"""
+
+        if self.__change_mode__:
+            if self.autoDateCheckBox.isChecked():
+                date_time_off = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
+            else:
+                date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text()
+        else:
+            date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text(),
+
+        band = self.bandComboBox.currentText()
+
+        return (
+            self.dateOnEdit.text() + ' ' + self.timeOnEdit.text(),
+            date_time_off,
+            self.ownCallSignLineEdit.text().upper() if band != '11m' else self.ownCallSignLineEdit.text(),
+            self.callSignLineEdit.text().upper() if band != '11m' else self.callSignLineEdit.text(),
+            self.nameLineEdit.text(),
+            self.QTHLineEdit.text(),
+            self.locatorLineEdit.text(),
+            self.RSTSentLineEdit.text(),
+            self.RSTRcvdLineEdit.text(),
+            band,
+            self.modeComboBox.currentText(),
+            self.freqDoubleSpinBox.value() if self.freqDoubleSpinBox.value() >= self.bands[band][
+                0] else '',
+            self.channelComboBox.currentText() if band == '11m' else '-',
+            self.powerSpinBox.value() if self.powerSpinBox.value() > 0 else '',
+            self.ownNameLineEdit.text(),
+            self.ownQTHLineEdit.text(),
+            self.ownLocatorLineEdit.text(),
+            self.radioLineEdit.text(),
+            self.antennaLineEdit.text(),
+            self.remarksTextEdit.toPlainText().strip(),
+            self.commentsTextEdit.toPlainText().strip(),
+            self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text())
+        )
+
+    @values.setter
+    def values(self, values: dict):
+        """Set all form values"""
+
+        date, time = values['date_time'].split()
+        self.dateOnEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
+        self.timeOnEdit.setTime(QtCore.QTime.fromString(time))
+
+        if values['date_time_off']:
+            date_off, time_off = values['date_time_off'].split()
+        else:
+            date_off, time_off = date, time
+        self.dateEdit.setDate(QtCore.QDate.fromString(date_off, 'yyyy-MM-dd'))
+        self.timeEdit.setTime(QtCore.QTime.fromString(time_off))
+
+        self.ownCallSignLineEdit.setText(values['own_callsign'])
+        self.callSignLineEdit.setText(values['call_sign'])
+        self.nameLineEdit.setText(values['name'])
+        self.QTHLineEdit.setText(values['qth'])
+        self.locatorLineEdit.setText(values['locator'])
+        self.RSTSentLineEdit.setText(values['rst_sent'])
+        self.RSTRcvdLineEdit.setText(values['rst_rcvd'])
+
+        band = values['band']
+        self.bandComboBox.setCurrentText(band)
+
+        self.modeComboBox.setCurrentText(values['mode'])
+
+        try:
+            freq = float(values['freq'])
+        except ValueError:
+            freq = self.bands[band][0] - self.bands[band][2]
+        self.freqDoubleSpinBox.setValue(freq)
+
+        if band == '11m':
+            self.channelComboBox.setCurrentIndex(-1)
+            channel = values['channel']
+            self.channelComboBox.setCurrentText(str(channel) if channel else '-')
+
+        try:
+            power = int(values['power'])
+        except ValueError:
+            power = 0
+        self.powerSpinBox.setValue(power)
+        self.ownNameLineEdit.setText(values['own_name'])
+        self.ownQTHLineEdit.setText(values['own_qth'])
+        self.ownLocatorLineEdit.setText(values['own_locator'])
+        self.radioLineEdit.setText(values['radio'])
+        self.antennaLineEdit.setText(values['antenna'])
+        self.remarksTextEdit.setText(values['remarks'])
+        self.commentsTextEdit.setText(values['comments'])
 
     def searchCallbook(self):
         try:
