@@ -408,7 +408,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         if self.RSTRcvdLineEdit.text():
             record['RST_RCVD'] = self.RSTRcvdLineEdit.text()
         if self.freqDoubleSpinBox.value() >= self.bands[self.bandComboBox.currentText()][0]:
-            record['FREQ'] = self.freqDoubleSpinBox.value()
+            record['FREQ'] = f'{self.freqDoubleSpinBox.value() / 1000:0.3f}'
         if self.powerSpinBox.value() > 0:
             record['TX_PWR'] = self.powerSpinBox.value()
         if self.ownLocatorLineEdit.text():
