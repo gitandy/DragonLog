@@ -73,13 +73,13 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
-                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'comments', 'dist')
+                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'comments', 'hamqth', 'dist')
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL', 'COMMENT_INTL',
-        'DISTANCE')
+        'HAMQTH_QSO_UPLOAD_STATUS', 'DISTANCE')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -104,6 +104,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "antenna"   TEXT,
                             "remarks"   TEXT,
                             "comments"   TEXT,
+                            "hamqth"   TEXT,
                             "dist" INTEGER
                         );'''
 
@@ -182,6 +183,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Antenna'),
             self.tr('Notes'),
             self.tr('Comments'),
+            self.tr('HamQTH'),
             self.tr('Distance'),
         )
 
@@ -452,6 +454,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             for col in range(len(self.__sql_cols__)):
                 values.append(self.QSOTableView.model().data(i.siblingAtColumn(col)))
 
+            self.qso_form.clear()
+            self.qso_form.setChangeMode()
             self.qso_form.values = dict(zip(self.__sql_cols__, values))
 
             self.qso_form.setWindowTitle(self.tr('Change QSO') + f' #{qso_id}')
@@ -697,6 +701,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['COMMENT'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n'))
                 record['COMMENT_INTL'] = query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n')
+            if query.value(self.__sql_cols__.index('hamqth')):
+                record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
 
             if not record['APP']:
                 record.pop('APP')

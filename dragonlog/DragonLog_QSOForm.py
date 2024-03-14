@@ -7,7 +7,8 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .DragonLog_Settings import Settings
 from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
-from .DragonLog_CallBook import CallBook, CallBookType, CallBookData, SessionExpiredException, MissingADIFFieldException, LoginException
+from .DragonLog_CallBook import CallBook, CallBookType, CallBookData, SessionExpiredException, \
+    MissingADIFFieldException, LoginException
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -72,6 +73,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self._create_worked_dlg_()
 
         self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}')
+
+        self.hamQTHuplRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self.hamQTHuplRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        self.hamQTHmodRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self.hamQTHmodRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
     def _create_worked_dlg_(self):
         self.worked_dialog = QtWidgets.QListWidget(self)
@@ -193,6 +199,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.bandComboBox.setCurrentIndex(0)
         if self.modeComboBox.currentIndex() < 0:
             self.modeComboBox.setCurrentIndex(0)
+
+        self.hamQTHGroupBox.setChecked(False)
+        self.hamQTHmodRadioButton.setChecked(True)  # Just not check upload
+
+        self.toolBox.setCurrentIndex(0)
 
     def reset(self):
         self.autoDateCheckBox.setEnabled(True)
@@ -386,6 +397,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         band = self.bandComboBox.currentText()
 
+        if self.hamQTHGroupBox.isChecked():
+            if self.hamQTHuplRadioButton.isChecked():
+                hamqth_state = 'Y'
+            if self.hamQTHmodRadioButton.isChecked():
+                hamqth_state = 'M'
+        else:
+            hamqth_state = 'N'
+
         return (
             self.dateOnEdit.text() + ' ' + self.timeOnEdit.text(),
             date_time_off,
@@ -409,6 +428,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.antennaLineEdit.text(),
             self.remarksTextEdit.toPlainText().strip(),
             self.commentsTextEdit.toPlainText().strip(),
+            hamqth_state,
             self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text())
         )
 
@@ -464,6 +484,17 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.remarksTextEdit.setText(values['remarks'])
         self.commentsTextEdit.setText(values['comments'])
 
+        match values['hamqth']:
+            case 'Y':
+                self.hamQTHGroupBox.setChecked(True)
+                self.hamQTHuplRadioButton.setChecked(True)
+            case 'M':
+                self.hamQTHGroupBox.setChecked(True)
+                self.hamQTHmodRadioButton.setChecked(True)
+            case _:
+                self.hamQTHGroupBox.setChecked(False)
+                self.hamQTHmodRadioButton.setChecked(True)  # Just don't check uploaded
+
     def searchCallbook(self):
         try:
             if not self.callbook.is_loggedin:
@@ -491,67 +522,83 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 print(f'Fetched data from callbook {self.callbook.callbook_type.name}')
         except LoginException:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
-                                          self.tr('Login failed for user') + ': ' + self.settings.value('callbook/username', ''))
+                                          self.tr('Login failed for user') + ': ' + self.settings.value(
+                                              'callbook/username', ''))
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('During callbook search an error occured') + f':\n{exc}')
 
+    def saveLog(self):
+        self.hamQTHmodRadioButton.setChecked(True)
+
+        # finally accept dialog anyway
+        self.accept()
+
     def uploadLog(self):
-        record = {
-            'QSO_DATE': self.dateOnEdit.text().replace('-', ''),
-            'TIME_ON': self.timeOnEdit.text().replace(':', ''),
-            'TIME_OFF': self.timeEdit.text().replace(':', ''),
-            'BAND': self.bandComboBox.currentText(),
-            'MODE': self.modeComboBox.currentText(),
-        }
+        if self.hamQTHGroupBox.isChecked():
+            record = {
+                'QSO_DATE': self.dateOnEdit.text().replace('-', ''),
+                'TIME_ON': self.timeOnEdit.text().replace(':', ''),
+                'TIME_OFF': self.timeEdit.text().replace(':', ''),
+                'BAND': self.bandComboBox.currentText(),
+                'MODE': self.modeComboBox.currentText(),
+            }
 
-        if self.ownCallSignLineEdit.text():
-            record['STATION_CALLSIGN'] = self.ownCallSignLineEdit.text().upper()
-        if self.callSignLineEdit.text():
-            record['CALL'] = self.callSignLineEdit.text().upper()
-        if self.nameLineEdit.text():
-            record['NAME'] = self.nameLineEdit.text()
-        if self.QTHLineEdit.text():
-            record['QTH'] = self.QTHLineEdit.text()
-        if self.locatorLineEdit.text():
-            record['GRIDSQUARE'] = self.locatorLineEdit.text()
-        if self.RSTSentLineEdit.text():
-            record['RST_SENT'] = self.RSTSentLineEdit.text()
-        if self.RSTRcvdLineEdit.text():
-            record['RST_RCVD'] = self.RSTRcvdLineEdit.text()
-        if self.freqDoubleSpinBox.value() >= self.bands[self.bandComboBox.currentText()][0]:
-            record['FREQ'] = self.freqDoubleSpinBox.value()
-        if self.powerSpinBox.value() > 0:
-            record['TX_PWR'] = self.powerSpinBox.value()
-        if self.ownLocatorLineEdit.text():
-            record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
-        if self.remarksTextEdit.toPlainText().strip():
-            record['NOTES'] = self.remarksTextEdit.toPlainText().strip()
-        if self.commentsTextEdit.toPlainText().strip():
-            record['COMMENTS'] = self.commentsTextEdit.toPlainText().strip()
+            if self.ownCallSignLineEdit.text():
+                record['STATION_CALLSIGN'] = self.ownCallSignLineEdit.text().upper()
+            if self.callSignLineEdit.text():
+                record['CALL'] = self.callSignLineEdit.text().upper()
+            if self.nameLineEdit.text():
+                record['NAME'] = self.nameLineEdit.text()
+            if self.QTHLineEdit.text():
+                record['QTH'] = self.QTHLineEdit.text()
+            if self.locatorLineEdit.text():
+                record['GRIDSQUARE'] = self.locatorLineEdit.text()
+            if self.RSTSentLineEdit.text():
+                record['RST_SENT'] = self.RSTSentLineEdit.text()
+            if self.RSTRcvdLineEdit.text():
+                record['RST_RCVD'] = self.RSTRcvdLineEdit.text()
+            if self.freqDoubleSpinBox.value() >= self.bands[self.bandComboBox.currentText()][0]:
+                record['FREQ'] = self.freqDoubleSpinBox.value()
+            if self.powerSpinBox.value() > 0:
+                record['TX_PWR'] = self.powerSpinBox.value()
+            if self.ownLocatorLineEdit.text():
+                record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
+            if self.remarksTextEdit.toPlainText().strip():  # FIXME: Decide here if notes are uploaded or not
+                record['NOTES'] = self.remarksTextEdit.toPlainText().strip()
+            if self.commentsTextEdit.toPlainText().strip():
+                record['COMMENTS'] = self.commentsTextEdit.toPlainText().strip()
 
-        try:
-            self.callbook.upload_log(self.settings.value('callbook/username', ''),
-                                     self.settings_form.callbookPassword(),
-                                     {'HEADER':
-                                         {
-                                             'ADIF_VER': '3.1.4',
-                                             'PROGRAMID': self.parent().programName,
-                                             'PROGRAMVERSION': self.parent().programVersion,
-                                             'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
-                                                 'yyyyMMdd HHmmss')
-                                         },
-                                         'RECORDS': [record]},
-                                     not bool(self.settings.value('imp_exp/own_notes_adif', 0)))
+            adif_doc = {'HEADER':
+                {
+                    'ADIF_VER': '3.1.4',
+                    'PROGRAMID': self.parent().programName,
+                    'PROGRAMVERSION': self.parent().programVersion,
+                    'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
+                        'yyyyMMdd HHmmss')
+                },
+                'RECORDS': [record]}
 
-            print(f'Uploaded log to {self.callbook.callbook_type.name}')
-        except LoginException:
-            QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                          self.tr('Login failed for user') + ': ' + self.settings.value('callbook/username', ''))
-        except MissingADIFFieldException as exc:
-            QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                          self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
+            if self.hamQTHGroupBox.isChecked() and not self.hamQTHuplRadioButton.isChecked():
+                try:
+                    self.callbook.upload_log(self.settings.value('callbook/username', ''),
+                                             self.settings_form.callbookPassword(),
+                                             adif_doc,
+                                             not bool(self.settings.value('imp_exp/own_notes_adif', 0)))
 
+                    self.hamQTHuplRadioButton.setChecked()
+                    print(f'Uploaded log to {self.callbook.callbook_type.name}')
+                except LoginException:
+                    QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                                  self.tr('Login failed for user') + ': ' + self.settings.value(
+                                                      'callbook/username', ''))
+                except MissingADIFFieldException as exc:
+                    QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                                  self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
+            else:
+                print('No upload selected or already done')
+
+        # finally accept dialog anyway
         self.accept()
 
     def exec(self) -> int:
