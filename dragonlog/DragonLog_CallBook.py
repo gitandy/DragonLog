@@ -76,14 +76,12 @@ class CallBook:
             case _:
                 return ()
 
-    def upload_log(self, username:str , password:str, adif_data:dict, no_notes:bool=True):
+    def upload_log(self, username: str, password: str, adif_data: dict):
         for field in self.required_fields:
             if field not in adif_data['RECORDS'][0]:
                 raise MissingADIFFieldException(field)
 
         adif_data = adif_data.copy()
-        if no_notes and 'NOTES' in adif_data['RECORDS'][0]:
-            adif_data.pop('NOTES')
         adif_data['RECORDS'] = [adif_data['RECORDS'][0]]
 
         match self.__callbook_type__:

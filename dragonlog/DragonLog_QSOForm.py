@@ -618,9 +618,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             if self.callSignLineEdit.text():
                 record['CALL'] = self.callSignLineEdit.text().upper()
             if self.nameLineEdit.text():
-                record['NAME'] = self.nameLineEdit.text()
+                record['NAME'] = self.parent().replaceUmlautsLigatures(self.nameLineEdit.text())
             if self.QTHLineEdit.text():
-                record['QTH'] = self.QTHLineEdit.text()
+                record['QTH'] = self.parent().replaceUmlautsLigatures(self.QTHLineEdit.text())
             if self.locatorLineEdit.text():
                 record['GRIDSQUARE'] = self.locatorLineEdit.text()
             if self.RSTSentLineEdit.text():
@@ -633,10 +633,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 record['TX_PWR'] = self.powerSpinBox.value()
             if self.ownLocatorLineEdit.text():
                 record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
-            if self.remarksTextEdit.toPlainText().strip():  # FIXME: Decide here if notes are uploaded or not
-                record['NOTES'] = self.remarksTextEdit.toPlainText().strip()
+            if self.remarksTextEdit.toPlainText().strip() and not bool(
+                self.settings.value('imp_exp/own_notes_adif', 0)):
+                record['NOTES'] = self.parent().replaceUmlautsLigatures(self.remarksTextEdit.toPlainText().strip())
             if self.commentsTextEdit.toPlainText().strip():
-                record['COMMENTS'] = self.commentsTextEdit.toPlainText().strip()
+                record['COMMENTS'] = self.parent().replaceUmlautsLigatures(self.commentsTextEdit.toPlainText().strip())
 
             adif_doc = {'HEADER':
                 {
@@ -647,15 +648,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                         'yyyyMMdd HHmmss')
                 },
                 'RECORDS': [record]}
-
+            print(adif_doc)
             if self.hamQTHGroupBox.isChecked() and not self.hamQTHuplRadioButton.isChecked():
                 try:
                     self.callbook.upload_log(self.settings.value('callbook/username', ''),
                                              self.settings_form.callbookPassword(),
-                                             adif_doc,
-                                             not bool(self.settings.value('imp_exp/own_notes_adif', 0)))
+                                             adif_doc)
 
-                    self.hamQTHuplRadioButton.setChecked()
+                    self.hamQTHuplRadioButton.setChecked(True)
                     print(f'Uploaded log to {self.callbook.callbook_type.name}')
                 except LoginException:
                     QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
