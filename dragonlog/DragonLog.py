@@ -368,8 +368,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def refreshTableView(self):
         hidden_cols = self.settings.value('ui/hidden_cols', '').split(',')
-        for i, col in enumerate(self.__headers__):
-            if col in hidden_cols:
+        for i in range(len(self.__headers__)):
+            if str(i+1) in hidden_cols:
                 self.QSOTableView.hideColumn(i)
             else:
                 self.QSOTableView.showColumn(i)
