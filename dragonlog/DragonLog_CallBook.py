@@ -15,6 +15,10 @@ class CallBookData:
     nickname: str
     locator: str
     qth: str
+    qsl_via: str
+    qsl_bureau: bool
+    qsl_direct: bool
+    qsl_eqsl: bool
 
 
 class CommunicationException(Exception):
@@ -129,6 +133,10 @@ class CallBook:
                         data['nick'] if 'nick' in data else '',
                         data['grid'] if 'grid' in data else '',
                         data['qth'] if 'qth' in data else '',
+                        data['qsl_via'] if 'qsl_via' in data else '',
+                        data['qsl'] == 'Y' if 'qsl' in data else False,
+                        data['qsldirect'] == 'Y' if 'qsldirect' in data else False,
+                        data['eqsl'] == 'Y' if 'eqsl' in data else False,
                     )
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')

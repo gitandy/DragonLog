@@ -73,13 +73,16 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
-                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'comments', 'hamqth', 'dist')
+                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
+                    'remarks', 'comments', 'dist',
+                    'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd', 'hamqth')
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
-        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL', 'COMMENT_INTL',
-        'HAMQTH_QSO_UPLOAD_STATUS', 'DISTANCE')
+        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
+        'NOTES_INTL', 'COMMENT_INTL',  'DISTANCE'
+        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -104,8 +107,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "antenna"   TEXT,
                             "remarks"   TEXT,
                             "comments"   TEXT,
-                            "hamqth"   TEXT,
-                            "dist" INTEGER
+                            "dist" INTEGER,
+                            "qsl_via"   TEXT,
+                            "qsl_path"   TEXT,
+                            "qsl_msg"   TEXT,
+                            "qsl_sent"   TEXT,
+                            "qsl_rcvd"   TEXT,
+                            "hamqth"   TEXT
                         );'''
 
     __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
@@ -183,8 +191,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Antenna'),
             self.tr('Notes'),
             self.tr('Comments'),
-            self.tr('HamQTH'),
             self.tr('Distance'),
+            self.tr('QSL via'),
+            self.tr('QSL path'),
+            self.tr('QSL message'),
+            self.tr('QSL sent'),
+            self.tr('QSL rcvd'),
+            self.tr('HamQTH'),
         )
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
@@ -701,6 +714,18 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['COMMENT'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n'))
                 record['COMMENT_INTL'] = query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n')
+            if query.value(self.__sql_cols__.index('qsl_via')):
+                record['QSL_VIA'] = query.value(self.__sql_cols__.index('qsl_via'))
+            if query.value(self.__sql_cols__.index('qsl_path')):
+                record['QSL_SENT_VIA'] = query.value(self.__sql_cols__.index('qsl_path'))
+            if query.value(self.__sql_cols__.index('qsl_msg')):
+                record['QSLMSG'] = self.replaceUmlautsLigatures(
+                    query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n'))
+                record['QSLMSG_INTL'] = query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n')
+            if query.value(self.__sql_cols__.index('qsl_sent')):
+                record['QSL_SENT'] = query.value(self.__sql_cols__.index('qsl_sent'))
+            if query.value(self.__sql_cols__.index('qsl_rcvd')):
+                record['QSL_RCVD'] = query.value(self.__sql_cols__.index('qsl_rcvd'))
             if query.value(self.__sql_cols__.index('hamqth')):
                 record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
 

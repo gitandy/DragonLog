@@ -74,10 +74,29 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}')
 
-        self.hamQTHuplRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self.hamQTHuplRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
-        self.hamQTHmodRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self.hamQTHmodRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        view_only_widgets = (
+            self.qslAccBureauCheckBox,
+            self.qslAccDirectCheckBox,
+            self.qslAccElectronicCheckBox,
+            self.hamQTHuplRadioButton,
+            self.hamQTHmodRadioButton,
+        )
+
+        # self.qslAccBureauCheckBox.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        # self.qslAccBureauCheckBox
+        # self.qslAccDirectCheckBox.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        # self.qslAccDirectCheckBox
+        # self.qslAccElectronicCheckBox.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        # self.qslAccElectronicCheckBox
+        #
+        # self.hamQTHuplRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        # self.hamQTHuplRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        # self.hamQTHmodRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        # self.hamQTHmodRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+
+        for w in view_only_widgets:
+            w.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
     def _create_worked_dlg_(self):
         self.worked_dialog = QtWidgets.QListWidget(self)
@@ -199,6 +218,18 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.bandComboBox.setCurrentIndex(0)
         if self.modeComboBox.currentIndex() < 0:
             self.modeComboBox.setCurrentIndex(0)
+
+        self.qslGroupBox.setChecked(False)
+        self.qslViaLineEdit.clear()
+        self.qslBureauRadioButton.setChecked(False)
+        self.qslDirectRadioButton.setChecked(False)
+        self.qslElectronicRadioButton.setChecked(False)
+        self.qslAccBureauCheckBox.setChecked(False)
+        self.qslAccDirectCheckBox.setChecked(False)
+        self.qslAccElectronicCheckBox.setChecked(False)
+        self.qslMessageTextEdit.clear()
+        self.qslSentCheckBox.setChecked(False)
+        self.qslRcvdCheckBox.setChecked(False)
 
         self.hamQTHGroupBox.setChecked(False)
         self.hamQTHmodRadioButton.setChecked(True)  # Just not check upload
@@ -397,13 +428,29 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         band = self.bandComboBox.currentText()
 
+        qsl_via = ''
+        qsl_path = ''
+        qsl_msg = ''
+        qsl_sent = 'N'
+        qsl_rcvd = 'N'
+        if self.qslGroupBox.isChecked():
+            qsl_via = self.qslViaLineEdit.text()
+            if self.qslBureauRadioButton.isChecked():
+                qsl_path = 'B'
+            elif self.qslDirectRadioButton.isChecked():
+                qsl_path = 'D'
+            elif self.qslElectronicRadioButton.isChecked():
+                qsl_path = 'E'
+            qsl_msg = self.qslMessageTextEdit.toPlainText().strip()
+            qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'R'
+            qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'R'
+
+        hamqth_state = 'N'
         if self.hamQTHGroupBox.isChecked():
             if self.hamQTHuplRadioButton.isChecked():
                 hamqth_state = 'Y'
             if self.hamQTHmodRadioButton.isChecked():
                 hamqth_state = 'M'
-        else:
-            hamqth_state = 'N'
 
         return (
             self.dateOnEdit.text() + ' ' + self.timeOnEdit.text(),
@@ -428,8 +475,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.antennaLineEdit.text(),
             self.remarksTextEdit.toPlainText().strip(),
             self.commentsTextEdit.toPlainText().strip(),
+            self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text()),
+            qsl_via,
+            qsl_path,
+            qsl_msg,
+            qsl_sent,
+            qsl_rcvd,
             hamqth_state,
-            self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text())
         )
 
     @values.setter
@@ -484,6 +536,16 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.remarksTextEdit.setText(values['remarks'])
         self.commentsTextEdit.setText(values['comments'])
 
+        if values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y'):
+            self.qslGroupBox.setChecked(True)
+            self.qslViaLineEdit.setText(values['qsl_via'])
+            self.qslBureauRadioButton.setChecked(values['qsl_path'] == 'B')
+            self.qslDirectRadioButton.setChecked(values['qsl_path'] == 'D')
+            self.qslElectronicRadioButton.setChecked(values['qsl_path'] == 'E')
+            self.qslMessageTextEdit.setText(values['qsl_msg'])
+            self.qslSentCheckBox.setChecked(values['qsl_sent'] == 'Y')
+            self.qslRcvdCheckBox.setChecked(values['qsl_rcvd'] == 'Y')
+
         match values['hamqth']:
             case 'Y':
                 self.hamQTHGroupBox.setChecked(True)
@@ -519,6 +581,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     self.locatorLineEdit.setText(data.locator)
                 if data.qth and not self.QTHLineEdit.text().strip():
                     self.QTHLineEdit.setText(data.qth)
+                if data.qsl_via and not self.qslViaLineEdit.text().strip():
+                    self.qslViaLineEdit.setText(data.qsl_via)
+
+                self.qslAccBureauCheckBox.setChecked(data.qsl_bureau)
+                self.qslAccDirectCheckBox.setChecked(data.qsl_direct)
+                self.qslAccElectronicCheckBox.setChecked(data.qsl_eqsl)
+
                 print(f'Fetched data from callbook {self.callbook.callbook_type.name}')
         except LoginException:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
