@@ -1,3 +1,4 @@
+import os
 import math
 import socket
 
@@ -7,8 +8,10 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .DragonLog_Settings import Settings
 from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
-from .DragonLog_CallBook import CallBook, CallBookType, CallBookData, SessionExpiredException, \
-    MissingADIFFieldException, LoginException
+from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
+                                 MissingADIFFieldException, LoginException)
+from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
+                             EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -73,26 +76,18 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self._create_worked_dlg_()
 
         self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}')
+        self.eqsl = EQSL(self.parent().programName)
+        self.eqsl_url = ''
 
         view_only_widgets = (
             self.qslAccBureauCheckBox,
             self.qslAccDirectCheckBox,
             self.qslAccElectronicCheckBox,
+            self.eqslSentCheckBox,
+            self.eqslRcvdCheckBox,
             self.hamQTHuplRadioButton,
             self.hamQTHmodRadioButton,
         )
-
-        # self.qslAccBureauCheckBox.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        # self.qslAccBureauCheckBox
-        # self.qslAccDirectCheckBox.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        # self.qslAccDirectCheckBox
-        # self.qslAccElectronicCheckBox.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        # self.qslAccElectronicCheckBox
-        #
-        # self.hamQTHuplRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        # self.hamQTHuplRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
-        # self.hamQTHmodRadioButton.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        # self.hamQTHmodRadioButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
         for w in view_only_widgets:
             w.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
@@ -219,7 +214,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         if self.modeComboBox.currentIndex() < 0:
             self.modeComboBox.setCurrentIndex(0)
 
-        self.qslGroupBox.setChecked(False)
+        self.qslBurDirGroupBox.setChecked(False)
         self.qslViaLineEdit.clear()
         self.qslBureauRadioButton.setChecked(False)
         self.qslDirectRadioButton.setChecked(False)
@@ -230,6 +225,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.qslMessageTextEdit.clear()
         self.qslSentCheckBox.setChecked(False)
         self.qslRcvdCheckBox.setChecked(False)
+
+        self.eqslSentCheckBox.setChecked(False)
+        self.eqslRcvdCheckBox.setChecked(False)
+        self.eqslLinkLabel.setEnabled(False)
+        self.eqslLinkLabel.setText(self.tr('Link to eQSL Card'))
+        self.eqslDownloadPushButton.setEnabled(False)
 
         self.hamQTHGroupBox.setChecked(False)
         self.hamQTHmodRadioButton.setChecked(True)  # Just not check upload
@@ -433,7 +434,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         qsl_msg = ''
         qsl_sent = 'N'
         qsl_rcvd = 'N'
-        if self.qslGroupBox.isChecked():
+        eqsl_sent = 'N'
+        eqsl_rcvd = 'N'
+        if self.qslBurDirGroupBox.isChecked() or self.eqslGroupBox.isChecked():
             qsl_via = self.qslViaLineEdit.text()
             if self.qslBureauRadioButton.isChecked():
                 qsl_path = 'B'
@@ -442,8 +445,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             elif self.qslElectronicRadioButton.isChecked():
                 qsl_path = 'E'
             qsl_msg = self.qslMessageTextEdit.toPlainText().strip()
-            qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'R'
-            qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'R'
+
+            if self.qslBurDirGroupBox.isChecked():
+                qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'R'
+                qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'R'
+
+            if self.eqslGroupBox.isChecked():
+                eqsl_sent = 'Y' if self.eqslSentCheckBox.isChecked() else 'R'
+                eqsl_rcvd = 'Y' if self.eqslRcvdCheckBox.isChecked() else 'R'
 
         hamqth_state = 'N'
         if self.hamQTHGroupBox.isChecked():
@@ -481,6 +490,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             qsl_msg,
             qsl_sent,
             qsl_rcvd,
+            eqsl_sent,
+            eqsl_rcvd,
             hamqth_state,
         )
 
@@ -536,15 +547,27 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.remarksTextEdit.setText(values['remarks'])
         self.commentsTextEdit.setText(values['comments'])
 
-        if values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y'):
-            self.qslGroupBox.setChecked(True)
+        if (values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y') or
+                values['eqsl_sent'] in ('R', 'Y') or values['eqsl_rcvd'] in ('R', 'Y')):
+
             self.qslViaLineEdit.setText(values['qsl_via'])
             self.qslBureauRadioButton.setChecked(values['qsl_path'] == 'B')
             self.qslDirectRadioButton.setChecked(values['qsl_path'] == 'D')
             self.qslElectronicRadioButton.setChecked(values['qsl_path'] == 'E')
             self.qslMessageTextEdit.setText(values['qsl_msg'])
-            self.qslSentCheckBox.setChecked(values['qsl_sent'] == 'Y')
-            self.qslRcvdCheckBox.setChecked(values['qsl_rcvd'] == 'Y')
+
+            if values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y'):
+                self.qslBurDirGroupBox.setChecked(True)
+                self.qslSentCheckBox.setChecked(values['qsl_sent'] == 'Y')
+                self.qslRcvdCheckBox.setChecked(values['qsl_rcvd'] == 'Y')
+
+            if values['eqsl_sent'] in ('R', 'Y') or values['eqsl_rcvd'] in ('R', 'Y'):
+                self.eqslGroupBox.setChecked(True)
+                self.eqslSentCheckBox.setChecked(values['eqsl_sent'] == 'Y')
+                self.eqslRcvdCheckBox.setChecked(values['eqsl_rcvd'] == 'Y')
+                if self.eqslRcvdCheckBox.isChecked():
+                    self.eqslLinkLabel.setEnabled(True)
+                    self.eqslDownloadPushButton.setEnabled(True)
 
         match values['hamqth']:
             case 'Y':
@@ -556,6 +579,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             case _:
                 self.hamQTHGroupBox.setChecked(False)
                 self.hamQTHmodRadioButton.setChecked(True)  # Just don't check uploaded
+
+    def eqslSelected(self):
+        self.eqslGroupBox.setChecked(True)
+        self.qslBurDirGroupBox.setChecked(False)
+
+    def qslBurDirSelected(self):
+        self.qslBurDirGroupBox.setChecked(True)
+        self.eqslGroupBox.setChecked(False)
 
     def searchCallbook(self):
         try:
@@ -604,40 +635,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.accept()
 
     def uploadLog(self):
-        if self.hamQTHGroupBox.isChecked():
-            record = {
-                'QSO_DATE': self.dateOnEdit.text().replace('-', ''),
-                'TIME_ON': self.timeOnEdit.text().replace(':', ''),
-                'TIME_OFF': self.timeEdit.text().replace(':', ''),
-                'BAND': self.bandComboBox.currentText(),
-                'MODE': self.modeComboBox.currentText(),
-            }
-
-            if self.ownCallSignLineEdit.text():
-                record['STATION_CALLSIGN'] = self.ownCallSignLineEdit.text().upper()
-            if self.callSignLineEdit.text():
-                record['CALL'] = self.callSignLineEdit.text().upper()
-            if self.nameLineEdit.text():
-                record['NAME'] = self.parent().replaceUmlautsLigatures(self.nameLineEdit.text())
-            if self.QTHLineEdit.text():
-                record['QTH'] = self.parent().replaceUmlautsLigatures(self.QTHLineEdit.text())
-            if self.locatorLineEdit.text():
-                record['GRIDSQUARE'] = self.locatorLineEdit.text()
-            if self.RSTSentLineEdit.text():
-                record['RST_SENT'] = self.RSTSentLineEdit.text()
-            if self.RSTRcvdLineEdit.text():
-                record['RST_RCVD'] = self.RSTRcvdLineEdit.text()
-            if self.freqDoubleSpinBox.value() >= self.bands[self.bandComboBox.currentText()][0]:
-                record['FREQ'] = self.freqDoubleSpinBox.value()
-            if self.powerSpinBox.value() > 0:
-                record['TX_PWR'] = self.powerSpinBox.value()
-            if self.ownLocatorLineEdit.text():
-                record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
-            if self.remarksTextEdit.toPlainText().strip() and not bool(
-                self.settings.value('imp_exp/own_notes_adif', 0)):
-                record['NOTES'] = self.parent().replaceUmlautsLigatures(self.remarksTextEdit.toPlainText().strip())
-            if self.commentsTextEdit.toPlainText().strip():
-                record['COMMENTS'] = self.parent().replaceUmlautsLigatures(self.commentsTextEdit.toPlainText().strip())
+        if self.hamQTHGroupBox.isChecked() or self.eqslGroupBox.isChecked():
+            record = self._build_record_()
 
             adif_doc = {'HEADER':
                 {
@@ -648,7 +647,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                         'yyyyMMdd HHmmss')
                 },
                 'RECORDS': [record]}
-            print(adif_doc)
+
             if self.hamQTHGroupBox.isChecked() and not self.hamQTHuplRadioButton.isChecked():
                 try:
                     self.callbook.upload_log(self.settings.value('callbook/username', ''),
@@ -664,11 +663,139 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 except MissingADIFFieldException as exc:
                     QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                                   self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
-            else:
-                print('No upload selected or already done')
+
+            if self.eqslGroupBox.isChecked():
+                try:
+                    self.eqsl.upload_log(self.settings.value('eqsl/username', ''),
+                                         self.settings_form.eqslPassword(),
+                                         record)
+
+                    self.eqslSentCheckBox.setChecked(True)
+                    print(f'Uploaded log to eQSL')
+                except EQSLLoginException:
+                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                                  self.tr('Login failed for user') + ': ' + self.settings.value(
+                                                      'eqsl/username', ''))
+                except EQSLADIFFieldException as exc:
+                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                                  self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
+                except EQSLQSODuplicateException:
+                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                                  self.tr('The QSO is a duplicate'))
+                except EQSLUserCallMatchException:
+                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                                  self.tr('User call does not match') + ': ' + self.settings.value(
+                                                      'eqsl/username', ''))
+                except EQSLRequestException as exc:
+                    QtWidgets.QMessageBox.information(self, self.tr('Upload eQSL error'),
+                                                      self.tr('Error on upload') + f':\n"{exc.args[0]}"')
 
         # finally accept dialog anyway
         self.accept()
+
+    def _build_record_(self):
+        record = {
+            'QSO_DATE': self.dateOnEdit.text().replace('-', ''),
+            'TIME_ON': self.timeOnEdit.text().replace(':', ''),
+            'TIME_OFF': self.timeEdit.text().replace(':', ''),
+            'BAND': self.bandComboBox.currentText(),
+            'MODE': self.modeComboBox.currentText(),
+        }
+        if self.ownCallSignLineEdit.text():
+            record['STATION_CALLSIGN'] = self.ownCallSignLineEdit.text().upper()
+        if self.callSignLineEdit.text():
+            record['CALL'] = self.callSignLineEdit.text().upper()
+        if self.nameLineEdit.text():
+            record['NAME'] = self.parent().replaceUmlautsLigatures(self.nameLineEdit.text())
+        if self.QTHLineEdit.text():
+            record['QTH'] = self.parent().replaceUmlautsLigatures(self.QTHLineEdit.text())
+        if self.locatorLineEdit.text():
+            record['GRIDSQUARE'] = self.locatorLineEdit.text()
+        if self.RSTSentLineEdit.text():
+            record['RST_SENT'] = self.RSTSentLineEdit.text()
+        if self.RSTRcvdLineEdit.text():
+            record['RST_RCVD'] = self.RSTRcvdLineEdit.text()
+        if self.freqDoubleSpinBox.value() >= self.bands[self.bandComboBox.currentText()][0]:
+            record['FREQ'] = f'{self.freqDoubleSpinBox.value() / 1000:0.3f}'
+        if self.powerSpinBox.value() > 0:
+            record['TX_PWR'] = self.powerSpinBox.value()
+        if self.ownLocatorLineEdit.text():
+            record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
+        if self.remarksTextEdit.toPlainText().strip() and not bool(
+                self.settings.value('imp_exp/own_notes_adif', 0)):
+            record['NOTES'] = self.parent().replaceUmlautsLigatures(self.remarksTextEdit.toPlainText().strip())
+        if self.commentsTextEdit.toPlainText().strip():
+            record['COMMENTS'] = self.parent().replaceUmlautsLigatures(self.commentsTextEdit.toPlainText().strip())
+        if self.qslMessageTextEdit.toPlainText().strip():
+            record['QSLMSG'] = self.parent().replaceUmlautsLigatures(self.qslMessageTextEdit.toPlainText().strip())
+
+        return record
+
+    def eqslCheckInbox(self, only_url: bool=False):
+        try:
+            res = self.eqsl.check_inbox(self.settings.value('eqsl/username', ''),
+                                        self.settings_form.eqslPassword(),
+                                        self._build_record_())
+            if res:
+                self.eqsl_url = res
+                self.eqslLinkLabel.setText(f'''<html>
+                <head/>
+                <body>
+                <p><a href="{res}">
+                <span style=" text-decoration: underline; color:#0000ff;">{self.tr('Link to eQSL Card')}</span>
+                </a></p>
+                </body>
+                </html>''')
+                print(f'eQSL available at "{res}"')
+
+                if not only_url:
+                    self.eqslRcvdCheckBox.setChecked(True)
+                    self.eqslLinkLabel.setEnabled(True)
+                    self.eqslDownloadPushButton.setEnabled(True)
+
+                return
+        except EQSLLoginException as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
+                                          self.tr('Login failed for user') + ': ' + self.settings.value(
+                                              'eqsl/username', '') + f'\n{exc}')
+        except EQSLUserCallMatchException:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
+                                          self.tr('User call does not match') + ': ' + self.settings.value(
+                                              'eqsl/username', ''))
+        except EQSLRequestException:
+            QtWidgets.QMessageBox.information(self, self.tr('Check eQSL Inbox error'),
+                                              self.tr('No eQSL available'))
+        except EQSLADIFFieldException as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
+                                          self.tr('A field is missing for inbox check') + f':\n"{exc.args[0]}"')
+
+        if not only_url:
+            self.eqslLinkLabel.setEnabled(False)
+            self.eqslDownloadPushButton.setEnabled(False)
+
+    def eqslDownload(self):
+        if not self.eqsl_url:
+            self.eqslCheckInbox(True)
+
+        if self.eqsl_url:
+            res = QtWidgets.QFileDialog.getExistingDirectory(
+                self,
+                self.tr('Select eQSL folder'),
+                self.settings.value('eqsl/lastExportDir', os.path.abspath(os.curdir)))
+
+            if res:
+                image_type = self.eqsl_url.split('/')[-1].split('.')[-1]
+                call_sign = self.callSignLineEdit.text().replace("/ ?%&§$!=.()´`#'+*-:;<>|~{[]}", "_")
+                image_name = (f'{self.dateOnEdit.text()} {call_sign} {self.modeComboBox.currentText()} '
+                              f'{self.bandComboBox.currentText()}.{image_type}')
+                image_path = os.path.join(res, image_name)
+
+                eqsl_image = self.eqsl.receive_qsl_card(self.eqsl_url)
+                with open(image_path, 'wb') as eqslf:
+                    eqslf.write(eqsl_image)
+
+                print(f'Stored eQSL to "{image_path}"')
+                self.settings.setValue('eqsl/lastExportDir', res)
 
     def exec(self) -> int:
         if self.lastpos:

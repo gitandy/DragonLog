@@ -534,12 +534,6 @@
          <property name="title">
           <string>QSL</string>
          </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <widget class="QLineEdit" name="qslViaLineEdit">
@@ -549,6 +543,34 @@ This is not the QSL manager/bureau address.</string>
             </property>
             <property name="placeholderText">
              <string>QSL via</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="qslMessageTextEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+            </property>
+            <property name="placeholderText">
+             <string>QSL card message</string>
             </property>
            </widget>
           </item>
@@ -619,63 +641,136 @@ This is not the QSL manager/bureau address.</string>
            </layout>
           </item>
           <item>
-           <widget class="QTextEdit" name="qslMessageTextEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <widget class="QGroupBox" name="qslBurDirGroupBox">
+            <property name="title">
+             <string>Bureau/Direct</string>
             </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>50</height>
-             </size>
+            <property name="checked">
+             <bool>false</bool>
             </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-            </property>
-            <property name="placeholderText">
-             <string>QSL card message</string>
-            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QCheckBox" name="qslSentCheckBox">
+               <property name="text">
+                <string>QSL sent</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="qslRcvdCheckBox">
+               <property name="text">
+                <string>QSL received</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QCheckBox" name="qslSentCheckBox">
-              <property name="text">
-               <string>QSL sent</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="qslRcvdCheckBox">
-              <property name="text">
-               <string>QSL received</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_9">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           <widget class="QGroupBox" name="eqslGroupBox">
+            <property name="title">
+             <string>eQSL</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <item>
+                <widget class="QCheckBox" name="eqslSentCheckBox">
+                 <property name="text">
+                  <string>eQSL sent</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="eqslRcvdCheckBox">
+                 <property name="text">
+                  <string>eQSL received</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="eqslInboxPushButton">
+                 <property name="text">
+                  <string>Check Inbox</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_10">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QLabel" name="eqslLinkLabel">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Link to eQSL Card</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="eqslDownloadPushButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Download eQSL</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_11">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -1201,6 +1296,86 @@ This is not the QSL manager/bureau address.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>qslBureauRadioButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>qslBurDirSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qslDirectRadioButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>qslBurDirSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qslElectronicRadioButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>eqslSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eqslInboxPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>eqslCheckInbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eqslDownloadPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>eqslDownload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -1218,5 +1393,9 @@ This is not the QSL manager/bureau address.</string>
   <slot>searchCallbook()</slot>
   <slot>uploadLog()</slot>
   <slot>saveLog()</slot>
+  <slot>eqslSelected()</slot>
+  <slot>qslBurDirSelected()</slot>
+  <slot>eqslCheckInbox()</slot>
+  <slot>eqslDownload()</slot>
  </slots>
 </ui>

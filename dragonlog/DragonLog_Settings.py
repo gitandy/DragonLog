@@ -283,6 +283,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         return keyring.get_password('HamQTH.com',
                                     self.settings.value('callbook/username', ''))
 
+    def eqslPassword(self):
+        return keyring.get_password('eqsl.cc',
+                                    self.settings.value('eqsl/username', ''))
+
     def accept(self):
         print('Saving Settings...')
         self.settings.setValue('cat/interface', self.catInterfaceLineEdit.text())
@@ -319,5 +323,12 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                  self.callbookUserLineEdit.text(),
                                  self.callbookPasswdLineEdit.text())
         self.callbookPasswdLineEdit.clear()
+
+        self.settings.setValue('eqsl/username', self.eqslUserLineEdit.text())
+        if self.eqslUserLineEdit.text() and self.eqslPasswdLineEdit.text():
+            keyring.set_password('eqsl.cc',
+                                 self.eqslUserLineEdit.text(),
+                                 self.eqslPasswdLineEdit.text())
+        self.eqslPasswdLineEdit.clear()
 
         super().accept()

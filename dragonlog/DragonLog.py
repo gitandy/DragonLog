@@ -75,14 +75,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
                     'remarks', 'comments', 'dist',
-                    'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd', 'hamqth')
+                    'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
+                    'eqsl_sent', 'eqsl_rcvd', 'hamqth')
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
         'NOTES_INTL', 'COMMENT_INTL',  'DISTANCE'
-        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
+        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
+        'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -113,6 +115,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "qsl_msg"   TEXT,
                             "qsl_sent"   TEXT,
                             "qsl_rcvd"   TEXT,
+                            "eqsl_sent"   TEXT,
+                            "eqsl_rcvd"   TEXT,
                             "hamqth"   TEXT
                         );'''
 
@@ -197,6 +201,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('QSL message'),
             self.tr('QSL sent'),
             self.tr('QSL rcvd'),
+            self.tr('eQSL sent'),
+            self.tr('eQSL rcvd'),
             self.tr('HamQTH'),
         )
 
@@ -726,6 +732,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['QSL_SENT'] = query.value(self.__sql_cols__.index('qsl_sent'))
             if query.value(self.__sql_cols__.index('qsl_rcvd')):
                 record['QSL_RCVD'] = query.value(self.__sql_cols__.index('qsl_rcvd'))
+            if query.value(self.__sql_cols__.index('eqsl_sent')):
+                record['EQSL_QSL_SENT'] = query.value(self.__sql_cols__.index('eqsl_sent'))
+            if query.value(self.__sql_cols__.index('eqsl_rcvd')):
+                record['EQSL_QSL_RCVD'] = query.value(self.__sql_cols__.index('eqsl_rcvd'))
             if query.value(self.__sql_cols__.index('hamqth')):
                 record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
 
