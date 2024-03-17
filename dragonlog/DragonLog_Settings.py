@@ -263,9 +263,9 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.colShowListWidget.clear()
         h_cols = self.settings.value('ui/hidden_cols', '').split(',')
         for i, c in enumerate(self.columns, 1):
-            if c not in h_cols:
+            if str(i+1) not in h_cols:
                 self.colShowListWidget.addItem(f'{i:02d} - {c}')
-            elif c in h_cols:
+            else:
                 self.colHideListWidget.addItem(f'{i:02d} - {c}')
 
         self.colShowListWidget.sortItems()
@@ -282,6 +282,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     def callbookPassword(self):
         return keyring.get_password('HamQTH.com',
                                     self.settings.value('callbook/username', ''))
+
+    def eqslPassword(self):
+        return keyring.get_password('eqsl.cc',
+                                    self.settings.value('eqsl/username', ''))
 
     def accept(self):
         print('Saving Settings...')
@@ -305,7 +309,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.settings.setValue('ui/sort_col', self.sortComboBox.currentText())
         self.settings.setValue('ui/hidden_cols',
-                               ','.join([i.text().split('-')[1].strip() for i in
+                               ','.join([str(int(i.text().split('-')[0].strip())) for i in
                                          self.colHideListWidget.findItems('.*',
                                                                           QtCore.Qt.MatchFlag.MatchRegularExpression)]))
 
@@ -319,5 +323,12 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                  self.callbookUserLineEdit.text(),
                                  self.callbookPasswdLineEdit.text())
         self.callbookPasswdLineEdit.clear()
+
+        self.settings.setValue('eqsl/username', self.eqslUserLineEdit.text())
+        if self.eqslUserLineEdit.text() and self.eqslPasswdLineEdit.text():
+            keyring.set_password('eqsl.cc',
+                                 self.eqslUserLineEdit.text(),
+                                 self.eqslPasswdLineEdit.text())
+        self.eqslPasswdLineEdit.clear()
 
         super().accept()

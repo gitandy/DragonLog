@@ -2,11 +2,9 @@ import os
 import csv
 import sys
 import json
-import math
 import datetime
 
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
-import maidenhead
 import adif_file
 from adif_file import adi, adx
 
@@ -75,13 +73,18 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
                     'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
-                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna', 'remarks', 'comments', 'dist')
+                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
+                    'remarks', 'comments', 'dist',
+                    'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
+                    'eqsl_sent', 'eqsl_rcvd', 'hamqth')
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
-        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL', 'NOTES_INTL', 'COMMENT_INTL',
-        'DISTANCE')
+        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
+        'NOTES_INTL', 'COMMENT_INTL',  'DISTANCE'
+        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
+        'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -106,7 +109,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "antenna"   TEXT,
                             "remarks"   TEXT,
                             "comments"   TEXT,
-                            "dist" INTEGER
+                            "dist" INTEGER,
+                            "qsl_via"   TEXT,
+                            "qsl_path"   TEXT,
+                            "qsl_msg"   TEXT,
+                            "qsl_sent"   TEXT,
+                            "qsl_rcvd"   TEXT,
+                            "eqsl_sent"   TEXT,
+                            "eqsl_rcvd"   TEXT,
+                            "hamqth"   TEXT
                         );'''
 
     __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
@@ -121,23 +132,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                                               'WHERE id = ?'
     __db_select_stmnt__ = 'SELECT * FROM qsos'
 
-    @staticmethod
-    def calc_distance(mh_pos1: str, mh_pos2: str):
-        # noinspection PyBroadException
-        try:
-            pos1 = maidenhead.to_location(mh_pos1, True)
-            pos2 = maidenhead.to_location(mh_pos2, True)
 
-            mlat = math.radians(pos1[0])
-            mlon = math.radians(pos1[1])
-            plat = math.radians(pos2[0])
-            plon = math.radians(pos2[1])
-
-            return int(6371.01 * math.acos(
-                math.sin(mlat) * math.sin(plat) + math.cos(mlat) * math.cos(plat) * math.cos(mlon - plon)))
-        except Exception:
-            print(f'Exception calcing distance between "{mh_pos1}" amd "{mh_pos2}"')
-            return 0
 
     @staticmethod
     def searchFile(name):
@@ -201,6 +196,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Notes'),
             self.tr('Comments'),
             self.tr('Distance'),
+            self.tr('QSL via'),
+            self.tr('QSL path'),
+            self.tr('QSL message'),
+            self.tr('QSL sent'),
+            self.tr('QSL rcvd'),
+            self.tr('eQSL sent'),
+            self.tr('eQSL rcvd'),
+            self.tr('HamQTH'),
         )
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
@@ -371,8 +374,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def refreshTableView(self):
         hidden_cols = self.settings.value('ui/hidden_cols', '').split(',')
-        for i, col in enumerate(self.__headers__):
-            if col in hidden_cols:
+        for i in range(len(self.__headers__)):
+            if str(i+1) in hidden_cols:
                 self.QSOTableView.hideColumn(i)
             else:
                 self.QSOTableView.showColumn(i)
@@ -400,43 +403,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if self.qso_form.exec():
             print('Logging QSO...')
-
-            if self.qso_form.autoDateCheckBox.isChecked():
-                date_time_off = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
-            else:
-                date_time_off = self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text()
-
-            band = self.qso_form.bandComboBox.currentText()
-
-            values = (
-                self.qso_form.dateOnEdit.text() + ' ' + self.qso_form.timeOnEdit.text(),
-                date_time_off,
-                self.qso_form.ownCallSignLineEdit.text().upper() if band != '11m' else self.qso_form.ownCallSignLineEdit.text(),
-                self.qso_form.callSignLineEdit.text().upper() if band != '11m' else self.qso_form.callSignLineEdit.text(),
-                self.qso_form.nameLineEdit.text(),
-                self.qso_form.QTHLineEdit.text(),
-                self.qso_form.locatorLineEdit.text(),
-                self.qso_form.RSTSentLineEdit.text(),
-                self.qso_form.RSTRcvdLineEdit.text(),
-                band,
-                self.qso_form.modeComboBox.currentText(),
-                self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >= self.bands[band][
-                    0] else '',
-                self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
-                self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
-                self.qso_form.ownNameLineEdit.text(),
-                self.qso_form.ownQTHLineEdit.text(),
-                self.qso_form.ownLocatorLineEdit.text(),
-                self.qso_form.radioLineEdit.text(),
-                self.qso_form.antennaLineEdit.text(),
-                self.qso_form.remarksTextEdit.toPlainText().strip(),
-                self.qso_form.commentsTextEdit.toPlainText().strip(),
-                self.calc_distance(self.qso_form.locatorLineEdit.text(), self.qso_form.ownLocatorLineEdit.text())
-            )
-
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
-            for i, val in enumerate(values):
+            for i, val in enumerate(self.qso_form.values):
                 query.bindValue(i, val)
             query.exec()
             if query.lastError().text():
@@ -500,104 +469,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 continue
             done_ids.append(qso_id)
 
-            date, time = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('date_time'))).split()
-            self.qso_form.dateOnEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
-            self.qso_form.timeOnEdit.setTime(QtCore.QTime.fromString(time))
+            values = []
+            for col in range(len(self.__sql_cols__)):
+                values.append(self.QSOTableView.model().data(i.siblingAtColumn(col)))
 
-            if self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('date_time_off'))):
-                date_off, time_off = self.QSOTableView.model().data(i.siblingAtColumn(
-                    self.__sql_cols__.index('date_time_off'))).split()
-            else:
-                date_off, time_off = date, time
-            self.qso_form.dateEdit.setDate(QtCore.QDate.fromString(date_off, 'yyyy-MM-dd'))
-            self.qso_form.timeEdit.setTime(QtCore.QTime.fromString(time_off))
-
-            self.qso_form.ownCallSignLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('own_callsign'))))
-            self.qso_form.callSignLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('call_sign'))))
-            self.qso_form.nameLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('name'))))
-            self.qso_form.QTHLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('qth'))))
-            self.qso_form.locatorLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('locator'))))
-            self.qso_form.RSTSentLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('rst_sent'))))
-            self.qso_form.RSTRcvdLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('rst_rcvd'))))
-
-            band = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('band')))
-            self.qso_form.bandComboBox.setCurrentText(band)
-
-            self.qso_form.modeComboBox.setCurrentText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('mode'))))
-
-            try:
-                freq = float(self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('freq'))))
-            except ValueError:
-                freq = self.bands[band][0] - self.bands[band][2]
-            self.qso_form.freqDoubleSpinBox.setValue(freq)
-
-            if band == '11m':
-                self.qso_form.channelComboBox.setCurrentIndex(-1)
-                channel = self.QSOTableView.model().data(i.siblingAtColumn(self.__sql_cols__.index('channel')))
-                self.qso_form.channelComboBox.setCurrentText(str(channel) if channel else '-')
-
-            try:
-                power = int(self.QSOTableView.model().data(i.siblingAtColumn(
-                    self.__sql_cols__.index('power'))))
-            except ValueError:
-                power = 0
-            self.qso_form.powerSpinBox.setValue(power)
-            self.qso_form.ownNameLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('own_name'))))
-            self.qso_form.ownQTHLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('own_qth'))))
-            self.qso_form.ownLocatorLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('own_locator'))))
-            self.qso_form.radioLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('radio'))))
-            self.qso_form.antennaLineEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('antenna'))))
-            self.qso_form.remarksTextEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('remarks'))))
-            self.qso_form.commentsTextEdit.setText(self.QSOTableView.model().data(i.siblingAtColumn(
-                self.__sql_cols__.index('comments'))))
+            self.qso_form.clear()
+            self.qso_form.setChangeMode()
+            self.qso_form.values = dict(zip(self.__sql_cols__, values))
 
             self.qso_form.setWindowTitle(self.tr('Change QSO') + f' #{qso_id}')
 
             if self.qso_form.exec():
                 print(f'Changing QSO {qso_id}...')
-
-                band = self.qso_form.bandComboBox.currentText()
-
-                values = (
-                    self.qso_form.dateOnEdit.text() + ' ' + self.qso_form.timeOnEdit.text(),
-                    self.qso_form.dateEdit.text() + ' ' + self.qso_form.timeEdit.text(),
-                    self.qso_form.ownCallSignLineEdit.text().upper() if band != '11m' else self.qso_form.ownCallSignLineEdit.text(),
-                    self.qso_form.callSignLineEdit.text().upper() if band != '11m' else self.qso_form.callSignLineEdit.text(),
-                    self.qso_form.nameLineEdit.text(),
-                    self.qso_form.QTHLineEdit.text(),
-                    self.qso_form.locatorLineEdit.text(),
-                    self.qso_form.RSTSentLineEdit.text(),
-                    self.qso_form.RSTRcvdLineEdit.text(),
-                    band,
-                    self.qso_form.modeComboBox.currentText(),
-                    self.qso_form.freqDoubleSpinBox.value() if self.qso_form.freqDoubleSpinBox.value() >=
-                                                               self.bands[band][0] else '',
-                    self.qso_form.channelComboBox.currentText() if band == '11m' else '-',
-                    self.qso_form.powerSpinBox.value() if self.qso_form.powerSpinBox.value() > 0 else '',
-                    self.qso_form.ownNameLineEdit.text(),
-                    self.qso_form.ownQTHLineEdit.text(),
-                    self.qso_form.ownLocatorLineEdit.text(),
-                    self.qso_form.radioLineEdit.text(),
-                    self.qso_form.antennaLineEdit.text(),
-                    self.qso_form.remarksTextEdit.toPlainText().strip(),
-                    self.qso_form.commentsTextEdit.toPlainText().strip(),
-                    self.calc_distance(self.qso_form.locatorLineEdit.text(), self.qso_form.ownLocatorLineEdit.text()),
-                    qso_id,
-                )
+                values = self.qso_form.values
+                values += (qso_id,)
 
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare(self.__db_update_stmnt__)
@@ -835,6 +720,24 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['COMMENT'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n'))
                 record['COMMENT_INTL'] = query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n')
+            if query.value(self.__sql_cols__.index('qsl_via')):
+                record['QSL_VIA'] = query.value(self.__sql_cols__.index('qsl_via'))
+            if query.value(self.__sql_cols__.index('qsl_path')):
+                record['QSL_SENT_VIA'] = query.value(self.__sql_cols__.index('qsl_path'))
+            if query.value(self.__sql_cols__.index('qsl_msg')):
+                record['QSLMSG'] = self.replaceUmlautsLigatures(
+                    query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n'))
+                record['QSLMSG_INTL'] = query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n')
+            if query.value(self.__sql_cols__.index('qsl_sent')):
+                record['QSL_SENT'] = query.value(self.__sql_cols__.index('qsl_sent'))
+            if query.value(self.__sql_cols__.index('qsl_rcvd')):
+                record['QSL_RCVD'] = query.value(self.__sql_cols__.index('qsl_rcvd'))
+            if query.value(self.__sql_cols__.index('eqsl_sent')):
+                record['EQSL_QSL_SENT'] = query.value(self.__sql_cols__.index('eqsl_sent'))
+            if query.value(self.__sql_cols__.index('eqsl_rcvd')):
+                record['EQSL_QSL_RCVD'] = query.value(self.__sql_cols__.index('eqsl_rcvd'))
+            if query.value(self.__sql_cols__.index('hamqth')):
+                record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
 
             if not record['APP']:
                 record.pop('APP')

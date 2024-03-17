@@ -15,6 +15,10 @@ class CallBookData:
     nickname: str
     locator: str
     qth: str
+    qsl_via: str
+    qsl_bureau: bool
+    qsl_direct: bool
+    qsl_eqsl: bool
 
 
 class CommunicationException(Exception):
@@ -72,14 +76,12 @@ class CallBook:
             case _:
                 return ()
 
-    def upload_log(self, username:str , password:str, adif_data:dict, no_notes:bool=True):
+    def upload_log(self, username: str, password: str, adif_data: dict):
         for field in self.required_fields:
             if field not in adif_data['RECORDS'][0]:
                 raise MissingADIFFieldException(field)
 
         adif_data = adif_data.copy()
-        if no_notes and 'NOTES' in adif_data['RECORDS'][0]:
-            adif_data.pop('NOTES')
         adif_data['RECORDS'] = [adif_data['RECORDS'][0]]
 
         match self.__callbook_type__:
@@ -129,6 +131,10 @@ class CallBook:
                         data['nick'] if 'nick' in data else '',
                         data['grid'] if 'grid' in data else '',
                         data['qth'] if 'qth' in data else '',
+                        data['qsl_via'] if 'qsl_via' in data else '',
+                        data['qsl'] == 'Y' if 'qsl' in data else False,
+                        data['qsldirect'] == 'Y' if 'qsldirect' in data else False,
+                        data['eqsl'] == 'Y' if 'eqsl' in data else False,
                     )
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')
