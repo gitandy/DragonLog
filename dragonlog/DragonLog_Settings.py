@@ -276,6 +276,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
         self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
+        self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
 
         return super().exec()
 
