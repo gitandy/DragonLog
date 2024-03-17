@@ -24,7 +24,7 @@ from .DragonLog_AppSelect import AppSelect
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
-__author_name__ = 'Andreas Schawo'
+__author_name__ = 'Andreas Schawo, DF1ASC'
 __author_email__ = 'andreas@schawo.de'
 __copyright__ = 'Copyright 2023 by Andreas Schawo,licensed under CC BY-SA 4.0'
 

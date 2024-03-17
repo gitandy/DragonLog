@@ -1,5 +1,12 @@
 DragonLog
 =========
+
+[![PyPI Package](https://img.shields.io/pypi/v/dragonlog?color=%2334D058&label=PyPI%20Package)](https://pypi.org/project/dragonlog)
+[![Python versions](https://img.shields.io/pypi/pyversions/dragonlog.svg?color=%2334D058&label=Python)](https://pypi.org/project/dragonlog)
+
+Author: Andreas Schawo, DF1ASC 
+([HamQTH](http://www.hamqth.com/DF1ASC), [eQSL](http://www.eqsl.cc/Member.cfm?DF1ASC))
+
 DragonLog is a logging program to log hamradio QSOs.
 Beside logging for ham radio you can also log CB radio QSOs.
 
@@ -16,7 +23,8 @@ Features
 * show worked before if a callsign is already logged
 * distance calculation
 * automatic time
-* callbook search and log upload
+* callbook search and log upload (currently only HamQTH.com)
+* eQSL upload, check and download
 * hamlib integration (band, frequency, mode, power)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * ADIF adi/adx export/import
