@@ -610,6 +610,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     self.nameLineEdit.setText(data.nickname)
                 if data.locator and not self.locatorLineEdit.text().strip():
                     self.locatorLineEdit.setText(data.locator)
+                    self.locatorChanged(data.locator)
                 if data.qth and not self.QTHLineEdit.text().strip():
                     self.QTHLineEdit.setText(data.qth)
                 if data.qsl_via and not self.qslViaLineEdit.text().strip():
