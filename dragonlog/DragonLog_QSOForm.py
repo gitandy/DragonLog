@@ -665,7 +665,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                                   self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
 
-            if self.eqslGroupBox.isChecked():
+            if self.eqslGroupBox.isChecked() and not self.eqslSentCheckBox.isChecked():
                 try:
                     self.eqsl.upload_log(self.settings.value('eqsl/username', ''),
                                          self.settings_form.eqslPassword(),
