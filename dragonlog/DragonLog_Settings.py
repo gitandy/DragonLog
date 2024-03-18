@@ -263,11 +263,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.colShowListWidget.clear()
         h_cols = self.settings.value('ui/hidden_cols', '').split(',')
         for i, c in enumerate(self.columns, 1):
-            if str(i+1) not in h_cols:
+            if str(i) not in h_cols:
                 self.colShowListWidget.addItem(f'{i:02d} - {c}')
             else:
                 self.colHideListWidget.addItem(f'{i:02d} - {c}')
-
         self.colShowListWidget.sortItems()
         self.colHideListWidget.sortItems()
 
