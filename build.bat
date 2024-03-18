@@ -37,8 +37,7 @@ lrelease i18n\DragonLog_de.ts -qm dragonlog\data\i18n\DragonLog_de.qm
 echo.
 echo Build...
 copy README.md dragonlog\data\README.md
-python setup_msi.py bdist
-python setup_msi.py bdist_msi
+python setup_msi.py bdist -d dist_exe bdist_msi -d dist_exe
 python -m pip install --upgrade pip
 python -m pip install --upgrade build
 python -m build
