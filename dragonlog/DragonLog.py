@@ -381,9 +381,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.QSOTableView.showColumn(i)
 
         if self.settings.value('ui/sort_col', self.tr('Date/Time start')) in self.__headers__:
+            sort_order = QtCore.Qt.SortOrder.AscendingOrder
+            if self.settings.value('ui/sort_order', 'ASC') == 'DSC':
+                sort_order = QtCore.Qt.SortOrder.DescendingOrder
+
             self.QSOTableView.sortByColumn(self.__headers__.index(self.settings.value('ui/sort_col',
                                                                                       self.tr('Date/Time start'))),
-                                           QtCore.Qt.SortOrder.AscendingOrder)
+                                           sort_order)
 
         self.QSOTableView.resizeColumnsToContents()
 
