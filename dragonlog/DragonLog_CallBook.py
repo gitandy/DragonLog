@@ -9,6 +9,7 @@ from adif_file import adi
 class CallBookType(Enum):
     HamQTH = auto()
 
+
 @dataclass
 class CallBookData:
     callsign: str
@@ -24,19 +25,28 @@ class CallBookData:
 class CommunicationException(Exception):
     pass
 
+
 class RequestException(Exception):
     pass
+
 
 class LoginException(Exception):
     pass
 
+
 class SessionExpiredException(Exception):
     pass
+
 
 class QSORejectedException(Exception):
     pass
 
+
 class MissingADIFFieldException(Exception):
+    pass
+
+
+class CallsignNotFoundException(Exception):
     pass
 
 
@@ -113,8 +123,8 @@ class CallBook:
     def _hamqth_get_data_(self, callsign: str) -> CallBookData:
         try:
             res = self._hamqth_get_({'id': self.__session__,
-                                         'prg': self.__program_str__,
-                                         'callsign': callsign})
+                                     'prg': self.__program_str__,
+                                     'callsign': callsign})
         except CommunicationException as exc:
             raise RequestException(str(exc))
 
@@ -122,6 +132,8 @@ class CallBook:
             case {'HamQTH': {'session': {'error': error}}}:
                 if error == 'Session does not exist or expired':
                     raise SessionExpiredException('HamQTH')
+                elif error == 'Callsign not found':
+                    raise CallsignNotFoundException(callsign)
                 else:
                     raise RequestException(f"HamQTH error: {error}")
             case {'HamQTH': {'search': data}}:
@@ -158,4 +170,3 @@ class CallBook:
             raise LoginException(r.text)
         else:
             raise CommunicationException(f'HamQTH error: HTTP-Error {r.status_code}')
-

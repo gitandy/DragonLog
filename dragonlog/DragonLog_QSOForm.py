@@ -9,7 +9,7 @@ from . import DragonLog_QSOForm_ui
 from .DragonLog_Settings import Settings
 from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
 from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
-                                 MissingADIFFieldException, LoginException)
+                                 MissingADIFFieldException, LoginException, CallsignNotFoundException)
 from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                              EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
 
@@ -625,6 +625,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
                                               'callbook/username', ''))
+        except CallsignNotFoundException as exc:
+            QtWidgets.QMessageBox.information(self, self.tr('Callbook search result'),
+                                          self.tr('Callsign not found') + f': {exc.args[0]}')
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('During callbook search an error occured') + f':\n{exc}')
