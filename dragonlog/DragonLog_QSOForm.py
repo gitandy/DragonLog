@@ -419,13 +419,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def values(self) -> tuple:
         """Retreiving all values from the form"""
 
-        if self.__change_mode__:
+        if not self.__change_mode__:
             if self.autoDateCheckBox.isChecked():
                 date_time_off = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
             else:
                 date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text()
         else:
-            date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text(),
+            date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text()
 
         band = self.bandComboBox.currentText()
 
