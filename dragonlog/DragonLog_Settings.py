@@ -261,7 +261,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         sort_order = self.settings.value('ui/sort_order', 'ASC')
         self.sortAscRadioButton.setChecked(sort_order == 'ASC')
         self.sortDscRadioButton.setChecked(sort_order == 'DSC')
-
+        self.recentQSOsComboBox.setCurrentText(self.settings.value('ui/recent_qsos', self.tr('Show all')))
         self.colHideListWidget.clear()
         self.colShowListWidget.clear()
         h_cols = self.settings.value('ui/hidden_cols', '').split(',')
@@ -312,6 +312,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.settings.setValue('ui/sort_col', self.sortComboBox.currentText())
         self.settings.setValue('ui/sort_order', 'ASC' if self.sortAscRadioButton.isChecked() else 'DSC')
+        self.settings.setValue('ui/recent_qsos', self.recentQSOsComboBox.currentText())
         self.settings.setValue('ui/hidden_cols',
                                ','.join([str(int(i.text().split('-')[0].strip())) for i in
                                          self.colHideListWidget.findItems('.*',

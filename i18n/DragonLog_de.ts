@@ -189,6 +189,41 @@
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Recent QSOs</source>
+      <translation>Neueste QSOs</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Show QSOs from</source>
+      <translation>Zeige QSOs für</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Show all</source>
+      <translation>zeige alle</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Last week</source>
+      <translation>letzte Woche</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Last month</source>
+      <translation>letzten Monat</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Last half year</source>
+      <translation>letztes Halbjahr</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Last year</source>
+      <translation>letztes Jahr</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Show or hide columns</source>
       <translation>Spalten anzeigen oder verstecken</translation>
     </message>
@@ -273,14 +308,14 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1060" />
-      <location filename="..\dragonlog\DragonLog.py" line="1054" />
+      <location filename="..\dragonlog\DragonLog.py" line="1072" />
+      <location filename="..\dragonlog\DragonLog.py" line="1066" />
       <location filename="..\dragonlog\DragonLog.py" line="157" />
       <source>Watching file</source>
       <translation>Dateiüberwachung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1060" />
+      <location filename="..\dragonlog\DragonLog.py" line="1072" />
       <location filename="..\dragonlog\DragonLog.py" line="159" />
       <location filename="..\dragonlog\DragonLog.py" line="157" />
       <source>inactiv</source>
@@ -297,8 +332,8 @@
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="389" />
-      <location filename="..\dragonlog\DragonLog.py" line="383" />
+      <location filename="..\dragonlog\DragonLog.py" line="390" />
+      <location filename="..\dragonlog\DragonLog.py" line="384" />
       <location filename="..\dragonlog\DragonLog.py" line="177" />
       <source>Date/Time start</source>
       <translation>Datum/Zeit Start</translation>
@@ -500,119 +535,144 @@ Die Datei existiert bereits.</translation>
       <translation>Datenbankkonvertierung abgeschlossen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="596" />
-      <location filename="..\dragonlog\DragonLog.py" line="372" />
+      <location filename="..\dragonlog\DragonLog.py" line="612" />
+      <location filename="..\dragonlog\DragonLog.py" line="371" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="430" />
+      <location filename="..\dragonlog\DragonLog.py" line="394" />
+      <source>Show all</source>
+      <translation>zeige alle</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog.py" line="395" />
+      <source>Last week</source>
+      <translation>letzte Woche</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog.py" line="398" />
+      <source>Last month</source>
+      <translation>letzten Monat</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog.py" line="401" />
+      <source>Last half year</source>
+      <translation>letztes Halbjahr</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog.py" line="404" />
+      <source>Last year</source>
+      <translation>letztes Jahr</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog.py" line="448" />
       <source>Log multi QSOs</source>
       <translation>Mehrfach QSOs eingeben</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="438" />
+      <location filename="..\dragonlog\DragonLog.py" line="456" />
       <source>Delete QSO</source>
       <translation>QSO löschen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="439" />
+      <location filename="..\dragonlog\DragonLog.py" line="457" />
       <source>Do you really want to delete the selected QSO(s)?</source>
       <translation>Wollen sie die selektierten QSOs wirklich löschen?</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="484" />
+      <location filename="..\dragonlog\DragonLog.py" line="501" />
       <source>Change QSO</source>
       <translation>QSO ändern</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="761" />
-      <location filename="..\dragonlog\DragonLog.py" line="510" />
+      <location filename="..\dragonlog\DragonLog.py" line="777" />
+      <location filename="..\dragonlog\DragonLog.py" line="526" />
       <source>ADIF 3 (*.adx *.adi *.adif)</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="762" />
-      <location filename="..\dragonlog\DragonLog.py" line="511" />
+      <location filename="..\dragonlog\DragonLog.py" line="778" />
+      <location filename="..\dragonlog\DragonLog.py" line="527" />
       <source>CSV-File (*.csv)</source>
       <translation>CSV-Datei (*.csv)</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="766" />
-      <location filename="..\dragonlog\DragonLog.py" line="515" />
+      <location filename="..\dragonlog\DragonLog.py" line="782" />
+      <location filename="..\dragonlog\DragonLog.py" line="531" />
       <source>Excel-File (*.xlsx)</source>
       <translation>Excel-Datei (*.xlsx)</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="519" />
+      <location filename="..\dragonlog\DragonLog.py" line="535" />
       <source>Select export file</source>
       <translation>Exportdatei speichern</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="551" />
+      <location filename="..\dragonlog\DragonLog.py" line="567" />
       <source>Exported QSO log</source>
       <translation>Exportiere QSO log</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="770" />
+      <location filename="..\dragonlog\DragonLog.py" line="786" />
       <source>Select import file</source>
       <translation>Importdatei öffnen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="810" />
-      <location filename="..\dragonlog\DragonLog.py" line="804" />
+      <location filename="..\dragonlog\DragonLog.py" line="826" />
+      <location filename="..\dragonlog\DragonLog.py" line="820" />
       <source>Log import Excel</source>
       <translation>Log Import Excel</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="847" />
-      <location filename="..\dragonlog\DragonLog.py" line="841" />
+      <location filename="..\dragonlog\DragonLog.py" line="862" />
+      <location filename="..\dragonlog\DragonLog.py" line="856" />
       <source>Log import CSV</source>
       <translation>Log Import CSV</translation>
     </message>
     <message>
+      <location filename="..\dragonlog\DragonLog.py" line="899" />
       <location filename="..\dragonlog\DragonLog.py" line="885" />
-      <location filename="..\dragonlog\DragonLog.py" line="871" />
       <source>Log import ADIF</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1040" />
+      <location filename="..\dragonlog\DragonLog.py" line="1052" />
       <source>Select file to watch</source>
       <translation>Zu überwachende Datei wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1042" />
+      <location filename="..\dragonlog\DragonLog.py" line="1054" />
       <source>ADIF 3 (*.adi *.adif)</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1072" />
+      <location filename="..\dragonlog\DragonLog.py" line="1084" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1092" />
+      <location filename="..\dragonlog\DragonLog.py" line="1104" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1117" />
+      <location filename="..\dragonlog\DragonLog.py" line="1129" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1118" />
+      <location filename="..\dragonlog\DragonLog.py" line="1130" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1119" />
+      <location filename="..\dragonlog\DragonLog.py" line="1131" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1129" />
+      <location filename="..\dragonlog\DragonLog.py" line="1141" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
@@ -1270,6 +1330,11 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <location filename="..\dragonlog\DragonLog_Settings.py" line="260" />
       <source>Date/Time start</source>
       <translation>Datum/Zeit Start</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="264" />
+      <source>Show all</source>
+      <translation>zeige alle</translation>
     </message>
   </context>
   <context>

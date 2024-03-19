@@ -23,15 +23,15 @@ Features
 * show worked before if a callsign is already logged
 * distance calculation
 * automatic time
-* callbook search and log upload (currently only HamQTH.com)
+* callbook search and log upload (HamQTH.com)
 * eQSL upload, check and download
 * hamlib integration (band, frequency, mode, power)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * ADIF adi/adx export/import
 * Excel/CSV export/import
 * log 11m band QSOs
-* UTF-8 (i.e. use german umlauts)
-* convert german umlauts for ADIF export
+* filter recent QSOs (last week, mont, half year, year)
+* UTF-8 (i.e. use german umlauts) and convert german umlauts for ADIF export
 
 Installation
 ------------

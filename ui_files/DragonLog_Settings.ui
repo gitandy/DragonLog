@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>515</width>
-    <height>320</height>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -170,10 +170,13 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -187,6 +190,19 @@
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="nameLineEdit"/>
+       </item>
+       <item row="8" column="1">
+        <spacer name="verticalSpacer_11">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>500</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -543,6 +559,64 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_7">
+           <property name="title">
+            <string>Recent QSOs</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Show QSOs from</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="recentQSOsComboBox">
+              <item>
+               <property name="text">
+                <string>Show all</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Last week</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Last month</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Last half year</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Last year</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox">
