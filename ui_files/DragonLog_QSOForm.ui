@@ -577,40 +577,6 @@ This is not the QSL manager/bureau address.</string>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
-             <widget class="QRadioButton" name="qslBureauRadioButton">
-              <property name="text">
-               <string>Bureau</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="qslDirectRadioButton">
-              <property name="text">
-               <string>Direct</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="qslElectronicRadioButton">
-              <property name="text">
-               <string>Electronic</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_8">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLabel" name="label_5">
               <property name="text">
                <string>Accepts:</string>
@@ -638,6 +604,19 @@ This is not the QSL manager/bureau address.</string>
               </property>
              </widget>
             </item>
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
           <item>
@@ -651,23 +630,44 @@ This is not the QSL manager/bureau address.</string>
             <property name="checked">
              <bool>false</bool>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <widget class="QCheckBox" name="qslSentCheckBox">
-               <property name="text">
-                <string>QSL sent</string>
-               </property>
-              </widget>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="1" column="0">
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QRadioButton" name="qslBureauRadioButton">
+                 <property name="text">
+                  <string>Bureau</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QRadioButton" name="qslDirectRadioButton">
+                 <property name="text">
+                  <string>Direct</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="qslSentCheckBox">
+                 <property name="text">
+                  <string>QSL sent</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="qslRcvdCheckBox">
+                 <property name="text">
+                  <string>QSL received</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
-             <item>
-              <widget class="QCheckBox" name="qslRcvdCheckBox">
-               <property name="text">
-                <string>QSL received</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_9">
+             <item row="1" column="1">
+              <spacer name="horizontalSpacer_12">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -1293,54 +1293,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>281</x>
      <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qslBureauRadioButton</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>QSOFormDialog</receiver>
-   <slot>qslBurDirSelected()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>198</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>287</x>
-     <y>273</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qslDirectRadioButton</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>QSOFormDialog</receiver>
-   <slot>qslBurDirSelected()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>121</x>
-     <y>198</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>287</x>
-     <y>273</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qslElectronicRadioButton</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>QSOFormDialog</receiver>
-   <slot>eqslSelected()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>192</x>
-     <y>198</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>287</x>
-     <y>273</y>
     </hint>
    </hints>
   </connection>

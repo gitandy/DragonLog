@@ -218,7 +218,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.qslViaLineEdit.clear()
         self.qslBureauRadioButton.setChecked(False)
         self.qslDirectRadioButton.setChecked(False)
-        self.qslElectronicRadioButton.setChecked(False)
         self.qslAccBureauCheckBox.setChecked(False)
         self.qslAccDirectCheckBox.setChecked(False)
         self.qslAccElectronicCheckBox.setChecked(False)
@@ -438,12 +437,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         eqsl_rcvd = 'N'
         if self.qslBurDirGroupBox.isChecked() or self.eqslGroupBox.isChecked():
             qsl_via = self.qslViaLineEdit.text()
-            if self.qslBureauRadioButton.isChecked():
-                qsl_path = 'B'
-            elif self.qslDirectRadioButton.isChecked():
-                qsl_path = 'D'
-            elif self.qslElectronicRadioButton.isChecked():
-                qsl_path = 'E'
+            qsl_path = 'D' if self.qslDirectRadioButton.isChecked() else 'B'
             qsl_msg = self.qslMessageTextEdit.toPlainText().strip()
 
             if self.qslBurDirGroupBox.isChecked():
@@ -553,7 +547,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.qslViaLineEdit.setText(values['qsl_via'])
             self.qslBureauRadioButton.setChecked(values['qsl_path'] == 'B')
             self.qslDirectRadioButton.setChecked(values['qsl_path'] == 'D')
-            self.qslElectronicRadioButton.setChecked(values['qsl_path'] == 'E')
             self.qslMessageTextEdit.setText(values['qsl_msg'])
 
             if values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y'):
@@ -579,14 +572,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             case _:
                 self.hamQTHGroupBox.setChecked(False)
                 self.hamQTHmodRadioButton.setChecked(True)  # Just don't check uploaded
-
-    def eqslSelected(self):
-        self.eqslGroupBox.setChecked(True)
-        self.qslBurDirGroupBox.setChecked(False)
-
-    def qslBurDirSelected(self):
-        self.qslBurDirGroupBox.setChecked(True)
-        self.eqslGroupBox.setChecked(False)
 
     def searchCallbook(self):
         try:
@@ -627,7 +612,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                                               'callbook/username', ''))
         except CallsignNotFoundException as exc:
             QtWidgets.QMessageBox.information(self, self.tr('Callbook search result'),
-                                          self.tr('Callsign not found') + f': {exc.args[0]}')
+                                              self.tr('Callsign not found') + f': {exc.args[0]}')
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('During callbook search an error occured') + f':\n{exc}')
@@ -735,7 +720,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
         return record
 
-    def eqslCheckInbox(self, only_url: bool=False):
+    def eqslCheckInbox(self, only_url: bool = False):
         try:
             res = self.eqsl.check_inbox(self.settings.value('eqsl/username', ''),
                                         self.settings_form.eqslPassword(),
