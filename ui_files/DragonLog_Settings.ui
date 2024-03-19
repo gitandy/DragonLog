@@ -22,6 +22,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="toolTip">
+      <string>See settings page &quot;User interface&quot;</string>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -745,6 +748,16 @@
            <widget class="QCheckBox" name="expOwnNotesADIFCheckBox">
             <property name="text">
              <string>Export own notes to ADIF</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="expRecentOnlyCheckBox">
+            <property name="toolTip">
+             <string>See settings page &quot;User interface&quot;</string>
+            </property>
+            <property name="text">
+             <string>Export only recent QSOs</string>
             </property>
            </widget>
           </item>

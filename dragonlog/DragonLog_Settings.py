@@ -274,6 +274,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.colHideListWidget.sortItems()
 
         self.expOwnNotesADIFCheckBox.setChecked(bool(self.settings.value('imp_exp/own_notes_adif', 0)))
+        self.expRecentOnlyCheckBox.setChecked(bool(self.settings.value('imp_exp/only_recent', 0)))
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
@@ -319,6 +320,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                                                           QtCore.Qt.MatchFlag.MatchRegularExpression)]))
 
         self.settings.setValue('imp_exp/own_notes_adif', int(self.expOwnNotesADIFCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/only_recent', int(self.expRecentOnlyCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
 

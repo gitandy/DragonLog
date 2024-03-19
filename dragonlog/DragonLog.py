@@ -390,23 +390,21 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                                                       self.tr('Date/Time start'))),
                                            sort_order)
 
-    def queryView(self):
+    def getQueryStr(self):
         recent_filter = self.settings.value('ui/recent_qsos', self.tr('Show all'))
         if recent_filter == self.tr('Last week'):
-            self.QSOTableView.model().setQuery(
-                "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-7 days')", self.__db_con__)
+            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-7 days')"
         elif recent_filter == self.tr('Last month'):
-            self.QSOTableView.model().setQuery(
-                "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-31 days')", self.__db_con__)
+            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-31 days')"
         elif recent_filter == self.tr('Last half year'):
-            self.QSOTableView.model().setQuery(
-                "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-183 days')", self.__db_con__)
+            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-183 days')"
         elif recent_filter == self.tr('Last year'):
-            self.QSOTableView.model().setQuery(
-                "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-365 days')", self.__db_con__)
+            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-365 days')"
         else:
-            self.QSOTableView.model().setQuery("SELECT * FROM qsos", self.__db_con__)
+            return "SELECT * FROM qsos"
 
+    def queryView(self):
+        self.QSOTableView.model().setQuery(self.getQueryStr(), self.__db_con__)
         self.QSOTableView.resizeColumnsToContents()
 
     def ctrlHamlib(self, start):
@@ -551,7 +549,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             writer.writerow(self.__headers__)
 
             # Write content
-            query = self.__db_con__.exec(self.__db_select_stmnt__)
+            query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
+            query = self.__db_con__.exec(query_str)
+
             if query.lastError().text():
                 raise Exception(query.lastError().text())
 
@@ -583,7 +583,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             column += 1
 
         # Write content
-        query = self.__db_con__.exec(self.__db_select_stmnt__)
+        query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
+        query = self.__db_con__.exec(query_str)
         row = 2
         while query.next():
             for col in range(len(self.__headers__)):
@@ -641,7 +642,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         records = []
 
-        query = self.__db_con__.exec(self.__db_select_stmnt__)
+        query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
+        query = self.__db_con__.exec(query_str)
         if query.lastError().text():
             raise Exception(query.lastError().text())
 
