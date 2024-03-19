@@ -1,6 +1,5 @@
-import sys
 from cx_Freeze import setup, Executable
-from dragonlog.DragonLog import __prog_name__, __prog_desc__, __version__, __author_name__, __author_email__, __copyright__
+from dragonlog.DragonLog import __prog_name__, __prog_desc__, __author_name__, __copyright__
 
 
 base = 'Win32GUI'

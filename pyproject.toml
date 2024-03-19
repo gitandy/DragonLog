@@ -2,7 +2,7 @@
 name = "DragonLog"
 dynamic = ["version"]
 authors = [
-  { name="Andreas Schawo", email="andreas@schawo.de" },
+  { name="Andreas Schawo, DF1ASC", email="andreas@schawo.de" },
 ]
 description = "Log QSO for Ham radio"
 readme = "README.md"
