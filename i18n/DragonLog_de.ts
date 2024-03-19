@@ -371,12 +371,12 @@
     <message>
       <location filename="..\dragonlog\DragonLog.py" line="184" />
       <source>RST sent</source>
-      <translation>RST gesendet</translation>
+      <translation>RST ges.</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog.py" line="185" />
       <source>RST rcvd</source>
-      <translation>RST empfangen</translation>
+      <translation>RST empf.</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog.py" line="186" />
