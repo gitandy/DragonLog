@@ -294,6 +294,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
+        self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
 
         return super().exec()
 
@@ -304,6 +305,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     def eqslPassword(self):
         return keyring.get_password('eqsl.cc',
                                     self.settings.value('eqsl/username', ''))
+
+    def lotwPassword(self):
+        return keyring.get_password('lotw.arrl.org',
+                                    self.settings.value('lotw/username', ''))
 
     def accept(self):
         self.log.info('Saving Settings...')
@@ -353,5 +358,12 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                  self.eqslUserLineEdit.text(),
                                  self.eqslPasswdLineEdit.text())
         self.eqslPasswdLineEdit.clear()
+
+        self.settings.setValue('lotw/username', self.lotwUserLineEdit.text())
+        if self.lotwUserLineEdit.text() and self.lotwPasswdLineEdit.text():
+            keyring.set_password('lotw.arrl.org',
+                                 self.lotwUserLineEdit.text(),
+                                 self.lotwPasswdLineEdit.text())
+        self.lotwPasswdLineEdit.clear()
 
         super().accept()

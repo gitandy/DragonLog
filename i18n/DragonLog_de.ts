@@ -321,10 +321,12 @@
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Username</source>
       <translation>Benutzername</translation>
     </message>
     <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Password</source>
@@ -333,6 +335,16 @@
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>eQSL</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Credentials for LoTW online account not for the certificate</source>
+      <translation>Anmeldedaten des LoTW-Online-Accounts, nicht des Zertifikats</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>LoTW</source>
       <translation />
     </message>
   </context>
