@@ -14,6 +14,7 @@ from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionEx
                                  MissingADIFFieldException, LoginException, CallsignNotFoundException)
 from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                              EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
+from .DragonLog_LoTW import LoTW
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -88,6 +89,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                                  self.logger)
         self.eqsl = EQSL(self.parent().programName, self.logger)
         self.eqsl_url = ''
+
+        self.lotw = LoTW()
 
         view_only_widgets = (
             self.qslAccBureauCheckBox,
@@ -794,6 +797,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
                 self.log.info(f'Stored eQSL to "{image_path}"')
                 self.settings.setValue('eqsl/lastExportDir', res)
+
+    def lotwCheckInbox(self):
+        self.lotw.check_inbox(self.settings.value('lotw/username', ''),
+                              self.settings_form.lotwPassword(),
+                              self._build_record_())
 
     def exec(self) -> int:
         if self.lastpos:

@@ -26,7 +26,7 @@
       <string>See settings page &quot;User interface&quot;</string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="station">
       <attribute name="title">
