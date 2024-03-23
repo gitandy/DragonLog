@@ -80,6 +80,8 @@
     </property>
     <addaction name="actionHelp"/>
     <addaction name="separator"/>
+    <addaction name="actionShow_log"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
@@ -106,6 +108,33 @@
    <addaction name="actionLog_multi_QSOs_TB"/>
    <addaction name="separator"/>
    <addaction name="actionWatch_file_for_QSOs_TB"/>
+  </widget>
+  <widget class="QDockWidget" name="logDockWidget">
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>Application Log</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTextEdit" name="logTextEdit">
+       <property name="font">
+        <font>
+         <family>Courier New</family>
+        </font>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionLog_QSO">
    <property name="icon">
@@ -304,6 +333,15 @@
    </property>
    <property name="text">
     <string>Watch file for QSOs...</string>
+   </property>
+  </action>
+  <action name="actionShow_log">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:file_doc.png</normaloff>icons:file_doc.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show log</string>
    </property>
   </action>
  </widget>
@@ -626,6 +664,22 @@
     <hint type="destinationlabel">
      <x>599</x>
      <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_log</sender>
+   <signal>triggered()</signal>
+   <receiver>logDockWidget</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1081</x>
+     <y>317</y>
     </hint>
    </hints>
   </connection>

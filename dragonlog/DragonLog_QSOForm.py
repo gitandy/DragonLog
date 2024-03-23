@@ -1,11 +1,13 @@
 import os
 import math
 import socket
+import logging
 
 import maidenhead
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 from . import DragonLog_QSOForm_ui
+from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
 from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
@@ -16,9 +18,15 @@ from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
-                 cb_channels: dict, hamlib_error: QtWidgets.QLabel):
+                 cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
         super().__init__(parent)
         self.setupUi(self)
+
+        self.log = logging.getLogger('QSOForm')
+        self.log.addHandler(logger)
+        self.log.setLevel(logger.loglevel)
+        self.logger = logger
+        self.log.debug('Initialising...')
 
         self.default_title = self.windowTitle()
         self.lastpos = None
@@ -75,8 +83,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
 
-        self.callbook = CallBook(CallBookType.HamQTH, f'{self.parent().programName}-{self.parent().programVersion}')
-        self.eqsl = EQSL(self.parent().programName)
+        self.callbook = CallBook(CallBookType.HamQTH,
+                                 f'{self.parent().programName}-{self.parent().programVersion}',
+                                 self.logger)
+        self.eqsl = EQSL(self.parent().programName, self.logger)
         self.eqsl_url = ''
 
         view_only_widgets = (
@@ -134,7 +144,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     freq_s = s.recv(1024).decode('utf-8').strip()
                     if freq_s.startswith('RPRT'):
                         self.hamlib_error.setText(self.tr('Error') + ':' + freq_s.split()[1])
-                        print(f'rigctld error get_freq: {freq_s.split()[1]}')
+                        self.log.error(f'rigctld error get_freq: {freq_s.split()[1]}')
                         return
 
                     try:
@@ -153,7 +163,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     mode_s = s.recv(1024).decode('utf-8').strip()
                     if mode_s.startswith('RPRT'):
                         self.hamlib_error.setText(self.tr('Error') + ':' + mode_s.split()[1])
-                        print(f'rigctld error get_mode: {mode_s.split()[1]}')
+                        self.log.error(f'rigctld error get_mode: {mode_s.split()[1]}')
                         return
 
                     try:
@@ -171,7 +181,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                         pwrlvl_s = s.recv(1024).decode('utf-8').strip()
                         if pwrlvl_s.startswith('RPRT'):
                             self.hamlib_error.setText(self.tr('Error') + ':' + pwrlvl_s.split()[1])
-                            print(f'rigctld error get_level: {pwrlvl_s.split()[1]}')
+                            self.log.error(f'rigctld error get_level: {pwrlvl_s.split()[1]}')
                             return
 
                         # Convert level to W
@@ -179,7 +189,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                         pwr_s = s.recv(1024).decode('utf-8').strip()
                         if pwr_s.startswith('RPRT'):
                             self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])
-                            print(f'rigctld error power2mW: {pwr_s.split()[1]}')
+                            self.log.error(f'rigctld error power2mW: {pwr_s.split()[1]}')
                             return
 
                         try:
@@ -191,7 +201,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                         self.powerSpinBox.setValue(0)
                 except socket.timeout:
                     self.hamlib_error.setText(self.tr('rigctld timeout'))
-                    print('rigctld error: timeout')
+                    self.log.error('rigctld error: timeout')
                     self.refreshTimer.stop()
         else:
             self.refreshTimer.stop()
@@ -396,8 +406,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         else:
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
 
-    @staticmethod
-    def calc_distance(mh_pos1: str, mh_pos2: str):
+    def calc_distance(self, mh_pos1: str, mh_pos2: str):
         # noinspection PyBroadException
         try:
             pos1 = maidenhead.to_location(mh_pos1, True)
@@ -411,7 +420,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             return int(6371.01 * math.acos(
                 math.sin(mlat) * math.sin(plat) + math.cos(mlat) * math.cos(plat) * math.cos(mlon - plon)))
         except Exception:
-            print(f'Exception calcing distance between "{mh_pos1}" amd "{mh_pos2}"')
+            self.log.warning(f'Exception calcing distance between "{mh_pos1}" amd "{mh_pos2}"')
             return 0
 
     @property
@@ -578,7 +587,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             if not self.callbook.is_loggedin:
                 self.callbook.login(self.settings.value('callbook/username', ''),
                                     self.settings_form.callbookPassword())
-                print('Logged into callbook')
+                self.log.info('Logged into callbook')
 
             data: CallBookData = None
             for _ in range(2):
@@ -586,7 +595,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     data = self.callbook.get_dataset(self.callSignLineEdit.text())
                     break
                 except SessionExpiredException:
-                    print('Callbook session expired')
+                    self.log.debug('Callbook session expired')
                     self.callbook.login(self.settings.value('callbook/username', ''),
                                         self.settings_form.callbookPassword())
 
@@ -605,7 +614,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 self.qslAccDirectCheckBox.setChecked(data.qsl_direct)
                 self.qslAccElectronicCheckBox.setChecked(data.qsl_eqsl)
 
-                print(f'Fetched data from callbook {self.callbook.callbook_type.name}')
+                self.log.info(f'Fetched data from callbook {self.callbook.callbook_type.name}')
         except LoginException:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
@@ -644,7 +653,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                                              adif_doc)
 
                     self.hamQTHuplRadioButton.setChecked(True)
-                    print(f'Uploaded log to {self.callbook.callbook_type.name}')
+                    self.log.info(f'Uploaded log to {self.callbook.callbook_type.name}')
                 except LoginException:
                     QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                                   self.tr('Login failed for user') + ': ' + self.settings.value(
@@ -660,7 +669,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                                          record)
 
                     self.eqslSentCheckBox.setChecked(True)
-                    print(f'Uploaded log to eQSL')
+                    self.log.info(f'Uploaded log to eQSL')
                 except EQSLLoginException:
                     QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
                                                   self.tr('Login failed for user') + ': ' + self.settings.value(
@@ -735,7 +744,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 </a></p>
                 </body>
                 </html>''')
-                print(f'eQSL available at "{res}"')
+                self.log.debug(f'eQSL available at "{res}"')
 
                 if not only_url:
                     self.eqslRcvdCheckBox.setChecked(True)
@@ -783,7 +792,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 with open(image_path, 'wb') as eqslf:
                     eqslf.write(eqsl_image)
 
-                print(f'Stored eQSL to "{image_path}"')
+                self.log.info(f'Stored eQSL to "{image_path}"')
                 self.settings.setValue('eqsl/lastExportDir', res)
 
     def exec(self) -> int:

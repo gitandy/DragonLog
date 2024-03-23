@@ -18,6 +18,7 @@ except ImportError:
     pass
 
 from . import DragonLog_MainWindow_ui
+from .Logger import Logger
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
@@ -82,8 +83,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
-        'NOTES_INTL', 'COMMENT_INTL',  'DISTANCE'
-        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
+        'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE'
+                                      'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
         'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
@@ -132,8 +133,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                                               'WHERE id = ?'
     __db_select_stmnt__ = 'SELECT * FROM qsos'
 
-
-
     @staticmethod
     def searchFile(name):
         file = QtCore.QFile(name)
@@ -143,14 +142,21 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def __init__(self, file=None, app_path='.'):
         super().__init__()
 
-        print(f'Starting {__prog_name__}...')
-
         self.setupUi(self)
 
         self.app_path = app_path
         self.help_dialog = None
 
         self.settings = QtCore.QSettings(self.tr(__prog_name__))
+
+        self.log = Logger(self.logTextEdit, self.settings)
+        self.log.info(f'Starting {__prog_name__} {__version__}...')
+
+        dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
+                                                               QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
+        self.addDockWidget(dock_area,
+                           self.logDockWidget)
+        self.logDockWidget.setVisible(bool(self.settings.value('ui/show_log', 0)))
 
         self.dummy_status = QtWidgets.QLabel()
         self.statusBar().addPermanentWidget(self.dummy_status)
@@ -208,23 +214,23 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
 
-        self.settings_form = Settings(self, self.settings, self.hamlib_status, self.__headers__)
+        self.settings_form = Settings(self, self.settings, self.hamlib_status, self.__headers__, self.log)
 
         self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
-                                self.cb_channels, self.hamlib_error)
+                                self.cb_channels, self.hamlib_error, self.log)
         self.keep_logging = False
 
         self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
         if file:
-            print(f'Opening database from commandline {file}...')
+            self.log.info(f'Opening database from commandline {file}...')
             self.connectDB(file)
         elif self.settings.value('lastDatabase', None):
             if os.path.isfile(self.settings.value('lastDatabase', None)):
-                print(f'Opening last database {self.settings.value("lastDatabase", None)}...')
+                self.log.info(f'Opening last database {self.settings.value("lastDatabase", None)}...')
                 self.connectDB(self.settings.value('lastDatabase', None))
             else:
-                print(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
+                self.log.warning(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
 
         self.watchAppSelect = AppSelect(self, f'{self.tr(__prog_name__)} - {self.tr("Watch application log")}',
                                         self.settings)
@@ -232,6 +238,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.watchTimer.timeout.connect(self.watchFile)
         self.watchPos = 0
         self.watchFileName = ''
+
+    @staticmethod
+    def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
+        dock_area = QtCore.Qt.DockWidgetArea.NoDockWidgetArea
+        match value:
+            case 1:
+                dock_area = QtCore.Qt.DockWidgetArea.LeftDockWidgetArea
+            case 2:
+                dock_area = QtCore.Qt.DockWidgetArea.RightDockWidgetArea
+            case 4:
+                dock_area = QtCore.Qt.DockWidgetArea.TopDockWidgetArea
+            case 8:
+                dock_area = QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
+        return dock_area
 
     def showSettings(self):
         if self.settings_form.exec():
@@ -246,7 +266,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             options=QtWidgets.QFileDialog.Option.DontConfirmOverwrite)
 
         if res[0]:
-            print(f'Selected database {res[0]}')
+            self.log.info(f'Selected database {res[0]}')
             self.connectDB(res[0])
 
     def checkDB(self, db_file):
@@ -254,6 +274,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         res = self.__db_con__.exec('SELECT GROUP_CONCAT(NAME,",") as columns FROM PRAGMA_TABLE_INFO("qsos")')
         res.next()
         db_cols = res.value('columns')
+        if not db_cols:
+            QtWidgets.QMessageBox.critical(self, self.tr('Database error'),
+                                           self.tr('Checking database failed. Content is not accessable.'))
+            self.close()
+            return False
+
         db_cols_l = db_cols.split(',')
         missing_cols = False
         for col in self.__sql_cols__:
@@ -275,9 +301,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             try:
                 os.rename(db_file, bck_name)
             except FileExistsError:
+                self.log.error('A database backup could not be created. The file already exists.')
                 QtWidgets.QMessageBox.critical(self, self.tr('Database backup error'),
-                                              self.tr('A database backup could not be created.\n'
-                                                      'The file already exists.'))
+                                               self.tr('A database backup could not be created.\n'
+                                                       'The file already exists.'))
                 self.close()
                 return False
 
@@ -359,10 +386,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.refreshTableView()
 
-            print(f'Opened database {db_file}')
+            self.log.info(f'Opened database {db_file}')
             self.settings.setValue('lastDatabase', db_file)
             self.setWindowTitle(__prog_name__ + ' - ' + db_file)
         except DatabaseOpenException as exc:
+            self.log.exception(exc)
             if db_file == self.settings.value('lastDatabase', None):
                 self.settings.setValue('lastDatabase', None)
 
@@ -376,7 +404,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         hidden_cols = self.settings.value('ui/hidden_cols', '').split(',')
         for i in range(len(self.__headers__)):
-            if str(i+1) in hidden_cols:
+            if str(i + 1) in hidden_cols:
                 self.QSOTableView.hideColumn(i)
             else:
                 self.QSOTableView.showColumn(i)
@@ -422,7 +450,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form.timeOnEdit.setTime(dt.time())
 
         if self.qso_form.exec():
-            print('Logging QSO...')
+            self.log.info('Logging QSO...')
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
             for i, val in enumerate(self.qso_form.values):
@@ -435,7 +463,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.queryView()
             self.QSOTableView.resizeColumnsToContents()
         else:
-            print('Logging aborted')
+            self.log.info('Logging aborted')
             self.keep_logging = False
 
         self.hamlib_error.setText('')
@@ -465,7 +493,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     continue
                 done_ids.append(qso_id)
 
-                print(f'Deleting QSO #{qso_id}...')
+                self.log.info(f'Deleting QSO #{qso_id}...')
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare('DELETE FROM qsos where id == ?')
                 query.bindValue(0, qso_id)
@@ -499,7 +527,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.qso_form.setWindowTitle(self.tr('Change QSO') + f' #{qso_id}')
 
             if self.qso_form.exec():
-                print(f'Changing QSO {qso_id}...')
+                self.log.info(f'Changing QSO {qso_id}...')
                 values = self.qso_form.values
                 values += (qso_id,)
 
@@ -512,7 +540,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 if query.lastError().text():
                     raise Exception(query.lastError().text())
             else:
-                print('Changing QSO(s) aborted')
+                self.log.info('Changing QSO(s) aborted')
                 break
 
         self.__db_con__.commit()
@@ -535,12 +563,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             ';;'.join(exp_formats.keys()))
 
         if res[0]:
-            exp_formats[res[1]](res[0])
+            try:
+                exp_formats[res[1]](res[0])
+            except Exception as exc:
+                self.log.exception(exc)
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
     def exportCSV(self, file):
-        print('Exporting to CSV...')
+        self.log.info('Exporting to CSV...')
 
         with open(file, 'w', newline='', encoding='utf-8') as cf:
             writer = csv.writer(cf)
@@ -549,7 +580,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             writer.writerow(self.__headers__)
 
             # Write content
-            query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
+            query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent',
+                                                                  0) else self.__db_select_stmnt__
             query = self.__db_con__.exec(query_str)
 
             if query.lastError().text():
@@ -562,7 +594,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 writer.writerow(row)
 
     def exportExcel(self, file):
-        print('Exporting to Excel...')
+        self.log.info('Exporting to Excel...')
         xl_wb = openpyxl.Workbook()
         xl_wb.properties.title = self.tr('Exported QSO log')
         xl_wb.properties.description = f'{__prog_name__} {__version__}'
@@ -599,15 +631,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         xl_ws.auto_filter.ref = f'A1:{openpyxl.utils.get_column_letter(len(self.__headers__))}1'
 
         # Fit size to content width approximation
-        for c, w in zip(range(1, len(col_widths)+1), col_widths):
+        for c, w in zip(range(1, len(col_widths) + 1), col_widths):
             # Add 5 due to Excel filter drop down
             xl_ws.column_dimensions[openpyxl.utils.get_column_letter(c)].width = w + 5
 
         # Finally save
         try:
             xl_wb.save(file)
-            print(f'Saved "{file}"')
+            self.log.info(f'Saved "{file}"')
         except OSError as e:
+            self.log.critical(e)
             QtWidgets.QMessageBox.critical(
                 self,
                 f'{__prog_name__} - {self.tr("Error")}',
@@ -625,7 +658,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         return text
 
     def exportADIF(self, file):
-        print('Exporting to ADIF...')
+        self.log.info('Exporting to ADIF...')
 
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
 
@@ -734,7 +767,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['MY_ANTENNA_INTL'] = query.value(self.__sql_cols__.index('antenna'))
             if query.value(self.__sql_cols__.index('dist')):
                 record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
-            if query.value(self.__sql_cols__.index('remarks')) and bool(self.settings.value('imp_exp/own_notes_adif', 0)):
+            if query.value(self.__sql_cols__.index('remarks')) and bool(
+                    self.settings.value('imp_exp/own_notes_adif', 0)):
                 record['NOTES'] = self.replaceUmlautsLigatures(
                     query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
                 record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
@@ -772,7 +806,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             adi.dump(file, doc, 'ADIF Export by DragonLog')
 
-        print(f'Saved "{file}"')
+        self.log.info(f'Saved "{file}"')
 
     def logImport(self):
         imp_formats = {
@@ -796,7 +830,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
 
     def logImportExcel(self, file):
-        print('Importing from Excel...')
+        self.log.info('Importing from Excel...')
 
         xl_wb = openpyxl.load_workbook(file, read_only=True, data_only=True)
         xl_ws = xl_wb.active
@@ -831,10 +865,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__db_con__.commit()
         self.queryView()
-        print(f'Imported {ln - 1} QSOs from "{file}"')
+        self.log.info(f'Imported {ln - 1} QSOs from "{file}"')
 
     def logImportCSV(self, file):
-        print('Importing from CSV...')
+        self.log.info('Importing from CSV...')
 
         with open(file, newline='', encoding='utf-8') as cf:
             reader = csv.reader(cf)
@@ -867,10 +901,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__db_con__.commit()
         self.queryView()
-        print(f'Imported {ln - 1} QSOs from "{file}"')
+        self.log.info(f'Imported {ln - 1} QSOs from "{file}"')
 
     def logImportADIF(self, file):
-        print('Importing from ADIF...')
+        self.log.info('Importing from ADIF...')
 
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
 
@@ -907,7 +941,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.__db_con__.commit()
         self.queryView()
 
-        print(f'Imported {imported} QSOs from "{file}"')
+        self.log.info(f'Imported {imported} QSOs from "{file}"')
 
     def _build_values_adiimport_(self, r, use_cfg_id=False, use_cfg_station=False):
         values = [''] * (len(self.__sql_cols__) - 1)
@@ -970,7 +1004,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
                 case 'GUEST_OP':
                     if (not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']) and \
-                        (not 'OPERATOR' in r or not r['OPERATOR']):
+                            (not 'OPERATOR' in r or not r['OPERATOR']):
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
                 case p if p in self.__adx_cols__:
                     values[self.__adx_cols__.index(p)] = r[p]
@@ -992,8 +1026,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.watchPos += 1
 
-            if 'QSO_DATE' not in rec or 'TIME_ON' not in rec or 'CALL' not  in rec:
-                print(f'QSO date, time or call missing in record #{self.watchPos+1} from watched file. Skipped.')
+            if 'QSO_DATE' not in rec or 'TIME_ON' not in rec or 'CALL' not in rec:
+                self.log.warning(
+                    f'QSO date, time or call missing in record #{self.watchPos + 1} from watched file. Skipped.')
                 continue
 
             adi_time = rec['TIME_ON']
@@ -1003,19 +1038,22 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             timestamp = f'{adi_date[:4]}-{adi_date[4:6]}-{adi_date[6:8]} {time}'
 
             if not self.findQSO(timestamp, rec['CALL']):
-                print(f'Adding QSO #{i} from "{self.watchFileName}" to logbook...')
+                self.log.info(f'Adding QSO #{i} from "{self.watchFileName}" to logbook...')
 
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare(self.__db_insert_stmnt__)
 
                 for j, val in enumerate(self._build_values_adiimport_(rec,
-                                                                      bool(self.settings.value('imp_exp/use_id_watch', 0)),
-                                                                      bool(self.settings.value('imp_exp/use_station_watch', 0)))):
+                                                                      bool(self.settings.value('imp_exp/use_id_watch',
+                                                                                               0)),
+                                                                      bool(self.settings.value(
+                                                                          'imp_exp/use_station_watch', 0)))):
                     query.bindValue(j, val)
                 query.exec()
                 if query.lastError().text():
-                    print(f'Record #{self.watchPos+1} import error from watched file ("{query.lastError().text()}").'
-                          'Skipped.')
+                    self.log.error(
+                        f'Record #{self.watchPos + 1} import error from watched file ("{query.lastError().text()}").'
+                        'Skipped.')
 
                 self.__db_con__.commit()
                 added = True
@@ -1143,8 +1181,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         QtWidgets.QMessageBox.aboutQt(self, __prog_name__ + ' - ' + self.tr('About Qt'))
 
     def closeEvent(self, e):
-        print(f'Quiting {__prog_name__}...')
+        self.log.info(f'Quiting {__prog_name__}...')
         self.__db_con__.close()
+        self.settings.setValue('ui/show_log', int(self.logDockWidget.isVisible()))
+        self.settings.setValue('ui/log_dock_area', self.dockWidgetArea(self.logDockWidget).value)
         self.settings_form.ctrlRigctld(False)
         e.accept()
 
@@ -1176,11 +1216,14 @@ def main():
 
 # Get old behaviour on printing a traceback on exceptions
 sys._excepthook = sys.excepthook
+
+
 def except_hook(cls, exception, traceback):
     sys._excepthook(cls, exception, traceback)
     sys.exit(1)
-sys.excepthook = except_hook
 
+
+sys.excepthook = except_hook
 
 if __name__ == '__main__':
     main()

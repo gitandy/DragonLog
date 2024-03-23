@@ -1,7 +1,10 @@
 import re
+import logging
 
 import requests
 from adif_file import adi
+
+from .Logger import Logger
 
 
 class EQSLCommunicationException(Exception):
@@ -34,8 +37,14 @@ class EQSL:
     image_pattern = re.compile(r'.*<img src="(.*)" alt="" />.*')
     upl_res_pattern = re.compile(r' *([EWCIR][a-z]*:.*)<BR>')
 
-    def __init__(self, program: str):
+    def __init__(self, program: str, logger: Logger):
         self.__program_str__ = program
+
+        self.log = logging.getLogger('EQSL')
+        self.log.addHandler(logger)
+        self.log.setLevel(logger.loglevel)
+        self.logger = logger
+        self.log.debug('Initialising...')
 
     def upload_log(self, username: str, password: str, record: dict) -> bool:
         self._check_fields_(record)
@@ -78,11 +87,11 @@ class EQSL:
                     else:
                         raise EQSLADIFFieldException(res)
                 elif 'Caution' in res:
-                    print(f'eQSL result: {res}')
+                    self.log.warning(f'eQSL result: {res}')
                 elif 'Information' in res:
-                    print(f'eQSL result: {res}')
+                    self.log.info(f'eQSL result: {res}')
                 elif 'Result' in res:
-                    print(f'eQSL result: {res}')
+                    self.log.debug(f'eQSL result: {res}')
 
             return True
         else:

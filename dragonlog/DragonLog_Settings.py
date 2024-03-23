@@ -1,5 +1,7 @@
 import os
 import sys
+import typing
+import logging
 import platform
 import subprocess
 
@@ -8,19 +10,28 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 import keyring
 
 from . import DragonLog_Settings_ui
+from .Logger import Logger
 from .DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):
     import win32timezone
     from keyring.backends import Windows
+
     keyring.set_keyring(Windows.WinVaultKeyring())
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
-    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: list):
+    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: typing.Iterable,
+                 logger: Logger):
         super().__init__(parent)
         self.setupUi(self)
+
+        self.log = logging.getLogger('Settings')
+        self.log.addHandler(logger)
+        self.log.setLevel(logger.loglevel)
+        self.logger = logger
+        self.log.debug('Initialising...')
 
         self.settings = settings
         self.rig_ids = None
@@ -70,7 +81,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
     def checkRigctld(self):
         if self.rigctld and self.rigctld.poll():
-            print('rigctld died unexpectedly')
+            self.log.error('rigctld died unexpectedly')
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
             self.ctrlRigctldPushButton.setChecked(False)
             self.rig_caps = []
@@ -166,6 +177,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     def ctrlRigctld(self, start):
         if start:
             if not self.rigctld:
+                # FIXME: read from settings not from UI (problem if UI was never initialised)
                 rig_id = self.rig_ids[self.manufacturerComboBox.currentText() + '/' + self.modelComboBox.currentText()]
 
                 self.collectRigCaps(rig_id)
@@ -187,14 +199,14 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                     self.ctrlRigctldPushButton.setText(self.tr('Stop'))
                     self.parent().actionStart_hamlib_TB.setChecked(True)
                     self.parent().actionStart_hamlib_TB.setText(self.tr('Stop hamlib'))
-                    print(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
+                    self.log.info(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
                     self.checkHamlibTimer.start(1000)
                     self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
         else:
             self.checkHamlibTimer.stop()
             if self.rigctld and not self.rigctld.poll():
                 os.kill(self.rigctld.pid, 9)
-                print('Killed rigctld')
+                self.log.info('Killed rigctld')
             self.rigctld = None
             self.ctrlRigctldPushButton.setChecked(False)
             self.ctrlRigctldPushButton.setText(self.tr('Start'))
@@ -240,7 +252,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.colShowListWidget.sortItems()
 
     def exec(self):
-        print('Loading settings...')
+        self.log.info('Loading settings...')
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
         self.catBaudComboBox.setCurrentText(self.settings.value('cat/baud', ''))
 
@@ -272,6 +284,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 self.colHideListWidget.addItem(f'{i:02d} - {c}')
         self.colShowListWidget.sortItems()
         self.colHideListWidget.sortItems()
+        self.logLevelComboBox.setCurrentText(str(self.settings.value('ui/log_level', 'Info')).capitalize())
+        self.logToFileCheckBox.setChecked(bool(self.settings.setValue('ui/log_file', 0)))
 
         self.expOwnNotesADIFCheckBox.setChecked(bool(self.settings.value('imp_exp/own_notes_adif', 0)))
         self.expRecentOnlyCheckBox.setChecked(bool(self.settings.value('imp_exp/only_recent', 0)))
@@ -292,7 +306,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                     self.settings.value('eqsl/username', ''))
 
     def accept(self):
-        print('Saving Settings...')
+        self.log.info('Saving Settings...')
         self.settings.setValue('cat/interface', self.catInterfaceLineEdit.text())
         self.settings.setValue('cat/baud', self.catBaudComboBox.currentText())
         self.settings.setValue('cat/rigMfr', self.manufacturerComboBox.currentText())
@@ -318,6 +332,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                ','.join([str(int(i.text().split('-')[0].strip())) for i in
                                          self.colHideListWidget.findItems('.*',
                                                                           QtCore.Qt.MatchFlag.MatchRegularExpression)]))
+        self.settings.setValue('ui/log_level', self.logLevelComboBox.currentText().upper())
+        self.settings.setValue('ui/log_file', int(self.logToFileCheckBox.isChecked()))
 
         self.settings.setValue('imp_exp/own_notes_adif', int(self.expOwnNotesADIFCheckBox.isChecked()))
         self.settings.setValue('imp_exp/only_recent', int(self.expRecentOnlyCheckBox.isChecked()))

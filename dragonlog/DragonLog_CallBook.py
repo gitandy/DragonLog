@@ -1,9 +1,12 @@
+import logging
 from dataclasses import dataclass
 from enum import Enum, auto
 
 import requests
 import xmltodict
 from adif_file import adi
+
+from .Logger import Logger
 
 
 class CallBookType(Enum):
@@ -51,10 +54,15 @@ class CallsignNotFoundException(Exception):
 
 
 class CallBook:
-    def __init__(self, callbook_type: CallBookType, program: str):
+    def __init__(self, callbook_type: CallBookType, program: str, logger: Logger):
         self.__callbook_type__ = callbook_type
         self.__program_str__ = program
         self.__session__: str = ''
+
+        self.log = logging.getLogger('CallBook')
+        self.log.setLevel(logger.loglevel)
+        self.log.addHandler(logger)
+        self.log.debug('Initialising...')
 
     @property
     def callbook_type(self):
@@ -122,6 +130,7 @@ class CallBook:
 
     def _hamqth_get_data_(self, callsign: str) -> CallBookData:
         try:
+            self.log.debug(f'Searching {callsign}')
             res = self._hamqth_get_({'id': self.__session__,
                                      'prg': self.__program_str__,
                                      'callsign': callsign})
