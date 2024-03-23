@@ -84,8 +84,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
-        'NOTES_INTL', 'COMMENT_INTL',  'DISTANCE'
-        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
+        'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE'
+                                      'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
         'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
@@ -306,8 +306,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             except FileExistsError:
                 self.log.error('A database backup could not be created. The file already exists.')
                 QtWidgets.QMessageBox.critical(self, self.tr('Database backup error'),
-                                              self.tr('A database backup could not be created.\n'
-                                                      'The file already exists.'))
+                                               self.tr('A database backup could not be created.\n'
+                                                       'The file already exists.'))
                 self.close()
                 return False
 
@@ -671,7 +671,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             adi.dump(file, doc, 'ADIF Export by DragonLog')
 
-        print(f'Saved "{file}"')
+        self.log.info(f'Saved "{file}"')
 
     def _build_adif_export_(self, query_str, is_adx=False):
         doc = {
@@ -853,8 +853,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 # self.queryView()
         else:
             QtWidgets.QMessageBox.information(self, self.tr('LoTW ADIF upload'), self.tr('No QSOs selected for upload'))
-
-        self.log.info(f'Saved "{file}"')
 
     def logImport(self):
         imp_formats = {
@@ -1052,7 +1050,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
                 case 'GUEST_OP':
                     if (not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']) and \
-                        (not 'OPERATOR' in r or not r['OPERATOR']):
+                            (not 'OPERATOR' in r or not r['OPERATOR']):
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
                 case p if p in self.__adx_cols__:
                     values[self.__adx_cols__.index(p)] = r[p]
@@ -1074,7 +1072,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.watchPos += 1
 
-            if 'QSO_DATE' not in rec or 'TIME_ON' not in rec or 'CALL' not  in rec:
+            if 'QSO_DATE' not in rec or 'TIME_ON' not in rec or 'CALL' not in rec:
                 self.log.warning(
                     f'QSO date, time or call missing in record #{self.watchPos + 1} from watched file. Skipped.')
                 continue
@@ -1101,7 +1099,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 if query.lastError().text():
                     self.log.error(
                         f'Record #{self.watchPos + 1} import error from watched file ("{query.lastError().text()}").'
-                          'Skipped.')
+                        'Skipped.')
 
                 self.__db_con__.commit()
                 added = True
