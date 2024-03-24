@@ -78,15 +78,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
                     'remarks', 'comments', 'dist',
                     'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
-                    'eqsl_sent', 'eqsl_rcvd', 'hamqth')
+                    'eqsl_sent', 'eqsl_rcvd', 'lotw_sent', 'lotw_rcvd', 'hamqth')
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
         'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
-        'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE'
-                                      'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
-        'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
+        'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE',
+        'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
+        'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'LOTW_QSL_SENT', 'LOTW_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -119,6 +119,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "qsl_rcvd"   TEXT,
                             "eqsl_sent"   TEXT,
                             "eqsl_rcvd"   TEXT,
+                            "lotw_sent"   TEXT,
+                            "lotw_rcvd"   TEXT,
                             "hamqth"   TEXT
                         );'''
 
@@ -210,6 +212,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('QSL rcvd'),
             self.tr('eQSL sent'),
             self.tr('eQSL rcvd'),
+            self.tr('LoTW sent'),
+            self.tr('LoTW rcvd'),
             self.tr('HamQTH'),
         )
 
@@ -240,7 +244,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.watchPos = 0
         self.watchFileName = ''
 
-        self.lotw = LoTW()
+        self.lotw = LoTW(self.log)
 
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
@@ -801,6 +805,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['EQSL_QSL_SENT'] = query.value(self.__sql_cols__.index('eqsl_sent'))
             if query.value(self.__sql_cols__.index('eqsl_rcvd')):
                 record['EQSL_QSL_RCVD'] = query.value(self.__sql_cols__.index('eqsl_rcvd'))
+            if query.value(self.__sql_cols__.index('lotw_sent')):
+                record['LOTW_QSL_SENT'] = query.value(self.__sql_cols__.index('lotw_sent'))
+            if query.value(self.__sql_cols__.index('lotw_rcvd')):
+                record['LOTW_QSL_RCVD'] = query.value(self.__sql_cols__.index('lotw_rcvd'))
             if query.value(self.__sql_cols__.index('hamqth')):
                 record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
 

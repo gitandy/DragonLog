@@ -25,7 +25,8 @@ Features
 * automatic time
 * callbook search and log upload (HamQTH.com)
 * eQSL upload, check and download
-* hamlib integration (band, frequency, mode, power)
+* LoTW check status
+* CAT (band, frequency, mode, power via hamlib integration)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * ADIF adi/adx export/import
 * Excel/CSV export/import

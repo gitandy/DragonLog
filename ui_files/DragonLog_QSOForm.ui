@@ -818,7 +818,7 @@ This is not the QSL manager/bureau address.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="lotwGroupBox">
          <property name="title">
           <string>LoTW</string>
          </property>
@@ -1374,6 +1374,22 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>287</x>
      <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lotwInboxPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOFormDialog</receiver>
+   <slot>lotwCheckInbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>255</x>
+     <y>515</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>295</y>
     </hint>
    </hints>
   </connection>

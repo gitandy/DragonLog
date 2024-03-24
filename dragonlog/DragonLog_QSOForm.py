@@ -14,7 +14,8 @@ from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionEx
                                  MissingADIFFieldException, LoginException, CallsignNotFoundException)
 from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                              EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
-from .DragonLog_LoTW import LoTW
+from .DragonLog_LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
+                             LoTWLoginException, LoTWNoRecordException)
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
@@ -90,7 +91,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.eqsl = EQSL(self.parent().programName, self.logger)
         self.eqsl_url = ''
 
-        self.lotw = LoTW()
+        self.lotw = LoTW(self.logger)
 
         view_only_widgets = (
             self.qslAccBureauCheckBox,
@@ -460,6 +461,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 eqsl_sent = 'Y' if self.eqslSentCheckBox.isChecked() else 'R'
                 eqsl_rcvd = 'Y' if self.eqslRcvdCheckBox.isChecked() else 'R'
 
+        lotw_sent = 'N'
+        lotw_rcvd = 'N'
+        if self.lotwGroupBox.isChecked():
+            lotw_sent = 'Y' if self.lotwSentCheckBox.isChecked() else 'R'
+            lotw_rcvd = 'Y' if self.lotwRcvdCheckBox.isChecked() else 'R'
+
         hamqth_state = 'N'
         if self.hamQTHGroupBox.isChecked():
             if self.hamQTHuplRadioButton.isChecked():
@@ -498,6 +505,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             qsl_rcvd,
             eqsl_sent,
             eqsl_rcvd,
+            lotw_sent,
+            lotw_rcvd,
             hamqth_state,
         )
 
@@ -573,6 +582,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 if self.eqslRcvdCheckBox.isChecked():
                     self.eqslLinkLabel.setEnabled(True)
                     self.eqslDownloadPushButton.setEnabled(True)
+
+        if values['lotw_sent'] in ('R', 'Y') or values['lotw_rcvd'] in ('R', 'Y'):
+            self.lotwGroupBox.setChecked(True)
+            self.lotwSentCheckBox.setChecked(values['lotw_sent'] == 'Y')
+            self.lotwRcvdCheckBox.setChecked(values['lotw_rcvd'] == 'Y')
 
         match values['hamqth']:
             case 'Y':
@@ -799,9 +813,26 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 self.settings.setValue('eqsl/lastExportDir', res)
 
     def lotwCheckInbox(self):
-        self.lotw.check_inbox(self.settings.value('lotw/username', ''),
-                              self.settings_form.lotwPassword(),
-                              self._build_record_())
+        try:
+            rcvd = self.lotw.check_inbox(self.settings.value('lotw/username', ''),
+                                         self.settings_form.lotwPassword(),
+                                         self._build_record_())
+
+            self.lotwRcvdCheckBox.setChecked(rcvd)
+            self.lotwSentCheckBox.setChecked(True)
+        except LoTWNoRecordException:
+            self.lotwSentCheckBox.setChecked(False)
+            self.lotwRcvdCheckBox.setChecked(False)
+        except LoTWCommunicationException:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
+                                          self.tr('Server communication error'))
+        except LoTWRequestException as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
+                                          self.tr('Bad request result') + f'\n{exc}')
+        except LoTWLoginException as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
+                                          self.tr('Login failed for user') + ': ' + self.settings.value(
+                                              'lotw/username', '') + f'\n{exc}')
 
     def exec(self) -> int:
         if self.lastpos:
