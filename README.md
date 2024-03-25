@@ -25,7 +25,7 @@ Features
 * automatic time
 * callbook search and log upload (HamQTH.com)
 * eQSL upload, check and download
-* LoTW check status
+* LoTW signing, upload and check status
 * CAT (band, frequency, mode, power via hamlib integration)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * ADIF adi/adx export/import
@@ -72,12 +72,27 @@ use a log loop to enter multiple QSOs via Ctrl+Shift+L.
 
 The displayed form can be handled the easiest if you use TAB key to jump from field to field.
 
-DragonLog can retreive additional OM data from HamQTH.com callbook and upload the QSO.
-The password is stored in the systems key vault.
-
 If automatic time is selected, the end time gets updated at saving the QSO.
 
 QSOs can be edited by double-clicking on an entry in the database view.
+
+DragonLog can retreive additional OM data from HamQTH.com callbook and upload the QSO.
+
+In log and change mode there is a second view for QSL and different upload status.
+Here you can check the status of your eQSL inbox or LoTW QSLs.
+
+While eQSL upload is handled per QSO only (currently) LoTW is handled for the whole database.
+
+Make sure that you properly set the credentials for each online service in the settings.
+The password is stored in the systems key vault (i.e. Credential Manager on Windows or KWallet on KDE/Linux).
+
+### LoTW sign and upload
+Only QSOs with a matching locator in TQSL application can be signed and uploaded.
+DragonLog provides a selection from the configured stations in TQSL. 
+Then it searches for all QSOs with the matching locator which were not already sent to LoTW.
+
+If you secured your TQSL set DragonLog correspondingly. DragonLog will then request your password on 
+each upload action.
 
 ### Automatic log import
 If you want to automatically log QSOs from other programms i.e. WSJT-X or JS8Call 

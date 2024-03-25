@@ -22,9 +22,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="toolTip">
-      <string>See settings page &quot;User interface&quot;</string>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -949,9 +946,6 @@
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_8">
-         <property name="toolTip">
-          <string>Credentials for LoTW online account not for the certificate</string>
-         </property>
          <property name="title">
           <string>LoTW</string>
          </property>
@@ -964,7 +958,11 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lotwUserLineEdit"/>
+           <widget class="QLineEdit" name="lotwUserLineEdit">
+            <property name="toolTip">
+             <string>Username for LoTW online account not for the certificate</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_21">
@@ -975,8 +973,32 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="lotwPasswdLineEdit">
+            <property name="toolTip">
+             <string>Password for LoTW online account not for the certificate</string>
+            </property>
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="lotwCertPwdCheckBox">
+            <property name="text">
+             <string>Certificate needs password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_23">
+            <property name="text">
+             <string>TQSL</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>

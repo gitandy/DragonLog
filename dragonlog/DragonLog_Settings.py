@@ -295,6 +295,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
         self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
+        self.lotwCertPwdCheckBox.setChecked(bool(self.settings.value('lotw/cert_needs_pwd', 0)))
 
         return super().exec()
 
@@ -365,5 +366,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                  self.lotwUserLineEdit.text(),
                                  self.lotwPasswdLineEdit.text())
         self.lotwPasswdLineEdit.clear()
+        self.settings.value('lotw/cert_needs_pwd', int(self.lotwCertPwdCheckBox.isChecked()))
 
         super().accept()

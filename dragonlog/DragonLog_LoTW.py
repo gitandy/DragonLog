@@ -1,7 +1,9 @@
 import re
 import os.path
 import logging
+import platform
 import tempfile
+import subprocess
 
 import requests
 from adif_file import adi
@@ -42,22 +44,63 @@ class LoTW:
         self.logger = logger
         self.log.debug('Initialising...')
 
-    def upload_log(self, password: str, doc: dict) -> bool:
+    def upload_log(self, station: str, doc: dict, password: str = '') -> bool:
         self._check_fields_(doc)
 
         # Export to tempfile
         with tempfile.TemporaryDirectory() as tmp_dir:
-            print(tmp_dir)
-            tmp_file = os.path.join(tmp_dir, 'lotw_export.adi')
-            adi.dump(tmp_file ,doc, 'ADIF Export by DragonLog')
+            tmp_file = os.path.join(tmp_dir, 'DragonLog_Export.adi')
+            adi.dump(tmp_file, doc, 'ADIF Export by DragonLog')
 
-            # Sign and Upload with TQSL
+            if platform.system() == 'Windows':
+                tqsl_path = 'C:/Program Files (x86)/TrustedQSL/tqsl.exe'
+            else:
+                tqsl_path = 'tqsl'
+
+            cmd = [tqsl_path,
+                   '-d',  # Supress date range dialog
+                   '-u',  # Directly upload
+                   '-a', 'all',  # Sign all including already sent
+                   '-f', 'ignore',  # Ignore QTH information
+                   '-x',  # Batch mode
+                   '-l', station,
+                   tmp_file]
+            if password:
+                cmd.append('-p')
+                cmd.append(password)
+
+            res = subprocess.run(cmd, capture_output=True)
+            match res.returncode:
+                case 0:
+                    self.log.debug('TQSL exited with success')
+                    return True
+                case 1:  # Will it be possible?
+                    self.log.debug('TQSL canceled by user')
+                case 2:
+                    self.log.warning('Log rejected by LoTW')
+                    raise LoTWRequestException
+                case 3 | 4 | 5:
+                    self.log.error(f'Local or server error: {res.returncode}')
+                case 6 | 7:  # Should not occur on tempfile
+                    self.log.error(f'Error for read/write on input/output file: {res.returncode}')
+                case 8:  # Should never occur
+                    self.log.warning('TQSL no QSOs were processed')
+                case 9:
+                    self.log.warning('TQSL some QSOs were already uploaded')
+                    return True
+                case 10:  # Should not occur due to tested syntax
+                    self.log.error('TQSL command syntax error')
+                case 11:
+                    self.log.warning('LoTW Connection error or network unreachable')
+                    raise LoTWCommunicationException()
+
+        return False
 
     def _check_fields_(self, doc: dict):
         for i, record in enumerate(doc['RECORDS']):
             for field in self.required_fields:
                 if field not in record:
-                    raise LoTWADIFFieldException(f'{field} in record #{i+1}')
+                    raise LoTWADIFFieldException(f'{field} in record #{i + 1}')
 
     def check_inbox(self, username: str, password: str, record: dict) -> bool:
         self._check_fields_({'RECORDS': [record]})
@@ -66,9 +109,10 @@ class LoTW:
         if not username or not password:
             raise LoTWLoginException('Missing username or password')
 
-        qso_dt = QtCore.QDateTime.fromString(f"{record['QSO_DATE'][:4]}-{record['QSO_DATE'][4:6]}-{record['QSO_DATE'][6:8]} "
-                                             f"{record['TIME_ON'][:2]}:{record['TIME_ON'][2:4]}",
-                                             'yyyy-MM-dd hh:mm')
+        qso_dt = QtCore.QDateTime.fromString(
+            f"{record['QSO_DATE'][:4]}-{record['QSO_DATE'][4:6]}-{record['QSO_DATE'][6:8]} "
+            f"{record['TIME_ON'][:2]}:{record['TIME_ON'][2:4]}",
+            'yyyy-MM-dd hh:mm')
         start_dt = qso_dt.addSecs(-600)
         end_dt = qso_dt.addSecs(600)
 

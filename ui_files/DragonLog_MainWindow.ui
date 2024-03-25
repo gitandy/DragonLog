@@ -347,6 +347,10 @@
    </property>
   </action>
   <action name="actionUpload_logs_to_LoTW">
+  <property name="icon">
+    <iconset>
+     <normaloff>icons:upload_lotw.png</normaloff>icons:upload_lotw.png</iconset>
+   </property>
    <property name="text">
     <string>Upload logs to LoTW...</string>
    </property>

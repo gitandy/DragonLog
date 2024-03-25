@@ -1,5 +1,6 @@
 import os
 import csv
+import platform
 import sys
 import json
 import datetime
@@ -7,6 +8,7 @@ import datetime
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
 from adif_file import adi, adx
+import xmltodict
 
 OPTION_OPENPYXL = False
 try:
@@ -22,7 +24,7 @@ from .Logger import Logger
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
-from .DragonLog_LoTW import LoTW
+from .DragonLog_LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -677,7 +679,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.log.info(f'Saved "{file}"')
 
-    def _build_adif_export_(self, query_str, is_adx=False):
+    def _build_adif_export_(self, query_str, is_adx=False, include_id=False):
         doc = {
             'HEADER':
                 {
@@ -705,6 +707,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                       'TIME_ON': qso_time.replace(':', ''),
                       'APP': []}
 
+            if include_id and query.value(self.__sql_cols__.index('id')):
+                if is_adx:
+                    record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
+                                          '@FIELDNAME': 'QSOID',
+                                          '@TYPE': 'N',
+                                          '$': query.value(self.__sql_cols__.index('id'))})
+                else:
+                    record['APP_DRAGONLOG_QSOID'] = query.value(self.__sql_cols__.index('id'))
             if query.value(self.__sql_cols__.index('date_time_off')):
                 qso_date_off, qso_time_off = query.value(self.__sql_cols__.index('date_time_off')).split()
                 record['QSO_DATE_OFF'] = qso_date_off.replace('-', '')
@@ -820,47 +830,83 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         return doc
 
     def lotwUpload(self):
-        # retreive selected Logs
-        qso_ids = []
-        for i in self.QSOTableView.selectedIndexes():
-            qso_id = str(self.QSOTableView.model().data(i.siblingAtColumn(0)))
+        self.log.info('Signing and uploading to LoTW...')
+        if platform.system() == 'Windows':
+            stationf_path = os.path.expanduser('~/AppData/Roaming/TrustedQSL/station_data')
+        elif platform.system() == 'Linux':
+            stationf_path = os.path.expanduser('~/.tqsl/station_data')
+        else:
+            self.log.warning(f'System "{platform.system()}" is currently not supported to upload to LoTW')
+            return
 
-            if qso_id in qso_ids or qso_id is None:
-                continue
-            qso_ids.append(qso_id)
+        if not os.path.isfile(stationf_path):
+            QtWidgets.QMessageBox.warning(self, self.tr('LoTW ADIF upload'),
+                                          self.tr('Missing station configuration in TQSL'))
+            return
 
-        if qso_ids:
-            query_str = f'SELECT * FROM qsos WHERE id IN {tuple(qso_ids)}'  # And not already uploaded
-            doc = self._build_adif_export_(query_str)
+        try:
+            with open(stationf_path) as st_f:
+                station_xml = st_f.read()
 
+            station_def = xmltodict.parse(station_xml)
+
+            stations = {}
+            for st in station_def['StationDataFile']['StationData']:
+                stations[f"{st['CALL']} - {st['@name']}"] = {'name': st['@name'],
+                                                             'locator': st['GRIDSQUARE']}
+        except Exception as exc:
+            self.log.exception(exc)
+            return
+
+        station, ok = QtWidgets.QInputDialog.getItem(self, self.tr('LoTW ADIF upload'),
+                                                     self.tr('Select station'),
+                                                     stations)
+        if not ok:
+            return
+
+        self.log.info(f'Selected station "{station}"')
+        locator = stations[station]['locator'].upper()
+        doc = self._build_adif_export_(f"SELECT * FROM qsos "
+                                       f"WHERE band != '11m' AND upper(own_locator) LIKE '{locator}%'"
+                                       f"AND (lotw_sent != 'Y' OR lotw_sent is NULL)",
+                                       include_id=True)
+        if len(doc['RECORDS']) < 1:
+            QtWidgets.QMessageBox.warning(self, self.tr('LoTW ADIF upload'),
+                                          self.tr('No records for location') + f': "{locator}"')
+            return
+
+        passwd, ok = '', False
+        if self.settings.value('lotw/cert_needs_pwd', 0):
             passwd, ok = QtWidgets.QInputDialog.getText(self, self.tr('LoTW ADIF upload'),
                                                         self.tr('TQSL signature password'),
                                                         echo=QtWidgets.QLineEdit.EchoMode.PasswordEchoOnEdit)
+            if not ok:
+                return
 
-            if ok:
-                self.lotw.upload_log(passwd, doc)
+        try:
+            if self.lotw.upload_log(stations[station]['name'], doc, passwd if ok else ''):
+                for rec in doc['RECORDS']:
+                    update_stmnt = "UPDATE qsos SET lotw_sent='Y', lotw_rcvd='R' WHERE id = ?"
 
-                # if self.qso_form.exec():
-                #     print(f'Changing QSO {qso_id}...')
-                #     values = self.qso_form.values
-                #     values += (qso_id,)
-                #
-                #     query = QtSql.QSqlQuery(self.__db_con__)
-                #     query.prepare(self.__db_update_stmnt__)
-                #
-                #     for col, val in enumerate(values):
-                #         query.bindValue(col, val)
-                #     query.exec()
-                #     if query.lastError().text():
-                #         raise Exception(query.lastError().text())
-                # else:
-                #     print('Changing QSO(s) aborted')
-                #     break
-                #
-                # self.__db_con__.commit()
-                # self.queryView()
-        else:
-            QtWidgets.QMessageBox.information(self, self.tr('LoTW ADIF upload'), self.tr('No QSOs selected for upload'))
+                    self.log.debug(f"Changing LoTW status for QSO {rec['APP_DRAGONLOG_QSOID']}...")
+                    query = QtSql.QSqlQuery(self.__db_con__)
+                    query.prepare(update_stmnt)
+                    query.bindValue(0, rec['APP_DRAGONLOG_QSOID'])
+                    query.exec()
+                    if query.lastError().text():
+                        raise Exception(query.lastError().text())
+
+                self.__db_con__.commit()
+                self.queryView()
+        except LoTWADIFFieldException as exc:
+            QtWidgets.QMessageBox.critical(self, self.tr('LoTW ADIF upload'),
+                                           self.tr('A field is missing for upload') + f':\n"{exc.args[0]}"')
+        except LoTWCommunicationException:
+            QtWidgets.QMessageBox.critical(self, self.tr('LoTW ADIF upload'),
+                                           self.tr('Connection error or network unreachable'))
+        except LoTWRequestException:
+            QtWidgets.QMessageBox.critical(self, self.tr('LoTW ADIF upload'),
+                                           self.tr('Server rejected log'))
 
     def logImport(self):
         imp_formats = {
