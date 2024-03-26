@@ -296,6 +296,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.freqDoubleSpinBox.setEnabled(False)
             self.searchCallbookPushButton.setEnabled(False)
             self.uploadPushButton.setEnabled(False)
+            self.qslPage.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
             self.channelComboBox.setCurrentIndex(0)
 
@@ -314,6 +315,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             self.freqDoubleSpinBox.setEnabled(True)
             self.searchCallbookPushButton.setEnabled(True)
             self.uploadPushButton.setEnabled(True)
+            self.qslPage.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
                 self.radioLineEdit.setText(self.settings.value('station/radio', ''))
