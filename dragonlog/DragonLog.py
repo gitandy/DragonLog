@@ -384,9 +384,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if not self.checkDB(db_file):
                 return
 
-            model = QtSql.QSqlQueryModel(self)
+            model = QtSql.QSqlTableModel(self, self.__db_con__)
+            model.setTable('qsos')
             self.QSOTableView.setModel(model)
-            self.queryView()
 
             for c in self.__sql_cols__:
                 model.setHeaderData(self.__sql_cols__.index(c),
@@ -408,8 +408,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 f'{__prog_name__} - {self.tr("Error")}',
                 str(exc))
 
-    def refreshTableView(self):
-        self.queryView()
+    def refreshTableView(self, sort: bool = True):
+        self.setFilter()
 
         hidden_cols = self.settings.value('ui/hidden_cols', '').split(',')
         for i in range(len(self.__headers__)):
@@ -418,7 +418,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 self.QSOTableView.showColumn(i)
 
-        if self.settings.value('ui/sort_col', self.tr('Date/Time start')) in self.__headers__:
+        if sort and self.settings.value('ui/sort_col', self.tr('Date/Time start')) in self.__headers__:
             sort_order = QtCore.Qt.SortOrder.AscendingOrder
             if self.settings.value('ui/sort_order', 'ASC') == 'DSC':
                 sort_order = QtCore.Qt.SortOrder.DescendingOrder
@@ -427,22 +427,30 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                                                       self.tr('Date/Time start'))),
                                            sort_order)
 
+        self.QSOTableView.resizeColumnsToContents()
+
     def getQueryStr(self):
-        recent_filter = self.settings.value('ui/recent_qsos', self.tr('Show all'))
-        if recent_filter == self.tr('Last week'):
-            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-7 days')"
-        elif recent_filter == self.tr('Last month'):
-            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-31 days')"
-        elif recent_filter == self.tr('Last half year'):
-            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-183 days')"
-        elif recent_filter == self.tr('Last year'):
-            return "SELECT * FROM qsos WHERE DATE(date_time) > DATE('now', '-365 days')"
+        view_filter = self.getFilter()
+        if view_filter:
+            return f"SELECT * FROM qsos WHERE {view_filter}"
         else:
             return "SELECT * FROM qsos"
 
-    def queryView(self):
-        self.QSOTableView.model().setQuery(self.getQueryStr(), self.__db_con__)
-        self.QSOTableView.resizeColumnsToContents()
+    def getFilter(self):
+        recent_filter = self.settings.value('ui/recent_qsos', self.tr('Show all'))
+        if recent_filter == self.tr('Last week'):
+            return "DATE(date_time) > DATE('now', '-7 days')"
+        elif recent_filter == self.tr('Last month'):
+            return "DATE(date_time) > DATE('now', '-31 days')"
+        elif recent_filter == self.tr('Last half year'):
+            return "DATE(date_time) > DATE('now', '-183 days')"
+        elif recent_filter == self.tr('Last year'):
+            return "DATE(date_time) > DATE('now', '-365 days')"
+        else:
+            return ""
+
+    def setFilter(self):
+        self.QSOTableView.model().setFilter(self.getFilter())
 
     def ctrlHamlib(self, start):
         self.settings_form.ctrlRigctld(start)
@@ -469,11 +477,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 raise Exception(query.lastError().text())
 
             self.__db_con__.commit()
-            self.queryView()
-            self.QSOTableView.resizeColumnsToContents()
         else:
             self.log.info('Logging aborted')
             self.keep_logging = False
+            
+        self.refreshTableView(sort=False)
 
         self.hamlib_error.setText('')
 
@@ -512,7 +520,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     raise Exception(query.lastError().text())
 
             self.__db_con__.commit()
-            self.queryView()
+            self.refreshTableView(sort=False)
 
     def changeQSO(self):
         done_ids = []
@@ -553,7 +561,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 break
 
         self.__db_con__.commit()
-        self.queryView()
+        self.refreshTableView(sort=False)
         self.qso_form.setChangeMode(False)
 
     def export(self):
@@ -897,7 +905,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         raise Exception(query.lastError().text())
 
                 self.__db_con__.commit()
-                self.queryView()
+                self.refreshTableView()
         except LoTWADIFFieldException as exc:
             QtWidgets.QMessageBox.critical(self, self.tr('LoTW ADIF upload'),
                                            self.tr('A field is missing for upload') + f':\n"{exc.args[0]}"')
@@ -964,7 +972,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 )
 
         self.__db_con__.commit()
-        self.queryView()
+        self.refreshTableView()
         self.log.info(f'Imported {ln - 1} QSOs from "{file}"')
 
     def logImportCSV(self, file):
@@ -1000,7 +1008,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     )
 
         self.__db_con__.commit()
-        self.queryView()
+        self.refreshTableView()
         self.log.info(f'Imported {ln - 1} QSOs from "{file}"')
 
     def logImportADIF(self, file):
@@ -1039,7 +1047,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 imported += 1
 
         self.__db_con__.commit()
-        self.queryView()
+        self.refreshTableView()
 
         self.log.info(f'Imported {imported} QSOs from "{file}"')
 
@@ -1159,7 +1167,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 added = True
 
         if added:
-            self.queryView()
+            self.refreshTableView()
 
     def findQSO(self, timestamp, call):
         query = self.__db_con__.exec(f'SELECT date_time, call_sign from qsos '
