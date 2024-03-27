@@ -96,7 +96,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         view_only_widgets = (
             self.qslAccBureauCheckBox,
             self.qslAccDirectCheckBox,
-            self.qslAccElectronicCheckBox,
+            self.qslAcceQSLCheckBox,
+            self.qslAccLoTWCheckBox,
             self.eqslSentCheckBox,
             self.eqslRcvdCheckBox,
             self.hamQTHuplRadioButton,
@@ -234,7 +235,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.qslDirectRadioButton.setChecked(False)
         self.qslAccBureauCheckBox.setChecked(False)
         self.qslAccDirectCheckBox.setChecked(False)
-        self.qslAccElectronicCheckBox.setChecked(False)
+        self.qslAcceQSLCheckBox.setChecked(False)
+        self.qslAccLoTWCheckBox.setChecked(False)
         self.qslMessageTextEdit.clear()
         self.qslSentCheckBox.setChecked(False)
         self.qslRcvdCheckBox.setChecked(False)
@@ -631,7 +633,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
                 self.qslAccBureauCheckBox.setChecked(data.qsl_bureau)
                 self.qslAccDirectCheckBox.setChecked(data.qsl_direct)
-                self.qslAccElectronicCheckBox.setChecked(data.qsl_eqsl)
+                self.qslAcceQSLCheckBox.setChecked(data.qsl_eqsl)
+                self.qslAccLoTWCheckBox.setChecked(data.qsl_lotw)
 
                 self.log.info(f'Fetched data from callbook {self.callbook.callbook_type.name}')
         except LoginException:

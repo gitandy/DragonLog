@@ -23,6 +23,7 @@ class CallBookData:
     qsl_bureau: bool
     qsl_direct: bool
     qsl_eqsl: bool
+    qsl_lotw: bool
 
 
 class CommunicationException(Exception):
@@ -65,7 +66,7 @@ class CallBook:
         self.log.debug('Initialising...')
 
     @property
-    def callbook_type(self):
+    def callbook_type(self) -> CallBookType:
         return self.__callbook_type__
 
     def login(self, username: str, password: str):
@@ -87,7 +88,7 @@ class CallBook:
             raise exc
 
     @property
-    def required_fields(self):
+    def required_fields(self) -> tuple:
         match self.__callbook_type__:
             case CallBookType.HamQTH:
                 return 'QSO_DATE', 'TIME_ON', 'CALL', 'MODE', 'BAND', 'RST_SENT', 'RST_RCVD'
@@ -153,9 +154,10 @@ class CallBook:
                         data['grid'] if 'grid' in data else '',
                         data['qth'] if 'qth' in data else '',
                         data['qsl_via'] if 'qsl_via' in data else '',
-                        data['qsl'] == 'Y' if 'qsl' in data else False,
-                        data['qsldirect'] == 'Y' if 'qsldirect' in data else False,
-                        data['eqsl'] == 'Y' if 'eqsl' in data else False,
+                        'qsl' in data and data['qsl'] == 'Y',
+                        'qsldirect' in data and data['qsldirect'] == 'Y',
+                        'eqsl' in data and data['eqsl'] == 'Y',
+                        'lotw' in data and data['lotw'] == 'Y',
                     )
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')

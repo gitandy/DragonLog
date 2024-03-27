@@ -598,9 +598,16 @@ This is not the QSL manager/bureau address.</string>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="qslAccElectronicCheckBox">
+             <widget class="QCheckBox" name="qslAcceQSLCheckBox">
               <property name="text">
-               <string>Electronic</string>
+               <string>eQSL</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="qslAccLoTWCheckBox">
+              <property name="text">
+               <string>LoTW</string>
               </property>
              </widget>
             </item>
@@ -772,6 +779,55 @@ This is not the QSL manager/bureau address.</string>
             </layout>
            </widget>
           </item>
+          <item>
+           <widget class="QGroupBox" name="lotwGroupBox">
+            <property name="title">
+             <string>LoTW</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QCheckBox" name="lotwSentCheckBox">
+               <property name="text">
+                <string>LoTW sent</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="lotwRcvdCheckBox">
+               <property name="text">
+                <string>LoTW received</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="lotwInboxPushButton">
+               <property name="text">
+                <string>Check Inbox</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -803,55 +859,6 @@ This is not the QSL manager/bureau address.</string>
           </item>
           <item>
            <spacer name="horizontalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="lotwGroupBox">
-         <property name="title">
-          <string>LoTW</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_13">
-          <item>
-           <widget class="QCheckBox" name="lotwSentCheckBox">
-            <property name="text">
-             <string>LoTW sent</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="lotwRcvdCheckBox">
-            <property name="text">
-             <string>LoTW received</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="lotwInboxPushButton">
-            <property name="text">
-             <string>Check Inbox</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_9">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
