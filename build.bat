@@ -33,6 +33,7 @@ cd ..
 pylupdate6 dragonlog\DragonLog.py ui_files\DragonLog_MainWindow.ui ui_files\DragonLog_QSOForm.ui ui_files\DragonLog_Settings.ui ui_files\DragonLog_AppSelect.ui dragonlog\DragonLog_QSOForm.py dragonlog\DragonLog_Settings.py dragonlog\DragonLog_AppSelect.py dragonlog\DragonLog_eQSL.py dragonlog\DragonLog_LoTW.py dragonlog\DragonLog_CallBook.py -ts i18n\DragonLog_de.ts
 mkdir dragonlog\data\i18n
 lrelease i18n\DragonLog_de.ts -qm dragonlog\data\i18n\DragonLog_de.qm
+copy i18n\*.json dragonlog\data\i18n\
 
 echo.
 echo Build...

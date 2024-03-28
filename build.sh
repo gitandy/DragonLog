@@ -27,6 +27,8 @@ pylupdate6 dragonlog/DragonLog.py ui_files/DragonLog_MainWindow.ui ui_files/Drag
 
 mkdir -p dragonlog/data/i18n
 /usr/lib/qt6/bin/lrelease i18n/DragonLog_de.ts -qm dragonlog/data/i18n/DragonLog_de.qm
+copy i18n/*.json dragonlog/data/i18n/
+
 
 echo
 echo "Build..."

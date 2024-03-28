@@ -32,7 +32,7 @@ Features
 * Excel/CSV export/import
 * log 11m band QSOs
 * filter recent QSOs (last week, mont, half year, year)
-* UTF-8 (i.e. use german umlauts) and convert german umlauts for ADIF export
+* UTF-8 (i.e. use german umlauts) and convert non ASCII characters for ADIF export
 
 Installation
 ------------

@@ -21,6 +21,7 @@ except ImportError:
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
+from .DragonLog_RegEx import find_non_ascii
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
@@ -182,6 +183,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         with open(self.searchFile('data:color_map.json')) as cmj:
             color_map: dict = json.load(cmj)
         self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
+
+        self.ascii_replace: dict = {}
+        try:
+            with open(self.searchFile(f'data:i18n/ascii_replace_{QtCore.QLocale.system().name()[:2]}.json'),
+                      encoding='utf-8') as arf:
+                self.ascii_replace = json.load(arf)
+                self.log.debug(f'Loaded ascii_replace from "{arf.name}"')
+        except Exception:
+            self.log.debug(f'Found no ascii_replace_xx.json for "{print(QtCore.QLocale.system().name()[:2])}"')
 
         self.__headers__ = (
             self.tr('QSO'),
@@ -480,7 +490,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             self.log.info('Logging aborted')
             self.keep_logging = False
-            
+
         self.refreshTableView(sort=False)
 
         self.hamlib_error.setText('')
@@ -663,15 +673,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 f'{__prog_name__} - {self.tr("Error")}',
                 str(e))
 
-    @staticmethod
-    def replaceUmlautsLigatures(text: str):
-        text = text.replace('Ä', 'Ae')
-        text = text.replace('Ö', 'Oe')
-        text = text.replace('Ü', 'Ue')
-        text = text.replace('ä', 'ae')
-        text = text.replace('ö', 'oe')
-        text = text.replace('ü', 'ue')
-        text = text.replace('ß', 'ss')
+    def replaceNonASCII(self, text: str) -> str:
+        non_ascii = find_non_ascii(text)
+
+        for na in non_ascii:
+            if na:
+                if na in self.ascii_replace:
+                    text = text.replace(na, self.ascii_replace[na])
+                else:
+                    text = text.replace(na, '_')
+
         return text
 
     def exportADIF(self, file):
@@ -735,12 +746,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                           '@TYPE': 'I',
                                           '$': query.value(self.__sql_cols__.index('call_sign'))})
                 else:
-                    record['CALL'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('call_sign')))
+                    record['CALL'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('call_sign')))
             if query.value(self.__sql_cols__.index('name')):
-                record['NAME'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('name')))
+                record['NAME'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('name')))
                 record['NAME_INTL'] = query.value(self.__sql_cols__.index('name'))
             if query.value(self.__sql_cols__.index('qth')):
-                record['QTH'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('qth')))
+                record['QTH'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('qth')))
                 record['QTH_INTL'] = query.value(self.__sql_cols__.index('qth'))
             if query.value(self.__sql_cols__.index('locator')):
                 record['GRIDSQUARE'] = query.value(self.__sql_cols__.index('locator'))
@@ -780,31 +791,31 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                           '@TYPE': 'I',
                                           '$': query.value(self.__sql_cols__.index('own_callsign'))})
                 else:
-                    record['STATION_CALLSIGN'] = self.replaceUmlautsLigatures(
+                    record['STATION_CALLSIGN'] = self.replaceNonASCII(
                         query.value(self.__sql_cols__.index('own_callsign')))
             if query.value(self.__sql_cols__.index('own_name')):
-                record['MY_NAME'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('own_name')))
+                record['MY_NAME'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('own_name')))
                 record['MY_NAME_INTL'] = query.value(self.__sql_cols__.index('own_name'))
             if query.value(self.__sql_cols__.index('own_qth')):
-                record['MY_CITY'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('own_qth')))
+                record['MY_CITY'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('own_qth')))
                 record['MY_CITY_INTL'] = query.value(self.__sql_cols__.index('own_qth'))
             if query.value(self.__sql_cols__.index('own_locator')):
                 record['MY_GRIDSQUARE'] = query.value(self.__sql_cols__.index('own_locator'))
             if query.value(self.__sql_cols__.index('radio')):
-                record['MY_RIG'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('radio')))
+                record['MY_RIG'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('radio')))
                 record['MY_RIG_INTL'] = query.value(self.__sql_cols__.index('radio'))
             if query.value(self.__sql_cols__.index('antenna')):
-                record['MY_ANTENNA'] = self.replaceUmlautsLigatures(query.value(self.__sql_cols__.index('antenna')))
+                record['MY_ANTENNA'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('antenna')))
                 record['MY_ANTENNA_INTL'] = query.value(self.__sql_cols__.index('antenna'))
             if query.value(self.__sql_cols__.index('dist')):
                 record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
             if query.value(self.__sql_cols__.index('remarks')) and bool(
                     self.settings.value('imp_exp/own_notes_adif', 0)):
-                record['NOTES'] = self.replaceUmlautsLigatures(
+                record['NOTES'] = self.replaceNonASCII(
                     query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
                 record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
             if query.value(self.__sql_cols__.index('comments')):
-                record['COMMENT'] = self.replaceUmlautsLigatures(
+                record['COMMENT'] = self.replaceNonASCII(
                     query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n'))
                 record['COMMENT_INTL'] = query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n')
             if query.value(self.__sql_cols__.index('qsl_via')):
@@ -812,7 +823,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('qsl_path')):
                 record['QSL_SENT_VIA'] = query.value(self.__sql_cols__.index('qsl_path'))
             if query.value(self.__sql_cols__.index('qsl_msg')):
-                record['QSLMSG'] = self.replaceUmlautsLigatures(
+                record['QSLMSG'] = self.replaceNonASCII(
                     query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n'))
                 record['QSLMSG_INTL'] = query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n')
             if query.value(self.__sql_cols__.index('qsl_sent')):
