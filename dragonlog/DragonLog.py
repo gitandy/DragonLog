@@ -811,21 +811,27 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['DISTANCE'] = query.value(self.__sql_cols__.index('dist'))
             if query.value(self.__sql_cols__.index('remarks')) and bool(
                     self.settings.value('imp_exp/own_notes_adif', 0)):
-                record['NOTES'] = self.replaceNonASCII(
-                    query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n'))
-                record['NOTES_INTL'] = query.value(self.__sql_cols__.index('remarks')).replace('\n', '\r\n')
+                remarks = query.value(self.__sql_cols__.index('remarks'))
+                if platform.system() == 'Linux':
+                    remarks = remarks.replace('\n', '\r\n')
+                record['NOTES'] = self.replaceNonASCII(remarks)
+                record['NOTES_INTL'] = remarks
             if query.value(self.__sql_cols__.index('comments')):
-                record['COMMENT'] = self.replaceNonASCII(
-                    query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n'))
-                record['COMMENT_INTL'] = query.value(self.__sql_cols__.index('comments')).replace('\n', '\r\n')
+                comment = query.value(self.__sql_cols__.index('comments'))
+                if platform.system() == 'Linux':
+                    comment = comment.replace('\n', '\r\n')
+                record['COMMENT'] = self.replaceNonASCII(comment)
+                record['COMMENT_INTL'] = comment
             if query.value(self.__sql_cols__.index('qsl_via')):
                 record['QSL_VIA'] = query.value(self.__sql_cols__.index('qsl_via'))
             if query.value(self.__sql_cols__.index('qsl_path')):
                 record['QSL_SENT_VIA'] = query.value(self.__sql_cols__.index('qsl_path'))
             if query.value(self.__sql_cols__.index('qsl_msg')):
-                record['QSLMSG'] = self.replaceNonASCII(
-                    query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n'))
-                record['QSLMSG_INTL'] = query.value(self.__sql_cols__.index('qsl_msg')).replace('\n', '\r\n')
+                qsl_msg = query.value(self.__sql_cols__.index('qsl_msg'))
+                if platform.system() == 'Linux':
+                    qsl_msg = qsl_msg.replace('\n', '\r\n')
+                record['QSLMSG'] = self.replaceNonASCII(qsl_msg)
+                record['QSLMSG_INTL'] = qsl_msg
             if query.value(self.__sql_cols__.index('qsl_sent')):
                 record['QSL_SENT'] = query.value(self.__sql_cols__.index('qsl_sent'))
             if query.value(self.__sql_cols__.index('qsl_rcvd')):

@@ -492,6 +492,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="QTextEdit" name="commentsTextEdit">
+             <property name="acceptRichText">
+              <bool>false</bool>
+             </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
@@ -502,6 +505,9 @@
            </item>
            <item>
             <widget class="QTextEdit" name="remarksTextEdit">
+             <property name="acceptRichText">
+              <bool>false</bool>
+             </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
