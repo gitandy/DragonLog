@@ -162,7 +162,9 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
     def mfrChanged(self, mfr):
         self.modelComboBox.clear()
-        self.modelComboBox.insertItems(0, sorted(self.rigs[mfr]))
+
+        if mfr in self.rigs:
+            self.modelComboBox.insertItems(0, sorted(self.rigs[mfr]))
 
         if self.settings.value('cat/rigModel', None):
             self.modelComboBox.setCurrentText(self.settings.value('cat/rigModel'))
