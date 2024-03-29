@@ -89,7 +89,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
 
     def isRigctldActive(self):
-        return self.ctrlRigctldPushButton.isChecked()
+        return self.rigctld and not self.rigctld.poll()
 
     @staticmethod
     def __is_exe__(path):
@@ -177,16 +177,29 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     def ctrlRigctld(self, start):
         if start:
             if not self.rigctld:
-                # FIXME: read from settings not from UI (problem if UI was never initialised)
-                rig_id = self.rig_ids[self.manufacturerComboBox.currentText() + '/' + self.modelComboBox.currentText()]
+                rig_mfr = self.settings.value('cat/rigMfr')
+                rig_model = self.settings.value('cat/rigModel')
+                rig_if = self.settings.value("cat/interface")
+                rig_speed = self.settings.value("cat/baud")
+                if not rig_mfr or not rig_model or not rig_if or not rig_speed:
+                    QtWidgets.QMessageBox.critical(self, self.tr('CAT settings error'),
+                                                   self.tr('CAT configuration was never saved '
+                                                          'or a parameter is missing'))
+                    self.ctrlRigctldPushButton.setChecked(False)
+                    self.parent().actionStart_hamlib_TB.setChecked(False)
+                    self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
+                    return
+
+                rig_id = self.rig_ids[f'{rig_mfr}/{rig_model}']
 
                 self.collectRigCaps(rig_id)
 
                 self.rigctld = subprocess.Popen([self.rigctld_path,
                                                  f'--model={rig_id}',
-                                                 f'--rig-file={self.catInterfaceLineEdit.text().strip()}',
-                                                 f'--serial-speed={self.catBaudComboBox.currentText()}',
+                                                 f'--rig-file={rig_if}',
+                                                 f'--serial-speed={rig_speed}',
                                                  '--listen-addr=127.0.0.1'])
+
                 if self.rigctld.poll():
                     self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
                     self.ctrlRigctldPushButton.setChecked(False)
