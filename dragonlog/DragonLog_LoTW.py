@@ -52,8 +52,11 @@ class LoTW:
             tmp_file = os.path.join(tmp_dir, 'DragonLog_Export.adi')
             adi.dump(tmp_file, doc, 'ADIF Export by DragonLog')
 
+            tqsl_startupinfo = None
             if platform.system() == 'Windows':
                 tqsl_path = 'C:/Program Files (x86)/TrustedQSL/tqsl.exe'
+                tqsl_startupinfo = subprocess.STARTUPINFO()
+                tqsl_startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             else:
                 tqsl_path = 'tqsl'
 
@@ -69,7 +72,7 @@ class LoTW:
                 cmd.append('-p')
                 cmd.append(password)
 
-            res = subprocess.run(cmd, capture_output=True)
+            res = subprocess.run(cmd, capture_output=True, startupinfo=tqsl_startupinfo)
             match res.returncode:
                 case 0:
                     self.log.debug('TQSL exited with success')

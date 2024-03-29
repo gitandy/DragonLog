@@ -41,7 +41,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.rig_caps = []
         self.rig_status = rig_status
 
+        self.rigctl_startupinfo = None
         if platform.system() == 'Windows':
+            self.rigctl_startupinfo = subprocess.STARTUPINFO()
+            self.rigctl_startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             if self.settings.value('cat/rigctldPath', None):
                 if self.__is_exe__(self.settings.value('cat/rigctldPath')):
                     self.init_hamlib(self.settings.value('cat/rigctldPath'))
@@ -165,7 +168,9 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.modelComboBox.setCurrentText(self.settings.value('cat/rigModel'))
 
     def collectRigCaps(self, rig_id):
-        res = subprocess.run([self.rigctld_path, f'--model={rig_id}', '-u'], capture_output=True)
+        res = subprocess.run([self.rigctld_path, f'--model={rig_id}', '-u'],
+                             capture_output=True,
+                             startupinfo=self.rigctl_startupinfo)
         stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
         self.rig_caps = []
         for ln in stdout.split('\n'):
@@ -184,7 +189,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 if not rig_mfr or not rig_model or not rig_if or not rig_speed:
                     QtWidgets.QMessageBox.critical(self, self.tr('CAT settings error'),
                                                    self.tr('CAT configuration was never saved '
-                                                          'or a parameter is missing'))
+                                                           'or a parameter is missing'))
                     self.ctrlRigctldPushButton.setChecked(False)
                     self.parent().actionStart_hamlib_TB.setChecked(False)
                     self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
@@ -198,7 +203,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                                  f'--model={rig_id}',
                                                  f'--rig-file={rig_if}',
                                                  f'--serial-speed={rig_speed}',
-                                                 '--listen-addr=127.0.0.1'])
+                                                 '--listen-addr=127.0.0.1'],
+                                                startupinfo=self.rigctl_startupinfo)
 
                 if self.rigctld.poll():
                     self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
