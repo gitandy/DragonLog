@@ -158,10 +158,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {__prog_name__} {__version__}...')
 
-        dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
-                                                               QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
-        self.addDockWidget(dock_area,
-                           self.logDockWidget)
+        if self.settings.value('ui/log_dock_float', 0):
+            self.logDockWidget.setFloating(True)
+        else:
+            log_dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
+                                                                   QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
+            self.addDockWidget(log_dock_area,
+                               self.logDockWidget)
         self.logDockWidget.setVisible(bool(self.settings.value('ui/show_log', 0)))
 
         self.dummy_status = QtWidgets.QLabel()
@@ -233,10 +236,24 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.settings_form = Settings(self, self.settings, self.hamlib_status, self.__headers__, self.log)
 
-        self.qso_form = QSOForm(self, self.bands, self.modes, self.settings, self.settings_form,
+        # QSOForm
+        self.qso_form = QSOForm(self, self, self.bands, self.modes, self.settings, self.settings_form,
                                 self.cb_channels, self.hamlib_error, self.log)
+        self.qsoDockWidget.setWidget(self.qso_form)
+        self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
+
+        if self.settings.value('ui/qso_dock_float', 0):
+            self.qsoDockWidget.setFloating(True)
+        else:
+            qso_dock_area = self.int2dock_area(int(self.settings.value('ui/qso_dock_area',
+                                                                   QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
+            self.addDockWidget(qso_dock_area,
+                               self.qsoDockWidget)
+        self.qsoDockWidget.setVisible(bool(self.settings.value('ui/show_qso', 0)))
+
         self.keep_logging = False
 
+        # Database
         self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
         if file:
@@ -270,6 +287,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 dock_area = QtCore.Qt.DockWidgetArea.TopDockWidgetArea
             case 8:
                 dock_area = QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
+
         return dock_area
 
     def showSettings(self):
@@ -467,43 +485,24 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def logQSO(self):
         self.qso_form.clear()
-        if not self.keep_logging:
-            self.qso_form.reset()
+        self.qso_form.setChangeMode(False)
+        self.qso_form.reset()
+        self.qsoDockWidget.setVisible(True)
 
-        dt = QtCore.QDateTime.currentDateTimeUtc()
-        self.qso_form.dateEdit.setDate(dt.date())
-        self.qso_form.dateOnEdit.setDate(dt.date())
-        self.qso_form.timeEdit.setTime(dt.time())
-        self.qso_form.timeOnEdit.setTime(dt.time())
+    def fetchQSO(self):
+        self.log.info('Logging QSO...')
+        query = QtSql.QSqlQuery(self.__db_con__)
+        query.prepare(self.__db_insert_stmnt__)
+        for i, val in enumerate(self.qso_form.values):
+            query.bindValue(i, val)
+        query.exec()
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
 
-        if self.qso_form.exec():
-            self.log.info('Logging QSO...')
-            query = QtSql.QSqlQuery(self.__db_con__)
-            query.prepare(self.__db_insert_stmnt__)
-            for i, val in enumerate(self.qso_form.values):
-                query.bindValue(i, val)
-            query.exec()
-            if query.lastError().text():
-                raise Exception(query.lastError().text())
-
-            self.__db_con__.commit()
-        else:
-            self.log.info('Logging aborted')
-            self.keep_logging = False
-
+        self.__db_con__.commit()
         self.refreshTableView(sort=False)
 
-        self.hamlib_error.setText('')
-
-    def logMultiQSOs(self):
-        self.keep_logging = True
-
-        self.qso_form.setWindowTitle(self.tr('Log multi QSOs'))
-
-        while self.keep_logging:
-            self.logQSO()
-
-        self.qso_form.reset()  # To reset window title
+        self.hamlib_error.setText('')  # TODO: Why???
 
     def deleteQSO(self):
         res = QtWidgets.QMessageBox.question(self, self.tr('Delete QSO'),
@@ -533,45 +532,39 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.refreshTableView(sort=False)
 
     def changeQSO(self):
-        done_ids = []
+        self.qso_form.clear()
+        self.qsoDockWidget.setVisible(True)
         self.qso_form.setChangeMode()
 
-        for i in self.QSOTableView.selectedIndexes():
-            qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
+        i = self.QSOTableView.selectedIndexes().pop(0)
+        qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
 
-            if qso_id in done_ids or qso_id is None:
-                continue
-            done_ids.append(qso_id)
+        values = []
+        for col in range(len(self.__sql_cols__)):
+            values.append(self.QSOTableView.model().data(i.siblingAtColumn(col)))
 
-            values = []
-            for col in range(len(self.__sql_cols__)):
-                values.append(self.QSOTableView.model().data(i.siblingAtColumn(col)))
+        self.qso_form.values = dict(zip(self.__sql_cols__, values))
 
-            self.qso_form.clear()
-            self.qso_form.setChangeMode()
-            self.qso_form.values = dict(zip(self.__sql_cols__, values))
+    def updateQSO(self, qso_id: int):
+        self.log.info(f'Changing QSO {qso_id}...')
+        values = self.qso_form.values
+        values += (qso_id,)
 
-            self.qso_form.setWindowTitle(self.tr('Change QSO') + f' #{qso_id}')
+        query = QtSql.QSqlQuery(self.__db_con__)
+        query.prepare(self.__db_update_stmnt__)
 
-            if self.qso_form.exec():
-                self.log.info(f'Changing QSO {qso_id}...')
-                values = self.qso_form.values
-                values += (qso_id,)
-
-                query = QtSql.QSqlQuery(self.__db_con__)
-                query.prepare(self.__db_update_stmnt__)
-
-                for col, val in enumerate(values):
-                    query.bindValue(col, val)
-                query.exec()
-                if query.lastError().text():
-                    raise Exception(query.lastError().text())
-            else:
-                self.log.info('Changing QSO(s) aborted')
-                break
+        for col, val in enumerate(values):
+            query.bindValue(col, val)
+        query.exec()
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
 
         self.__db_con__.commit()
         self.refreshTableView(sort=False)
+        self.qso_form.setChangeMode(False)
+
+    def clearQSOForm(self):
+        self.qso_form.clear()
         self.qso_form.setChangeMode(False)
 
     def export(self):
@@ -1308,8 +1301,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def closeEvent(self, e):
         self.log.info(f'Quiting {__prog_name__}...')
         self.__db_con__.close()
+
         self.settings.setValue('ui/show_log', int(self.logDockWidget.isVisible()))
         self.settings.setValue('ui/log_dock_area', self.dockWidgetArea(self.logDockWidget).value)
+        self.settings.setValue('ui/log_dock_float', int(self.logDockWidget.isFloating()))
+
+        self.settings.setValue('ui/show_qso', int(self.qsoDockWidget.isVisible()))
+        self.settings.setValue('ui/qso_dock_area', self.dockWidgetArea(self.qsoDockWidget).value)
+        self.settings.setValue('ui/qso_dock_float', int(self.qsoDockWidget.isFloating()))
+
         self.settings_form.ctrlRigctld(False)
         e.accept()
 

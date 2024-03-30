@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>QSOFormDialog</class>
- <widget class="QDialog" name="QSOFormDialog">
+ <class>QSOForm</class>
+ <widget class="QWidget" name="QSOForm">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>592</height>
+    <width>500</width>
+    <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>600</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Enter QSO</string>
+   <string>QSO Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -24,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>557</width>
-        <height>482</height>
+        <width>482</width>
+        <height>490</height>
        </rect>
       </property>
       <attribute name="label">
@@ -527,8 +539,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>540</width>
-        <height>484</height>
+        <width>482</width>
+        <height>490</height>
        </rect>
       </property>
       <attribute name="label">
@@ -931,7 +943,7 @@ This is not the QSL manager/bureau address.</string>
      <item>
       <widget class="QPushButton" name="cancelPushButton">
        <property name="text">
-        <string>Cancel</string>
+        <string>Clear</string>
        </property>
       </widget>
      </item>
@@ -977,7 +989,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>savePushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>saveLog()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -986,22 +998,6 @@ This is not the QSL manager/bureau address.</string>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cancelPushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>515</x>
-     <y>420</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
      <y>274</y>
     </hint>
    </hints>
@@ -1105,7 +1101,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>bandComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>bandChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1121,7 +1117,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>stationGroupBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>stationChanged(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1137,7 +1133,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>identityGroupBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>identityChanged(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1185,7 +1181,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>channelComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>channelChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1201,7 +1197,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>RSTRcvdLineEdit</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>rstRcvdChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1217,7 +1213,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>RSTSentLineEdit</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>rstSentChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1233,7 +1229,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>locatorLineEdit</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>locatorChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1249,7 +1245,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>callSignLineEdit</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>callSignChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1265,7 +1261,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>ownLocatorLineEdit</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>ownLocatorChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1281,7 +1277,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>ownCallSignLineEdit</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>ownCallSignChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1297,7 +1293,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>callSignLineEdit</sender>
    <signal>editingFinished()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>setWorkedBefore()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1313,7 +1309,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>timeNowPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>setStartTimeNow()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1329,7 +1325,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>searchCallbookPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>searchCallbook()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1345,7 +1341,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>uploadPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>uploadLog()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1361,7 +1357,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>eqslInboxPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>eqslCheckInbox()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1377,7 +1373,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>eqslDownloadPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>eqslDownload()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1393,7 +1389,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>lotwInboxPushButton</sender>
    <signal>clicked()</signal>
-   <receiver>QSOFormDialog</receiver>
+   <receiver>QSOForm</receiver>
    <slot>lotwCheckInbox()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1403,6 +1399,22 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>287</x>
      <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOForm</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>515</x>
+     <y>420</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
@@ -1428,5 +1440,6 @@ This is not the QSL manager/bureau address.</string>
   <slot>eqslCheckInbox()</slot>
   <slot>eqslDownload()</slot>
   <slot>lotwCheckInbox()</slot>
+  <slot>clear()</slot>
  </slots>
 </ui>

@@ -18,10 +18,11 @@ from .DragonLog_LoTW import (LoTW, LoTWRequestException, LoTWCommunicationExcept
                              LoTWLoginException, LoTWNoRecordException)
 
 
-class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
-    def __init__(self, parent, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
+class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
+    def __init__(self, parent, dragonlog, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
                  cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
         super().__init__(parent)
+        self.dragonlog = dragonlog
         self.setupUi(self)
 
         self.log = logging.getLogger('QSOForm')
@@ -30,12 +31,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.logger = logger
         self.log.debug('Initialising...')
 
-        self.default_title = self.windowTitle()
         self.lastpos = None
         self.bands = bands
         self.modes = modes
         self.settings = settings
         self.settings_form = settings_form
+        self.qso_id = None
 
         self.cb_channels = cb_channels
         self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
@@ -86,9 +87,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self._create_worked_dlg_()
 
         self.callbook = CallBook(CallBookType.HamQTH,
-                                 f'{self.parent().programName}-{self.parent().programVersion}',
+                                 f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
                                  self.logger)
-        self.eqsl = EQSL(self.parent().programName, self.logger)
+        self.eqsl = EQSL(self.dragonlog.programName, self.logger)
         self.eqsl_url = ''
 
         self.lotw = LoTW(self.logger)
@@ -108,11 +109,22 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             w.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
+        self.clear()
+
+    def startTimers(self, start: bool):
+        if start:
+            self.refreshTimer.start(500)
+            self.timeTimer.start(1000)
+        else:
+            self.refreshTimer.stop()
+            self.timeTimer.stop()
+
     def _create_worked_dlg_(self):
         self.worked_dialog = QtWidgets.QListWidget(self)
         self.worked_dialog.setMinimumHeight(100)
         self.worked_dialog.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
         self.worked_dialog.setSortingEnabled(True)
+        self.worked_dialog.hide()
 
     def setWorkedBefore(self, worked: list = None):
         self.worked_dialog.clear()
@@ -139,7 +151,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
 
     # noinspection PyBroadException
     def refreshRigData(self):
-        if self.settings_form.isRigctldActive():
+        if self.settings_form.isRigctldActive() and not self.__change_mode__:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect(('127.0.0.1', 4532))
                 s.settimeout(1)
@@ -207,11 +219,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                 except socket.timeout:
                     self.hamlib_error.setText(self.tr('rigctld timeout'))
                     self.log.error('rigctld error: timeout')
-                    self.refreshTimer.stop()
-        else:
-            self.refreshTimer.stop()
 
     def clear(self):
+        self.qso_id = None
         self.callSignLineEdit.clear()
         self.nameLineEdit.clear()
         self.QTHLineEdit.clear()
@@ -220,6 +230,19 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.RSTRcvdLineEdit.setText('59')
         self.remarksTextEdit.clear()
         self.powerSpinBox.setValue(0)
+
+        self.callSignChanged('')
+        self.locatorChanged('')
+        self.ownCallSignChanged(self.ownCallSignLineEdit.text())
+        self.ownLocatorChanged(self.ownLocatorLineEdit.text())
+        self.rstSentChanged(self.RSTSentLineEdit.text())
+        self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
+
+        dt = QtCore.QDateTime.currentDateTimeUtc()
+        self.dateEdit.setDate(dt.date())
+        self.dateOnEdit.setDate(dt.date())
+        self.timeEdit.setTime(dt.time())
+        self.timeOnEdit.setTime(dt.time())
 
         if bool(self.settings.value('station_cb/cb_by_default', 0)):
             self.bandComboBox.setCurrentText('11m')
@@ -258,10 +281,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.stationGroupBox.setChecked(True)
         self.identityGroupBox.setChecked(True)
 
-        self.setWindowTitle(self.default_title)
-
     def setChangeMode(self, activate=True):
         self.__change_mode__ = activate
+        self.startTimers(not activate)
 
         if activate:
             self.stationGroupBox.setChecked(False)
@@ -377,7 +399,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         if not txt:
             self.callSignLineEdit.setPalette(self.palette_empty)
         elif check_format(REGEX_CALL, txt):
-            worked = self.parent().workedBefore(check_call(txt)[1])
+            worked = self.dragonlog.workedBefore(check_call(txt)[1])
             if not self.__change_mode__ and worked:
                 self.setWorkedBefore(worked)
                 self.callSignLineEdit.setPalette(self.palette_worked)
@@ -518,6 +540,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def values(self, values: dict):
         """Set all form values"""
 
+        self.qso_id = values['id']
         date, time = values['date_time'].split()
         self.dateOnEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
         self.timeOnEdit.setTime(QtCore.QTime.fromString(time))
@@ -536,6 +559,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         self.locatorLineEdit.setText(values['locator'])
         self.RSTSentLineEdit.setText(values['rst_sent'])
         self.RSTRcvdLineEdit.setText(values['rst_rcvd'])
+
+        self.callSignChanged(self.callSignLineEdit.text())
+        self.locatorChanged(self.locatorLineEdit.text())
+        self.ownCallSignChanged(self.ownCallSignLineEdit.text())
+        self.ownLocatorChanged(self.ownLocatorLineEdit.text())
+        self.rstSentChanged(self.RSTSentLineEdit.text())
+        self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
 
         band = values['band']
         self.bandComboBox.setCurrentText(band)
@@ -651,8 +681,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
     def saveLog(self):
         self.hamQTHmodRadioButton.setChecked(True)
 
-        # finally accept dialog anyway
-        self.accept()
+        if self.__change_mode__:
+            self.dragonlog.updateQSO(self.qso_id)
+        else:
+            self.dragonlog.fetchQSO()
+
+        self.toolBox.setCurrentIndex(0)
 
     def uploadLog(self):
         if self.hamQTHGroupBox.isChecked() or self.eqslGroupBox.isChecked():
@@ -661,8 +695,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             adif_doc = {'HEADER':
                 {
                     'ADIF_VER': '3.1.4',
-                    'PROGRAMID': self.parent().programName,
-                    'PROGRAMVERSION': self.parent().programVersion,
+                    'PROGRAMID': self.dragonlog.programName,
+                    'PROGRAMVERSION': self.dragonlog.programVersion,
                     'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
                         'yyyyMMdd HHmmss')
                 },
@@ -710,8 +744,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
                     QtWidgets.QMessageBox.information(self, self.tr('Upload eQSL error'),
                                                       self.tr('Error on upload') + f':\n"{exc.args[0]}"')
 
-        # finally accept dialog anyway
-        self.accept()
+        if self.__change_mode__:
+            self.dragonlog.updateQSO(self.qso_id)
+        else:
+            self.dragonlog.fetchQSO()
+
+        self.toolBox.setCurrentIndex(0)
 
     def _build_record_(self):
         record = {
@@ -726,9 +764,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
         if self.callSignLineEdit.text():
             record['CALL'] = self.callSignLineEdit.text().upper()
         if self.nameLineEdit.text():
-            record['NAME'] = self.parent().replaceUmlautsLigatures(self.nameLineEdit.text())
+            record['NAME'] = self.dragonlog.replaceUmlautsLigatures(self.nameLineEdit.text())
         if self.QTHLineEdit.text():
-            record['QTH'] = self.parent().replaceUmlautsLigatures(self.QTHLineEdit.text())
+            record['QTH'] = self.dragonlog.replaceUmlautsLigatures(self.QTHLineEdit.text())
         if self.locatorLineEdit.text():
             record['GRIDSQUARE'] = self.locatorLineEdit.text()
         if self.RSTSentLineEdit.text():
@@ -743,11 +781,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
         if self.remarksTextEdit.toPlainText().strip() and not bool(
                 self.settings.value('imp_exp/own_notes_adif', 0)):
-            record['NOTES'] = self.parent().replaceUmlautsLigatures(self.remarksTextEdit.toPlainText().strip())
+            record['NOTES'] = self.dragonlog.replaceUmlautsLigatures(self.remarksTextEdit.toPlainText().strip())
         if self.commentsTextEdit.toPlainText().strip():
-            record['COMMENTS'] = self.parent().replaceUmlautsLigatures(self.commentsTextEdit.toPlainText().strip())
+            record['COMMENTS'] = self.dragonlog.replaceUmlautsLigatures(self.commentsTextEdit.toPlainText().strip())
         if self.qslMessageTextEdit.toPlainText().strip():
-            record['QSLMSG'] = self.parent().replaceUmlautsLigatures(self.qslMessageTextEdit.toPlainText().strip())
+            record['QSLMSG'] = self.dragonlog.replaceUmlautsLigatures(self.qslMessageTextEdit.toPlainText().strip())
 
         return record
 
@@ -838,29 +876,3 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOFormDialog):
             QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
                                               'lotw/username', '') + f'\n{exc}')
-
-    def exec(self) -> int:
-        if self.lastpos:
-            self.move(self.lastpos)
-
-        self.callSignLineEdit.setFocus()
-
-        if self.settings_form.isRigctldActive():
-            self.refreshTimer.start(500)
-
-        self.callSignChanged(self.callSignLineEdit.text())
-        self.locatorChanged(self.locatorLineEdit.text())
-        self.rstSentChanged(self.RSTSentLineEdit.text())
-        self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
-        self.ownCallSignChanged(self.ownCallSignLineEdit.text())
-        self.ownLocatorChanged(self.ownLocatorLineEdit.text())
-
-        self.timeTimer.start(1000)
-
-        return super().exec()
-
-    def hideEvent(self, e):
-        self.lastpos = self.pos()
-        self.refreshTimer.stop()
-        self.timeTimer.stop()
-        e.accept()

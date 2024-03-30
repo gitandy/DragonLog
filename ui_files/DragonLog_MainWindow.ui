@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>600</height>
+    <width>1300</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1300</width>
      <height>22</height>
     </rect>
    </property>
@@ -67,7 +67,6 @@
      <string>Edit</string>
     </property>
     <addaction name="actionLog_QSO"/>
-    <addaction name="actionLog_multi_QSOs"/>
     <addaction name="separator"/>
     <addaction name="actionDelete_log_entry"/>
     <addaction name="actionChange_log_entry"/>
@@ -107,7 +106,6 @@
    <addaction name="actionStart_hamlib_TB"/>
    <addaction name="separator"/>
    <addaction name="actionLog_QSO_TB"/>
-   <addaction name="actionLog_multi_QSOs_TB"/>
    <addaction name="separator"/>
    <addaction name="actionWatch_file_for_QSOs_TB"/>
   </widget>
@@ -115,13 +113,16 @@
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>Application Log</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>8</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QWidget" name="logDockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QTextEdit" name="logTextEdit">
@@ -137,6 +138,24 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QDockWidget" name="qsoDockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>QSO Form</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="qsoDockWidgetContents"/>
   </widget>
   <action name="actionLog_QSO">
    <property name="icon">
@@ -267,27 +286,6 @@
     <string>Settings</string>
    </property>
   </action>
-  <action name="actionLog_multi_QSOs">
-   <property name="icon">
-    <iconset>
-     <normaloff>icons:edit_addmulti.png</normaloff>icons:edit_addmulti.png</iconset>
-   </property>
-   <property name="text">
-    <string>Log multi QSOs...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+L</string>
-   </property>
-  </action>
-  <action name="actionLog_multi_QSOs_TB">
-   <property name="icon">
-    <iconset>
-     <normaloff>icons:edit_addmulti.png</normaloff>icons:edit_addmulti.png</iconset>
-   </property>
-   <property name="text">
-    <string>Log multi QSOs...</string>
-   </property>
-  </action>
   <action name="actionHelp">
    <property name="icon">
     <iconset>
@@ -347,7 +345,7 @@
    </property>
   </action>
   <action name="actionUpload_logs_to_LoTW">
-  <property name="icon">
+   <property name="icon">
     <iconset>
      <normaloff>icons:upload_lotw.png</normaloff>icons:upload_lotw.png</iconset>
    </property>
@@ -535,38 +533,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionLog_multi_QSOs</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>logMultiQSOs()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLog_multi_QSOs_TB</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>logMultiQSOs()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>QSOTableView</sender>
    <signal>doubleClicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
@@ -710,6 +676,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>QSOTableView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearQSOForm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>606</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>649</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -721,10 +703,10 @@
   <slot>showSettings()</slot>
   <slot>export()</slot>
   <slot>logImport()</slot>
-  <slot>logMultiQSOs()</slot>
   <slot>showHelp()</slot>
   <slot>ctrlHamlib(bool)</slot>
   <slot>ctrlWatching(bool)</slot>
   <slot>lotwUpload()</slot>
+  <slot>clearQSOForm()</slot>
  </slots>
 </ui>
