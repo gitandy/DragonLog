@@ -56,6 +56,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                           'AM': 'AM',
                           'FM': 'FM',
                           'WFM': 'FM',
+                          'PKTUSB': 'SSB',
+                          'PKTLSB': 'SSB',
                           }
         self.__last_mode__ = ''
 
