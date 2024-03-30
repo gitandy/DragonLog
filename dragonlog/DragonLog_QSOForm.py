@@ -154,73 +154,77 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     # noinspection PyBroadException
     def refreshRigData(self):
         if self.settings_form.isRigctldActive() and not self.__change_mode__:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect(('127.0.0.1', 4532))
-                s.settimeout(1)
-                try:
-                    # Get frequency
-                    s.sendall(b'\\get_freq\n')
-                    freq_s = s.recv(1024).decode('utf-8').strip()
-                    if freq_s.startswith('RPRT'):
-                        self.hamlib_error.setText(self.tr('Error') + ':' + freq_s.split()[1])
-                        self.log.error(f'rigctld error get_freq: {freq_s.split()[1]}')
-                        return
-
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect(('127.0.0.1', 4532))
+                    s.settimeout(1)
                     try:
-                        freq = float(freq_s) / 1000
-                        for b in self.bands:
-                            if freq < self.bands[b][1]:
-                                if freq > self.bands[b][0]:
-                                    self.bandComboBox.setCurrentText(b)
-                                    self.freqDoubleSpinBox.setValue(freq)
-                                break
-                    except Exception:
-                        pass
-
-                    # Get mode
-                    s.sendall(b'\\get_mode\n')
-                    mode_s = s.recv(1024).decode('utf-8').strip()
-                    if mode_s.startswith('RPRT'):
-                        self.hamlib_error.setText(self.tr('Error') + ':' + mode_s.split()[1])
-                        self.log.error(f'rigctld error get_mode: {mode_s.split()[1]}')
-                        return
-
-                    try:
-                        mode, passband = [v.strip() for v in mode_s.split('\n')]
-                        if mode in self.rig_modes and mode != self.__last_mode__:
-                            self.modeComboBox.setCurrentText(self.rig_modes[mode])
-                            self.__last_mode__ = mode
-                    except Exception:
-                        pass
-
-                    # Get power
-                    if 'get level' in self.settings_form.rig_caps and 'get power2mw' in self.settings_form.rig_caps:
-                        # Get power level
-                        s.sendall(b'\\get_level RFPOWER\n')
-                        pwrlvl_s = s.recv(1024).decode('utf-8').strip()
-                        if pwrlvl_s.startswith('RPRT'):
-                            self.hamlib_error.setText(self.tr('Error') + ':' + pwrlvl_s.split()[1])
-                            self.log.error(f'rigctld error get_level: {pwrlvl_s.split()[1]}')
-                            return
-
-                        # Convert level to W
-                        s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n'.encode())
-                        pwr_s = s.recv(1024).decode('utf-8').strip()
-                        if pwr_s.startswith('RPRT'):
-                            self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])
-                            self.log.error(f'rigctld error power2mW: {pwr_s.split()[1]}')
+                        # Get frequency
+                        s.sendall(b'\\get_freq\n')
+                        freq_s = s.recv(1024).decode('utf-8').strip()
+                        if freq_s.startswith('RPRT'):
+                            self.hamlib_error.setText(self.tr('Error') + ':' + freq_s.split()[1])
+                            self.log.error(f'rigctld error get_freq: {freq_s.split()[1]}')
                             return
 
                         try:
-                            pwr = int(int(pwr_s) / 1000 + .9)
-                            self.powerSpinBox.setValue(pwr)
+                            freq = float(freq_s) / 1000
+                            for b in self.bands:
+                                if freq < self.bands[b][1]:
+                                    if freq > self.bands[b][0]:
+                                        self.bandComboBox.setCurrentText(b)
+                                        self.freqDoubleSpinBox.setValue(freq)
+                                    break
                         except Exception:
                             pass
-                    else:
-                        self.powerSpinBox.setValue(0)
-                except socket.timeout:
-                    self.hamlib_error.setText(self.tr('rigctld timeout'))
-                    self.log.error('rigctld error: timeout')
+
+                        # Get mode
+                        s.sendall(b'\\get_mode\n')
+                        mode_s = s.recv(1024).decode('utf-8').strip()
+                        if mode_s.startswith('RPRT'):
+                            self.hamlib_error.setText(self.tr('Error') + ':' + mode_s.split()[1])
+                            self.log.error(f'rigctld error get_mode: {mode_s.split()[1]}')
+                            return
+
+                        try:
+                            mode, passband = [v.strip() for v in mode_s.split('\n')]
+                            if mode in self.rig_modes and mode != self.__last_mode__:
+                                self.modeComboBox.setCurrentText(self.rig_modes[mode])
+                                self.__last_mode__ = mode
+                        except Exception:
+                            pass
+
+                        # Get power
+                        if 'get level' in self.settings_form.rig_caps and 'get power2mw' in self.settings_form.rig_caps:
+                            # Get power level
+                            s.sendall(b'\\get_level RFPOWER\n')
+                            pwrlvl_s = s.recv(1024).decode('utf-8').strip()
+                            if pwrlvl_s.startswith('RPRT'):
+                                self.hamlib_error.setText(self.tr('Error') + ':' + pwrlvl_s.split()[1])
+                                self.log.error(f'rigctld error get_level: {pwrlvl_s.split()[1]}')
+                                return
+
+                            # Convert level to W
+                            s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n'.encode())
+                            pwr_s = s.recv(1024).decode('utf-8').strip()
+                            if pwr_s.startswith('RPRT'):
+                                self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])
+                                self.log.error(f'rigctld error power2mW: {pwr_s.split()[1]}')
+                                return
+
+                            try:
+                                pwr = int(int(pwr_s) / 1000 + .9)
+                                self.powerSpinBox.setValue(pwr)
+                            except Exception:
+                                pass
+                        else:
+                            self.powerSpinBox.setValue(0)
+                    except socket.timeout:
+                        self.hamlib_error.setText(self.tr('rigctld timeout'))
+                        self.log.error('rigctld error: timeout')
+            except ConnectionRefusedError:
+                self.log.error('Could not connect to rigctld')
+                self.refreshTimer.stop()
 
     def clear(self):
         self.qso_id = None
