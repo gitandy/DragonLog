@@ -102,11 +102,12 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionSelect_DB_TB"/>
+   <addaction name="actionImport_TB"/>
+   <addaction name="actionExport_TB"/>
    <addaction name="actionSettings_TB"/>
+   <addaction name="separator"/>
    <addaction name="actionStart_hamlib_TB"/>
-   <addaction name="separator"/>
    <addaction name="actionLog_QSO_TB"/>
-   <addaction name="separator"/>
    <addaction name="actionWatch_file_for_QSOs_TB"/>
   </widget>
   <widget class="QDockWidget" name="logDockWidget">
@@ -224,6 +225,24 @@
    </property>
    <property name="text">
     <string>Import...</string>
+   </property>
+  </action>
+  <action name="actionExport_TB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:fileexport.png</normaloff>icons:fileexport.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+  </action>
+  <action name="actionImport_TB">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:fileimport.png</normaloff>icons:fileimport.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -533,6 +552,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionExport_TB</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>export()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>QSOTableView</sender>
    <signal>doubleClicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
@@ -566,6 +601,22 @@
   </connection>
   <connection>
    <sender>actionImport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>logImport()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionImport_TB</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>logImport()</slot>
