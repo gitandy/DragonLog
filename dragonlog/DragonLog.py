@@ -1044,7 +1044,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
 
-            for j, val in enumerate(self._build_values_adiimport_(r)):
+            for j, val in enumerate(self._build_adif_import_(r)):
                 query.bindValue(j, val)
             query.exec()
             if query.lastError().text():
@@ -1061,7 +1061,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.log.info(f'Imported {imported} QSOs from "{file}"')
 
-    def _build_values_adiimport_(self, r, use_cfg_id=False, use_cfg_station=False):
+    def _build_adif_import_(self, r, use_cfg_id=False, use_cfg_station=False):
         values = [''] * (len(self.__sql_cols__) - 1)
         date = r['QSO_DATE']
         timex = r['TIME_ON']
@@ -1161,10 +1161,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare(self.__db_insert_stmnt__)
 
-                for j, val in enumerate(self._build_values_adiimport_(rec,
-                                                                      bool(self.settings.value('imp_exp/use_id_watch',
+                for j, val in enumerate(self._build_adif_import_(rec,
+                                                                 bool(self.settings.value('imp_exp/use_id_watch',
                                                                                                0)),
-                                                                      bool(self.settings.value(
+                                                                 bool(self.settings.value(
                                                                           'imp_exp/use_station_watch', 0)))):
                     query.bindValue(j, val)
                 query.exec()
