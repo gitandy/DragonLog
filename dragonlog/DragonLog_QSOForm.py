@@ -103,6 +103,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.qslAccLoTWCheckBox,
             self.eqslSentCheckBox,
             self.eqslRcvdCheckBox,
+            self.lotwSentCheckBox,
+            self.lotwRcvdCheckBox,
             self.hamQTHuplRadioButton,
             self.hamQTHmodRadioButton,
         )
@@ -275,6 +277,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.eqslLinkLabel.setEnabled(False)
         self.eqslLinkLabel.setText(self.tr('Link to eQSL Card'))
         self.eqslDownloadPushButton.setEnabled(False)
+
+        self.lotwGroupBox.setChecked(False)
+        self.lotwSentCheckBox.setChecked(False)
+        self.lotwRcvdCheckBox.setChecked(False)
+        self.lotwInboxPushButton.setEnabled(False)
 
         self.hamQTHGroupBox.setChecked(False)
         self.hamQTHmodRadioButton.setChecked(True)  # Just not check upload
@@ -627,6 +634,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.lotwGroupBox.setChecked(True)
             self.lotwSentCheckBox.setChecked(values['lotw_sent'] == 'Y')
             self.lotwRcvdCheckBox.setChecked(values['lotw_rcvd'] == 'Y')
+            self.lotwInboxPushButton.setEnabled(True)
 
         match values['hamqth']:
             case 'Y':
@@ -770,9 +778,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if self.callSignLineEdit.text():
             record['CALL'] = self.callSignLineEdit.text().upper()
         if self.nameLineEdit.text():
-            record['NAME'] = self.dragonlog.replaceUmlautsLigatures(self.nameLineEdit.text())
+            record['NAME'] = self.dragonlog.replaceNonASCII(self.nameLineEdit.text())
         if self.QTHLineEdit.text():
-            record['QTH'] = self.dragonlog.replaceUmlautsLigatures(self.QTHLineEdit.text())
+            record['QTH'] = self.dragonlog.replaceNonASCII(self.QTHLineEdit.text())
         if self.locatorLineEdit.text():
             record['GRIDSQUARE'] = self.locatorLineEdit.text()
         if self.RSTSentLineEdit.text():
@@ -787,11 +795,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
         if self.remarksTextEdit.toPlainText().strip() and not bool(
                 self.settings.value('imp_exp/own_notes_adif', 0)):
-            record['NOTES'] = self.dragonlog.replaceUmlautsLigatures(self.remarksTextEdit.toPlainText().strip())
+            record['NOTES'] = self.dragonlog.replaceNonASCII(self.remarksTextEdit.toPlainText().strip())
         if self.commentsTextEdit.toPlainText().strip():
-            record['COMMENTS'] = self.dragonlog.replaceUmlautsLigatures(self.commentsTextEdit.toPlainText().strip())
+            record['COMMENTS'] = self.dragonlog.replaceNonASCII(self.commentsTextEdit.toPlainText().strip())
         if self.qslMessageTextEdit.toPlainText().strip():
-            record['QSLMSG'] = self.dragonlog.replaceUmlautsLigatures(self.qslMessageTextEdit.toPlainText().strip())
+            record['QSLMSG'] = self.dragonlog.replaceNonASCII(self.qslMessageTextEdit.toPlainText().strip())
 
         return record
 
@@ -870,8 +878,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.lotwRcvdCheckBox.setChecked(rcvd)
             self.lotwSentCheckBox.setChecked(True)
         except LoTWNoRecordException:
-            self.lotwSentCheckBox.setChecked(False)
             self.lotwRcvdCheckBox.setChecked(False)
+            QtWidgets.QMessageBox.information(self, self.tr('Check LoTW QSL'),
+                                              self.tr('No QSL available'))
         except LoTWCommunicationException:
             QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                           self.tr('Server communication error'))

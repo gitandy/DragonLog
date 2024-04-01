@@ -8,6 +8,7 @@ import subprocess
 import requests
 from adif_file import adi
 from PyQt6 import QtCore
+import xmltodict
 
 from .Logger import Logger
 
@@ -32,6 +33,39 @@ class LoTWADIFFieldException(Exception):
     pass
 
 
+mode_map = {}
+
+
+def load_mode_map(log):
+    if platform.system() == 'Windows':
+        lotwcfg_path = os.path.expanduser('~/AppData/Roaming/TrustedQSL/config.xml')
+    elif platform.system() == 'Linux':
+        lotwcfg_path = os.path.expanduser('~/.tqsl/config.xml')
+    else:
+        log(logging.WARNING, f'System "{platform.system()}" is currently not supported to upload to LoTW')
+        return
+
+    if not os.path.isfile(lotwcfg_path):
+        log(logging.WARNING, 'Not able to load TQSL configuration')
+    else:
+        try:
+            with open(lotwcfg_path) as cfg_f:
+                lotwcfg_xml = cfg_f.read()
+
+            lotw_config = xmltodict.parse(lotwcfg_xml)
+
+            for mode in lotw_config['tqslconfig']['adifmap']['adifmode']:
+                if mode['@adif-mode'] not in mode_map:
+                    if '@adif-submode' in mode:
+                        continue
+                    else:
+                        mode_map[mode['@adif-mode']] = mode['@mode']
+
+            log(logging.DEBUG, 'Loaded ADIF mode mapping')
+        except Exception as exc:
+            log(logging.ERROR, exc)
+
+
 class LoTW:
     required_fields = ('QSO_DATE', 'TIME_ON', 'CALL', 'MODE', 'BAND')
     fields = required_fields + ('FREQ', 'QSLMSG', 'RST_SENT', 'MY_GRIDSQUARE', 'STATION_CALLSIGN')
@@ -43,6 +77,9 @@ class LoTW:
         self.log.setLevel(logger.loglevel)
         self.logger = logger
         self.log.debug('Initialising...')
+
+        if not mode_map:
+            load_mode_map(self.log.log)
 
     def upload_log(self, station: str, doc: dict, password: str = '') -> bool:
         self._check_fields_(doc)
@@ -116,8 +153,8 @@ class LoTW:
             f"{record['QSO_DATE'][:4]}-{record['QSO_DATE'][4:6]}-{record['QSO_DATE'][6:8]} "
             f"{record['TIME_ON'][:2]}:{record['TIME_ON'][2:4]}",
             'yyyy-MM-dd hh:mm')
-        start_dt = qso_dt.addSecs(-600)
-        end_dt = qso_dt.addSecs(600)
+        start_dt = qso_dt.addSecs(-300)
+        end_dt = qso_dt.addSecs(300)
 
         self.log.debug(f"Filter QSOs between {start_dt.toString('yyyy-MM-dd hh:mm')} and "
                        f"{end_dt.toString('yyyy-MM-dd hh:mm')}")
@@ -132,7 +169,7 @@ class LoTW:
             'qso_enddate': end_dt.date().toString('yyyy-MM-dd'),
             'qso_endtime': end_dt.time().toString('hh:mm'),
             'qso_band': record['BAND'],
-            'qso_mode': record['MODE'],
+            'qso_mode': mode_map[record['MODE']] if record['MODE'] in mode_map else record['MODE'],
         }
 
         r = requests.get('https://lotw.arrl.org/lotwuser/lotwreport.adi', params=params)
