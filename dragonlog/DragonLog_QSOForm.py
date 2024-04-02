@@ -318,6 +318,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.autoDateCheckBox.setChecked(True)
             self.autoDateCheckBox.setEnabled(True)
             self.timeNowPushButton.setEnabled(True)
+            self.clear()
 
     def bandChanged(self, band: str):
         self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
