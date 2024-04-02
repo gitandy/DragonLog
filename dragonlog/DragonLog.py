@@ -77,7 +77,7 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
-                    'rst_sent', 'rst_rcvd', 'band', 'mode', 'freq', 'channel', 'power',
+                    'rst_sent', 'rst_rcvd', 'band', 'mode', 'submode', 'freq', 'channel', 'power', 'propagation',
                     'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
                     'remarks', 'comments', 'dist',
                     'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
@@ -85,7 +85,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
-        'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR',
+        'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'SUBMODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR', 'PROP_MODE',
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
         'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE',
         'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
@@ -104,9 +104,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "rst_rcvd" TEXT,
                             "band"    TEXT,
                             "mode"   TEXT,
+                            "submode"  TEXT,
                             "freq"  REAL,
                             "channel"  INTEGER,
                             "power"  REAL,
+                            "propagation"  TEXT,
                             "own_name"  TEXT,
                             "own_qth"   TEXT,
                             "own_locator" TEXT,
@@ -162,7 +164,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.logDockWidget.setFloating(True)
         else:
             log_dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
-                                                                   QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
+                                                                       QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
             self.addDockWidget(log_dock_area,
                                self.logDockWidget)
         self.logDockWidget.setVisible(bool(self.settings.value('ui/show_log', 0)))
@@ -182,10 +184,33 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.modes: dict = json.load(mj)
         with open(self.searchFile('data:cb_channels.json')) as cj:
             self.cb_channels: dict = json.load(cj)
-
         with open(self.searchFile('data:color_map.json')) as cmj:
             color_map: dict = json.load(cmj)
         self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
+
+        self.prop: dict = {
+            '': '',
+            'AS': self.tr('Aircraft Scatter'),
+            'AUE': self.tr('Aurora-E'),
+            'AUR': self.tr('Aurora'),
+            'BS': self.tr('Back scatter'),
+            'ECH': self.tr('EchoLink'),
+            'EME': self.tr('Earth-Moon-Earth'),
+            'ES': self.tr('Sporadic E'),
+            'F2': self.tr('F2 Reflection'),
+            'FAI': self.tr('Field Aligned Irregularities'),
+            'GWAVE': self.tr('Ground Wave'),
+            'INTERNET': self.tr('Internet-assisted'),
+            'ION': self.tr('Ionoscatter'),
+            'IRL': self.tr('IRLP'),
+            'LOS': self.tr('Line of Sight'),
+            'MS': self.tr('Meteor scatter'),
+            'RPT': self.tr('Repeater or Transponder'),
+            'RS': self.tr('Rain scatter'),
+            'SAT': self.tr('Satellite'),
+            'TEP': self.tr('Trans-equatorial'),
+            'TR': self.tr('Tropospheric ducting'),
+        }
 
         self.ascii_replace: dict = {}
         try:
@@ -209,9 +234,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('RST rcvd'),
             self.tr('Band'),
             self.tr('Mode'),
+            self.tr('Submode'),
             self.tr('Frequency'),
             self.tr('Channel'),
             self.tr('Power'),
+            self.tr('Propagation'),
             self.tr('Own Name'),
             self.tr('Own QTH'),
             self.tr('Own Locator'),
@@ -237,7 +264,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings_form = Settings(self, self.settings, self.hamlib_status, self.__headers__, self.log)
 
         # QSOForm
-        self.qso_form = QSOForm(self, self, self.bands, self.modes, self.settings, self.settings_form,
+        self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
                                 self.cb_channels, self.hamlib_error, self.log)
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
@@ -246,7 +273,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.qsoDockWidget.setFloating(True)
         else:
             qso_dock_area = self.int2dock_area(int(self.settings.value('ui/qso_dock_area',
-                                                                   QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
+                                                                       QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
             self.addDockWidget(qso_dock_area,
                                self.qsoDockWidget)
         self.qsoDockWidget.setVisible(bool(self.settings.value('ui/show_qso', 0)))
@@ -1088,6 +1115,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         values[self.__sql_cols__.index('channel') - 1] = '-'
 
+        submode_eval = False
+
         for p in r:
             match p:
                 case 'QSO_DATE' | 'TIME_ON' | 'QSO_DATE_OFF' | 'TIME_OFF' | 'APP_DRAGONLOG_CBQSO':
@@ -1098,14 +1127,18 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     freq = r[p].replace(',', '.')  # Workaround for wrong export from fldigi
                     values[self.__adx_cols__.index(p)] = str(float(freq) * 1000)
                 case 'MODE':
-                    if r[p] in self.modes['AFU'] or r[p] in self.modes['CB']:
+                    if r[p] in self.modes['AFU'] or r[p] in self.modes['CB']:  # If it is a main mode
                         values[self.__adx_cols__.index(p)] = r[p]
                     else:  # Workaround for wrong mode export from fldigi
-                        # TODO: store in submode if Dragonlog supports submodes
                         for m in self.modes['AFU']:
                             if r[p] in self.modes['AFU'][m]:
                                 values[self.__adx_cols__.index(p)] = m
+                                values[self.__adx_cols__.index('SUBMODE')] = r[p]
+                                submode_eval = True
                                 break
+                case 'SUBMODE':
+                    if not submode_eval:  # Set only if not already evaluated from mode
+                        values[self.__adx_cols__.index(p)] = r[p]
                 case 'APP':  # Only for ADX as ADI App fields are recognised the standard way
                     for af in r[p]:
                         af_param = f'APP_{af["@PROGRAMID"].upper()}_{af["@FIELDNAME"].upper()}'
@@ -1163,9 +1196,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
                 for j, val in enumerate(self._build_adif_import_(rec,
                                                                  bool(self.settings.value('imp_exp/use_id_watch',
-                                                                                               0)),
+                                                                                          0)),
                                                                  bool(self.settings.value(
-                                                                          'imp_exp/use_station_watch', 0)))):
+                                                                     'imp_exp/use_station_watch', 0)))):
                     query.bindValue(j, val)
                 query.exec()
                 if query.lastError().text():

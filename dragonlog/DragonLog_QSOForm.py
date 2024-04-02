@@ -19,8 +19,8 @@ from .DragonLog_LoTW import (LoTW, LoTWRequestException, LoTWCommunicationExcept
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
-    def __init__(self, parent, dragonlog, bands: dict, modes: dict, settings: QtCore.QSettings, settings_form: Settings,
-                 cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
+    def __init__(self, parent, dragonlog, bands: dict, modes: dict, prop: dict, settings: QtCore.QSettings,
+                 settings_form: Settings, cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
         super().__init__(parent)
         self.dragonlog = dragonlog
         self.setupUi(self)
@@ -34,6 +34,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.lastpos = None
         self.bands = bands
         self.modes = modes
+        self.prop = prop
+        self.prop_trans = dict(zip(prop.values(), prop.keys()))
         self.settings = settings
         self.settings_form = settings_form
         self.qso_id = None
@@ -43,21 +45,23 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         self.bandComboBox.insertItems(0, bands.keys())
 
+        self.propComboBox.insertItems(0, self.prop.values())
+
         self.stationChanged(True)
         self.identityChanged(True)
 
         self.hamlib_error = hamlib_error
-        self.rig_modes = {'USB': 'SSB',
-                          'LSB': 'SSB',
-                          'CW': 'CW',
-                          'CWR': 'CW',
-                          'RTTY': 'RTTY',
-                          'RTTYR': 'RTTY',
-                          'AM': 'AM',
-                          'FM': 'FM',
-                          'WFM': 'FM',
-                          'PKTUSB': 'SSB',
-                          'PKTLSB': 'SSB',
+        self.rig_modes = {'USB': ('SSB', 'USB'),
+                          'LSB': ('SSB', 'LSB'),
+                          'CW': ('CW', ''),
+                          'CWR': ('CW', ''),
+                          'RTTY': ('RTTY', ''),
+                          'RTTYR': ('RTTY', ''),
+                          'AM': ('AM', ''),
+                          'FM': ('FM', ''),
+                          'WFM': ('FM', ''),
+                          'PKTUSB': ('SSB', 'USB'),
+                          'PKTLSB': ('SSB', 'LSB'),
                           }
         self.__last_mode__ = ''
 
@@ -191,7 +195,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                         try:
                             mode, passband = [v.strip() for v in mode_s.split('\n')]
                             if mode in self.rig_modes and mode != self.__last_mode__:
-                                self.modeComboBox.setCurrentText(self.rig_modes[mode])
+                                self.modeComboBox.setCurrentText(self.rig_modes[mode][0])
+                                if self.rig_modes[mode][1]:
+                                    self.submodeComboBox.setCurrentText(self.rig_modes[mode][1])
                                 self.__last_mode__ = mode
                         except Exception:
                             pass
@@ -259,6 +265,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.bandComboBox.setCurrentIndex(0)
         if self.modeComboBox.currentIndex() < 0:
             self.modeComboBox.setCurrentIndex(0)
+
+        self.submodeComboBox.setCurrentIndex(-1)
+        self.propComboBox.setCurrentIndex(-1)
 
         self.qslBurDirGroupBox.setChecked(False)
         self.qslViaLineEdit.clear()
@@ -328,6 +337,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         self.modeComboBox.clear()
         if band == '11m':
+            self.modeComboBox.insertItems(0, self.modes['CB'].keys())
             self.powerSpinBox.setMaximum(12)
             self.channelComboBox.setVisible(True)
             self.channelLabel.setVisible(True)
@@ -361,6 +371,20 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
             if self.identityGroupBox.isChecked():
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
+
+    def modeChanged(self, mode: str):
+        self.submodeComboBox.clear()
+        self.submodeComboBox.setEnabled(True)
+        if self.bandComboBox.currentText() == '11m':
+            if mode in self.modes['CB'] and self.modes['CB'][mode]:
+                self.submodeComboBox.insertItems(0, [''] + self.modes['CB'][mode])
+            else:
+                self.submodeComboBox.setEnabled(False)
+        else:
+            if mode in self.modes['AFU'] and  self.modes['AFU'][mode]:
+                self.submodeComboBox.insertItems(0, [''] + self.modes['AFU'][mode])
+            else:
+                self.submodeComboBox.setEnabled(False)
 
     def stationChanged(self, checked):
         if checked:
@@ -481,6 +505,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         band = self.bandComboBox.currentText()
 
+        prop = ''
+        if self.propComboBox.currentText():
+            prop = self.prop_trans[self.propComboBox.currentText()]
+
         qsl_via = ''
         qsl_path = ''
         qsl_msg = ''
@@ -526,10 +554,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.RSTRcvdLineEdit.text(),
             band,
             self.modeComboBox.currentText(),
+            self.submodeComboBox.currentText(),
             self.freqDoubleSpinBox.value() if self.freqDoubleSpinBox.value() >= self.bands[band][
                 0] else '',
             self.channelComboBox.currentText() if band == '11m' else '-',
             self.powerSpinBox.value() if self.powerSpinBox.value() > 0 else '',
+            prop,
             self.ownNameLineEdit.text(),
             self.ownQTHLineEdit.text(),
             self.ownLocatorLineEdit.text(),
@@ -585,6 +615,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.bandComboBox.setCurrentText(band)
 
         self.modeComboBox.setCurrentText(values['mode'])
+        if values['submode']:
+            self.submodeComboBox.setCurrentText(values['submode'])
 
         try:
             freq = float(values['freq'])
@@ -602,6 +634,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         except ValueError:
             power = 0
         self.powerSpinBox.setValue(power)
+
+        if values['propagation']:
+            self.propComboBox.setCurrentText(self.prop[values['propagation']])
+
         self.ownNameLineEdit.setText(values['own_name'])
         self.ownQTHLineEdit.setText(values['own_qth'])
         self.ownLocatorLineEdit.setText(values['own_locator'])

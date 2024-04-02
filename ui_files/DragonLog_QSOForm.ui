@@ -263,8 +263,29 @@
              </property>
             </widget>
            </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_14">
            <item>
-            <spacer name="horizontalSpacer">
+            <widget class="QComboBox" name="modeComboBox">
+             <property name="minimumContentsLength">
+              <number>2</number>
+             </property>
+             <property name="placeholderText">
+              <string>Mode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="submodeComboBox">
+             <property name="placeholderText">
+              <string>Submode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_13">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -277,12 +298,9 @@
             </spacer>
            </item>
            <item>
-            <widget class="QComboBox" name="modeComboBox">
-             <property name="minimumContentsLength">
-              <number>2</number>
-             </property>
+            <widget class="QComboBox" name="propComboBox">
              <property name="placeholderText">
-              <string>Mode</string>
+              <string>Propagation</string>
              </property>
             </widget>
            </item>
@@ -539,8 +557,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>490</height>
+        <width>332</width>
+        <height>484</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1418,6 +1436,22 @@ This is not the QSL manager/bureau address.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>modeComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>modeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>54</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -1441,5 +1475,6 @@ This is not the QSL manager/bureau address.</string>
   <slot>eqslDownload()</slot>
   <slot>lotwCheckInbox()</slot>
   <slot>clear()</slot>
+  <slot>modeChanged()</slot>
  </slots>
 </ui>
