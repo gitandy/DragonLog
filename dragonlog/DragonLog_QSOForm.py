@@ -135,8 +135,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if worked:
             self.worked_dialog.addItems(worked)
             call_edit_pos = self.callSignLineEdit.pos()
-            call_edit_pos.setX(call_edit_pos.x())
-            call_edit_pos.setY(call_edit_pos.y() + self.callSignLineEdit.height())
+            call_edit_pos.setX(call_edit_pos.x() + 15)
+            call_edit_pos.setY(call_edit_pos.y() + self.callSignLineEdit.height() + 40)
             self.worked_dialog.move(call_edit_pos)
             self.worked_dialog.show()
         else:
