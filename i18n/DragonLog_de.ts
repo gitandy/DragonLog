@@ -361,10 +361,6 @@
       <source>TQSL</source>
       <translation />
     </message>
-    <message>
-      <source>Credentials for LoTW online account not for the certificate</source>
-      <translation type="vanished">Anmeldedaten des LoTW-Online-Accounts, nicht des Zertifikats</translation>
-    </message>
   </context>
   <context>
     <name>DragonLog</name>
@@ -793,22 +789,6 @@ Die Datei existiert bereits.</translation>
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
-    <message>
-      <source>Change QSO</source>
-      <translation type="vanished">QSO ändern</translation>
-    </message>
-    <message>
-      <source>Log multi QSOs</source>
-      <translation type="vanished">Mehrfach QSOs eingeben</translation>
-    </message>
-    <message>
-      <source>No QSOs selected for upload</source>
-      <translation type="vanished">Kein(e) QSO(s) ausgewählt</translation>
-    </message>
-    <message>
-      <source>Remarks</source>
-      <translation type="vanished">Bemerkungen</translation>
-    </message>
   </context>
   <context>
     <name>MainWindow</name>
@@ -956,10 +936,6 @@ Die Datei existiert bereits.</translation>
       <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
       <source>Upload logs to LoTW...</source>
       <translation>Logs zu LoTW hochladen...</translation>
-    </message>
-    <message>
-      <source>Log multi QSOs...</source>
-      <translation type="vanished">Logge mehrere QSOs...</translation>
     </message>
   </context>
   <context>
@@ -1433,191 +1409,6 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="889" />
       <source>Bad request result</source>
       <translation>Fehlerhaftes Abfrageergebnis</translation>
-    </message>
-  </context>
-  <context>
-    <name>QSOFormDialog</name>
-    <message>
-      <source>Enter QSO</source>
-      <translation type="vanished">QSO eingeben</translation>
-    </message>
-    <message>
-      <source>Main data</source>
-      <translation type="vanished">Hauptdaten</translation>
-    </message>
-    <message>
-      <source>Call sign</source>
-      <translation type="vanished">Rufzeichen</translation>
-    </message>
-    <message>
-      <source>RST sent</source>
-      <translation type="vanished">RST gesendet</translation>
-    </message>
-    <message>
-      <source>RST received</source>
-      <translation type="vanished">RST empfangen</translation>
-    </message>
-    <message>
-      <source>Power</source>
-      <translation type="vanished">Leistung</translation>
-    </message>
-    <message>
-      <source>n.a.</source>
-      <translation type="vanished">k.A.</translation>
-    </message>
-    <message>
-      <source>Channel</source>
-      <translation type="vanished">Kanal</translation>
-    </message>
-    <message>
-      <source>Frequency</source>
-      <translation type="vanished">Frequenz</translation>
-    </message>
-    <message>
-      <source>Configured identity</source>
-      <translation type="vanished">Konfigurierte ID</translation>
-    </message>
-    <message>
-      <source>Own call sign</source>
-      <translation type="vanished">Eigenes Rufzeichen</translation>
-    </message>
-    <message>
-      <source>Own name</source>
-      <translation type="vanished">Eigener Name</translation>
-    </message>
-    <message>
-      <source>Configured station</source>
-      <translation type="vanished">Konfigurierte Station</translation>
-    </message>
-    <message>
-      <source>Own QTH</source>
-      <translation type="vanished">Eigener QTH</translation>
-    </message>
-    <message>
-      <source>Own locator</source>
-      <translation type="vanished">Eigener Locator</translation>
-    </message>
-    <message>
-      <source>Antenna</source>
-      <translation type="vanished">Antenne</translation>
-    </message>
-    <message>
-      <source>Now</source>
-      <translation type="vanished">Jetzt</translation>
-    </message>
-    <message>
-      <source>End</source>
-      <translation type="vanished">Ende</translation>
-    </message>
-    <message>
-      <source>Automatically</source>
-      <translation type="vanished">Automatisch</translation>
-    </message>
-    <message>
-      <source>QSO comments</source>
-      <translation type="vanished">QSO-Kommentare</translation>
-    </message>
-    <message>
-      <source>Own notes</source>
-      <translation type="vanished">Eigene Notizen</translation>
-    </message>
-    <message>
-      <source>QSL &amp;&amp; Log upload</source>
-      <translation type="vanished">QSL &amp;&amp; Log-Upload</translation>
-    </message>
-    <message>
-      <source>The contacted station QSL route.
-This is not the QSL manager/bureau address.</source>
-      <translation type="vanished">Die QSL-Route der kontaktierten Station.
-Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
-    </message>
-    <message>
-      <source>QSL card message</source>
-      <translation type="vanished">QSL-Kartentext</translation>
-    </message>
-    <message>
-      <source>Accepts:</source>
-      <translation type="vanished">Akzeptiert:</translation>
-    </message>
-    <message>
-      <source>Bureau</source>
-      <translation type="vanished">Büro</translation>
-    </message>
-    <message>
-      <source>Direct</source>
-      <translation type="vanished">direkt</translation>
-    </message>
-    <message>
-      <source>Bureau/Direct</source>
-      <translation type="vanished">Büro/Direkt</translation>
-    </message>
-    <message>
-      <source>QSL sent</source>
-      <translation type="vanished">QSL gesendet</translation>
-    </message>
-    <message>
-      <source>QSL received</source>
-      <translation type="vanished">QSL empfangen</translation>
-    </message>
-    <message>
-      <source>eQSL sent</source>
-      <translation type="vanished">eQSL gesendet</translation>
-    </message>
-    <message>
-      <source>eQSL received</source>
-      <translation type="vanished">eQSL empfangen</translation>
-    </message>
-    <message>
-      <source>Check Inbox</source>
-      <translation type="vanished">Prüfe Inbox</translation>
-    </message>
-    <message>
-      <source>Link to eQSL Card</source>
-      <translation type="vanished">Link zur eQSL-Karte</translation>
-    </message>
-    <message>
-      <source>Download eQSL</source>
-      <translation type="vanished">eQSL speichern</translation>
-    </message>
-    <message>
-      <source>LoTW sent</source>
-      <translation type="vanished">LoTW versendet</translation>
-    </message>
-    <message>
-      <source>LoTW received</source>
-      <translation type="vanished">LoTW empfangen</translation>
-    </message>
-    <message>
-      <source>Uploaded</source>
-      <translation type="vanished">hochgeladen</translation>
-    </message>
-    <message>
-      <source>Modified</source>
-      <translation type="vanished">verändert</translation>
-    </message>
-    <message>
-      <source>Uploads only if selected on QSL page</source>
-      <translation type="vanished">Upload erfolgt nur wenn auf der QSL-Seite ausgewählt</translation>
-    </message>
-    <message>
-      <source>Save &amp;&amp; Upload</source>
-      <translation type="vanished">Speichern &amp;&amp; Upload</translation>
-    </message>
-    <message>
-      <source>Save</source>
-      <translation type="vanished">Speichern</translation>
-    </message>
-    <message>
-      <source>Cancel</source>
-      <translation type="vanished">Abbrechen</translation>
-    </message>
-    <message>
-      <source>Electronic</source>
-      <translation type="vanished">elektronisch</translation>
-    </message>
-    <message>
-      <source>Remarks</source>
-      <translation type="vanished">Bemerkungen</translation>
     </message>
   </context>
   <context>
