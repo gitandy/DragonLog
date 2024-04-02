@@ -64,6 +64,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                           'PKTLSB': ('SSB', 'LSB'),
                           }
         self.__last_mode__ = ''
+        self.__last_band__ = ''
+        self.__last_freq__ = 0.0
+        self.__last_pwr__ = ''
 
         self.__change_mode__ = False
 
@@ -175,12 +178,18 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
                         try:
                             freq = float(freq_s) / 1000
-                            for b in self.bands:
-                                if freq < self.bands[b][1]:
-                                    if freq > self.bands[b][0]:
-                                        self.bandComboBox.setCurrentText(b)
-                                        self.freqDoubleSpinBox.setValue(freq)
-                                    break
+                            if freq != self.__last_freq__:
+                                for b in self.bands:
+                                    if freq < self.bands[b][1]:
+                                        if freq > self.bands[b][0]:
+                                            if b != self.__last_band__:
+                                                self.bandComboBox.setCurrentText(b)
+                                                self.log.info(f'CAT changed band to {b}')
+                                                self.__last_band__ = b
+                                                self.__last_mode__ = ''
+                                        break
+                                self.freqDoubleSpinBox.setValue(freq)
+                                self.__last_freq__ = freq
                         except Exception:
                             pass
 
@@ -196,6 +205,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                             mode, passband = [v.strip() for v in mode_s.split('\n')]
                             if mode in self.rig_modes and mode != self.__last_mode__:
                                 self.modeComboBox.setCurrentText(self.rig_modes[mode][0])
+                                self.log.info(f'CAT changed mode to {self.rig_modes[mode][0]}')
                                 if self.rig_modes[mode][1]:
                                     self.submodeComboBox.setCurrentText(self.rig_modes[mode][1])
                                 self.__last_mode__ = mode
@@ -212,21 +222,22 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                 self.log.error(f'rigctld error get_level: {pwrlvl_s.split()[1]}')
                                 return
 
-                            # Convert level to W
-                            s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n'.encode())
-                            pwr_s = s.recv(1024).decode('utf-8').strip()
-                            if pwr_s.startswith('RPRT'):
-                                self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])
-                                self.log.error(f'rigctld error power2mW: {pwr_s.split()[1]}')
-                                return
+                            if pwrlvl_s != self.__last_pwr__:
+                                self.__last_pwr__ = pwrlvl_s
+                                # Convert level to W
+                                s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n'.encode())
+                                pwr_s = s.recv(1024).decode('utf-8').strip()
+                                if pwr_s.startswith('RPRT'):
+                                    self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])
+                                    self.log.error(f'rigctld error power2mW: {pwr_s.split()[1]}')
+                                    return
 
-                            try:
-                                pwr = int(int(pwr_s) / 1000 + .9)
-                                self.powerSpinBox.setValue(pwr)
-                            except Exception:
-                                pass
-                        else:
-                            self.powerSpinBox.setValue(0)
+                                try:
+                                    pwr = int(int(pwr_s) / 1000 + .9)
+                                    self.powerSpinBox.setValue(pwr)
+                                    self.log.info(f'CAT changed power to {pwr} W')
+                                except Exception:
+                                    pass
                     except socket.timeout:
                         self.hamlib_error.setText(self.tr('rigctld timeout'))
                         self.log.error('rigctld error: timeout')
