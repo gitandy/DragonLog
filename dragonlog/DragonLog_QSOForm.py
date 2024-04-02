@@ -327,7 +327,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.autoDateCheckBox.setChecked(True)
             self.autoDateCheckBox.setEnabled(True)
             self.timeNowPushButton.setEnabled(True)
-            self.clear()
 
     def bandChanged(self, band: str):
         self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
@@ -738,6 +737,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.dragonlog.fetchQSO()
 
         self.toolBox.setCurrentIndex(0)
+        self.clear()
 
     def uploadLog(self):
         if self.hamQTHGroupBox.isChecked() or self.eqslGroupBox.isChecked():
@@ -801,6 +801,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.dragonlog.fetchQSO()
 
         self.toolBox.setCurrentIndex(0)
+        self.clear()
 
     def _build_record_(self):
         record = {
