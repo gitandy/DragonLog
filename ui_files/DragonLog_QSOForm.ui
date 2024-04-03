@@ -557,8 +557,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>332</width>
-        <height>484</height>
+        <width>482</width>
+        <height>490</height>
        </rect>
       </property>
       <attribute name="label">
@@ -971,17 +971,19 @@ This is not the QSL manager/bureau address.</string>
  </widget>
  <tabstops>
   <tabstop>callSignLineEdit</tabstop>
-  <tabstop>nameLineEdit</tabstop>
-  <tabstop>QTHLineEdit</tabstop>
-  <tabstop>locatorLineEdit</tabstop>
   <tabstop>searchCallbookPushButton</tabstop>
   <tabstop>RSTSentLineEdit</tabstop>
   <tabstop>RSTRcvdLineEdit</tabstop>
-  <tabstop>powerSpinBox</tabstop>
   <tabstop>bandComboBox</tabstop>
   <tabstop>channelComboBox</tabstop>
   <tabstop>freqDoubleSpinBox</tabstop>
   <tabstop>modeComboBox</tabstop>
+  <tabstop>submodeComboBox</tabstop>
+  <tabstop>nameLineEdit</tabstop>
+  <tabstop>QTHLineEdit</tabstop>
+  <tabstop>locatorLineEdit</tabstop>
+  <tabstop>powerSpinBox</tabstop>
+  <tabstop>propComboBox</tabstop>
   <tabstop>identityGroupBox</tabstop>
   <tabstop>ownCallSignLineEdit</tabstop>
   <tabstop>ownNameLineEdit</tabstop>
@@ -990,17 +992,40 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>ownLocatorLineEdit</tabstop>
   <tabstop>radioLineEdit</tabstop>
   <tabstop>antennaLineEdit</tabstop>
+  <tabstop>timeNowPushButton</tabstop>
+  <tabstop>autoDateCheckBox</tabstop>
   <tabstop>dateOnEdit</tabstop>
   <tabstop>timeOnEdit</tabstop>
-  <tabstop>timeNowPushButton</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>timeEdit</tabstop>
-  <tabstop>autoDateCheckBox</tabstop>
   <tabstop>commentsTextEdit</tabstop>
   <tabstop>remarksTextEdit</tabstop>
-  <tabstop>savePushButton</tabstop>
+  <tabstop>eqslSentCheckBox</tabstop>
+  <tabstop>lotwSentCheckBox</tabstop>
+  <tabstop>qslAccBureauCheckBox</tabstop>
+  <tabstop>qslViaLineEdit</tabstop>
+  <tabstop>qslMessageTextEdit</tabstop>
+  <tabstop>qslBurDirGroupBox</tabstop>
+  <tabstop>qslBureauRadioButton</tabstop>
+  <tabstop>qslDirectRadioButton</tabstop>
+  <tabstop>qslSentCheckBox</tabstop>
+  <tabstop>qslRcvdCheckBox</tabstop>
+  <tabstop>eqslGroupBox</tabstop>
+  <tabstop>eqslInboxPushButton</tabstop>
+  <tabstop>eqslDownloadPushButton</tabstop>
+  <tabstop>lotwGroupBox</tabstop>
+  <tabstop>lotwInboxPushButton</tabstop>
+  <tabstop>hamQTHGroupBox</tabstop>
   <tabstop>uploadPushButton</tabstop>
+  <tabstop>savePushButton</tabstop>
   <tabstop>cancelPushButton</tabstop>
+  <tabstop>qslAccDirectCheckBox</tabstop>
+  <tabstop>qslAcceQSLCheckBox</tabstop>
+  <tabstop>qslAccLoTWCheckBox</tabstop>
+  <tabstop>hamQTHmodRadioButton</tabstop>
+  <tabstop>hamQTHuplRadioButton</tabstop>
+  <tabstop>lotwRcvdCheckBox</tabstop>
+  <tabstop>eqslRcvdCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

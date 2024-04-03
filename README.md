@@ -26,13 +26,14 @@ Features
 * callbook search and log upload (HamQTH.com)
 * eQSL upload, check and download
 * LoTW signing, upload and check status
-* CAT (band, frequency, mode, power via hamlib integration)
+* CAT (band, frequency, mode/submode, power via hamlib integration)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * ADIF adi/adx export/import
 * Excel/CSV export/import
 * log 11m band QSOs
-* filter recent QSOs (last week, mont, half year, year)
-* UTF-8 (i.e. use german umlauts) and convert non ASCII characters for ADIF export
+* filter recent QSOs (last week, month, half year, year)
+* UTF-8 (i.e. use german umlauts)
+* convert non ASCII characters for ADIF export (for supported languages)
 
 Installation
 ------------
@@ -145,7 +146,7 @@ You can use hamlib to interact with your radio.
 
 The QSO logging form automatically updates radio information:
 * frequency (and band)
-* mode
+* mode (and submode)
 * power
 
 Hamlib can be downloaded at https://github.com/Hamlib/Hamlib/releases.
