@@ -1,5 +1,6 @@
 import os.path
 import sys
+import time
 import logging
 
 from PyQt6 import QtCore, QtWidgets, QtGui
@@ -12,7 +13,7 @@ class Logger(logging.Handler):
         self.settings = settings
 
         self.__loglevel__ = self.settings.value('ui/log_level', 'INFO')
-
+        logging.Formatter.converter = time.gmtime
         self.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s: %(name)s - %(message)s'))
         self.__log__ = logging.getLogger('DragonLog')
         self.__log__.setLevel(self.__loglevel__)
