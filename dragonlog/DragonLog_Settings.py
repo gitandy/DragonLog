@@ -11,8 +11,8 @@ import keyring
 
 from . import DragonLog_Settings_ui
 from .Logger import Logger
-from .DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
-from .DragonLog_CallBook import CallBookType
+from .RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
+from .CallBook import CallBookType
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):

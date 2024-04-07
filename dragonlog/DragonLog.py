@@ -21,11 +21,11 @@ except ImportError:
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
-from .DragonLog_RegEx import find_non_ascii
+from .RegEx import find_non_ascii
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
-from .DragonLog_LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
+from .LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'

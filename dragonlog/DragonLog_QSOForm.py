@@ -9,13 +9,13 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
-from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
-from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
-                                 MissingADIFFieldException, LoginException, CallsignNotFoundException)
-from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
-                             EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
-from .DragonLog_LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
-                             LoTWLoginException, LoTWNoRecordException)
+from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
+from .CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
+                       MissingADIFFieldException, LoginException, CallsignNotFoundException)
+from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
+                   EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
+from .LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
+                   LoTWLoginException, LoTWNoRecordException)
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
@@ -391,7 +391,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             else:
                 self.submodeComboBox.setEnabled(False)
         else:
-            if mode in self.modes['AFU'] and  self.modes['AFU'][mode]:
+            if mode in self.modes['AFU'] and self.modes['AFU'][mode]:
                 self.submodeComboBox.insertItems(0, [''] + self.modes['AFU'][mode])
             else:
                 self.submodeComboBox.setEnabled(False)
