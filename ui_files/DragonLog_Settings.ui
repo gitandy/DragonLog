@@ -881,30 +881,40 @@
        <item>
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>HamQTH</string>
+          <string>Callbook</string>
          </property>
          <layout class="QFormLayout" name="formLayout_4">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label_16">
             <property name="text">
              <string>Username</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QLineEdit" name="callbookUserLineEdit"/>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_17">
             <property name="text">
              <string>Password</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QLineEdit" name="callbookPasswdLineEdit">
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="callbookComboBox"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Service</string>
             </property>
            </widget>
           </item>

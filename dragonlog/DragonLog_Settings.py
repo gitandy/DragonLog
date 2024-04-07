@@ -12,6 +12,7 @@ import keyring
 from . import DragonLog_Settings_ui
 from .Logger import Logger
 from .DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
+from .DragonLog_CallBook import CallBookType
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):
@@ -76,6 +77,9 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.columns = cols
         self.sortComboBox.insertItems(0, cols)
+
+        self.callbooks = dict([(cbt.value, cbt.name) for cbt in set(CallBookType)])
+        self.callbookComboBox.insertItems(0, self.callbooks.keys())
 
     def calcLocator(self):
         self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
@@ -313,7 +317,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
+        self.callbookComboBox.setCurrentText(CallBookType[self.settings.value('callbook/service',
+                                                                              CallBookType['HamQTH'].name)].value)
         self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
+
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
         self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
         self.lotwCertPwdCheckBox.setChecked(bool(self.settings.value('lotw/cert_needs_pwd', 0)))
@@ -321,7 +328,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         return super().exec()
 
     def callbookPassword(self):
-        return keyring.get_password('HamQTH.com',
+        return keyring.get_password(CallBookType[self.settings.value('callbook/service',
+                                                                     CallBookType['HamQTH'].name)].value,
                                     self.settings.value('callbook/username', ''))
 
     def eqslPassword(self):
@@ -367,9 +375,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
 
+        self.settings.setValue('callbook/service', self.callbooks[self.callbookComboBox.currentText()])
         self.settings.setValue('callbook/username', self.callbookUserLineEdit.text())
         if self.callbookUserLineEdit.text() and self.callbookPasswdLineEdit.text():
-            keyring.set_password('HamQTH.com',
+            keyring.set_password(self.callbookComboBox.currentText(),
                                  self.callbookUserLineEdit.text(),
                                  self.callbookPasswdLineEdit.text())
         self.callbookPasswdLineEdit.clear()

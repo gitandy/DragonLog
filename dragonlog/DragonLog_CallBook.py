@@ -10,7 +10,7 @@ from .Logger import Logger
 
 
 class CallBookType(Enum):
-    HamQTH = auto()
+    HamQTH = 'HamQTH.com'
 
 
 @dataclass
