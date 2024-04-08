@@ -110,6 +110,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.qslAccLoTWCheckBox,
             self.eqslSentCheckBox,
             self.eqslRcvdCheckBox,
+            self.lotwGroupBox,
             self.lotwSentCheckBox,
             self.lotwRcvdCheckBox,
             self.hamQTHuplRadioButton,
