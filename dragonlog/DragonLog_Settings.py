@@ -23,6 +23,8 @@ if getattr(sys, 'frozen', False):
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
+    callbookChanged = QtCore.pyqtSignal(str)
+
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: typing.Iterable,
                  logger: Logger):
         super().__init__(parent)
@@ -382,6 +384,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                  self.callbookUserLineEdit.text(),
                                  self.callbookPasswdLineEdit.text())
         self.callbookPasswdLineEdit.clear()
+        self.callbookChanged.emit(self.callbooks[self.callbookComboBox.currentText()])
 
         self.settings.setValue('eqsl/username', self.eqslUserLineEdit.text())
         if self.eqslUserLineEdit.text() and self.eqslPasswdLineEdit.text():

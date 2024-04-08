@@ -1,6 +1,7 @@
 import logging
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 
 import requests
 import xmltodict
@@ -54,10 +55,9 @@ class CallsignNotFoundException(Exception):
     pass
 
 
-class CallBook:
-    def __init__(self, callbook_type: CallBookType, program: str, logger: Logger):
-        self.__callbook_type__ = callbook_type
-        self.__program_str__ = program
+class AbstractCallBook(ABC):
+    def __init__(self, logger: Logger, prog_name: str):
+        self.__program_str__ = prog_name
         self.__session__: str = ''
 
         self.log = logging.getLogger('CallBook')
@@ -66,34 +66,53 @@ class CallBook:
         self.log.debug('Initialising...')
 
     @property
+    @abstractmethod
+    def required_fields(self) -> tuple:
+        pass
+
+    @property
+    @abstractmethod
+    def __url__(self) -> str:
+        pass
+
+    def _get_(self, params: dict) -> dict:
+        r = requests.get(self.__url__, params=params)
+
+        if r.status_code == 200:
+            return xmltodict.parse(r.text)
+        else:
+            raise CommunicationException(f'{self.callbook_type.name} error: HTTP-Error {r.status_code}')
+
+    @property
+    @abstractmethod
     def callbook_type(self) -> CallBookType:
-        return self.__callbook_type__
+        pass
+
+    @abstractmethod
+    def __login__(self, username: str, password: str) -> str:
+        pass
 
     def login(self, username: str, password: str):
-        match self.__callbook_type__:
-            case CallBookType.HamQTH:
-                self.__session__ = self._hamqth_login_(username, password)
+        self.__session__ = self.__login__(username, password)
 
     @property
     def is_loggedin(self) -> bool:
         return bool(self.__session__)
 
+    @abstractmethod
+    def __get_dataset__(self, callsign: str):
+        pass
+
     def get_dataset(self, callsign: str) -> CallBookData:
         try:
-            match self.__callbook_type__:
-                case CallBookType.HamQTH:
-                    return self._hamqth_get_data_(callsign)
+            return self.__get_dataset__(callsign)
         except SessionExpiredException as exc:
             self.__session__ = ''
             raise exc
 
-    @property
-    def required_fields(self) -> tuple:
-        match self.__callbook_type__:
-            case CallBookType.HamQTH:
-                return 'QSO_DATE', 'TIME_ON', 'CALL', 'MODE', 'BAND', 'RST_SENT', 'RST_RCVD'
-            case _:
-                return ()
+    @abstractmethod
+    def __upload_log__(self, username: str, password: str, adif: str):
+        pass
 
     def upload_log(self, username: str, password: str, adif_data: dict):
         for field in self.required_fields:
@@ -103,21 +122,28 @@ class CallBook:
         adif_data = adif_data.copy()
         adif_data['RECORDS'] = [adif_data['RECORDS'][0]]
 
-        match self.__callbook_type__:
-            case CallBookType.HamQTH:
-                return self._hamqth_upload_(username, password, adi.dumps(adif_data, 'ADIF Export by DragonLog'))
+        self.__upload_log__(username, password, adi.dumps(adif_data, 'ADIF Export by DragonLog'))
 
-    def _hamqth_get_(self, params: dict):
-        r = requests.get('https://www.hamqth.com/xml.php', params=params)
 
-        if r.status_code == 200:
-            return xmltodict.parse(r.text)
-        else:
-            raise CommunicationException(f'HamQTH error: HTTP-Error {r.status_code}')
+class HamQTHCallBook(AbstractCallBook):
+    def __init__(self, logger: Logger, prog_name: str):
+        super().__init__(logger, prog_name)
 
-    def _hamqth_login_(self, username: str, password: str) -> str:
+    @property
+    def required_fields(self) -> tuple:
+        return 'QSO_DATE', 'TIME_ON', 'CALL', 'MODE', 'BAND', 'RST_SENT', 'RST_RCVD'
+
+    @property
+    def __url__(self):
+        return 'https://www.hamqth.com/xml.php'
+
+    @property
+    def callbook_type(self) -> CallBookType:
+        return CallBookType.HamQTH
+
+    def __login__(self, username: str, password: str) -> str:
         try:
-            res = self._hamqth_get_({'u': username, 'p': password})
+            res = self._get_({'u': username, 'p': password})
         except CommunicationException as exc:
             raise LoginException(str(exc))
 
@@ -129,12 +155,12 @@ class CallBook:
             case _:
                 raise LoginException(f'HamQTH error: Unknown data format {res}')
 
-    def _hamqth_get_data_(self, callsign: str) -> CallBookData:
+    def __get_dataset__(self, callsign: str) -> CallBookData:
         try:
             self.log.debug(f'Searching {callsign}')
-            res = self._hamqth_get_({'id': self.__session__,
-                                     'prg': self.__program_str__,
-                                     'callsign': callsign})
+            res = self._get_({'id': self.__session__,
+                              'prg': self.__program_str__,
+                              'callsign': callsign})
         except CommunicationException as exc:
             raise RequestException(str(exc))
 
@@ -162,7 +188,7 @@ class CallBook:
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')
 
-    def _hamqth_upload_(self, username: str, password: str, adif: str):
+    def __upload_log__(self, username: str, password: str, adif: str):
         data = {
             'u': username,
             'p': password,

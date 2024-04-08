@@ -10,7 +10,7 @@ from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
-from .CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
+from .CallBook import (HamQTHCallBook, CallBookType, CallBookData, SessionExpiredException,
                        MissingADIFFieldException, LoginException, CallsignNotFoundException)
 from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                    EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
@@ -95,9 +95,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
 
-        self.callbook = CallBook(CallBookType.HamQTH,
-                                 f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
-                                 self.logger)
+        self.callbook = None
+        self.callbookChanged(CallBookType[self.settings.value('callbook/service',
+                                                              CallBookType['HamQTH'].name)].name)
+        self.settings_form.callbookChanged.connect(self.callbookChanged)
+
         self.eqsl = EQSL(self.dragonlog.programName, self.logger)
         self.eqsl_url = ''
 
@@ -121,6 +123,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
         self.clear()
+
+    def callbookChanged(self, callbook: str):
+        if callbook == CallBookType.HamQTH.name:
+            self.callbook = HamQTHCallBook(self.logger,
+                                           f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                           )
 
     def startTimers(self, start: bool):
         if start:
