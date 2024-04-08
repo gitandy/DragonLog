@@ -51,6 +51,7 @@ class Logger(logging.Handler):
             self.__log_file__.write(log_msg + '\n')
 
         self.log_widget.append(log_msg)
+        self.log_widget.verticalScrollBar().setValue(self.log_widget.verticalScrollBar().maximum())
         self.log_widget.repaint()
 
     def debug(self, message):
