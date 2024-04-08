@@ -33,7 +33,7 @@ class EQSLADIFFieldException(Exception):
 
 class EQSL:
     required_fields = ('QSO_DATE', 'TIME_ON', 'CALL', 'MODE', 'BAND')
-    fields = required_fields + ('FREQ', 'QSLMSG', 'RST_SENT', 'MY_GRIDSQUARE')
+    fields = required_fields + ('FREQ', 'QSLMSG', 'RST_SENT', 'MY_GRIDSQUARE', 'PROP_MODE', 'SUBMODE')
     image_pattern = re.compile(r'.*<img src="(.*)" alt="" />.*')
     upl_res_pattern = re.compile(r' *([EWCIR][a-z]*:.*)<BR>')
 
