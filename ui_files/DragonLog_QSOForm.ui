@@ -868,28 +868,15 @@ This is not the QSL manager/bureau address.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="hamQTHGroupBox">
+        <widget class="QGroupBox" name="callbookGroupBox">
          <property name="title">
-          <string>HamQTH</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
+          <string>Logbook</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QRadioButton" name="hamQTHuplRadioButton">
+           <widget class="QCheckBox" name="hamQTHCheckBox">
             <property name="text">
-             <string>Uploaded</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="hamQTHmodRadioButton">
-            <property name="text">
-             <string>Modified</string>
+             <string>HamQTH</string>
             </property>
            </widget>
           </item>
@@ -1015,15 +1002,14 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>eqslDownloadPushButton</tabstop>
   <tabstop>lotwGroupBox</tabstop>
   <tabstop>lotwInboxPushButton</tabstop>
-  <tabstop>hamQTHGroupBox</tabstop>
+  <tabstop>callbookGroupBox</tabstop>
   <tabstop>uploadPushButton</tabstop>
   <tabstop>savePushButton</tabstop>
   <tabstop>cancelPushButton</tabstop>
   <tabstop>qslAccDirectCheckBox</tabstop>
   <tabstop>qslAcceQSLCheckBox</tabstop>
   <tabstop>qslAccLoTWCheckBox</tabstop>
-  <tabstop>hamQTHmodRadioButton</tabstop>
-  <tabstop>hamQTHuplRadioButton</tabstop>
+  <tabstop>hamQTHCheckBox</tabstop>
   <tabstop>lotwRcvdCheckBox</tabstop>
   <tabstop>eqslRcvdCheckBox</tabstop>
  </tabstops>

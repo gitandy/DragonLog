@@ -278,6 +278,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.colShowListWidget.sortItems()
 
+    def callbookSelected(self, service: str):
+        """Slot (i.e. if callbookComboBox is changed)"""
+        self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbooks[service]}_user', ''))
+
     def exec(self):
         self.log.info('Loading settings...')
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
@@ -319,9 +323,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
-        self.callbookComboBox.setCurrentText(CallBookType[self.settings.value('callbook/service',
-                                                                              CallBookType['HamQTH'].name)].value)
-        self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
+        self.callbookComboBox.setCurrentText(self.callbook_dname)
+        self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbook_id}_user', ''))
 
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
         self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
@@ -329,16 +332,35 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         return super().exec()
 
-    def callbookPassword(self):
-        return keyring.get_password(CallBookType[self.settings.value('callbook/service',
-                                                                     CallBookType['HamQTH'].name)].value,
-                                    self.settings.value('callbook/username', ''))
+    @property
+    def callbook_id(self) -> str:
+        """The selected callbooks id"""
+        return self.settings.value('callbook/service', 'HamQTH')
 
-    def eqslPassword(self):
+    @property
+    def callbook_dname(self) -> str:
+        """Returns the selected callbooks descriptive name"""
+        return CallBookType[self.settings.value('callbook/service', 'HamQTH')].value
+
+    def callbookPassword(self, callbook: CallBookType = None) -> str:
+        """Get the password for the currently set callbook or from given parameter
+        :param callbook: the callbook service to get the password for
+        :return: the current or given callbooks password"""
+
+        if callbook:
+            return keyring.get_password(callbook.value,
+                                        self.settings.value(f'callbook/{callbook.name}_user', ''))
+        else:
+            return keyring.get_password(self.callbook_dname,
+                                        self.settings.value(f'callbook/{self.callbook_id}_user', ''))
+
+    def eqslPassword(self) -> str:
+        """The password for the eQSL service"""
         return keyring.get_password('eqsl.cc',
                                     self.settings.value('eqsl/username', ''))
 
-    def lotwPassword(self):
+    def lotwPassword(self) -> str:
+        """The password for the LoTW online service"""
         return keyring.get_password('lotw.arrl.org',
                                     self.settings.value('lotw/username', ''))
 
@@ -378,7 +400,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
 
         self.settings.setValue('callbook/service', self.callbooks[self.callbookComboBox.currentText()])
-        self.settings.setValue('callbook/username', self.callbookUserLineEdit.text())
+        self.settings.setValue(f'callbook/{self.callbook_id}_user', self.callbookUserLineEdit.text())
         if self.callbookUserLineEdit.text() and self.callbookPasswdLineEdit.text():
             keyring.set_password(self.callbookComboBox.currentText(),
                                  self.callbookUserLineEdit.text(),

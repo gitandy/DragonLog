@@ -1302,6 +1302,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>callbookComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>callbookSelected(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>calcLocator()</slot>
@@ -1313,5 +1329,6 @@
   <slot>callSignCBChanged(QString)</slot>
   <slot>hideCol()</slot>
   <slot>showCol()</slot>
+  <slot>callbookSelected(QString)</slot>
  </slots>
 </ui>
