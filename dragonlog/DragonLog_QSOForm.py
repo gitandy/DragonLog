@@ -10,7 +10,7 @@ from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
-from .CallBook import (HamQTHCallBook, AbstractCallBook, CallBookType, CallBookData,
+from .CallBook import (HamQTHCallBook, QRZCQCallBook, AbstractCallBook, CallBookType, CallBookData,
                        SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException)
 from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                    EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
@@ -125,7 +125,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.clear()
 
     def callbookChanged(self, callbook: str):
-        if callbook == CallBookType.HamQTH.name:
+        if callbook == CallBookType.QRZCQ.name:
+            self.callbook = QRZCQCallBook(self.logger,
+                                          f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                          )
+        else:
             self.callbook = HamQTHCallBook(self.logger,
                                            f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
                                            )

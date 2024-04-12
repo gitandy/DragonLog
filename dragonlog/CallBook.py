@@ -12,6 +12,7 @@ from .Logger import Logger
 
 class CallBookType(Enum):
     HamQTH = 'HamQTH.com'
+    QRZCQ = 'QRZCQ.com'
 
 
 @dataclass
@@ -56,11 +57,16 @@ class CallsignNotFoundException(Exception):
 
 
 class AbstractCallBook(ABC):
+    """Standardised interface to access diffrent callbook services
+
+    :param logger: the application log
+    :param prog_name: the calling programs name"""
+
     def __init__(self, logger: Logger, prog_name: str):
         self.__program_str__ = prog_name
         self.__session__: str = ''
 
-        self.log = logging.getLogger('CallBook')
+        self.log = logging.getLogger(type(self).__name__)
         self.log.setLevel(logger.loglevel)
         self.log.addHandler(logger)
         self.log.debug('Initialising...')
@@ -68,6 +74,7 @@ class AbstractCallBook(ABC):
     @property
     @abstractmethod
     def required_fields(self) -> tuple:
+        """A list of required fields to create a logbook entry"""
         pass
 
     @property
@@ -86,6 +93,7 @@ class AbstractCallBook(ABC):
     @property
     @abstractmethod
     def callbook_type(self) -> CallBookType:
+        """The type of the callbook"""
         pass
 
     @abstractmethod
@@ -93,10 +101,14 @@ class AbstractCallBook(ABC):
         pass
 
     def login(self, username: str, password: str):
+        """Login and retreive a session key
+        :param username: the username used with this service
+        :param password: the password used with this service"""
         self.__session__ = self.__login__(username, password)
 
     @property
     def is_loggedin(self) -> bool:
+        """Check if already logged in"""
         return bool(self.__session__)
 
     @abstractmethod
@@ -104,17 +116,31 @@ class AbstractCallBook(ABC):
         pass
 
     def get_dataset(self, callsign: str) -> CallBookData:
+        """Perform a data search for a callsign search
+        :param callsign: the callsign to be searched for
+        :return: the callbook data set"""
         try:
             return self.__get_dataset__(callsign)
         except SessionExpiredException as exc:
             self.__session__ = ''
             raise exc
 
+    @property
+    @abstractmethod
+    def has_logbook(self) -> bool:
+        """Is a logbook available for this service"""
+        pass
+
     @abstractmethod
     def __upload_log__(self, username: str, password: str, adif: str):
         pass
 
     def upload_log(self, username: str, password: str, adif_data: dict):
+        """Upload logbook data
+        :param username: the username used with this service
+        :param password: the password used with this service
+        :param adif_data: the data to be converted to ADI and uploaded"""
+
         for field in self.required_fields:
             if field not in adif_data['RECORDS'][0]:
                 raise MissingADIFFieldException(field)
@@ -157,7 +183,7 @@ class HamQTHCallBook(AbstractCallBook):
 
     def __get_dataset__(self, callsign: str) -> CallBookData:
         try:
-            self.log.debug(f'Searching {callsign}')
+            self.log.debug(f'Searching {callsign}...')
             res = self._get_({'id': self.__session__,
                               'prg': self.__program_str__,
                               'callsign': callsign})
@@ -188,6 +214,10 @@ class HamQTHCallBook(AbstractCallBook):
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')
 
+    @property
+    def has_logbook(self) -> bool:
+        return True
+
     def __upload_log__(self, username: str, password: str, adif: str):
         data = {
             'u': username,
@@ -207,3 +237,76 @@ class HamQTHCallBook(AbstractCallBook):
             raise LoginException(r.text)
         else:
             raise CommunicationException(f'HamQTH error: HTTP-Error {r.status_code}')
+
+
+class QRZCQCallBook(AbstractCallBook):
+    def __init__(self, logger: Logger, prog_name: str):
+        super().__init__(logger, prog_name)
+
+    @property
+    def required_fields(self) -> tuple:
+        raise NotImplementedError('QRZCQ.com API for uploading is currently not stable')
+
+    @property
+    def __url__(self):
+        return 'https://ssl.qrzcq.com/xml'
+
+    @property
+    def callbook_type(self) -> CallBookType:
+        return CallBookType.QRZCQ
+
+    def __login__(self, username: str, password: str) -> str:
+        try:
+            res = self._get_({'username': username,
+                              'password': password,
+                              'agent': self.__program_str__})
+        except CommunicationException as exc:
+            raise LoginException(str(exc))
+
+        match res:
+            case {'QRZCQDatabase': {'Session': {'Error': error}}}:
+                raise LoginException(f"QRZCQ error: {error}")
+            case {'QRZCQDatabase': {'Session': {'Key': session_id}}}:
+                return session_id
+            case _:
+                raise LoginException(f'QRZCQ error: Unknown data format {res}')
+
+    def __get_dataset__(self, callsign: str) -> CallBookData:
+        try:
+            self.log.debug(f'Searching {callsign}...')
+            res = self._get_({'s': self.__session__,
+                              'callsign': callsign,
+                              'agent': self.__program_str__})
+        except CommunicationException as exc:
+            raise RequestException(str(exc))
+
+        match res:
+            case {'QRZCQDatabase': {'Session': {'Error': error}}}:
+                if error == 'Session does not exist or expired':
+                    raise SessionExpiredException('QRZCQ')
+                elif error.startswith('Not found'):
+                    raise CallsignNotFoundException(callsign)
+                else:
+                    raise RequestException(f"QRZCQ error: {error}")
+            case {'QRZCQDatabase': {'Callsign': data}}:
+                if data:
+                    return CallBookData(
+                        callsign,
+                        data['name'] if 'name' in data else '',
+                        data['locator'] if 'locator' in data else '',
+                        data['qth'] if 'qth' in data else '',
+                        data['manager'] if 'manager' in data else '',
+                        'bqsl' in data and data['bqsl'] == '1',
+                        'mqsl' in data and data['mqsl'] == '1',
+                        'eqsl' in data and data['eqsl'] == '1',
+                        'lotw' in data and data['lotw'] == '1',
+                    )
+            case _:
+                raise RequestException(f'QRZCQ error: Unknown data format {res}')
+
+    @property
+    def has_logbook(self) -> bool:
+        return False
+
+    def __upload_log__(self, username: str, password: str, adif: str):
+        raise NotImplementedError('QRZCQ.com API for uploading is currently not stable')
