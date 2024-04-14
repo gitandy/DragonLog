@@ -9,7 +9,7 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
-from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, check_format, check_call
+from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call
 from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
                                  MissingADIFFieldException, LoginException, CallsignNotFoundException)
 from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
@@ -153,13 +153,21 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def refreshTime(self):
         if self.autoDateCheckBox.isChecked():
             dt = QtCore.QDateTime.currentDateTimeUtc()
-            self.dateEdit.setDate(dt.date())
-            self.timeEdit.setTime(dt.time())
+            self.dateOffEdit.setDate(dt.date())
+            self.timeOffEdit.setText(dt.time().toString('HH:mm:ss'))
 
     def setStartTimeNow(self):
         dt = QtCore.QDateTime.currentDateTimeUtc()
         self.dateOnEdit.setDate(dt.date())
-        self.timeOnEdit.setTime(dt.time())
+        self.timeOnEdit.setText(dt.time().toString('HH:mm:ss'))
+        self.timeOnChanged(self.timeOnEdit.text())
+
+    def autoDateCBChanged(self, checked: bool):
+        if not checked:
+            self.timeOffEdit.clear()
+            self.timeOffChanged('')
+        else:
+            self.refreshTime()
 
     # noinspection PyBroadException
     def refreshRigData(self):
@@ -265,10 +273,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
 
         dt = QtCore.QDateTime.currentDateTimeUtc()
-        self.dateEdit.setDate(dt.date())
+        self.dateOffEdit.setDate(dt.date())
         self.dateOnEdit.setDate(dt.date())
-        self.timeEdit.setTime(dt.time())
-        self.timeOnEdit.setTime(dt.time())
+        self.timeOffEdit.setText(dt.time().toString('HH:mm:ss'))
+        self.timeOffChanged(self.timeOffEdit.text())
+        self.timeOnEdit.setText('')
+        self.timeOnChanged('')
 
         if bool(self.settings.value('station_cb/cb_by_default', 0)):
             self.bandComboBox.setCurrentText('11m')
@@ -392,7 +402,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             else:
                 self.submodeComboBox.setEnabled(False)
         else:
-            if mode in self.modes['AFU'] and  self.modes['AFU'][mode]:
+            if mode in self.modes['AFU'] and self.modes['AFU'][mode]:
                 self.submodeComboBox.insertItems(0, [''] + self.modes['AFU'][mode])
             else:
                 self.submodeComboBox.setEnabled(False)
@@ -485,6 +495,22 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         else:
             self.ownLocatorLineEdit.setPalette(self.palette_faulty)
 
+    def timeOnChanged(self, txt):
+        if not txt:
+            self.timeOnEdit.setPalette(self.palette_empty)
+        elif check_format(REGEX_TIME, txt):
+            self.timeOnEdit.setPalette(self.palette_ok)
+        else:
+            self.timeOnEdit.setPalette(self.palette_faulty)
+
+    def timeOffChanged(self, txt):
+        if not txt:
+            self.timeOffEdit.setPalette(self.palette_empty)
+        elif check_format(REGEX_TIME, txt):
+            self.timeOffEdit.setPalette(self.palette_ok)
+        else:
+            self.timeOffEdit.setPalette(self.palette_faulty)
+
     def calc_distance(self, mh_pos1: str, mh_pos2: str):
         # noinspection PyBroadException
         try:
@@ -506,13 +532,17 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def values(self) -> tuple:
         """Retreiving all values from the form"""
 
-        if not self.__change_mode__:
-            if self.autoDateCheckBox.isChecked():
-                date_time_off = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
-            else:
-                date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text()
+        date_time_off = ''
+        if check_format(REGEX_TIME, self.timeOffEdit.text()):
+            date_time_off = self.dateOffEdit.text() + ' ' + self.timeOffEdit.text()
         else:
-            date_time_off = self.dateEdit.text() + ' ' + self.timeEdit.text()
+            self.log.warning(f'Wrong time format for end time')
+
+        if check_format(REGEX_TIME, self.timeOnEdit.text()):
+            date_time_on = self.dateOnEdit.text() + ' ' + self.timeOnEdit.text()
+        else:
+            self.log.warning(f'Wrong time format for start time. Fallback to current date time.')
+            date_time_on = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd HH:mm:ss')
 
         band = self.bandComboBox.currentText()
 
@@ -554,7 +584,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 hamqth_state = 'M'
 
         return (
-            self.dateOnEdit.text() + ' ' + self.timeOnEdit.text(),
+            date_time_on,
             date_time_off,
             self.ownCallSignLineEdit.text().upper() if band != '11m' else self.ownCallSignLineEdit.text(),
             self.callSignLineEdit.text().upper() if band != '11m' else self.callSignLineEdit.text(),
@@ -596,16 +626,25 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         """Set all form values"""
 
         self.qso_id = values['id']
-        date, time = values['date_time'].split()
-        self.dateOnEdit.setDate(QtCore.QDate.fromString(date, 'yyyy-MM-dd'))
-        self.timeOnEdit.setTime(QtCore.QTime.fromString(time))
+        time_on = ''
+        if values['date_time']:
+            try:
+                date_on, time_on = values['date_time'].split()
+                self.dateOnEdit.setDate(QtCore.QDate.fromString(date_on, 'yyyy-MM-dd'))
+            except ValueError:
+                self.log.error(f'Wrong date time format for start time in QSO #{self.qso_id}')
+        self.timeOnEdit.setText(time_on)
+        self.timeOnChanged(self.timeOnEdit.text())
 
+        time_off = ''
         if values['date_time_off']:
-            date_off, time_off = values['date_time_off'].split()
-        else:
-            date_off, time_off = date, time
-        self.dateEdit.setDate(QtCore.QDate.fromString(date_off, 'yyyy-MM-dd'))
-        self.timeEdit.setTime(QtCore.QTime.fromString(time_off))
+            try:
+                date_off, time_off = values['date_time_off'].split()
+                self.dateOffEdit.setDate(QtCore.QDate.fromString(date_off, 'yyyy-MM-dd'))
+            except ValueError:
+                self.log.error(f'Wrong date time format for end time in QSO #{self.qso_id}')
+        self.timeOffEdit.setText(time_off)
+        self.timeOffChanged(self.timeOffEdit.text())
 
         self.ownCallSignLineEdit.setText(values['own_callsign'])
         self.callSignLineEdit.setText(values['call_sign'])
@@ -819,7 +858,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         record = {
             'QSO_DATE': self.dateOnEdit.text().replace('-', ''),
             'TIME_ON': self.timeOnEdit.text().replace(':', ''),
-            'TIME_OFF': self.timeEdit.text().replace(':', ''),
+            'TIME_OFF': self.timeOffEdit.text().replace(':', ''),
             'BAND': self.bandComboBox.currentText(),
             'MODE': self.modeComboBox.currentText(),
         }

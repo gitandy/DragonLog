@@ -404,32 +404,6 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,2,0">
-           <item row="1" column="1">
-            <widget class="QDateEdit" name="dateEdit">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="displayFormat">
-              <string>yyyy-MM-dd</string>
-             </property>
-             <property name="calendarPopup">
-              <bool>true</bool>
-             </property>
-             <property name="timeSpec">
-              <enum>Qt::UTC</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QDateEdit" name="dateOnEdit">
-             <property name="displayFormat">
-              <string>yyyy-MM-dd</string>
-             </property>
-             <property name="calendarPopup">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="3">
             <widget class="QPushButton" name="timeNowPushButton">
              <property name="sizePolicy">
@@ -450,33 +424,10 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QTimeEdit" name="timeEdit">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="displayFormat">
-              <string>HH:mm:ss</string>
-             </property>
-             <property name="currentSectionIndex">
-              <number>1</number>
-             </property>
-             <property name="timeSpec">
-              <enum>Qt::UTC</enum>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="2">
-            <widget class="QTimeEdit" name="timeOnEdit">
-             <property name="displayFormat">
-              <string>HH:mm:ss</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Start</string>
+            <widget class="QLineEdit" name="timeOnEdit">
+             <property name="placeholderText">
+              <string>Time start</string>
              </property>
             </widget>
            </item>
@@ -503,6 +454,39 @@
              </property>
             </spacer>
            </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Start</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDateEdit" name="dateOnEdit">
+             <property name="displayFormat">
+              <string>yyyy-MM-dd</string>
+             </property>
+             <property name="calendarPopup">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDateEdit" name="dateOffEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="displayFormat">
+              <string>yyyy-MM-dd</string>
+             </property>
+             <property name="calendarPopup">
+              <bool>true</bool>
+             </property>
+             <property name="timeSpec">
+              <enum>Qt::UTC</enum>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="4">
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
@@ -515,6 +499,16 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLineEdit" name="timeOffEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="placeholderText">
+              <string>Time end</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -557,8 +551,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>490</height>
+        <width>332</width>
+        <height>484</height>
        </rect>
       </property>
       <attribute name="label">
@@ -995,9 +989,7 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>timeNowPushButton</tabstop>
   <tabstop>autoDateCheckBox</tabstop>
   <tabstop>dateOnEdit</tabstop>
-  <tabstop>timeOnEdit</tabstop>
-  <tabstop>dateEdit</tabstop>
-  <tabstop>timeEdit</tabstop>
+  <tabstop>dateOffEdit</tabstop>
   <tabstop>commentsTextEdit</tabstop>
   <tabstop>remarksTextEdit</tabstop>
   <tabstop>eqslSentCheckBox</tabstop>
@@ -1048,23 +1040,7 @@ This is not the QSL manager/bureau address.</string>
   <connection>
    <sender>autoDateCheckBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>timeEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>526</x>
-     <y>263</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>263</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>autoDateCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dateEdit</receiver>
+   <receiver>dateOffEdit</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1477,6 +1453,70 @@ This is not the QSL manager/bureau address.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>autoDateCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>timeOffEdit</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeOnEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>timeOnChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>375</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeOffEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>timeOffChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoDateCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>autoDateCBChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -1501,5 +1541,8 @@ This is not the QSL manager/bureau address.</string>
   <slot>lotwCheckInbox()</slot>
   <slot>clear()</slot>
   <slot>modeChanged()</slot>
+  <slot>timeOnChanged(QString)</slot>
+  <slot>timeOffChanged(QString)</slot>
+  <slot>autoDateCBChanged(bool)</slot>
  </slots>
 </ui>
