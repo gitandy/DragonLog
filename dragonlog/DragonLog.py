@@ -4,6 +4,7 @@ import platform
 import sys
 import json
 import datetime
+from typing import Iterable
 
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
@@ -52,11 +53,13 @@ class DatabaseWriteException(Exception):
 
 
 class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, color_map, column):
+    """A delegate to change background color depending on a columns conntent and translation of different columns"""
+
+    def __init__(self, color_map: dict, column: int):
         super(BackgroundBrushDelegate, self).__init__()
 
-        self.color_map = color_map
-        self.column = column
+        self.color_map: dict = color_map
+        self.column: int = column
 
     def getColor(self, value):
         color = [255, 255, 255, 0]  # white as fallback
@@ -73,6 +76,45 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 
         option.backgroundBrush = QtGui.QBrush(
             QtGui.QColor(*self.getColor(index.model().data(index.siblingAtColumn(self.column)))))
+
+
+class TranslatedTableModel(QtSql.QSqlTableModel):
+    """Translate propagation values and status to clear text and fancy icon for status"""
+
+    def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict):
+        super(TranslatedTableModel, self).__init__(parent, db_conn)
+
+        self.status_cols = status_cols
+        self.status_translation = {
+            'Y': self.tr('Y'),
+            'N': self.tr('N'),
+            'M': self.tr('M'),
+            'R': self.tr('R'),
+        }
+
+        self.prop_col = prop_col
+        self.prop_translation = prop_tr
+
+        self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
+        self.no_icon = QtGui.QIcon(self.parent().searchFile('icons:no.png'))
+
+    def data(self, idx, role = QtCore.Qt.ItemDataRole.DisplayRole):
+        value = super().data(idx, role)
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
+            if idx.column() in self.status_cols and value in self.status_translation:
+                return self.status_translation[value]
+            elif idx.column() == self.prop_col and value in self.prop_translation:
+                return self.prop_translation[value]
+
+        if role == QtCore.Qt.ItemDataRole.DecorationRole:
+            txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)
+            if idx.column() in self.status_cols:
+                if txt in ('Y', 'M'):
+                    return self.ok_icon
+                else:
+                    return self.no_icon
+
+        return value
 
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
@@ -439,7 +481,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if not self.checkDB(db_file):
                 return
 
-            model = QtSql.QSqlTableModel(self, self.__db_con__)
+            model = TranslatedTableModel(self, self.__db_con__,
+                                         status_cols=tuple(range(self.__sql_cols__.index('qsl_sent'),
+                                                                 self.__sql_cols__.index('hamqth')+1)),
+                                         prop_col=self.__sql_cols__.index('propagation'),
+                                         prop_tr=self.prop)
             model.setTable('qsos')
             self.QSOTableView.setModel(model)
 
@@ -566,10 +612,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         i = self.QSOTableView.selectedIndexes().pop(0)
         qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
 
-        values = []
-        for col in range(len(self.__sql_cols__)):
-            values.append(self.QSOTableView.model().data(i.siblingAtColumn(col)))
+        query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
 
+        values = []
+        while query.next():
+            for col in range(len(self.__sql_cols__)):
+                values.append(query.value(col))
+            break
         self.qso_form.values = dict(zip(self.__sql_cols__, values))
 
     def updateQSO(self, qso_id: int):
