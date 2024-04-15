@@ -231,11 +231,12 @@ class HamQTHCallBook(AbstractCallBook):
 
         if r.status_code == 200:
             return
-        elif r.status_code in (400, 500):
+        elif r.status_code == 400:
             raise QSORejectedException(r.text)
         elif r.status_code == 403:
             raise LoginException(r.text)
         else:
+            self.log.debug(f'HamQTH communication error #{r.status_code} "{r.text}"')
             raise CommunicationException(f'HamQTH error: HTTP-Error {r.status_code}')
 
 

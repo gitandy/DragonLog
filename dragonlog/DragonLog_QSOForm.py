@@ -11,7 +11,8 @@ from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call
 from .CallBook import (HamQTHCallBook, QRZCQCallBook, AbstractCallBook, CallBookType, CallBookData,
-                       SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException)
+                       SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException,
+                       QSORejectedException, CommunicationException)
 from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                    EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
 from .LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
@@ -820,10 +821,17 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                               self.tr('Login to HamQTH failed for user') + ': ' + self.settings.value(
                                                   f'callbook/HamQTH_user', ''))
+            except QSORejectedException:
+                self.hamQTHCheckBox.setChecked(True)
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr('QSO rejected on HamQTH'))
             except MissingADIFFieldException as exc:
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                              self.tr(
-                                                  'A field is missing for log upload to HamQTH') + f':\n"{exc.args[0]}"')
+                                              self.tr('A field is missing for log upload to HamQTH') +
+                                              f':\n"{exc.args[0]}"')
+            except CommunicationException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr('An error occured on uploading to HamQTH') + f':\n"{exc}"')
 
         if self.eqslGroupBox.isChecked() and not self.eqslSentCheckBox.isChecked():
             try:
@@ -841,6 +849,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
                                               self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
             except EQSLQSODuplicateException:
+                self.eqslSentCheckBox.setChecked(True)
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
                                               self.tr('The QSO is a duplicate'))
             except EQSLUserCallMatchException:
