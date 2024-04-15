@@ -11,7 +11,8 @@ import keyring
 
 from . import DragonLog_Settings_ui
 from .Logger import Logger
-from .DragonLog_RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
+from .RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
+from .CallBook import CallBookType
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):
@@ -22,6 +23,8 @@ if getattr(sys, 'frozen', False):
 
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
+    callbookChanged = QtCore.pyqtSignal(str)
+
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: typing.Iterable,
                  logger: Logger):
         super().__init__(parent)
@@ -76,6 +79,9 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.columns = cols
         self.sortComboBox.insertItems(0, cols)
+
+        self.callbooks = dict([(cbt.value, cbt.name) for cbt in set(CallBookType)])
+        self.callbookComboBox.insertItems(0, self.callbooks.keys())
 
     def calcLocator(self):
         self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
@@ -272,6 +278,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.colShowListWidget.sortItems()
 
+    def callbookSelected(self, service: str):
+        """Slot (i.e. if callbookComboBox is changed)"""
+        self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbooks[service]}_user', ''))
+
     def exec(self):
         self.log.info('Loading settings...')
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
@@ -313,22 +323,44 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
-        self.callbookUserLineEdit.setText(self.settings.value('callbook/username', ''))
+        self.callbookComboBox.setCurrentText(self.callbook_dname)
+        self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbook_id}_user', ''))
+
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
         self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
         self.lotwCertPwdCheckBox.setChecked(bool(self.settings.value('lotw/cert_needs_pwd', 0)))
 
         return super().exec()
 
-    def callbookPassword(self):
-        return keyring.get_password('HamQTH.com',
-                                    self.settings.value('callbook/username', ''))
+    @property
+    def callbook_id(self) -> str:
+        """The selected callbooks id"""
+        return self.settings.value('callbook/service', 'HamQTH')
 
-    def eqslPassword(self):
+    @property
+    def callbook_dname(self) -> str:
+        """Returns the selected callbooks descriptive name"""
+        return CallBookType[self.settings.value('callbook/service', 'HamQTH')].value
+
+    def callbookPassword(self, callbook: CallBookType = None) -> str:
+        """Get the password for the currently set callbook or from given parameter
+        :param callbook: the callbook service to get the password for
+        :return: the current or given callbooks password"""
+
+        if callbook:
+            return keyring.get_password(callbook.value,
+                                        self.settings.value(f'callbook/{callbook.name}_user', ''))
+        else:
+            return keyring.get_password(self.callbook_dname,
+                                        self.settings.value(f'callbook/{self.callbook_id}_user', ''))
+
+    def eqslPassword(self) -> str:
+        """The password for the eQSL service"""
         return keyring.get_password('eqsl.cc',
                                     self.settings.value('eqsl/username', ''))
 
-    def lotwPassword(self):
+    def lotwPassword(self) -> str:
+        """The password for the LoTW online service"""
         return keyring.get_password('lotw.arrl.org',
                                     self.settings.value('lotw/username', ''))
 
@@ -367,12 +399,14 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
 
-        self.settings.setValue('callbook/username', self.callbookUserLineEdit.text())
+        self.settings.setValue('callbook/service', self.callbooks[self.callbookComboBox.currentText()])
+        self.settings.setValue(f'callbook/{self.callbook_id}_user', self.callbookUserLineEdit.text())
         if self.callbookUserLineEdit.text() and self.callbookPasswdLineEdit.text():
-            keyring.set_password('HamQTH.com',
+            keyring.set_password(self.callbookComboBox.currentText(),
                                  self.callbookUserLineEdit.text(),
                                  self.callbookPasswdLineEdit.text())
         self.callbookPasswdLineEdit.clear()
+        self.callbookChanged.emit(self.callbooks[self.callbookComboBox.currentText()])
 
         self.settings.setValue('eqsl/username', self.eqslUserLineEdit.text())
         if self.eqslUserLineEdit.text() and self.eqslPasswdLineEdit.text():

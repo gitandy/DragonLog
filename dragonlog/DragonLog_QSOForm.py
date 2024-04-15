@@ -9,13 +9,13 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
-from .DragonLog_RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call
-from .DragonLog_CallBook import (CallBook, CallBookType, CallBookData, SessionExpiredException,
-                                 MissingADIFFieldException, LoginException, CallsignNotFoundException)
-from .DragonLog_eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
-                             EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
-from .DragonLog_LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
-                             LoTWLoginException, LoTWNoRecordException)
+from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call
+from .CallBook import (HamQTHCallBook, QRZCQCallBook, AbstractCallBook, CallBookType, CallBookData,
+                       SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException)
+from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
+                   EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
+from .LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
+                   LoTWLoginException, LoTWNoRecordException)
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
@@ -39,6 +39,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.settings = settings
         self.settings_form = settings_form
         self.qso_id = None
+
+        self.__old_values__ = {}
 
         self.cb_channels = cb_channels
         self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
@@ -95,9 +97,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
 
-        self.callbook = CallBook(CallBookType.HamQTH,
-                                 f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
-                                 self.logger)
+        self.callbook: AbstractCallBook = None
+        self.callbookChanged(CallBookType[self.settings.value('callbook/service',
+                                                              'HamQTH')].name)
+        self.settings_form.callbookChanged.connect(self.callbookChanged)
+
         self.eqsl = EQSL(self.dragonlog.programName, self.logger)
         self.eqsl_url = ''
 
@@ -113,8 +117,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.lotwGroupBox,
             self.lotwSentCheckBox,
             self.lotwRcvdCheckBox,
-            self.hamQTHuplRadioButton,
-            self.hamQTHmodRadioButton,
         )
 
         for w in view_only_widgets:
@@ -122,6 +124,16 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
         self.clear()
+
+    def callbookChanged(self, callbook: str):
+        if callbook == CallBookType.QRZCQ.name:
+            self.callbook = QRZCQCallBook(self.logger,
+                                          f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                          )
+        else:
+            self.callbook = HamQTHCallBook(self.logger,
+                                           f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                           )
 
     def startTimers(self, start: bool):
         if start:
@@ -255,6 +267,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.refreshTimer.stop()
 
     def clear(self):
+        self.__old_values__ = {}
         self.qso_id = None
         self.callSignLineEdit.clear()
         self.nameLineEdit.clear()
@@ -314,8 +327,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.lotwRcvdCheckBox.setChecked(False)
         self.lotwInboxPushButton.setEnabled(False)
 
-        self.hamQTHGroupBox.setChecked(False)
-        self.hamQTHmodRadioButton.setChecked(True)  # Just not check upload
+        self.hamQTHCheckBox.setChecked(False)
 
         self.toolBox.setCurrentIndex(0)
 
@@ -576,13 +588,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             lotw_sent = 'Y' if self.lotwSentCheckBox.isChecked() else 'R'
             lotw_rcvd = 'Y' if self.lotwRcvdCheckBox.isChecked() else 'R'
 
-        hamqth_state = 'N'
-        if self.hamQTHGroupBox.isChecked():
-            if self.hamQTHuplRadioButton.isChecked():
-                hamqth_state = 'Y'
-            if self.hamQTHmodRadioButton.isChecked():
-                hamqth_state = 'M'
-
         return (
             date_time_on,
             date_time_off,
@@ -618,12 +623,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             eqsl_rcvd,
             lotw_sent,
             lotw_rcvd,
-            hamqth_state,
+            'Y' if self.hamQTHCheckBox.isChecked() else 'N',
         )
 
     @values.setter
     def values(self, values: dict):
         """Set all form values"""
+        self.__old_values__ = values.copy()
 
         self.qso_id = values['id']
         time_on = ''
@@ -724,20 +730,15 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.lotwInboxPushButton.setEnabled(True)
 
         match values['hamqth']:
-            case 'Y':
-                self.hamQTHGroupBox.setChecked(True)
-                self.hamQTHuplRadioButton.setChecked(True)
-            case 'M':
-                self.hamQTHGroupBox.setChecked(True)
-                self.hamQTHmodRadioButton.setChecked(True)
+            case 'Y' | 'M':
+                self.hamQTHCheckBox.setChecked(True)
             case _:
-                self.hamQTHGroupBox.setChecked(False)
-                self.hamQTHmodRadioButton.setChecked(True)  # Just don't check uploaded
+                self.hamQTHCheckBox.setChecked(False)
 
     def searchCallbook(self):
         try:
             if not self.callbook.is_loggedin:
-                self.callbook.login(self.settings.value('callbook/username', ''),
+                self.callbook.login(self.settings.value(f'callbook/{self.settings_form.callbook_id}_user', ''),
                                     self.settings_form.callbookPassword())
                 self.log.info('Logged into callbook')
 
@@ -748,7 +749,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                     break
                 except SessionExpiredException:
                     self.log.debug('Callbook session expired')
-                    self.callbook.login(self.settings.value('callbook/username', ''),
+                    self.callbook.login(self.settings.value(f'callbook/{self.settings_form.callbook_id}_user', ''),
                                         self.settings_form.callbookPassword())
 
             if data:
@@ -771,16 +772,18 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         except LoginException:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
-                                              'callbook/username', ''))
+                                              f'callbook/{self.settings_form.callbook_id}_user', ''))
         except CallsignNotFoundException as exc:
             QtWidgets.QMessageBox.information(self, self.tr('Callbook search result'),
                                               self.tr('Callsign not found') + f': {exc.args[0]}')
         except Exception as exc:
+            self.log.exception(exc)
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('During callbook search an error occured') + f':\n{exc}')
 
     def saveLog(self):
-        self.hamQTHmodRadioButton.setChecked(True)
+        if self.__old_values__['hamqth'] in ('Y', 'M'):
+            self.hamQTHCheckBox.setChecked(True)
 
         if self.__change_mode__:
             self.dragonlog.updateQSO(self.qso_id)
@@ -791,60 +794,62 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.clear()
 
     def uploadLog(self):
-        if self.hamQTHGroupBox.isChecked() or self.eqslGroupBox.isChecked():
-            record = self._build_record_()
+        record = self._build_record_()
 
-            adif_doc = {'HEADER':
-                {
-                    'ADIF_VER': '3.1.4',
-                    'PROGRAMID': self.dragonlog.programName,
-                    'PROGRAMVERSION': self.dragonlog.programVersion,
-                    'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
-                        'yyyyMMdd HHmmss')
-                },
-                'RECORDS': [record]}
+        adif_doc = {'HEADER':
+            {
+                'ADIF_VER': '3.1.4',
+                'PROGRAMID': self.dragonlog.programName,
+                'PROGRAMVERSION': self.dragonlog.programVersion,
+                'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
+                    'yyyyMMdd HHmmss')
+            },
+            'RECORDS': [record]}
 
-            if self.hamQTHGroupBox.isChecked() and not self.hamQTHuplRadioButton.isChecked():
-                try:
-                    self.callbook.upload_log(self.settings.value('callbook/username', ''),
-                                             self.settings_form.callbookPassword(),
-                                             adif_doc)
+        if self.hamQTHCheckBox.isChecked() and self.__old_values__['hamqth'] not in ('Y', 'M'):
+            logbook = HamQTHCallBook(self.logger,
+                                     f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                     )
+            try:
+                logbook.upload_log(self.settings.value(f'callbook/HamQTH_user', ''),
+                                   self.settings_form.callbookPassword(CallBookType.HamQTH),
+                                   adif_doc)
 
-                    self.hamQTHuplRadioButton.setChecked(True)
-                    self.log.info(f'Uploaded log to {self.callbook.callbook_type.name}')
-                except LoginException:
-                    QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                                  self.tr('Login failed for user') + ': ' + self.settings.value(
-                                                      'callbook/username', ''))
-                except MissingADIFFieldException as exc:
-                    QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                                  self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
+                self.log.info(f'Uploaded log to HamQTH')
+            except LoginException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr('Login to HamQTH failed for user') + ': ' + self.settings.value(
+                                                  f'callbook/HamQTH_user', ''))
+            except MissingADIFFieldException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr(
+                                                  'A field is missing for log upload to HamQTH') + f':\n"{exc.args[0]}"')
 
-            if self.eqslGroupBox.isChecked() and not self.eqslSentCheckBox.isChecked():
-                try:
-                    self.eqsl.upload_log(self.settings.value('eqsl/username', ''),
-                                         self.settings_form.eqslPassword(),
-                                         record)
+        if self.eqslGroupBox.isChecked() and not self.eqslSentCheckBox.isChecked():
+            try:
+                self.eqsl.upload_log(self.settings.value('eqsl/username', ''),
+                                     self.settings_form.eqslPassword(),
+                                     record)
 
-                    self.eqslSentCheckBox.setChecked(True)
-                    self.log.info(f'Uploaded log to eQSL')
-                except EQSLLoginException:
-                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
-                                                  self.tr('Login failed for user') + ': ' + self.settings.value(
-                                                      'eqsl/username', ''))
-                except EQSLADIFFieldException as exc:
-                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
-                                                  self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
-                except EQSLQSODuplicateException:
-                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
-                                                  self.tr('The QSO is a duplicate'))
-                except EQSLUserCallMatchException:
-                    QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
-                                                  self.tr('User call does not match') + ': ' + self.settings.value(
-                                                      'eqsl/username', ''))
-                except EQSLRequestException as exc:
-                    QtWidgets.QMessageBox.information(self, self.tr('Upload eQSL error'),
-                                                      self.tr('Error on upload') + f':\n"{exc.args[0]}"')
+                self.eqslSentCheckBox.setChecked(True)
+                self.log.info(f'Uploaded log to eQSL')
+            except EQSLLoginException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('Login failed for user') + ': ' + self.settings.value(
+                                                  'eqsl/username', ''))
+            except EQSLADIFFieldException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('A field is missing for log upload') + f':\n"{exc.args[0]}"')
+            except EQSLQSODuplicateException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('The QSO is a duplicate'))
+            except EQSLUserCallMatchException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('User call does not match') + ': ' + self.settings.value(
+                                                  'eqsl/username', ''))
+            except EQSLRequestException as exc:
+                QtWidgets.QMessageBox.information(self, self.tr('Upload eQSL error'),
+                                                  self.tr('Error on upload') + f':\n"{exc.args[0]}"')
 
         if self.__change_mode__:
             self.dragonlog.updateQSO(self.qso_id)
@@ -900,13 +905,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             if res:
                 self.eqsl_url = res
                 self.eqslLinkLabel.setText(f'''<html>
-                <head/>
-                <body>
-                <p><a href="{res}">
-                <span style=" text-decoration: underline; color:#0000ff;">{self.tr('Link to eQSL Card')}</span>
-                </a></p>
-                </body>
-                </html>''')
+                    <head/>
+                    <body>
+                    <p><a href="{res}">
+                    <span style=" text-decoration: underline; color:#0000ff;">{self.tr('Link to eQSL Card')}</span>
+                    </a></p>
+                    </body>
+                    </html>''')
                 self.log.debug(f'eQSL available at "{res}"')
 
                 if not only_url:
