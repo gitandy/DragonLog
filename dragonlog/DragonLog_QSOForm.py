@@ -10,7 +10,7 @@ from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call
-from .CallBook import (HamQTHCallBook, QRZCQCallBook, AbstractCallBook, CallBookType, CallBookData,
+from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookType, CallBookData,
                        SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException,
                        QSORejectedException, CommunicationException)
 from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
@@ -98,10 +98,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
 
-        self.callbook: AbstractCallBook = None
-        self.callbookChanged(CallBookType[self.settings.value('callbook/service',
-                                                              'HamQTH')].name)
-        self.settings_form.callbookChanged.connect(self.callbookChanged)
+        self.callbook_hamqth = HamQTHCallBook(self.logger,
+                                              f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                              )
+        self.callbook_qrzcq = QRZCQCallBook(self.logger,
+                                            f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                            )
 
         self.eqsl = EQSL(self.dragonlog.programName, self.logger)
         self.eqsl_url = ''
@@ -125,16 +127,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
         self.clear()
-
-    def callbookChanged(self, callbook: str):
-        if callbook == CallBookType.QRZCQ.name:
-            self.callbook = QRZCQCallBook(self.logger,
-                                          f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
-                                          )
-        else:
-            self.callbook = HamQTHCallBook(self.logger,
-                                           f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
-                                           )
 
     def startTimers(self, start: bool):
         if start:
@@ -376,7 +368,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.channelComboBox.setVisible(True)
             self.channelLabel.setVisible(True)
             self.freqDoubleSpinBox.setEnabled(False)
-            self.searchCallbookPushButton.setEnabled(False)
+            self.searchHamQTHPushButton.setEnabled(False)
+            self.searchQRZCQPushButton.setEnabled(False)
             self.uploadPushButton.setEnabled(False)
             self.qslPage.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
@@ -395,7 +388,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.channelComboBox.setVisible(False)
             self.channelLabel.setVisible(False)
             self.freqDoubleSpinBox.setEnabled(True)
-            self.searchCallbookPushButton.setEnabled(True)
+            self.searchHamQTHPushButton.setEnabled(True)
+            self.searchQRZCQPushButton.setEnabled(True)
             self.uploadPushButton.setEnabled(True)
             self.qslPage.setEnabled(True)
 
@@ -736,22 +730,28 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             case _:
                 self.hamQTHCheckBox.setChecked(False)
 
-    def searchCallbook(self):
+    def searchHamQTH(self):
+        self.searchCallbook(self.callbook_hamqth)
+
+    def searchQRZCQ(self):
+        self.searchCallbook(self.callbook_qrzcq)
+
+    def searchCallbook(self, callbook):
         try:
-            if not self.callbook.is_loggedin:
-                self.callbook.login(self.settings.value(f'callbook/{self.settings_form.callbook_id}_user', ''),
-                                    self.settings_form.callbookPassword())
-                self.log.info('Logged into callbook')
+            if not callbook.is_loggedin:
+                callbook.login(self.settings.value(f'callbook/{callbook.callbook_type.name}_user', ''),
+                               self.settings_form.callbookPassword(callbook.callbook_type))
+                self.log.info(f'Logged into callbook {callbook.callbook_type.name}')
 
             data: CallBookData = None
             for _ in range(2):
                 try:
-                    data = self.callbook.get_dataset(self.callSignLineEdit.text())
+                    data = callbook.get_dataset(self.callSignLineEdit.text())
                     break
                 except SessionExpiredException:
                     self.log.debug('Callbook session expired')
-                    self.callbook.login(self.settings.value(f'callbook/{self.settings_form.callbook_id}_user', ''),
-                                        self.settings_form.callbookPassword())
+                    callbook.login(self.settings.value(f'callbook/{callbook.callbook_type.name}_user', ''),
+                                   self.settings_form.callbookPassword(callbook.callbook_type))
 
             if data:
                 if data.nickname and not self.nameLineEdit.text().strip():
@@ -769,11 +769,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.qslAcceQSLCheckBox.setChecked(data.qsl_eqsl)
                 self.qslAccLoTWCheckBox.setChecked(data.qsl_lotw)
 
-                self.log.info(f'Fetched data from callbook {self.callbook.callbook_type.name}')
+                self.log.info(f'Fetched data from callbook {callbook.callbook_type.name}')
         except LoginException:
             QtWidgets.QMessageBox.warning(self, self.tr('Callbook search error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
-                                              f'callbook/{self.settings_form.callbook_id}_user', ''))
+                                              f'callbook/{callbook.callbook_type.name}_user', ''))
         except CallsignNotFoundException as exc:
             QtWidgets.QMessageBox.information(self, self.tr('Callbook search result'),
                                               self.tr('Callsign not found') + f': {exc.args[0]}')

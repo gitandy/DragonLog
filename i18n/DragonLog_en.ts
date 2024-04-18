@@ -1263,8 +1263,14 @@ The file already exists.</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Callbook</source>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>HamQTH</source>
       <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>QRZCQ</source>
+      <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
@@ -1524,11 +1530,6 @@ This is not the QSL manager/bureau address.</source>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Logbook</source>
       <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>HamQTH</source>
-      <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />

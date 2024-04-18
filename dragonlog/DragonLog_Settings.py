@@ -16,6 +16,7 @@ from .CallBook import CallBookType
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):
+    # noinspection PyUnresolvedReferences
     import win32timezone
     from keyring.backends import Windows
 
@@ -187,6 +188,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 if able.strip() == 'Y':
                     self.rig_caps.append(cap[4:].lower())
 
+    # noinspection PyUnresolvedReferences
     def ctrlRigctld(self, start):
         if start:
             if not self.rigctld:
@@ -342,17 +344,13 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         """Returns the selected callbooks descriptive name"""
         return CallBookType[self.settings.value('callbook/service', 'HamQTH')].value
 
-    def callbookPassword(self, callbook: CallBookType = None) -> str:
-        """Get the password for the currently set callbook or from given parameter
+    def callbookPassword(self, callbook: CallBookType) -> str:
+        """Get the password for the callbook
         :param callbook: the callbook service to get the password for
-        :return: the current or given callbooks password"""
+        :return: the password"""
 
-        if callbook:
-            return keyring.get_password(callbook.value,
-                                        self.settings.value(f'callbook/{callbook.name}_user', ''))
-        else:
-            return keyring.get_password(self.callbook_dname,
-                                        self.settings.value(f'callbook/{self.callbook_id}_user', ''))
+        return keyring.get_password(callbook.value,
+                                    self.settings.value(f'callbook/{callbook.name}_user', ''))
 
     def eqslPassword(self) -> str:
         """The password for the eQSL service"""

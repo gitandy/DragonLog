@@ -77,9 +77,16 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QPushButton" name="searchCallbookPushButton">
+            <widget class="QPushButton" name="searchHamQTHPushButton">
              <property name="text">
-              <string>Callbook</string>
+              <string>HamQTH</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="searchQRZCQPushButton">
+             <property name="text">
+              <string>QRZCQ</string>
              </property>
             </widget>
            </item>
@@ -952,7 +959,7 @@ This is not the QSL manager/bureau address.</string>
  </widget>
  <tabstops>
   <tabstop>callSignLineEdit</tabstop>
-  <tabstop>searchCallbookPushButton</tabstop>
+  <tabstop>searchHamQTHPushButton</tabstop>
   <tabstop>RSTSentLineEdit</tabstop>
   <tabstop>RSTRcvdLineEdit</tabstop>
   <tabstop>bandComboBox</tabstop>
@@ -1328,10 +1335,10 @@ This is not the QSL manager/bureau address.</string>
    </hints>
   </connection>
   <connection>
-   <sender>searchCallbookPushButton</sender>
+   <sender>searchHamQTHPushButton</sender>
    <signal>clicked()</signal>
    <receiver>QSOForm</receiver>
-   <slot>searchCallbook()</slot>
+   <slot>searchHamQTH()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>514</x>
@@ -1503,6 +1510,22 @@ This is not the QSL manager/bureau address.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>searchQRZCQPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOForm</receiver>
+   <slot>searchQRZCQ()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -1517,7 +1540,7 @@ This is not the QSL manager/bureau address.</string>
   <slot>ownCallSignChanged(QString)</slot>
   <slot>setWorkedBefore()</slot>
   <slot>setStartTimeNow()</slot>
-  <slot>searchCallbook()</slot>
+  <slot>searchHamQTH()</slot>
   <slot>uploadLog()</slot>
   <slot>saveLog()</slot>
   <slot>eqslSelected()</slot>
@@ -1530,5 +1553,6 @@ This is not the QSL manager/bureau address.</string>
   <slot>timeOnChanged(QString)</slot>
   <slot>timeOffChanged(QString)</slot>
   <slot>autoDateCBChanged(bool)</slot>
+  <slot>searchQRZCQ()</slot>
  </slots>
 </ui>
