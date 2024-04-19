@@ -35,9 +35,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>482</width>
-        <height>490</height>
+        <y>-3</y>
+        <width>465</width>
+        <height>493</height>
        </rect>
       </property>
       <attribute name="label">
@@ -93,110 +93,106 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>RST Tx</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="RSTSentLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>59</string>
-               </property>
-               <property name="placeholderText">
-                <string>RST sent</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>RST Rx</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="RSTRcvdLineEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>59</string>
-               </property>
-               <property name="placeholderText">
-                <string>RST received</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="powerLabel">
-               <property name="text">
-                <string>Power</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="powerSpinBox">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="specialValueText">
-                <string>n.a.</string>
-               </property>
-               <property name="suffix">
-                <string> W</string>
-               </property>
-               <property name="minimum">
-                <number>0</number>
-               </property>
-               <property name="maximum">
-                <number>1000</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>RST Tx</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="RSTSentLineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>59</string>
+             </property>
+             <property name="placeholderText">
+              <string>RST sent</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>RST Rx</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="RSTRcvdLineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>59</string>
+             </property>
+             <property name="placeholderText">
+              <string>RST received</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="powerLabel">
+             <property name="text">
+              <string>Power</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="powerSpinBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="specialValueText">
+              <string>n.a.</string>
+             </property>
+             <property name="suffix">
+              <string> W</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -520,34 +516,24 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QTextEdit" name="commentsTextEdit">
-             <property name="acceptRichText">
-              <bool>false</bool>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-             <property name="placeholderText">
-              <string>QSO comments</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QTextEdit" name="remarksTextEdit">
-             <property name="acceptRichText">
-              <bool>false</bool>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-             <property name="placeholderText">
-              <string>Own notes</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QLineEdit" name="commentLineEdit">
+           <property name="placeholderText">
+            <string>QSO comment</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="remarksTextEdit">
+           <property name="acceptRichText">
+            <bool>false</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+           <property name="placeholderText">
+            <string>Own notes</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -558,8 +544,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>332</width>
-        <height>484</height>
+        <width>482</width>
+        <height>490</height>
        </rect>
       </property>
       <attribute name="label">
@@ -984,8 +970,6 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>autoDateCheckBox</tabstop>
   <tabstop>dateOnEdit</tabstop>
   <tabstop>dateOffEdit</tabstop>
-  <tabstop>commentsTextEdit</tabstop>
-  <tabstop>remarksTextEdit</tabstop>
   <tabstop>eqslSentCheckBox</tabstop>
   <tabstop>lotwSentCheckBox</tabstop>
   <tabstop>qslAccBureauCheckBox</tabstop>

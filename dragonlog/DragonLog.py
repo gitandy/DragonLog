@@ -287,7 +287,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Radio'),
             self.tr('Antenna'),
             self.tr('Notes'),
-            self.tr('Comments'),
+            self.tr('Comment'),
             self.tr('Distance'),
             self.tr('QSL via'),
             self.tr('QSL path'),
@@ -762,12 +762,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
         doc = self._build_adif_export_(query_str, is_adx)
-        if is_adx:
-            adx.dump(file, doc)
-        else:
-            adi.dump(file, doc, 'ADIF Export by DragonLog')
+        try:
+            if is_adx:
+                adx.dump(file, doc)
+            else:
+                adi.dump(file, doc, 'ADIF Export by DragonLog')
 
-        self.log.info(f'Saved "{file}"')
+            self.log.info(f'Saved "{file}"')
+        except Exception as exc:
+            self.log.exception(exc)
 
     def _build_adif_export_(self, query_str, is_adx=False, include_id=False):
         doc = {
@@ -889,8 +892,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['NOTES_INTL'] = remarks
             if query.value(self.__sql_cols__.index('comments')):
                 comment = query.value(self.__sql_cols__.index('comments'))
-                if platform.system() == 'Linux':
-                    comment = comment.replace('\n', '\r\n')
                 record['COMMENT'] = self.replaceNonASCII(comment)
                 record['COMMENT_INTL'] = comment
             if query.value(self.__sql_cols__.index('qsl_via')):

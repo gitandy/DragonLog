@@ -268,6 +268,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.locatorLineEdit.clear()
         self.RSTSentLineEdit.setText('59')
         self.RSTRcvdLineEdit.setText('59')
+        self.commentLineEdit.clear()
         self.remarksTextEdit.clear()
         self.powerSpinBox.setValue(0)
 
@@ -607,7 +608,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.radioLineEdit.text(),
             self.antennaLineEdit.text(),
             self.remarksTextEdit.toPlainText().strip(),
-            self.commentsTextEdit.toPlainText().strip(),
+            self.commentLineEdit.text().strip(),
             self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text()),
             qsl_via,
             qsl_path,
@@ -695,7 +696,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.radioLineEdit.setText(values['radio'])
         self.antennaLineEdit.setText(values['antenna'])
         self.remarksTextEdit.setText(values['remarks'])
-        self.commentsTextEdit.setText(values['comments'])
+        self.commentLineEdit.setText(values['comments'].replace('\n', ' ').replace('\r', ''))
 
         if (values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y') or
                 values['eqsl_sent'] in ('R', 'Y') or values['eqsl_rcvd'] in ('R', 'Y')):
@@ -899,8 +900,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if self.remarksTextEdit.toPlainText().strip() and not bool(
                 self.settings.value('imp_exp/own_notes_adif', 0)):
             record['NOTES'] = self.dragonlog.replaceNonASCII(self.remarksTextEdit.toPlainText().strip())
-        if self.commentsTextEdit.toPlainText().strip():
-            record['COMMENTS'] = self.dragonlog.replaceNonASCII(self.commentsTextEdit.toPlainText().strip())
+        if self.commentLineEdit.text().strip():
+            record['COMMENT'] = self.dragonlog.replaceNonASCII(self.commentLineEdit.text().strip())
         if self.qslMessageTextEdit.toPlainText().strip():
             record['QSLMSG'] = self.dragonlog.replaceNonASCII(self.qslMessageTextEdit.toPlainText().strip())
 
