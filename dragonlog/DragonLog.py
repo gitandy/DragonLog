@@ -202,14 +202,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {__prog_name__} {__version__}...')
 
-        if self.settings.value('ui/log_dock_float', 0):
+        if int(self.settings.value('ui/log_dock_float', 0)):
             self.logDockWidget.setFloating(True)
         else:
             log_dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
                                                                        QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
             self.addDockWidget(log_dock_area,
                                self.logDockWidget)
-        self.logDockWidget.setVisible(bool(self.settings.value('ui/show_log', 0)))
+        self.logDockWidget.setVisible(bool(int(self.settings.value('ui/show_log', 0))))
 
         self.dummy_status = QtWidgets.QLabel()
         self.statusBar().addPermanentWidget(self.dummy_status)
@@ -311,14 +311,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
 
-        if self.settings.value('ui/qso_dock_float', 0):
+        if int(self.settings.value('ui/qso_dock_float', 0)):
             self.qsoDockWidget.setFloating(True)
         else:
             qso_dock_area = self.int2dock_area(int(self.settings.value('ui/qso_dock_area',
                                                                        QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
             self.addDockWidget(qso_dock_area,
                                self.qsoDockWidget)
-        self.qsoDockWidget.setVisible(bool(self.settings.value('ui/show_qso', 0)))
+        self.qsoDockWidget.setVisible(bool(int(self.settings.value('ui/show_qso', 0))))
 
         self.keep_logging = False
 
