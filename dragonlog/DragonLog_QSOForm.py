@@ -784,7 +784,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                           self.tr('During callbook search an error occured') + f':\n{exc}')
 
     def saveLog(self):
-        if self.__old_values__['hamqth'] in ('Y', 'M'):
+        if self.__old_values__ and self.__old_values__['hamqth'] in ('Y', 'M'):
             self.hamQTHCheckBox.setChecked(True)
 
         if self.__change_mode__:
@@ -808,7 +808,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             },
             'RECORDS': [record]}
 
-        if self.hamQTHCheckBox.isChecked() and self.__old_values__['hamqth'] not in ('Y', 'M'):
+        upload_hamqth = self.__old_values__['hamqth'] not in ('Y', 'M') if self.__old_values__ else True
+
+        if self.hamQTHCheckBox.isChecked() and upload_hamqth:
             logbook = HamQTHCallBook(self.logger,
                                      f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
                                      )
