@@ -1403,6 +1403,13 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app_path = os.path.dirname(__file__)
 
+    css = '''QToolBox::tab {
+        background: #b0c4de;
+        border-radius: 2px;
+        color: black;
+    }'''
+    app.setStyleSheet(css)
+
     translator = QtCore.QTranslator(app)
     translator.load(os.path.abspath(app_path + '/data/i18n/DragonLog_' + QtCore.QLocale.system().name()))
     app.installTranslator(translator)
