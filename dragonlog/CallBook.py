@@ -285,7 +285,7 @@ class QRZCQCallBook(AbstractCallBook):
             case {'QRZCQDatabase': {'Session': {'Error': error}}}:
                 if error == 'Session does not exist or expired':
                     raise SessionExpiredException('QRZCQ')
-                elif error.startswith('Not found'):
+                elif error.startswith('Not found') or error.startswith('Callsign Empty'):
                     raise CallsignNotFoundException(callsign)
                 else:
                     raise RequestException(f"QRZCQ error: {error}")
