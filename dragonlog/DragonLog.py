@@ -310,7 +310,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                 self.cb_channels, self.hamlib_error, self.log)
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
-        self.qso_form.clear()
+        self.qsoDockWidget.visibilityChanged.connect(self.qso_form.clear)
 
         if int(self.settings.value('ui/qso_dock_float', 0)):
             self.qsoDockWidget.setFloating(True)
