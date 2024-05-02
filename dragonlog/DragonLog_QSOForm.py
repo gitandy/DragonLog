@@ -270,7 +270,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.RSTRcvdLineEdit.setText('59')
         self.commentLineEdit.clear()
         self.remarksTextEdit.clear()
-        self.powerSpinBox.setValue(0)
 
         self.callSignChanged('')
         self.locatorChanged('')
@@ -282,8 +281,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         dt = QtCore.QDateTime.currentDateTimeUtc()
         self.dateOffEdit.setDate(dt.date())
         self.dateOnEdit.setDate(dt.date())
-        self.timeOffEdit.setText(dt.time().toString('HH:mm:ss'))
-        self.timeOffChanged(self.timeOffEdit.text())
+        if self.autoDateCheckBox.isChecked():
+            self.timeOffEdit.setText(dt.time().toString('HH:mm:ss'))
         self.timeOnEdit.setText('')
         self.timeOnChanged('')
 
@@ -292,11 +291,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         if self.bandComboBox.currentIndex() < 0:
             self.bandComboBox.setCurrentIndex(0)
+            self.submodeComboBox.setCurrentIndex(-1)
         if self.modeComboBox.currentIndex() < 0:
             self.modeComboBox.setCurrentIndex(0)
-
-        self.submodeComboBox.setCurrentIndex(-1)
-        self.propComboBox.setCurrentIndex(-1)
 
         self.qslBurDirGroupBox.setChecked(False)
         self.qslViaLineEdit.clear()
