@@ -201,6 +201,13 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     # noinspection PyUnresolvedReferences
     def ctrlRigctld(self, start):
         if start:
+            if not self.rigctld_path:
+                self.log.warning('rigctld is not available')
+                self.ctrlRigctldPushButton.setChecked(False)
+                self.parent().actionStart_hamlib_TB.setChecked(False)
+                self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
+                return
+
             if not self.rigctld:
                 rig_mfr = self.settings.value('cat/rigMfr')
                 rig_model = self.settings.value('cat/rigModel')

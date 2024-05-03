@@ -1559,22 +1559,22 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="251" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="258" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="95" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="254" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="234" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="261" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="250" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="241" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="99" />
       <source>Hamlib</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="254" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="234" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="261" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="241" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="99" />
       <source>inactiv</source>
       <translation>inaktiv</translation>
@@ -1600,49 +1600,50 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <translation>rigctld ist nicht verfügbar</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="210" />
-      <source>CAT settings error</source>
-      <translation>CAT-Einstellungen Fehler</translation>
-    </message>
-    <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="211" />
-      <source>CAT configuration was never saved or a parameter is missing</source>
-      <translation>CAT-Einstellung wurd noch nie gespeichert or Parameter fehlen</translation>
-    </message>
-    <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="253" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="233" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="215" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="260" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="240" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="222" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="208" />
       <source>Start hamlib</source>
       <translation>Starte Hamlib</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="230" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="217" />
+      <source>CAT settings error</source>
+      <translation>CAT-Einstellungen Fehler</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="218" />
+      <source>CAT configuration was never saved or a parameter is missing</source>
+      <translation>CAT-Einstellung wurd noch nie gespeichert or Parameter fehlen</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="237" />
       <source>rigctld did not start properly</source>
       <translation>rigctld konnte nicht gestartet werden</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="238" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="245" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="240" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="247" />
       <source>Stop hamlib</source>
       <translation>Stoppe Hamlib</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="250" />
       <source>activ</source>
       <translation>aktiv</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="315" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="322" />
       <source>Date/Time start</source>
       <translation>Datum/Zeit Start</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="319" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="326" />
       <source>Show all</source>
       <translation>zeige alle</translation>
     </message>
