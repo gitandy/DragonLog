@@ -25,6 +25,7 @@ if getattr(sys, 'frozen', False):
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     callbookChanged = QtCore.pyqtSignal(str)
+    rigctldStatusChanged = QtCore.pyqtSignal(bool)
 
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: typing.Iterable,
                  logger: Logger):
@@ -248,6 +249,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                     self.log.info(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
                     self.checkHamlibTimer.start(1000)
                     self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
+                    self.rigctldStatusChanged.emit(True)
         else:
             self.checkHamlibTimer.stop()
             if self.rigctld and not self.rigctld.poll():
@@ -260,6 +262,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
             self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
             self.rig_caps = []
+            self.rigctldStatusChanged.emit(False)
 
     def locatorChanged(self, txt):
         if not txt:

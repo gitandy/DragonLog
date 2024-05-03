@@ -71,6 +71,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.__last_freq__ = 0.0
         self.__last_pwr__ = ''
 
+        self.settings_form.rigctldStatusChanged.connect(self.rigctldChanged)
+
         self.__change_mode__ = False
 
         self.refreshTimer = QtCore.QTimer(self)
@@ -127,6 +129,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
         self.clear()
+
+    def rigctldChanged(self, state):
+        self.__last_mode__ = ''
+        self.__last_band__ = ''
+        self.__last_freq__ = 0.0
+        self.__last_pwr__ = ''
 
     def startTimers(self, start: bool):
         if start:
@@ -355,6 +363,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.timeNowPushButton.setEnabled(True)
 
     def bandChanged(self, band: str):
+        self.__last_band__ = band
         self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
         self.freqDoubleSpinBox.setValue(self.bands[band][0] - self.bands[band][2])
         self.freqDoubleSpinBox.setMaximum(self.bands[band][1])
@@ -400,6 +409,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
 
     def modeChanged(self, mode: str):
+        self.__last_mode__ = mode
         self.submodeComboBox.clear()
         self.submodeComboBox.setEnabled(True)
         if self.bandComboBox.currentText() == '11m':
