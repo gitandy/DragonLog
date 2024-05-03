@@ -1555,22 +1555,22 @@ This is not the QSL manager/bureau address.</source>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="241" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="251" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="95" />
       <source>Start</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="244" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="233" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="224" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="254" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="234" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="99" />
       <source>Hamlib</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="244" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="224" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="254" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="234" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="99" />
       <source>inactiv</source>
       <translation type="unfinished" />
@@ -1586,54 +1586,59 @@ This is not the QSL manager/bureau address.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="126" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="128" />
       <source>Error executing rigctld</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="200" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="135" />
+      <source>rigctld is not available</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="210" />
       <source>CAT settings error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="201" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="211" />
       <source>CAT configuration was never saved or a parameter is missing</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="223" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="205" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="253" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="233" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="215" />
       <source>Start hamlib</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="220" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="230" />
       <source>rigctld did not start properly</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="228" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="238" />
       <source>Stop</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="230" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="240" />
       <source>Stop hamlib</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="233" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
       <source>activ</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="305" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="315" />
       <source>Date/Time start</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="309" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="319" />
       <source>Show all</source>
       <translation type="unfinished" />
     </message>

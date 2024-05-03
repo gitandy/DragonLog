@@ -120,12 +120,22 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
     def init_hamlib(self, rigctld_path):
         if rigctld_path:
-            res = subprocess.run([rigctld_path, '-l'], capture_output=True)
-            stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
-            if res.returncode != 0 or not stdout:
-                self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
+            try:
+                res = subprocess.run([rigctld_path, '-l'], capture_output=True)
+                stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
+                if res.returncode != 0 or not stdout:
+                    self.log.error(f'Error executing rigctld: {res.returncode}')
+                    self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
+                    self.settings.setValue('cat/rigctldPath', '')
+                    self.hamlibPathLineEdit.setText('')
+                    return
+                self.log.debug('Executed rigctld to list rigs')
+            except FileNotFoundError:
+                self.log.info('rigctld is not available')
+                self.checkHamlibLabel.setText(self.tr('rigctld is not available'))
                 self.settings.setValue('cat/rigctldPath', '')
                 self.hamlibPathLineEdit.setText('')
+                return
 
             first = True
             rig_pos = 0
