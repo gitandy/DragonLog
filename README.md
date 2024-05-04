@@ -37,7 +37,8 @@ Features
 
 Installation
 ------------
-The installation requires a python installation (>= 3.9).
+The installation requires a python installation (>= 3.10). 
+On Linux you may have to install libxcb-cursor0.
     
     # python3 -m pip install DragonLog
 
@@ -55,6 +56,7 @@ Or if your python scripts folder is on PATH you can start DragonLog with
 
 
 For windows there is also an installable MSI and ZIP package available for convenience.
+
 
 First start
 -----------
