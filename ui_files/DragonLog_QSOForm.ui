@@ -946,6 +946,7 @@ This is not the QSL manager/bureau address.</string>
  <tabstops>
   <tabstop>callSignLineEdit</tabstop>
   <tabstop>searchHamQTHPushButton</tabstop>
+  <tabstop>searchQRZCQPushButton</tabstop>
   <tabstop>RSTSentLineEdit</tabstop>
   <tabstop>RSTRcvdLineEdit</tabstop>
   <tabstop>bandComboBox</tabstop>
