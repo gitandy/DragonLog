@@ -328,6 +328,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         self.hamQTHCheckBox.setChecked(False)
 
+        self.contestComboBox.setCurrentText('')
+        self.sentQSOSpinBox.setValue(0)
+        self.rcvdQSOSpinBox.setValue(0)
+        self.rcvdDataLineEdit.clear()
+
         self.toolBox.setCurrentIndex(0)
         self.callSignLineEdit.setFocus()
 
@@ -628,6 +633,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             lotw_sent,
             lotw_rcvd,
             'Y' if self.hamQTHCheckBox.isChecked() else 'N',
+            self.contestComboBox.currentText(),
+            self.sentQSOSpinBox.value(),
+            self.rcvdQSOSpinBox.value(),
+            self.rcvdDataLineEdit.text(),
         )
 
     @values.setter
@@ -738,6 +747,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.hamQTHCheckBox.setChecked(True)
             case _:
                 self.hamQTHCheckBox.setChecked(False)
+
+        self.contestComboBox.setCurrentText(values['contest_id'])
+        self.sentQSOSpinBox.setValue(values['ctx_qso_id'] if values['ctx_qso_id'] else -1)
+        self.rcvdQSOSpinBox.setValue(values['crx_qso_id'] if values['crx_qso_id'] else -1)
+        self.rcvdDataLineEdit.setText(values['crx_data'])
 
     def searchHamQTH(self):
         self.searchCallbook(self.callbook_hamqth)

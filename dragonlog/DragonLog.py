@@ -98,7 +98,7 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
         self.no_icon = QtGui.QIcon(self.parent().searchFile('icons:no.png'))
 
-    def data(self, idx, role = QtCore.Qt.ItemDataRole.DisplayRole):
+    def data(self, idx, role=QtCore.Qt.ItemDataRole.DisplayRole):
         value = super().data(idx, role)
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
             if idx.column() in self.status_cols and value in self.status_translation:
@@ -118,12 +118,15 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
 
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
-    __sql_cols__ = ('id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
-                    'rst_sent', 'rst_rcvd', 'band', 'mode', 'submode', 'freq', 'channel', 'power', 'propagation',
-                    'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
-                    'remarks', 'comments', 'dist',
-                    'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
-                    'eqsl_sent', 'eqsl_rcvd', 'lotw_sent', 'lotw_rcvd', 'hamqth')
+    __sql_cols__ = (
+        'id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
+        'rst_sent', 'rst_rcvd', 'band', 'mode', 'submode', 'freq', 'channel', 'power', 'propagation',
+        'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
+        'remarks', 'comments', 'dist',
+        'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
+        'eqsl_sent', 'eqsl_rcvd', 'lotw_sent', 'lotw_rcvd', 'hamqth',
+        'contest_id', 'ctx_qso_id', 'crx_qso_id', 'crx_data',
+    )
 
     __adx_cols__ = (
         'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
@@ -131,7 +134,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
         'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE',
         'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
-        'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'LOTW_QSL_SENT', 'LOTW_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS')
+        'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'LOTW_QSL_SENT', 'LOTW_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS',
+        'CONTEST_ID', 'STX', 'SRX', 'SRX_STRING',
+    )
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
                             "id"    INTEGER PRIMARY KEY NOT NULL,
@@ -168,7 +173,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "eqsl_rcvd"   TEXT,
                             "lotw_sent"   TEXT,
                             "lotw_rcvd"   TEXT,
-                            "hamqth"   TEXT
+                            "hamqth"   TEXT,
+                            "contest_id" TEXT,
+                            "ctx_qso_id" INTEGER,
+                            "crx_qso_id" INTEGER,
+                            "crx_data" TEXT
                         );'''
 
     __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
@@ -299,6 +308,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('LoTW sent'),
             self.tr('LoTW rcvd'),
             self.tr('HamQTH'),
+            self.tr('Contest'),
+            self.tr('Tx QSO ID'),
+            self.tr('Rx QSO ID'),
+            self.tr('Rx data'),
         )
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
@@ -484,7 +497,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             model = TranslatedTableModel(self, self.__db_con__,
                                          status_cols=tuple(range(self.__sql_cols__.index('qsl_sent'),
-                                                                 self.__sql_cols__.index('hamqth')+1)),
+                                                                 self.__sql_cols__.index('hamqth') + 1)),
                                          prop_col=self.__sql_cols__.index('propagation'),
                                          prop_tr=self.prop)
             model.setTable('qsos')
@@ -919,6 +932,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['LOTW_QSL_RCVD'] = query.value(self.__sql_cols__.index('lotw_rcvd'))
             if query.value(self.__sql_cols__.index('hamqth')):
                 record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
+            if query.value(self.__sql_cols__.index('contest_id')):
+                record['CONTEST_ID'] = query.value(self.__sql_cols__.index('contest_id'))
+            if query.value(self.__sql_cols__.index('ctx_qso_id')):
+                record['STX'] = query.value(self.__sql_cols__.index('ctx_qso_id'))
+            if query.value(self.__sql_cols__.index('crx_qso_id')):
+                record['SRX'] = query.value(self.__sql_cols__.index('crx_qso_id'))
+            if query.value(self.__sql_cols__.index('crx_data')):
+                record['SRX_STRING'] = query.value(self.__sql_cols__.index('crx_data'))
 
             if not record['APP']:
                 record.pop('APP')
