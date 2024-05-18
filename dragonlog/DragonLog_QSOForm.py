@@ -1019,3 +1019,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
                                               'lotw/username', '') + f'\n{exc}')
+
+    def keyPressEvent(self, e):
+        if e.key() != QtCore.Qt.Key.Key_Escape:
+            super().keyPressEvent(e)
