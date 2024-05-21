@@ -6,6 +6,7 @@ REGEX_RSTFIELD = re.compile(r'([1-5][1-9][1-9aAcCkKmMsSxX]?)|([rR]?[-+]?[0-9]{1,
 REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
 REGEX_NONASCII = re.compile(r'[ -~\n\r]*(.)?')
 REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3])):([0-5][0-9])(:[0-5][0-9])?')
+REGEX_DATE = re.compile(r'([1-9][0-9]{3})-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))')
 
 def check_format(exp: re.Pattern, txt: str) -> bool:
     """Test the given text against a regular expression

@@ -22,7 +22,7 @@ except ImportError:
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
-from .RegEx import find_non_ascii
+from .RegEx import find_non_ascii, check_format, REGEX_DATE
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
@@ -216,9 +216,21 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             log_dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
                                                                        QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
-            self.addDockWidget(log_dock_area,
-                               self.logDockWidget)
+            self.addDockWidget(log_dock_area, self.logDockWidget)
         self.logDockWidget.setVisible(bool(int(self.settings.value('ui/show_log', 0))))
+
+        if int(self.settings.value('ui/filter_dock_float', 0)):
+            self.filterDockWidget.setFloating(True)
+            self.filterDockWidget.resize(10, 10)
+        else:
+            filter_dock_area = self.int2dock_area(int(self.settings.value('ui/filter_dock_area',
+                                                                       QtCore.Qt.DockWidgetArea.TopDockWidgetArea.value)))
+            self.addDockWidget(filter_dock_area, self.filterDockWidget)
+        self.filterDockWidget.setVisible(bool(int(self.settings.value('ui/show_filter', 0))))
+
+        self.__table_filter__ = ''
+        self.filterDockWidget.visibilityChanged.connect(self.resetTableFilter)
+        self.filterDockWidget.dockLocationChanged.connect(self.filterWidgetResize)
 
         self.dummy_status = QtWidgets.QLabel()
         self.statusBar().addPermanentWidget(self.dummy_status)
@@ -238,6 +250,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         with open(self.searchFile('data:color_map.json')) as cmj:
             color_map: dict = json.load(cmj)
         self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
+
+        self.fBandComboBox.insertItem(0, '')
+        self.fModeComboBox.insertItem(0, '')
+        self.fBandComboBox.insertItems(1, self.bands.keys())
+        self.fModeComboBox.insertItems(1, self.modes['AFU'].keys())
 
         self.prop: dict = {
             '': '',
@@ -372,6 +389,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 dock_area = QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
 
         return dock_area
+
+    def filterWidgetResize(self):
+        if self.filterDockWidget.isFloating():
+            self.filterDockWidget.resize(10,10)
 
     def showSettings(self):
         if self.settings_form.exec():
@@ -552,20 +573,52 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             return "SELECT * FROM qsos"
 
     def getFilter(self):
-        recent_filter = self.settings.value('ui/recent_qsos', self.tr('Show all'))
-        if recent_filter == self.tr('Last week'):
-            return "DATE(date_time) > DATE('now', '-7 days')"
-        elif recent_filter == self.tr('Last month'):
-            return "DATE(date_time) > DATE('now', '-31 days')"
-        elif recent_filter == self.tr('Last half year'):
-            return "DATE(date_time) > DATE('now', '-183 days')"
-        elif recent_filter == self.tr('Last year'):
-            return "DATE(date_time) > DATE('now', '-365 days')"
+        if self.__table_filter__:
+            return self.__table_filter__
         else:
-            return ""
+            recent_filter = self.settings.value('ui/recent_qsos', self.tr('Show all'))
+            if recent_filter == self.tr('Last week'):
+                return "DATE(date_time) > DATE('now', '-7 days')"
+            elif recent_filter == self.tr('Last month'):
+                return "DATE(date_time) > DATE('now', '-31 days')"
+            elif recent_filter == self.tr('Last half year'):
+                return "DATE(date_time) > DATE('now', '-183 days')"
+            elif recent_filter == self.tr('Last year'):
+                return "DATE(date_time) > DATE('now', '-365 days')"
+            else:
+                return ""
 
     def setFilter(self):
         self.QSOTableView.model().setFilter(self.getFilter())
+
+    def setTableFilter(self):
+        filter_set = []
+
+        if self.fDateFromLineEdit.text() and check_format(REGEX_DATE, self.fDateFromLineEdit.text()):
+            filter_set.append(f"DATE(date_time) >= DATE('{self.fDateFromLineEdit.text()}')")
+        if self.fDateToLineEdit.text() and check_format(REGEX_DATE, self.fDateToLineEdit.text()):
+            filter_set.append(f"DATE(date_time) <= DATE('{self.fDateToLineEdit.text()}')")
+
+        if self.fCallsignLineEdit.text():
+            filter_set.append(f'call_sign LIKE "%{self.fCallsignLineEdit.text()}%"')
+        if self.fBandComboBox.currentText():
+            filter_set.append(f'band = "{self.fBandComboBox.currentText()}"')
+        if self.fModeComboBox.currentText():
+            filter_set.append(f'mode = "{self.fModeComboBox.currentText()}"')
+
+        self.__table_filter__ = ' AND '.join(filter_set)
+
+        self.setFilter()
+
+    def resetTableFilter(self):
+        self.__table_filter__ = ''
+        self.setFilter()
+
+        self.fDateFromLineEdit.clear()
+        self.fDateToLineEdit.clear()
+        self.fCallsignLineEdit.clear()
+        self.fBandComboBox.setCurrentIndex(0)
+        self.fModeComboBox.setCurrentIndex(0)
 
     def ctrlHamlib(self, start):
         self.settings_form.ctrlRigctld(start)
@@ -1412,6 +1465,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings.setValue('ui/show_log', int(self.logDockWidget.isVisible()))
         self.settings.setValue('ui/log_dock_area', self.dockWidgetArea(self.logDockWidget).value)
         self.settings.setValue('ui/log_dock_float', int(self.logDockWidget.isFloating()))
+
+        self.settings.setValue('ui/show_filter', int(self.filterDockWidget.isVisible()))
+        self.settings.setValue('ui/filter_dock_area', self.dockWidgetArea(self.filterDockWidget).value)
+        self.settings.setValue('ui/filter_dock_float', int(self.filterDockWidget.isFloating()))
 
         self.settings.setValue('ui/show_qso', int(self.qsoDockWidget.isVisible()))
         self.settings.setValue('ui/qso_dock_area', self.dockWidgetArea(self.qsoDockWidget).value)
