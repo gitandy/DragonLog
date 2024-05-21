@@ -334,7 +334,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.rcvdDataLineEdit.clear()
 
         self.toolBox.setCurrentIndex(0)
-        self.callSignLineEdit.setFocus()
 
     def reset(self):
         self.autoDateCheckBox.setEnabled(True)

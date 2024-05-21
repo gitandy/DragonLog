@@ -628,6 +628,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form.setChangeMode(False)
         self.qso_form.reset()
         self.qsoDockWidget.setVisible(True)
+        self.qso_form.callSignLineEdit.setFocus()
 
     def fetchQSO(self):
         self.log.info('Logging QSO...')
