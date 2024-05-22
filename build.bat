@@ -28,6 +28,7 @@ pyuic6 DragonLog_MainWindow.ui -o ..\dragonlog\DragonLog_MainWindow_ui.py
 pyuic6 DragonLog_QSOForm.ui -o ..\dragonlog\DragonLog_QSOForm_ui.py
 pyuic6 DragonLog_Settings.ui -o ..\dragonlog\DragonLog_Settings_ui.py
 pyuic6 DragonLog_AppSelect.ui -o ..\dragonlog\DragonLog_AppSelect_ui.py
+pyuic6 ListEdit.ui -o ..\dragonlog\ListEdit_ui.py
 cd ..
 
 pylupdate6 -no-obsolete dragonlog ui_files -ts i18n\DragonLog_templ.ts

@@ -128,7 +128,18 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             w.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
+        self.refreshRadioList()
+        self.refreshAntennaList()
+
         self.clear()
+
+    def refreshRadioList(self):
+        self.radioComboBox.clear()
+        self.radioComboBox.insertItems(0, self.settings.value('listings/rigs'))
+
+    def refreshAntennaList(self):
+        self.antennaComboBox.clear()
+        self.antennaComboBox.insertItems(0, self.settings.value('listings/antennas'))
 
     def rigctldChanged(self, state):
         self.__last_mode__ = ''
@@ -341,6 +352,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.stationGroupBox.setChecked(True)
         self.identityGroupBox.setChecked(True)
 
+        self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
+        self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
+
     def setChangeMode(self, activate=True):
         self.__change_mode__ = activate
         self.startTimers(not activate)
@@ -388,8 +402,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.channelComboBox.setCurrentIndex(0)
 
             if self.stationGroupBox.isChecked():
-                self.radioLineEdit.setText(self.settings.value('station_cb/radio', ''))
-                self.antennaLineEdit.setText(self.settings.value('station_cb/antenna', ''))
+                self.radioComboBox.setCurrentText(self.settings.value('station_cb/radio', ''))
+                self.antennaComboBox.setCurrentText(self.settings.value('station_cb/antenna', ''))
 
             if self.identityGroupBox.isChecked():
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
@@ -406,8 +420,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.qslPage.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
-                self.radioLineEdit.setText(self.settings.value('station/radio', ''))
-                self.antennaLineEdit.setText(self.settings.value('station/antenna', ''))
+                self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
+                self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
 
             if self.identityGroupBox.isChecked():
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
@@ -433,11 +447,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.ownLocatorLineEdit.setText(self.settings.value('station/locator', ''))
 
             if self.bandComboBox.currentText() == '11m':
-                self.radioLineEdit.setText(self.settings.value('station_cb/radio', ''))
-                self.antennaLineEdit.setText(self.settings.value('station_cb/antenna', ''))
+                self.radioComboBox.setCurrentText(self.settings.value('station_cb/radio', ''))
+                self.antennaComboBox.setCurrentText(self.settings.value('station_cb/antenna', ''))
             else:
-                self.radioLineEdit.setText(self.settings.value('station/radio', ''))
-                self.antennaLineEdit.setText(self.settings.value('station/antenna', ''))
+                self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
+                self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
 
     def identityChanged(self, checked):
         if checked:
@@ -617,8 +631,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.ownNameLineEdit.text(),
             self.ownQTHLineEdit.text(),
             self.ownLocatorLineEdit.text(),
-            self.radioLineEdit.text(),
-            self.antennaLineEdit.text(),
+            self.radioComboBox.currentText(),
+            self.antennaComboBox.currentText(),
             self.remarksTextEdit.toPlainText().strip(),
             self.commentLineEdit.text().strip(),
             self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text()),
@@ -709,8 +723,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.ownNameLineEdit.setText(values['own_name'])
         self.ownQTHLineEdit.setText(values['own_qth'])
         self.ownLocatorLineEdit.setText(values['own_locator'])
-        self.radioLineEdit.setText(values['radio'])
-        self.antennaLineEdit.setText(values['antenna'])
+        self.radioComboBox.setCurrentText(values['radio'])
+        self.antennaComboBox.setCurrentText(values['antenna'])
         self.remarksTextEdit.setText(values['remarks'])
         self.commentLineEdit.setText(values['comments'].replace('\n', ' ').replace('\r', ''))
 

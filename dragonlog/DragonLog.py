@@ -224,7 +224,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.filterDockWidget.resize(10, 10)
         else:
             filter_dock_area = self.int2dock_area(int(self.settings.value('ui/filter_dock_area',
-                                                                       QtCore.Qt.DockWidgetArea.TopDockWidgetArea.value)))
+                                                                          QtCore.Qt.DockWidgetArea.TopDockWidgetArea.value)))
             self.addDockWidget(filter_dock_area, self.filterDockWidget)
         self.filterDockWidget.setVisible(bool(int(self.settings.value('ui/show_filter', 0))))
 
@@ -375,6 +375,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.lotw = LoTW(self.log)
 
+        self.settings_form.settingsStored.connect(self.qso_form.refreshRadioList)
+        self.settings_form.settingsStored.connect(self.qso_form.refreshAntennaList)
+
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
         dock_area = QtCore.Qt.DockWidgetArea.NoDockWidgetArea
@@ -392,7 +395,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def filterWidgetResize(self):
         if self.filterDockWidget.isFloating():
-            self.filterDockWidget.resize(10,10)
+            self.filterDockWidget.resize(10, 10)
 
     def showSettings(self):
         if self.settings_form.exec():

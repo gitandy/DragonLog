@@ -29,7 +29,7 @@
    <item>
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="mainPage">
       <property name="geometry">
@@ -381,22 +381,22 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
-               <widget class="QLineEdit" name="radioLineEdit">
+               <widget class="QComboBox" name="radioComboBox">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="placeholderText">
-                 <string>Radio</string>
+                <property name="editable">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="antennaLineEdit">
+               <widget class="QComboBox" name="antennaComboBox">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="placeholderText">
-                 <string>Antenna</string>
+                <property name="editable">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -1087,8 +1087,6 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>stationGroupBox</tabstop>
   <tabstop>ownQTHLineEdit</tabstop>
   <tabstop>ownLocatorLineEdit</tabstop>
-  <tabstop>radioLineEdit</tabstop>
-  <tabstop>antennaLineEdit</tabstop>
   <tabstop>timeNowPushButton</tabstop>
   <tabstop>autoDateCheckBox</tabstop>
   <tabstop>dateOnEdit</tabstop>
@@ -1182,38 +1180,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>168</x>
      <y>103</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>radioLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>97</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>100</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>antennaLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>97</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>266</x>
-     <y>133</y>
     </hint>
    </hints>
   </connection>
@@ -1630,6 +1596,38 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>249</x>
      <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>antennaComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>348</x>
+     <y>334</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>334</y>
     </hint>
    </hints>
   </connection>
