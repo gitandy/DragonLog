@@ -9,7 +9,7 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
-from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call
+from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call, check_qth
 from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookType, CallBookData,
                        SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException,
                        QSORejectedException, CommunicationException)
@@ -42,6 +42,22 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.qso_id = None
 
         self.__old_values__ = {}
+
+        self.palette_default = QtGui.QPalette()
+        self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                      QtGui.QColor(255, 255, 255))
+        self.palette_ok = QtGui.QPalette()
+        self.palette_ok.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                 QtGui.QColor(204, 255, 204))
+        self.palette_empty = QtGui.QPalette()
+        self.palette_empty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                    QtGui.QColor(255, 255, 204))
+        self.palette_faulty = QtGui.QPalette()
+        self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                     QtGui.QColor(255, 204, 204))
+        self.palette_worked = QtGui.QPalette()
+        self.palette_worked.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                                     QtGui.QColor(204, 204, 255))
 
         self.cb_channels = cb_channels
         self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
@@ -81,22 +97,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.timeTimer = QtCore.QTimer(self)
         self.timeTimer.timeout.connect(self.refreshTime)
 
-        self.palette_default = QtGui.QPalette()
-        self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                      QtGui.QColor(255, 255, 255))
-        self.palette_ok = QtGui.QPalette()
-        self.palette_ok.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                 QtGui.QColor(204, 255, 204))
-        self.palette_empty = QtGui.QPalette()
-        self.palette_empty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                    QtGui.QColor(255, 255, 204))
-        self.palette_faulty = QtGui.QPalette()
-        self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                     QtGui.QColor(255, 204, 204))
-        self.palette_worked = QtGui.QPalette()
-        self.palette_worked.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                     QtGui.QColor(204, 204, 255))
-
         self.worked_dialog: QtWidgets.QListWidget = None
         self._create_worked_dlg_()
 
@@ -128,10 +128,16 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             w.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents)
             w.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
+        self.refreshQTHList()
         self.refreshRadioList()
         self.refreshAntennaList()
 
         self.clear()
+
+    def refreshQTHList(self):
+        self.ownQTHComboBox.clear()
+        if self.settings.value('listings/qths'):
+            self.ownQTHComboBox.insertItems(0, self.settings.value('listings/qths'))
 
     def refreshRadioList(self):
         self.radioComboBox.clear()
@@ -295,9 +301,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.callSignChanged('')
         self.locatorChanged('')
         self.ownCallSignChanged(self.ownCallSignLineEdit.text())
-        self.ownLocatorChanged(self.ownLocatorLineEdit.text())
         self.rstSentChanged(self.RSTSentLineEdit.text())
         self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
+        self.ownQTHChanged(self.ownQTHComboBox.currentText())
 
         dt = QtCore.QDateTime.currentDateTimeUtc()
         self.dateOffEdit.setDate(dt.date())
@@ -445,8 +451,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
     def stationChanged(self, checked):
         if checked:
-            self.ownQTHLineEdit.setText(self.settings.value('station/QTH', ''))
-            self.ownLocatorLineEdit.setText(self.settings.value('station/locator', ''))
+            self.ownQTHComboBox.setCurrentText(self.settings.value('station/qth_loc', ''))
 
             if self.bandComboBox.currentText() == '11m':
                 self.radioComboBox.setCurrentText(self.settings.value('station_cb/radio', ''))
@@ -523,13 +528,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         else:
             self.ownCallSignLineEdit.setPalette(self.palette_faulty)
 
-    def ownLocatorChanged(self, txt):
+    def ownQTHChanged(self, txt):
         if not txt:
-            self.ownLocatorLineEdit.setPalette(self.palette_empty)
-        elif check_format(REGEX_LOCATOR, txt):
-            self.ownLocatorLineEdit.setPalette(self.palette_ok)
+            self.ownQTHComboBox.setPalette(self.palette_empty)
+        elif check_qth(txt.strip()):
+            self.ownQTHComboBox.setPalette(self.palette_ok)
         else:
-            self.ownLocatorLineEdit.setPalette(self.palette_faulty)
+            self.ownQTHComboBox.setPalette(self.palette_faulty)
 
     def timeOnChanged(self, txt):
         if not txt:
@@ -586,6 +591,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if self.propComboBox.currentText():
             prop = self.prop_trans[self.propComboBox.currentText()]
 
+        own_qth = self.ownQTHComboBox.currentText()
+        own_locator = ''
+        if check_qth(self.ownQTHComboBox.currentText()):
+            own_qth, own_locator = check_qth(self.ownQTHComboBox.currentText())
+
         qsl_via = ''
         qsl_path = ''
         qsl_msg = ''
@@ -631,13 +641,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.powerSpinBox.value() if self.powerSpinBox.value() > 0 else '',
             prop,
             self.ownNameLineEdit.text(),
-            self.ownQTHLineEdit.text(),
-            self.ownLocatorLineEdit.text(),
+            own_qth,
+            own_locator,
             self.radioComboBox.currentText(),
             self.antennaComboBox.currentText(),
             self.remarksTextEdit.toPlainText().strip(),
             self.commentLineEdit.text().strip(),
-            self.calc_distance(self.locatorLineEdit.text(), self.ownLocatorLineEdit.text()),
+            self.calc_distance(self.locatorLineEdit.text(), own_locator),
             qsl_via,
             qsl_path,
             qsl_msg,
@@ -691,9 +701,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.callSignChanged(self.callSignLineEdit.text())
         self.locatorChanged(self.locatorLineEdit.text())
         self.ownCallSignChanged(self.ownCallSignLineEdit.text())
-        self.ownLocatorChanged(self.ownLocatorLineEdit.text())
         self.rstSentChanged(self.RSTSentLineEdit.text())
         self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
+        self.ownQTHChanged(self.ownQTHComboBox.currentText())
 
         band = values['band']
         self.bandComboBox.setCurrentText(band)
@@ -723,8 +733,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.propComboBox.setCurrentText(self.prop[values['propagation']])
 
         self.ownNameLineEdit.setText(values['own_name'])
-        self.ownQTHLineEdit.setText(values['own_qth'])
-        self.ownLocatorLineEdit.setText(values['own_locator'])
+        self.ownQTHComboBox.setCurrentText(f"{values['own_qth']} ({values['own_locator']})")
         self.radioComboBox.setCurrentText(values['radio'])
         self.antennaComboBox.setCurrentText(values['antenna'])
         self.remarksTextEdit.setText(values['remarks'])
@@ -934,8 +943,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             record['FREQ'] = f'{self.freqDoubleSpinBox.value() / 1000:0.3f}'
         if self.powerSpinBox.value() > 0:
             record['TX_PWR'] = self.powerSpinBox.value()
-        if self.ownLocatorLineEdit.text():
-            record['MY_GRIDSQUARE'] = self.ownLocatorLineEdit.text()
+        if check_qth(self.ownQTHComboBox.currentText()):
+            record['MY_GRIDSQUARE'] = check_qth(self.ownQTHComboBox.currentText())[1]
         if self.remarksTextEdit.toPlainText().strip() and not bool(
                 self.settings.value('imp_exp/own_notes_adif', 0)):
             record['NOTES'] = self.dragonlog.replaceNonASCII(self.remarksTextEdit.toPlainText().strip())

@@ -375,6 +375,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.lotw = LoTW(self.log)
 
+        self.settings_form.settingsStored.connect(self.qso_form.refreshQTHList)
         self.settings_form.settingsStored.connect(self.qso_form.refreshRadioList)
         self.settings_form.settingsStored.connect(self.qso_form.refreshAntennaList)
 

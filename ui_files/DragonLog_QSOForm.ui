@@ -357,22 +357,15 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
-               <widget class="QLineEdit" name="ownQTHLineEdit">
+               <widget class="QComboBox" name="ownQTHComboBox">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="placeholderText">
-                 <string>Own QTH</string>
+                <property name="autoFillBackground">
+                 <bool>true</bool>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="ownLocatorLineEdit">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Own locator</string>
+                <property name="editable">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -1085,8 +1078,6 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>ownCallSignLineEdit</tabstop>
   <tabstop>ownNameLineEdit</tabstop>
   <tabstop>stationGroupBox</tabstop>
-  <tabstop>ownQTHLineEdit</tabstop>
-  <tabstop>ownLocatorLineEdit</tabstop>
   <tabstop>timeNowPushButton</tabstop>
   <tabstop>autoDateCheckBox</tabstop>
   <tabstop>dateOnEdit</tabstop>
@@ -1148,38 +1139,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>111</x>
      <y>263</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ownLocatorLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>97</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>469</x>
-     <y>103</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ownQTHLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>97</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>168</x>
-     <y>103</y>
     </hint>
    </hints>
   </connection>
@@ -1336,22 +1295,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="sourcelabel">
      <x>163</x>
      <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>226</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ownLocatorLineEdit</sender>
-   <signal>textEdited(QString)</signal>
-   <receiver>QSOForm</receiver>
-   <slot>ownLocatorChanged(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>469</x>
-     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -1631,6 +1574,38 @@ This is not the QSL manager/bureau address.</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ownQTHComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ownQTHComboBox</sender>
+   <signal>editTextChanged(QString)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>ownQTHChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>304</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>bandChanged(QString)</slot>
@@ -1640,7 +1615,6 @@ This is not the QSL manager/bureau address.</string>
   <slot>rstRcvdChanged(QString)</slot>
   <slot>rstSentChanged(QString)</slot>
   <slot>locatorChanged(QString)</slot>
-  <slot>ownLocatorChanged(QString)</slot>
   <slot>callSignChanged(QString)</slot>
   <slot>ownCallSignChanged(QString)</slot>
   <slot>setWorkedBefore()</slot>
@@ -1659,5 +1633,6 @@ This is not the QSL manager/bureau address.</string>
   <slot>timeOffChanged(QString)</slot>
   <slot>autoDateCBChanged(bool)</slot>
   <slot>searchQRZCQ()</slot>
+  <slot>ownQTHChanged(QString)</slot>
  </slots>
 </ui>

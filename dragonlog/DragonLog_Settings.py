@@ -5,13 +5,13 @@ import logging
 import platform
 import subprocess
 
-import maidenhead
+# import maidenhead
 from PyQt6 import QtWidgets, QtCore, QtGui
 import keyring
 
 from . import DragonLog_Settings_ui
 from .Logger import Logger
-from .RegEx import REGEX_CALL, REGEX_LOCATOR, check_format
+from .RegEx import REGEX_CALL, check_format
 from .CallBook import CallBookType
 from .ListEdit import ListEdit
 
@@ -40,11 +40,15 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.logger = logger
         self.log.debug('Initialising...')
 
+        self.qthsListEdit = ListEdit(self.listingsWidget, self.tr('QTHs & locators'))
+        self.qthsListEdit.setToolTip(self.tr('Type in as: "City (Locator)", i.e. "Koblenz (JO30ti)"'))
+        self.listingsWidget.layout().addWidget(self.qthsListEdit, 0, 0, 1, 2)
+        self.qthsListEdit.listChanged.connect(self.refreshQTHsComboBox)
         self.rigsListEdit = ListEdit(self.listingsWidget, self.tr('Radios'))
-        self.listingsWidget.layout().addWidget(self.rigsListEdit, 0, 0, 1, 1)
+        self.listingsWidget.layout().addWidget(self.rigsListEdit, 1, 0, 1, 1)
         self.rigsListEdit.listChanged.connect(self.refreshRigsComboBox)
         self.antsListEdit = ListEdit(self.listingsWidget, self.tr('Antennas'))
-        self.listingsWidget.layout().addWidget(self.antsListEdit, 0, 1, 1, 1)
+        self.listingsWidget.layout().addWidget(self.antsListEdit, 1, 1, 1, 1)
         self.antsListEdit.listChanged.connect(self.refreshAntsComboBox)
 
         self.settings = settings
@@ -94,6 +98,11 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.callbooks = dict([(cbt.value, cbt.name) for cbt in set(CallBookType)])
         self.callbookComboBox.insertItems(0, self.callbooks.keys())
 
+    def refreshQTHsComboBox(self):
+        self.qthComboBox.clear()
+        self.qthComboBox.insertItems(0, self.qthsListEdit.items())
+        self.qthComboBox.setCurrentText(self.settings.value('station/qth_loc', ''))
+
     def refreshRigsComboBox(self):
         self.radioComboBox.clear()
         self.radioComboBox.insertItems(0, self.rigsListEdit.items())
@@ -103,11 +112,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.antennaComboBox.clear()
         self.antennaComboBox.insertItems(0, self.antsListEdit.items())
         self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
-
-    def calcLocator(self):
-        self.locatorLineEdit.setText(maidenhead.to_maiden(self.latitudeDoubleSpinBox.value(),
-                                                          self.longitudeDoubleSpinBox.value(),
-                                                          4))
 
     def checkRigctld(self):
         if self.rigctld and self.rigctld.poll():
@@ -283,14 +287,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.rig_caps = []
             self.rigctldStatusChanged.emit(False)
 
-    def locatorChanged(self, txt):
-        if not txt:
-            self.locatorLineEdit.setPalette(self.palette_empty)
-        elif check_format(REGEX_LOCATOR, txt):
-            self.locatorLineEdit.setPalette(self.palette_ok)
-        else:
-            self.locatorLineEdit.setPalette(self.palette_faulty)
-
     def callSignChanged(self, txt):
         if not txt:
             self.callsignLineEdit.setPalette(self.palette_empty)
@@ -328,6 +324,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
         self.catBaudComboBox.setCurrentText(self.settings.value('cat/baud', ''))
 
+        self.qthsListEdit.clear()
+        self.qthsListEdit.setItems(self.settings.value('listings/qths'))
         self.rigsListEdit.clear()
         self.rigsListEdit.setItems(self.settings.value('listings/rigs'))
         self.antsListEdit.clear()
@@ -335,8 +333,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.callsignLineEdit.setText(self.settings.value('station/callSign', ''))
         self.nameLineEdit.setText(self.settings.value('station/name', ''))
-        self.QTHLineEdit.setText(self.settings.value('station/QTH', ''))
-        self.locatorLineEdit.setText(self.settings.value('station/locator', ''))
+        self.qthComboBox.setCurrentText(self.settings.value('station/qth_loc', ''))
         self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
         self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
 
@@ -415,11 +412,11 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.settings.setValue('station/callSign', self.callsignLineEdit.text())
         self.settings.setValue('station/name', self.nameLineEdit.text())
-        self.settings.setValue('station/QTH', self.QTHLineEdit.text())
-        self.settings.setValue('station/locator', self.locatorLineEdit.text())
+        self.settings.setValue('station/qth_loc', self.qthComboBox.currentText())
         self.settings.setValue('station/radio', self.radioComboBox.currentText())
         self.settings.setValue('station/antenna', self.antennaComboBox.currentText())
 
+        self.settings.setValue('listings/qths', self.qthsListEdit.items())
         self.settings.setValue('listings/rigs', self.rigsListEdit.items())
         self.settings.setValue('listings/antennas', self.antsListEdit.items())
 

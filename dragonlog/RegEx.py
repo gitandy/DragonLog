@@ -7,6 +7,8 @@ REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
 REGEX_NONASCII = re.compile(r'[ -~\n\r]*(.)?')
 REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3])):([0-5][0-9])(:[0-5][0-9])?')
 REGEX_DATE = re.compile(r'([1-9][0-9]{3})-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3[0-2]))')
+REGEX_QTH = re.compile(r'(.*)? \(([a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?)\)')
+
 
 def check_format(exp: re.Pattern, txt: str) -> bool:
     """Test the given text against a regular expression
@@ -15,7 +17,8 @@ def check_format(exp: re.Pattern, txt: str) -> bool:
     :return: true if pattern matches"""
     return bool(re.fullmatch(exp, txt))
 
-def check_call(call: str) -> None|tuple:
+
+def check_call(call: str) -> None | tuple:
     """Test a call sign against a regular expression
     :param call: a call sign
     :return: tuple of parts ('Country prefix/', 'Call sign', '/Operation suffix')"""
@@ -24,5 +27,16 @@ def check_call(call: str) -> None|tuple:
     if m:
         return m.groups()
 
+
 def find_non_ascii(text: str) -> set:
     return set(re.findall(REGEX_NONASCII, text))
+
+
+def check_qth(qth_loc: str) -> None | tuple:
+    """Test a QTH + locator against a regular expression
+    :param qth_loc: "QTH (locator)"
+    :return: tuple of parts ('QTH', 'locator')"""
+
+    m = re.fullmatch(REGEX_QTH, qth_loc.strip())
+    if m:
+        return m.groups()[:2]
