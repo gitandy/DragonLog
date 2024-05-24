@@ -135,11 +135,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
     def refreshRadioList(self):
         self.radioComboBox.clear()
-        self.radioComboBox.insertItems(0, self.settings.value('listings/rigs'))
+        if self.settings.value('listings/rigs'):
+            self.radioComboBox.insertItems(0, self.settings.value('listings/rigs'))
 
     def refreshAntennaList(self):
         self.antennaComboBox.clear()
-        self.antennaComboBox.insertItems(0, self.settings.value('listings/antennas'))
+        if self.settings.value('listings/antennas'):
+            self.antennaComboBox.insertItems(0, self.settings.value('listings/antennas'))
 
     def rigctldChanged(self, state):
         self.__last_mode__ = ''

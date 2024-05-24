@@ -31,13 +31,14 @@ class ListEdit(QtWidgets.QWidget, ListEdit_ui.Ui_ListEditForm):
         return items
 
     def setItems(self, items: list[str]):
-        for item_str in items:
-            if item_str:
-                item = QtWidgets.QListWidgetItem(item_str)
-                item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
-                self.listWidget.addItem(item)
-                self.delPushButton.setEnabled(True)
-                self.listChanged.emit()
+        if items:
+            for item_str in items:
+                if item_str:
+                    item = QtWidgets.QListWidgetItem(item_str)
+                    item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
+                    self.listWidget.addItem(item)
+                    self.delPushButton.setEnabled(True)
+                    self.listChanged.emit()
 
     def addEmptyItem(self):
         item = QtWidgets.QListWidgetItem(self.tr('(empty)'))
