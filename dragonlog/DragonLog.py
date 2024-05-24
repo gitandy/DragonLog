@@ -53,7 +53,7 @@ class DatabaseWriteException(Exception):
 
 
 class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
-    """A delegate to change background color depending on a columns conntent and translation of different columns"""
+    """A delegate to change background color depending on a columns content and translation of different columns"""
 
     def __init__(self, color_map: dict, column: int):
         super(BackgroundBrushDelegate, self).__init__()
@@ -507,7 +507,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.__db_con__.close()
 
             self.__db_con__.setDatabaseName(db_file)
-            if self.__db_con__.lastError().text():
+            if self.__db_con__.lastError().text():  # TODO: Rebase artifact???
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
             self.__db_con__.open()
             self.__db_con__.exec(self.__db_create_stmnt__)
@@ -763,7 +763,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 writer.writerow(row)
 
     def exportExcel(self, file):
-        self.log.info('Exporting to Excel...')
+        self.log.info('Exporting to XLSX...')
         xl_wb = openpyxl.Workbook()
         xl_wb.properties.title = self.tr('Exported QSO log')
         xl_wb.properties.description = f'{__prog_name__} {__version__}'
@@ -1106,78 +1106,112 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
 
     def logImportExcel(self, file):
-        self.log.info('Importing from Excel...')
+        self.log.info('Importing from XLSX...')
 
         xl_wb = openpyxl.load_workbook(file, read_only=True, data_only=True)
         xl_ws = xl_wb.active
 
-        ln = 0
-        for row in xl_ws.iter_rows():
-            ln += 1
+        lines = 0
+
+        for ln, row in enumerate(xl_ws.iter_rows(), 1):
             if ln == 1:  # Skip header
                 continue
 
             row = list(row)
 
-            if len(row) >= len(self.__sql_cols__) and row[1].value:
-                query = QtSql.QSqlQuery(self.__db_con__)
-                query.prepare(self.__db_insert_stmnt__)
-
-                for i, cell in enumerate(row[1:]):
-                    query.bindValue(i, cell.value)
-                query.exec()
-                if query.lastError().text():
-                    QtWidgets.QMessageBox.warning(
-                        self,
-                        self.tr('Log import Excel'),
-                        f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
-                    )
-            else:
+            if not len(row) >= len(self.__sql_cols__):
+                self.log.warning(f'XLSX import, row {ln} has too few columns.\nSkipped row.')
                 QtWidgets.QMessageBox.warning(
                     self,
-                    self.tr('Log import Excel'),
+                    self.tr('Log import XLSX'),
                     f'Row {ln} has too few columns.\nSkipped row.'
                 )
+                continue
+
+            if not row[1].value or not row[4].value:
+                self.log.warning(f'XLSX import, QSO date/time or callsign missing in row {ln}.\nSkipped row.')
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr('Log import XLSX'),
+                    f'QSO date/time or callsign missing in row {ln}.\nSkipped row.'
+                )
+                continue
+
+            if self.findQSO(row[1].value, row[4].value):
+                self.log.info(
+                    f'XLSX import, QSO row {ln} already exists for {row[1].value} and {row[4].value}. Skipping row.')
+                continue
+
+            query = QtSql.QSqlQuery(self.__db_con__)
+            query.prepare(self.__db_insert_stmnt__)
+
+            for i, cell in enumerate(row[1:]):
+                query.bindValue(i, cell.value)
+            query.exec()
+            if query.lastError().text():
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr('Log import XLSX'),
+                    f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
+                )
+            else:
+                lines += 1
 
         self.__db_con__.commit()
         self.refreshTableView()
-        self.log.info(f'Imported {ln - 1} QSOs from "{file}"')
+        self.log.info(f'Imported {lines} QSOs from "{file}"')
 
     def logImportCSV(self, file):
         self.log.info('Importing from CSV...')
 
         with open(file, newline='', encoding='utf-8') as cf:
             reader = csv.reader(cf)
+            lines = 0
 
-            ln = 0
-            for row in reader:
-                ln += 1
+            for ln, row in enumerate(reader, 1):
                 if ln == 1:  # Skip header
                     continue
 
-                if len(row) >= len(self.__sql_cols__) and row[1]:
-                    query = QtSql.QSqlQuery(self.__db_con__)
-                    query.prepare(self.__db_insert_stmnt__)
-
-                    for i, val in enumerate(row[1:]):
-                        query.bindValue(i, val)
-                    query.exec()
-                    if query.lastError().text():
-                        QtWidgets.QMessageBox.warning(
-                            self,
-                            self.tr('Log import CSV'),
-                            f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
-                        )
-                else:
+                if not len(row) >= len(self.__sql_cols__):
+                    self.log.warning(f'CSV import, row {ln} has too few columns.\nSkipped row.')
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
                         f'Row {ln} has too few columns.\nSkipped row.'
                     )
 
+                if not row[1] or not row[4]:
+                    self.log.warning(f'CSV import, QSO date/time or callsign missing in row {ln}.\nSkipped row.')
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        self.tr('Log import CSV'),
+                        f'QSO date/time or callsign missing in row {ln}.\nSkipped row.'
+                    )
+                    continue
+
+                if self.findQSO(row[1], row[4]):
+                    self.log.info(
+                        f'CSV import, QSO row {ln} already exists for {row[1]} and {row[4]}. Skipping row.')
+                    continue
+
+                query = QtSql.QSqlQuery(self.__db_con__)
+                query.prepare(self.__db_insert_stmnt__)
+
+                for i, val in enumerate(row[1:]):
+                    query.bindValue(i, val)
+                query.exec()
+                if query.lastError().text():
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        self.tr('Log import CSV'),
+                        f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
+                    )
+                else:
+                    lines += 1
+
         self.__db_con__.commit()
         self.refreshTableView()
-        self.log.info(f'Imported {ln - 1} QSOs from "{file}"')
+        self.log.info(f'Imported {lines} QSOs from "{file}"')
 
     def logImportADIF(self, file):
         self.log.info('Importing from ADIF...')
@@ -1192,11 +1226,31 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         imported = 0
         for i, r in enumerate(records, 1):
             if 'QSO_DATE' not in r or 'TIME_ON' not in r:
+                self.log.warning(f'ADIF import, QSO date/time missing in record {i}.\nSkipped record.')
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
                     f'QSO date/time missing in record {i}.\nSkipped record.'
                 )
+                continue
+
+            if 'CALL' not in r:
+                self.log.warning(f'ADIF import, callsign missing in record {i}.\nSkipped record.')
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr('Log import ADIF'),
+                    f'Callsign missing in record {i}.\nSkipped record.'
+                )
+                continue
+
+            adi_time = r['TIME_ON']
+            adi_date = r['QSO_DATE']
+            time = f'{adi_time[:2]}:{adi_time[2:4]}' if len(
+                adi_time) == 4 else f'{adi_time[:2]}:{adi_time[2:4]}:{adi_time[4:6]}'
+            timestamp = f'{adi_date[:4]}-{adi_date[4:6]}-{adi_date[6:8]} {time}'
+
+            if self.findQSO(timestamp, r['CALL']):
+                self.log.info(f'ADIF import, QSO {i} already exists for {timestamp} and {r["CALL"]}. Skipping record.')
                 continue
 
             query = QtSql.QSqlQuery(self.__db_con__)

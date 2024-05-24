@@ -375,14 +375,14 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1394" />
-      <location filename="..\dragonlog\DragonLog.py" line="1388" />
+      <location filename="..\dragonlog\DragonLog.py" line="1448" />
+      <location filename="..\dragonlog\DragonLog.py" line="1442" />
       <location filename="..\dragonlog\DragonLog.py" line="237" />
       <source>Watching file</source>
       <translation>Dateiüberwachung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1394" />
+      <location filename="..\dragonlog\DragonLog.py" line="1448" />
       <location filename="..\dragonlog\DragonLog.py" line="239" />
       <location filename="..\dragonlog\DragonLog.py" line="237" />
       <source>inactiv</source>
@@ -872,60 +872,63 @@ Die Datei existiert bereits.</translation>
       <translation>Importdatei öffnen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1138" />
-      <location filename="..\dragonlog\DragonLog.py" line="1132" />
-      <source>Log import Excel</source>
-      <translation>Log Import Excel</translation>
+      <location filename="..\dragonlog\DragonLog.py" line="1154" />
+      <location filename="..\dragonlog\DragonLog.py" line="1135" />
+      <location filename="..\dragonlog\DragonLog.py" line="1126" />
+      <source>Log import XLSX</source>
+      <translation>Log-Import XLSX</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1174" />
-      <location filename="..\dragonlog\DragonLog.py" line="1168" />
+      <location filename="..\dragonlog\DragonLog.py" line="1206" />
+      <location filename="..\dragonlog\DragonLog.py" line="1187" />
+      <location filename="..\dragonlog\DragonLog.py" line="1179" />
       <source>Log import CSV</source>
-      <translation>Log Import CSV</translation>
+      <translation>Log-Import CSV</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1211" />
-      <location filename="..\dragonlog\DragonLog.py" line="1197" />
+      <location filename="..\dragonlog\DragonLog.py" line="1265" />
+      <location filename="..\dragonlog\DragonLog.py" line="1241" />
+      <location filename="..\dragonlog\DragonLog.py" line="1232" />
       <source>Log import ADIF</source>
-      <translation />
+      <translation>Log-Import ADIF</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1374" />
+      <location filename="..\dragonlog\DragonLog.py" line="1428" />
       <source>Select file to watch</source>
       <translation>Zu überwachende Datei wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1376" />
+      <location filename="..\dragonlog\DragonLog.py" line="1430" />
       <source>ADIF 3 (*.adi *.adif)</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1406" />
+      <location filename="..\dragonlog\DragonLog.py" line="1460" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1426" />
+      <location filename="..\dragonlog\DragonLog.py" line="1480" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1451" />
+      <location filename="..\dragonlog\DragonLog.py" line="1505" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1452" />
+      <location filename="..\dragonlog\DragonLog.py" line="1506" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1453" />
+      <location filename="..\dragonlog\DragonLog.py" line="1507" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1463" />
+      <location filename="..\dragonlog\DragonLog.py" line="1517" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
@@ -1153,16 +1156,11 @@ Die Datei existiert bereits.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="256" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="235" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="210" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="272" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="262" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="241" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="216" />
       <source>Error</source>
       <translation>Fehler</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="277" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="283" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
     </message>
@@ -1170,42 +1168,34 @@ Die Datei existiert bereits.</translation>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="960" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="334" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="969" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="340" />
       <source>Link to eQSL Card</source>
       <translation>Link zur eQSL-Karte</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="367" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="373" />
       <source>Station</source>
       <translation />
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="370" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="376" />
       <source>Identity</source>
       <translation>ID</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="376" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="382" />
       <source>Configured station</source>
       <translation>Konfigurierte Station</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="379" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="385" />
       <source>Configured identity</source>
       <translation>Konfigurierte ID</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="820" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="812" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="829" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="821" />
       <source>Callbook search error</source>
       <translation>Fehler bei der Rufzeichensuche</translation>
     </message>
@@ -1214,28 +1204,21 @@ Die Datei existiert bereits.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="974" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="886" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="813" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1044" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="983" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="895" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="822" />
       <source>Login failed for user</source>
       <translation>Login fehlgeschlagen für Benutzer</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="816" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="825" />
       <source>Callbook search result</source>
       <translation>Callbook-Suchergebnis</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="817" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="826" />
       <source>Callsign not found</source>
       <translation>Rufzeichen nicht gefunden</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="821" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="830" />
       <source>During callbook search an error occured</source>
       <translation>Während der Rufzeichensuche ist ein Fehler aufgetreten</translation>
     </message>
@@ -1244,34 +1227,26 @@ Die Datei existiert bereits.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="869" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="866" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="861" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="882" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="878" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="875" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="870" />
       <source>Upload log error</source>
       <translation>Upload-Fehler</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="862" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="871" />
       <source>Login to HamQTH failed for user</source>
       <translation>Login bei HamQTH fehlgeschlagen für Benutzer</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="867" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="876" />
       <source>QSO rejected on HamQTH</source>
       <translation>QSO wurde von HamQTH abgewiesen</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="870" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="879" />
       <source>A field is missing for log upload to HamQTH</source>
       <translation>Fehlendes Feld für den Log-Upload zu HamQTH</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="874" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="883" />
       <source>An error occured on uploading to HamQTH</source>
       <translation>Ein Fehler trat während der Übertragung zu HamQTH auf</translation>
     </message>
@@ -1281,37 +1256,27 @@ Die Datei existiert bereits.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="893" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="889" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="885" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="909" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="905" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="902" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="898" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="894" />
       <source>Upload eQSL error</source>
       <translation>eQSL-Upload-Fehler</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="890" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="899" />
       <source>A field is missing for log upload</source>
       <translation>Fehlendes Feld für den Log-Upload</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="894" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="903" />
       <source>The QSO is a duplicate</source>
       <translation>Das QSO ist ein Duplikat</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="978" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="897" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="987" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="906" />
       <source>User call does not match</source>
       <translation>Der Nutzer Call stimmt nicht überein</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="901" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="910" />
       <source>Error on upload</source>
       <translation>eQSL-Upload-Fehler</translation>
     </message>
@@ -1320,40 +1285,31 @@ Die Datei existiert bereits.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="981" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="977" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="973" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="993" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="990" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="986" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="982" />
       <source>Check eQSL Inbox error</source>
       <translation>eQSL-Fehler prüfen der Inbox</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="982" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="991" />
       <source>No eQSL available</source>
       <translation>Kein eQSL verfügbar</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="985" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="994" />
       <source>A field is missing for inbox check</source>
       <translation>Ein Feld fehlt für die Inbox-Prüfung</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="998" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1007" />
       <source>Select eQSL folder</source>
       <translation>eQSL-Ordner auswählen</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1025" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1034" />
       <source>Check LoTW QSL</source>
       <translation>Prüfe LoTW QSL</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1026" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1035" />
       <source>No QSL available</source>
       <translation>Kein QSL verfügbar</translation>
     </message>
@@ -1361,21 +1317,16 @@ Die Datei existiert bereits.</translation>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1034" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1031" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1028" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1043" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1040" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1037" />
       <source>Check LoTW Inbox error</source>
       <translation>Fehler beim Prüfen der LoTW-Inbox</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1029" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1038" />
       <source>Server communication error</source>
       <translation>Serverkommunikations-Fehler</translation>
     </message>
     <message>
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="1032" />
-      <location filename="..\dragonlog\DragonLog_QSOForm - Kopie.py" line="1041" />
       <source>Bad request result</source>
       <translation>Fehlerhaftes Abfrageergebnis</translation>
     </message>
