@@ -17,6 +17,7 @@ from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                    EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
 from .LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
                    LoTWLoginException, LoTWNoRecordException)
+from . import ColorPalettes
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
@@ -42,22 +43,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.qso_id = None
 
         self.__old_values__ = {}
-
-        self.palette_default = QtGui.QPalette()
-        self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                      QtGui.QColor(255, 255, 255))
-        self.palette_ok = QtGui.QPalette()
-        self.palette_ok.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                 QtGui.QColor(204, 255, 204))
-        self.palette_empty = QtGui.QPalette()
-        self.palette_empty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                    QtGui.QColor(255, 255, 204))
-        self.palette_faulty = QtGui.QPalette()
-        self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                     QtGui.QColor(255, 204, 204))
-        self.palette_worked = QtGui.QPalette()
-        self.palette_worked.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                     QtGui.QColor(204, 204, 255))
 
         self.cb_channels = cb_channels
         self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
@@ -480,77 +465,77 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
     def rstRcvdChanged(self, txt):
         if not txt:
-            self.RSTRcvdLineEdit.setPalette(self.palette_empty)
+            self.RSTRcvdLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_RSTFIELD, txt):
-            self.RSTRcvdLineEdit.setPalette(self.palette_ok)
+            self.RSTRcvdLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.RSTRcvdLineEdit.setPalette(self.palette_faulty)
+            self.RSTRcvdLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def rstSentChanged(self, txt):
         if not txt:
-            self.RSTSentLineEdit.setPalette(self.palette_empty)
+            self.RSTSentLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_RSTFIELD, txt):
-            self.RSTSentLineEdit.setPalette(self.palette_ok)
+            self.RSTSentLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.RSTSentLineEdit.setPalette(self.palette_faulty)
+            self.RSTSentLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def callSignChanged(self, txt):
         self.setWorkedBefore()
         if not txt:
-            self.callSignLineEdit.setPalette(self.palette_empty)
+            self.callSignLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_CALL, txt):
             worked = self.dragonlog.workedBefore(check_call(txt)[1])
             if not self.__change_mode__ and worked:
                 self.setWorkedBefore(worked)
-                self.callSignLineEdit.setPalette(self.palette_worked)
+                self.callSignLineEdit.setPalette(ColorPalettes.PaletteWorked)
             else:
-                self.callSignLineEdit.setPalette(self.palette_ok)
+                self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         elif self.bandComboBox.currentText() == '11m':
-            self.callSignLineEdit.setPalette(self.palette_ok)
+            self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.callSignLineEdit.setPalette(self.palette_faulty)
+            self.callSignLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def locatorChanged(self, txt):
         if not txt:
-            self.locatorLineEdit.setPalette(self.palette_empty)
+            self.locatorLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_LOCATOR, txt):
-            self.locatorLineEdit.setPalette(self.palette_ok)
+            self.locatorLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.locatorLineEdit.setPalette(self.palette_faulty)
+            self.locatorLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def ownCallSignChanged(self, txt):
         if not txt:
-            self.ownCallSignLineEdit.setPalette(self.palette_empty)
+            self.ownCallSignLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_CALL, txt):
-            self.ownCallSignLineEdit.setPalette(self.palette_ok)
+            self.ownCallSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         elif self.bandComboBox.currentText() == '11m':
-            self.ownCallSignLineEdit.setPalette(self.palette_ok)
+            self.ownCallSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.ownCallSignLineEdit.setPalette(self.palette_faulty)
+            self.ownCallSignLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def ownQTHChanged(self, txt):
         if not txt:
-            self.ownQTHComboBox.setPalette(self.palette_empty)
+            self.ownQTHComboBox.setPalette(ColorPalettes.PaletteEmpty)
         elif check_qth(txt.strip()):
-            self.ownQTHComboBox.setPalette(self.palette_ok)
+            self.ownQTHComboBox.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.ownQTHComboBox.setPalette(self.palette_faulty)
+            self.ownQTHComboBox.setPalette(ColorPalettes.PaletteFaulty)
 
     def timeOnChanged(self, txt):
         if not txt:
-            self.timeOnEdit.setPalette(self.palette_empty)
+            self.timeOnEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_TIME, txt):
-            self.timeOnEdit.setPalette(self.palette_ok)
+            self.timeOnEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.timeOnEdit.setPalette(self.palette_faulty)
+            self.timeOnEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def timeOffChanged(self, txt):
         if not txt:
-            self.timeOffEdit.setPalette(self.palette_empty)
+            self.timeOffEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_TIME, txt):
-            self.timeOffEdit.setPalette(self.palette_ok)
+            self.timeOffEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.timeOffEdit.setPalette(self.palette_faulty)
+            self.timeOffEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def calc_distance(self, mh_pos1: str, mh_pos2: str):
         # noinspection PyBroadException

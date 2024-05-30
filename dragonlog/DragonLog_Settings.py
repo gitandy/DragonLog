@@ -5,8 +5,7 @@ import logging
 import platform
 import subprocess
 
-# import maidenhead
-from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore
 import keyring
 
 from . import DragonLog_Settings_ui
@@ -14,6 +13,7 @@ from .Logger import Logger
 from .RegEx import REGEX_CALL, check_format
 from .CallBook import CallBookType
 from .ListEdit import ListEdit
+from . import ColorPalettes
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):
@@ -78,19 +78,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.checkHamlibTimer = QtCore.QTimer(self)
         self.checkHamlibTimer.timeout.connect(self.checkRigctld)
-
-        self.palette_default = QtGui.QPalette()
-        self.palette_default.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                      QtGui.QColor(255, 255, 255))
-        self.palette_ok = QtGui.QPalette()
-        self.palette_ok.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                 QtGui.QColor(204, 255, 204))
-        self.palette_empty = QtGui.QPalette()
-        self.palette_empty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                    QtGui.QColor(255, 255, 204))
-        self.palette_faulty = QtGui.QPalette()
-        self.palette_faulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                                     QtGui.QColor(255, 204, 204))
 
         self.columns = cols
         self.sortComboBox.insertItems(0, cols)
@@ -289,17 +276,17 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
     def callSignChanged(self, txt):
         if not txt:
-            self.callsignLineEdit.setPalette(self.palette_empty)
+            self.callsignLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         elif check_format(REGEX_CALL, txt):
-            self.callsignLineEdit.setPalette(self.palette_ok)
+            self.callsignLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
-            self.callsignLineEdit.setPalette(self.palette_faulty)
+            self.callsignLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
     def callSignCBChanged(self, txt):
         if not txt:
-            self.callsignCBLineEdit.setPalette(self.palette_empty)
+            self.callsignCBLineEdit.setPalette(ColorPalettes.PaletteEmpty)
         else:
-            self.callsignCBLineEdit.setPalette(self.palette_ok)
+            self.callsignCBLineEdit.setPalette(ColorPalettes.PaletteOk)
 
     def hideCol(self):
         for item in self.colShowListWidget.selectedItems():
