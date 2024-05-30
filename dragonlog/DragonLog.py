@@ -509,8 +509,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.__db_con__.close()
 
             self.__db_con__.setDatabaseName(db_file)
-            if self.__db_con__.lastError().text():  # TODO: Rebase artifact???
-                raise DatabaseOpenException(self.__db_con__.lastError().text())
             self.__db_con__.open()
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
