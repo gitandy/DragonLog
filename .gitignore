@@ -7,8 +7,8 @@ __pycache__
 *_ui.py
 /temp
 /tools/*.csv
-/dragonlog/data/README.md
+/dragonlog/data/*.md
 __version__.py
 DragonLog.egg-info
 /dist_exe
-/dragonlog/data/i18n/ascii_replace_de.json
+/dragonlog/data/i18n/ascii_replace_*.json

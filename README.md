@@ -108,6 +108,9 @@ If you want to use the worked before feature of the other program consider to ex
 QSOs beforehand.
 Dragonlog will only import QSOs which are not already included in the current database.
 
+[Keyboard shortcuts](SHORTCUTS.md)
+----------------------------------
+
 Export
 ------
 Following formats are supported for export

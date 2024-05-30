@@ -360,6 +360,9 @@
           <iconset>
            <normaloff>icons:no.png</normaloff>icons:no.png</iconset>
          </property>
+         <property name="shortcut">
+          <string>Ctrl+R</string>
+         </property>
         </widget>
        </item>
        <item>

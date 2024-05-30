@@ -81,12 +81,18 @@
              <property name="text">
               <string>HamQTH</string>
              </property>
+             <property name="shortcut">
+              <string>Ctrl+Alt+H</string>
+             </property>
             </widget>
            </item>
            <item row="1" column="2">
             <widget class="QPushButton" name="searchQRZCQPushButton">
              <property name="text">
               <string>QRZCQ</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Alt+Z</string>
              </property>
             </widget>
            </item>
@@ -410,6 +416,9 @@
              </property>
              <property name="text">
               <string>Now</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Alt+N</string>
              </property>
             </widget>
            </item>
@@ -738,6 +747,9 @@ This is not the QSL manager/bureau address.</string>
                  <property name="text">
                   <string>Check Inbox</string>
                  </property>
+                 <property name="shortcut">
+                  <string>Ctrl+Alt+E</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -774,6 +786,9 @@ This is not the QSL manager/bureau address.</string>
                  </property>
                  <property name="text">
                   <string>Download eQSL</string>
+                 </property>
+                 <property name="shortcut">
+                  <string>Ctrl+Shift+E</string>
                  </property>
                 </widget>
                </item>
@@ -825,6 +840,9 @@ This is not the QSL manager/bureau address.</string>
               <widget class="QPushButton" name="lotwInboxPushButton">
                <property name="text">
                 <string>Check Inbox</string>
+               </property>
+               <property name="shortcut">
+                <string>Ctrl+Alt+I</string>
                </property>
               </widget>
              </item>
@@ -1038,12 +1056,18 @@ This is not the QSL manager/bureau address.</string>
        <property name="text">
         <string>Save &amp;&amp; Upload</string>
        </property>
+       <property name="shortcut">
+        <string>Ctrl+U</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="savePushButton">
        <property name="text">
         <string>Save</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+S</string>
        </property>
       </widget>
      </item>

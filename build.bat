@@ -40,7 +40,7 @@ copy i18n\*.json dragonlog\data\i18n\
 
 echo.
 echo Build...
-copy README.md dragonlog\data\README.md
+copy *.md dragonlog\data
 python setup_msi.py bdist -d dist_exe bdist_msi -d dist_exe
 python -m pip install --upgrade pip
 python -m pip install --upgrade build

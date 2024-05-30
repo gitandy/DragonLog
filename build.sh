@@ -33,7 +33,7 @@ copy i18n/*.json dragonlog/data/i18n/
 
 echo
 echo "Build..."
-cp README.md dragonlog/data/README.md
+cp *.md dragonlog/data
 python -m pip install --upgrade pip
 python -m pip install --upgrade build
 python -m build
