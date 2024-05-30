@@ -355,14 +355,6 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="setFilterPushButton">
-         <property name="icon">
-          <iconset>
-           <normaloff>icons:filter.png</normaloff>icons:filter.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="resetFilterPushButton">
          <property name="icon">
           <iconset>
@@ -999,22 +991,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>setFilterPushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setTableFilter()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>455</x>
-     <y>101</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>642</x>
-     <y>449</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>resetFilterPushButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
@@ -1043,6 +1019,86 @@
     <hint type="destinationlabel">
      <x>642</x>
      <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fCallsignLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTableFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>289</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fBandComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTableFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>414</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fModeComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTableFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>491</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fDateToLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTableFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>153</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fDateFromLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTableFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
     </hint>
    </hints>
   </connection>

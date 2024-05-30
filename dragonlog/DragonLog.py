@@ -27,6 +27,7 @@ from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
 from .LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
+from . import ColorPalettes
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -593,15 +594,29 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 return ""
 
     def setFilter(self):
-        self.QSOTableView.model().setFilter(self.getFilter())
+        if self.QSOTableView.model():
+            self.QSOTableView.model().setFilter(self.getFilter())
 
     def setTableFilter(self):
         filter_set = []
 
-        if self.fDateFromLineEdit.text() and check_format(REGEX_DATE, self.fDateFromLineEdit.text()):
-            filter_set.append(f"DATE(date_time) >= DATE('{self.fDateFromLineEdit.text()}')")
-        if self.fDateToLineEdit.text() and check_format(REGEX_DATE, self.fDateToLineEdit.text()):
-            filter_set.append(f"DATE(date_time) <= DATE('{self.fDateToLineEdit.text()}')")
+        if self.fDateFromLineEdit.text():
+            if check_format(REGEX_DATE, self.fDateFromLineEdit.text()):
+                filter_set.append(f"DATE(date_time) >= DATE('{self.fDateFromLineEdit.text()}')")
+                self.fDateFromLineEdit.setPalette(ColorPalettes.PaletteDefault)
+            else:
+                self.fDateFromLineEdit.setPalette(ColorPalettes.PaletteFaulty)
+        else:
+            self.fDateFromLineEdit.setPalette(ColorPalettes.PaletteDefault)
+
+        if self.fDateToLineEdit.text():
+            if check_format(REGEX_DATE, self.fDateToLineEdit.text()):
+                filter_set.append(f"DATE(date_time) <= DATE('{self.fDateToLineEdit.text()}')")
+                self.fDateToLineEdit.setPalette(ColorPalettes.PaletteDefault)
+            else:
+                self.fDateToLineEdit.setPalette(ColorPalettes.PaletteFaulty)
+        else:
+            self.fDateToLineEdit.setPalette(ColorPalettes.PaletteDefault)
 
         if self.fCallsignLineEdit.text():
             filter_set.append(f'call_sign LIKE "%{self.fCallsignLineEdit.text()}%"')
