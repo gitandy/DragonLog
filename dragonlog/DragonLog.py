@@ -632,7 +632,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.setFilter()
 
         self.fDateFromLineEdit.clear()
+        self.fDateFromLineEdit.setPalette(ColorPalettes.PaletteDefault)
         self.fDateToLineEdit.clear()
+        self.fDateToLineEdit.setPalette(ColorPalettes.PaletteDefault)
         self.fCallsignLineEdit.clear()
         self.fBandComboBox.setCurrentIndex(0)
         self.fModeComboBox.setCurrentIndex(0)
