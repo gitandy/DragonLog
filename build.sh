@@ -21,6 +21,7 @@ pyuic6 DragonLog_MainWindow.ui -o ../dragonlog/DragonLog_MainWindow_ui.py
 pyuic6 DragonLog_QSOForm.ui -o ../dragonlog/DragonLog_QSOForm_ui.py
 pyuic6 DragonLog_Settings.ui -o ../dragonlog/DragonLog_Settings_ui.py
 pyuic6 DragonLog_AppSelect.ui -o ../dragonlog/DragonLog_AppSelect_ui.py
+pyuic6 ListEdit.ui -o ../dragonlog/ListEdit_ui.py
 cd ..
 
 pylupdate6 dragonlog ui_files -ts i18n/DragonLog_templ.ts
@@ -28,7 +29,7 @@ pylupdate6 dragonlog ui_files -ts i18n/DragonLog_en.ts
 pylupdate6 dragonlog ui_files -ts i18n/DragonLog_de.ts
 mkdir -p dragonlog/data/i18n
 /usr/lib/qt6/bin/lrelease i18n/DragonLog_de.ts -qm dragonlog/data/i18n/DragonLog_de.qm
-copy i18n/*.json dragonlog/data/i18n/
+cp i18n/*.json dragonlog/data/i18n/
 
 
 echo
