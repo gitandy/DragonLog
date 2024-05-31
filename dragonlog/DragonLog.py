@@ -13,7 +13,9 @@ import xmltodict
 
 OPTION_OPENPYXL = False
 try:
+    # noinspection PyUnresolvedReferences
     import openpyxl
+    # noinspection PyUnresolvedReferences
     from openpyxl.styles import Font
 
     OPTION_OPENPYXL = True
@@ -96,7 +98,9 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
         self.prop_col = prop_col
         self.prop_translation = prop_tr
 
+        # noinspection PyUnresolvedReferences
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
+        # noinspection PyUnresolvedReferences
         self.no_icon = QtGui.QIcon(self.parent().searchFile('icons:no.png'))
 
     def data(self, idx, role=QtCore.Qt.ItemDataRole.DisplayRole):
@@ -215,8 +219,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if int(self.settings.value('ui/log_dock_float', 0)):
             self.logDockWidget.setFloating(True)
         else:
-            log_dock_area = self.int2dock_area(int(self.settings.value('ui/log_dock_area',
-                                                                       QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
+            log_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/log_dock_area',
+                                        QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
             self.addDockWidget(log_dock_area, self.logDockWidget)
         self.logDockWidget.setVisible(bool(int(self.settings.value('ui/show_log', 0))))
 
@@ -224,8 +229,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.filterDockWidget.setFloating(True)
             self.filterDockWidget.resize(10, 10)
         else:
-            filter_dock_area = self.int2dock_area(int(self.settings.value('ui/filter_dock_area',
-                                                                          QtCore.Qt.DockWidgetArea.TopDockWidgetArea.value)))
+            filter_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/filter_dock_area',
+                                        QtCore.Qt.DockWidgetArea.TopDockWidgetArea.value)))
             self.addDockWidget(filter_dock_area, self.filterDockWidget)
         self.filterDockWidget.setVisible(bool(int(self.settings.value('ui/show_filter', 0))))
 
@@ -346,8 +352,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if int(self.settings.value('ui/qso_dock_float', 0)):
             self.qsoDockWidget.setFloating(True)
         else:
-            qso_dock_area = self.int2dock_area(int(self.settings.value('ui/qso_dock_area',
-                                                                       QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
+            qso_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/qso_dock_area',
+                                        QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
             self.addDockWidget(qso_dock_area,
                                self.qsoDockWidget)
         self.qsoDockWidget.setVisible(bool(int(self.settings.value('ui/show_qso', 0))))
@@ -465,7 +472,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             # Open backup
             db_con_bck = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'backup')
-            db_con_bck.setDatabaseName(bck_name)
+            db_con_bck.setDatabaseName(str(bck_name))
             if db_con_bck.lastError().text():
                 raise DatabaseOpenException(db_con_bck.lastError().text())
             db_con_bck.open()
@@ -749,13 +756,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if res[0]:
             try:
+                # noinspection PyArgumentList
                 exp_formats[res[1]](res[0])
             except Exception as exc:
                 self.log.exception(exc)
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
-    def exportCSV(self, file):
+    def exportCSV(self, file: str):
         self.log.info('Exporting to CSV...')
 
         with open(file, 'w', newline='', encoding='utf-8') as cf:
@@ -778,7 +786,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     row.append(query.value(i))
                 writer.writerow(row)
 
-    def exportExcel(self, file):
+    def exportExcel(self, file: str):
         self.log.info('Exporting to XLSX...')
         xl_wb = openpyxl.Workbook()
         xl_wb.properties.title = self.tr('Exported QSO log')
@@ -843,7 +851,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         return text
 
-    def exportADIF(self, file):
+    def exportADIF(self, file: str):
         self.log.info('Exporting to ADIF...')
 
         query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
@@ -1117,6 +1125,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         )
 
         if res[0]:
+            # noinspection PyArgumentList
             imp_formats[res[1]](res[0])
 
             self.settings.setValue('lastImportDir', os.path.dirname(res[0]))
@@ -1589,6 +1598,7 @@ sys._excepthook = sys.excepthook
 
 
 def except_hook(cls, exception, traceback):
+    # noinspection PyUnresolvedReferences
     sys._excepthook(cls, exception, traceback)
     sys.exit(1)
 

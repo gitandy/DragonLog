@@ -1,5 +1,4 @@
 PyQt6
-#PyQt6-tools
 openpyxl
 maidenhead
 PyADIF-File==1.0
