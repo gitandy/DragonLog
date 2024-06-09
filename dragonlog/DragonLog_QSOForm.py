@@ -718,7 +718,14 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.propComboBox.setCurrentText(self.prop[values['propagation']])
 
         self.ownNameLineEdit.setText(values['own_name'])
-        self.ownQTHComboBox.setCurrentText(f"{values['own_qth']} ({values['own_locator']})")
+
+        if values['own_qth'] and values['own_locator']:
+            self.ownQTHComboBox.setCurrentText(f"{values['own_qth']} ({values['own_locator']})")
+        elif values['own_qth']:
+            self.ownQTHComboBox.setCurrentText(values['own_qth'])
+        elif values['own_locator']:
+            self.ownQTHComboBox.setCurrentText(f"({values['own_locator']})")
+
         self.radioComboBox.setCurrentText(values['radio'])
         self.antennaComboBox.setCurrentText(values['antenna'])
         self.remarksTextEdit.setText(values['remarks'])
