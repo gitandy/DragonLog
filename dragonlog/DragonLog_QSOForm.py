@@ -392,6 +392,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.searchQRZCQPushButton.setEnabled(False)
             self.uploadPushButton.setEnabled(False)
             self.qslPage.setEnabled(False)
+            self.contestPage.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
             self.channelComboBox.setCurrentIndex(0)
 
@@ -412,6 +413,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.searchQRZCQPushButton.setEnabled(True)
             self.uploadPushButton.setEnabled(True)
             self.qslPage.setEnabled(True)
+            self.contestPage.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
                 self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
