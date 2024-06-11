@@ -1,6 +1,7 @@
 import os
 import math
 import socket
+import string
 import logging
 
 import maidenhead
@@ -1001,17 +1002,23 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
             if res:
                 image_type = self.eqsl_url.split('/')[-1].split('.')[-1]
-                call_sign = self.callSignLineEdit.text().replace("/ ?%&§$!=.()´`#'+*-:;<>|~{[]}", "_")
+                call_sign = self.callSignLineEdit.text()
+                for c in string.punctuation:
+                    call_sign = call_sign.replace(c, '_')
+
                 image_name = (f'{self.dateOnEdit.text()} {call_sign} {self.modeComboBox.currentText()} '
                               f'{self.bandComboBox.currentText()}.{image_type}')
                 image_path = os.path.join(res, image_name)
+                self.log.debug(f'eQSL path: "{image_path}"')
 
-                eqsl_image = self.eqsl.receive_qsl_card(self.eqsl_url)
-                with open(image_path, 'wb') as eqslf:
-                    eqslf.write(eqsl_image)
-
-                self.log.info(f'Stored eQSL to "{image_path}"')
-                self.settings.setValue('eqsl/lastExportDir', res)
+                try:
+                    eqsl_image = self.eqsl.receive_qsl_card(self.eqsl_url)
+                    with open(image_path, 'wb') as eqslf:
+                        eqslf.write(eqsl_image)
+                    self.log.info(f'Stored eQSL to "{image_path}"')
+                    self.settings.setValue('eqsl/lastExportDir', res)
+                except Exception as exc:
+                    self.log.exception(exc)
 
     def lotwCheckInbox(self):
         try:
