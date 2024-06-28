@@ -1269,14 +1269,40 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info('Importing from ADIF...')
 
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
-
+        is_eqsl_in: bool = False
+        is_eqsl_out: bool = False
         if is_adx:
             records: list = adx.load(file)['RECORDS']
         else:
-            records: list = adi.load(file)['RECORDS']
+            adi_doc: dict = adi.load(file)
+            if 'HEADER' in adi_doc and 'PROGRAMID' in adi_doc['HEADER']:
+                is_eqsl_in = adi_doc['HEADER']['PROGRAMID'].strip() == 'eQSL.cc DownloadInBox'
+                is_eqsl_out = adi_doc['HEADER']['PROGRAMID'].strip() == 'eQSL.cc DownloadADIF'
+            records: list = adi_doc['RECORDS']
 
         imported = 0
+        i: int
+        r: dict
         for i, r in enumerate(records, 1):
+            # Fix eQSL export
+            if is_eqsl_in:
+                self.log.debug('Fixing eQSL inbox data')
+                if 'QSL_SENT' in r:  # Wrong tag, missing tag
+                    r['EQSL_QSL_SENT'] = r.pop('QSL_SENT')
+                    r['EQSL_QSL_RCVD'] = 'Y'
+                if 'QSL_SENT_VIA' in r:  # Wrong usage
+                    r.pop('QSL_SENT_VIA')
+                if 'QSLMSG' in r:  # Not the own message
+                    r.pop('QSLMSG')
+                if 'RST_SENT' in r:  # Wrong direction
+                    r['RST_RCVD'] = r.pop('RST_SENT')
+            elif is_eqsl_out:
+                self.log.debug('Fixing eQSL outbox data')
+                if 'QSL_SENT' in r:  # Wrong tag
+                    r['EQSL_QSL_SENT'] = r.pop('QSL_SENT')
+                if 'QSL_SENT_VIA' in r:  # Wrong usage
+                    r.pop('QSL_SENT_VIA')
+
             if 'QSO_DATE' not in r or 'TIME_ON' not in r:
                 self.log.warning(f'ADIF import, QSO date/time missing in record {i}.\nSkipped record.')
                 QtWidgets.QMessageBox.warning(
