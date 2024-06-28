@@ -448,6 +448,9 @@
    </property>
   </action>
   <action name="actionExport">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:fileexport.png</normaloff>icons:fileexport.png</iconset>
@@ -466,6 +469,9 @@
    </property>
   </action>
   <action name="actionExport_TB">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:fileexport.png</normaloff>icons:fileexport.png</iconset>
@@ -502,6 +508,9 @@
    </property>
   </action>
   <action name="actionDelete_log_entry">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:edit_remove.png</normaloff>icons:edit_remove.png</iconset>
@@ -514,6 +523,9 @@
    </property>
   </action>
   <action name="actionChange_log_entry">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:edit.png</normaloff>icons:edit.png</iconset>
@@ -602,6 +614,9 @@
    </property>
   </action>
   <action name="actionUpload_logs_to_LoTW">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:upload_lotw.png</normaloff>icons:upload_lotw.png</iconset>

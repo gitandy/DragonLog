@@ -544,6 +544,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.info(f'Opened database {db_file}')
             self.settings.setValue('lastDatabase', db_file)
             self.setWindowTitle(__prog_name__ + ' - ' + db_file)
+
+            self.actionExport.setEnabled(True)
+            self.actionExport_TB.setEnabled(True)
+            self.actionChange_log_entry.setEnabled(True)
+            self.actionDelete_log_entry.setEnabled(True)
+            self.actionUpload_logs_to_LoTW.setEnabled(True)
         except DatabaseOpenException as exc:
             self.log.exception(exc)
             if db_file == self.settings.value('lastDatabase', None):
@@ -650,6 +656,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings_form.ctrlRigctld(start)
 
     def logQSO(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Log QSO'),
+                                              self.tr('No database opened for logging'))
+                return
+
         self.qso_form.clear()
         self.qso_form.setChangeMode(False)
         self.qso_form.reset()
@@ -657,6 +670,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form.callSignLineEdit.setFocus()
 
     def fetchQSO(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Saving QSO'),
+                                              self.tr('No database opened for saving'))
+                return
+
         self.log.info('Logging QSO...')
         query = QtSql.QSqlQuery(self.__db_con__)
         query.prepare(self.__db_insert_stmnt__)
@@ -1109,6 +1129,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                            self.tr('Server rejected log'))
 
     def logImport(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Import'),
+                                              self.tr('No database opened for import'))
+                return
+
         imp_formats = {
             self.tr('ADIF 3 (*.adx *.adi *.adif)'): self.logImportADIF,
             self.tr('CSV-File (*.csv)'): self.logImportCSV,
@@ -1446,6 +1473,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def ctrlWatching(self, start):
         if start:
+            if not self.__db_con__.isOpen():
+                self.selectDB()
+                if not self.__db_con__.isOpen():
+                    QtWidgets.QMessageBox.warning(self, self.tr('Watching file'),
+                                                  self.tr('No database opened for watching files'))
+                    return
+
             app_res = self.watchAppSelect.exec()
             if app_res:
                 res = QtWidgets.QFileDialog.getOpenFileName(
