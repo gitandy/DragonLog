@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="station">
       <attribute name="title">
@@ -746,6 +746,29 @@
             </property>
             <property name="text">
              <string>Export only recent QSOs</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_9">
+         <property name="title">
+          <string>ADIF Import</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_13">
+          <item>
+           <widget class="QCheckBox" name="useCfgIDImportCheckBox">
+            <property name="text">
+             <string>Use configured ID for missing values</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="useCfgStationImportCheckBox">
+            <property name="text">
+             <string>Use configured Station for missing values</string>
             </property>
            </widget>
           </item>

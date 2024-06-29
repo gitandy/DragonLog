@@ -350,6 +350,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.expOwnNotesADIFCheckBox.setChecked(bool(self.settings.value('imp_exp/own_notes_adif', 0)))
         self.expRecentOnlyCheckBox.setChecked(bool(self.settings.value('imp_exp/only_recent', 0)))
+        self.useCfgIDImportCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_adif', 0)))
+        self.useCfgStationImportCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_adif', 0)))
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
 
@@ -425,6 +427,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.settings.setValue('imp_exp/own_notes_adif', int(self.expOwnNotesADIFCheckBox.isChecked()))
         self.settings.setValue('imp_exp/only_recent', int(self.expRecentOnlyCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/use_id_adif', int(self.useCfgIDImportCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/use_station_adif', int(self.useCfgStationImportCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
 

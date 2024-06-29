@@ -1334,7 +1334,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
 
-            for j, val in enumerate(self._build_adif_import_(r)):
+            for j, val in enumerate(self._build_adif_import_(r,
+                                                             bool(self.settings.value('imp_exp/use_id_adif', 0)),
+                                                             bool(self.settings.value('imp_exp/use_station_adif', 0)))):
                 query.bindValue(j, val)
             query.exec()
             if query.lastError().text():
