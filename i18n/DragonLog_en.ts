@@ -356,15 +356,15 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1550" />
-      <location filename="..\dragonlog\DragonLog.py" line="1544" />
-      <location filename="..\dragonlog\DragonLog.py" line="1522" />
+      <location filename="..\dragonlog\DragonLog.py" line="1547" />
+      <location filename="..\dragonlog\DragonLog.py" line="1541" />
+      <location filename="..\dragonlog\DragonLog.py" line="1519" />
       <location filename="..\dragonlog\DragonLog.py" line="244" />
       <source>Watching file</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1550" />
+      <location filename="..\dragonlog\DragonLog.py" line="1547" />
       <location filename="..\dragonlog\DragonLog.py" line="246" />
       <location filename="..\dragonlog\DragonLog.py" line="244" />
       <source>inactiv</source>
@@ -895,54 +895,54 @@ The file already exists.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1349" />
-      <location filename="..\dragonlog\DragonLog.py" line="1319" />
-      <location filename="..\dragonlog\DragonLog.py" line="1310" />
+      <location filename="..\dragonlog\DragonLog.py" line="1346" />
+      <location filename="..\dragonlog\DragonLog.py" line="1316" />
+      <location filename="..\dragonlog\DragonLog.py" line="1307" />
       <source>Log import ADIF</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1523" />
+      <location filename="..\dragonlog\DragonLog.py" line="1520" />
       <source>No database opened for watching files</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1530" />
+      <location filename="..\dragonlog\DragonLog.py" line="1527" />
       <source>Select file to watch</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1532" />
+      <location filename="..\dragonlog\DragonLog.py" line="1529" />
       <source>ADIF 3 (*.adi *.adif)</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1562" />
+      <location filename="..\dragonlog\DragonLog.py" line="1559" />
       <source>Help</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1582" />
+      <location filename="..\dragonlog\DragonLog.py" line="1579" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1607" />
+      <location filename="..\dragonlog\DragonLog.py" line="1604" />
       <source>About</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1608" />
+      <location filename="..\dragonlog\DragonLog.py" line="1605" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1609" />
+      <location filename="..\dragonlog\DragonLog.py" line="1606" />
       <source>Author</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1619" />
+      <location filename="..\dragonlog\DragonLog.py" line="1616" />
       <source>About Qt</source>
       <translation />
     </message>

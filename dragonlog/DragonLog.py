@@ -1288,10 +1288,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if is_eqsl_in:
                 self.log.debug('Fixing eQSL inbox data')
                 if 'QSL_SENT' in r:  # Wrong tag, missing tag
-                    r['EQSL_QSL_SENT'] = r.pop('QSL_SENT')
-                    r['EQSL_QSL_RCVD'] = 'Y'
-                if 'QSL_SENT_VIA' in r:  # Wrong usage
-                    r.pop('QSL_SENT_VIA')
+                    r['EQSL_QSL_RCVD'] = r.pop('QSL_SENT')
                 if 'QSLMSG' in r:  # Not the own message
                     r.pop('QSLMSG')
                 if 'RST_SENT' in r:  # Wrong direction
