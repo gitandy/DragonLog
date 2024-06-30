@@ -1327,16 +1327,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 adi_time) == 4 else f'{adi_time[:2]}:{adi_time[2:4]}:{adi_time[4:6]}'
             timestamp = f'{adi_date[:4]}-{adi_date[4:6]}-{adi_date[6:8]} {time}'
 
-            if self.findQSO(timestamp, r['CALL']):
-                self.log.info(f'ADIF import, QSO {i} already exists for {timestamp} and {r["CALL"]}. Skipping record.')
-                continue
-
             query = QtSql.QSqlQuery(self.__db_con__)
-            query.prepare(self.__db_insert_stmnt__)
+
+            qso_values: list = self.findQSO(timestamp, r['CALL'])
+            if qso_values:
+                self.log.info(f'ADIF import, updating QSO {qso_values[0]} for {timestamp} and {r["CALL"]}...')
+                qso_values.append(qso_values.pop(0))
+                query.prepare(self.__db_update_stmnt__)
+            else:
+                query.prepare(self.__db_insert_stmnt__)
 
             for j, val in enumerate(self._build_adif_import_(r,
                                                              bool(self.settings.value('imp_exp/use_id_adif', 0)),
-                                                             bool(self.settings.value('imp_exp/use_station_adif', 0)))):
+                                                             bool(self.settings.value('imp_exp/use_station_adif', 0)),
+                                                             qso_values)):
                 query.bindValue(j, val)
             query.exec()
             if query.lastError().text():
@@ -1353,8 +1357,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.log.info(f'Imported {imported} QSOs from "{file}"')
 
-    def _build_adif_import_(self, r, use_cfg_id=False, use_cfg_station=False):
-        values = [''] * (len(self.__sql_cols__) - 1)
+    def _build_adif_import_(self, r, use_cfg_id=False, use_cfg_station=False, update: list = None):
+        if update:
+            values = update
+        else:
+            values = [''] * (len(self.__sql_cols__) - 1)
+
         date = r['QSO_DATE']
         timex = r['TIME_ON']
         time = f'{timex[:2]}:{timex[2:4]}' if len(timex) == 4 else f'{timex[:2]}:{timex[2:4]}:{timex[4:6]}'
@@ -1477,13 +1485,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if added:
             self.refreshTableView()
 
-    def findQSO(self, timestamp, call):
-        query = self.__db_con__.exec(f'SELECT date_time, call_sign from qsos '
+    def findQSO(self, timestamp, call) -> list:
+        """Find a QSO and return data set"""
+
+        query = self.__db_con__.exec(f'SELECT * from qsos '
                                      f'where date_time="{timestamp}" and call_sign="{call}"')
         if query.lastError().text():
             raise Exception(query.lastError().text())
 
-        return query.next()
+        row = []
+        if query.next():
+            for i in range(len(self.__sql_cols__)):
+                row.append(query.value(i))
+
+        return row
 
     def workedBefore(self, call):
         query = self.__db_con__.exec(f'SELECT call_sign from qsos '
