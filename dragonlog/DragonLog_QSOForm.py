@@ -105,7 +105,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.qslAccLoTWCheckBox,
             self.eqslSentCheckBox,
             self.eqslRcvdCheckBox,
-            self.lotwGroupBox,
             self.lotwSentCheckBox,
             self.lotwRcvdCheckBox,
         )
@@ -326,10 +325,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.eqslLinkLabel.setText(self.tr('Link to eQSL Card'))
         self.eqslDownloadPushButton.setEnabled(False)
 
-        self.lotwGroupBox.setChecked(False)
+        self.lotwGroupBox.setEnabled(False)
         self.lotwSentCheckBox.setChecked(False)
         self.lotwRcvdCheckBox.setChecked(False)
-        self.lotwInboxPushButton.setEnabled(False)
 
         self.hamQTHCheckBox.setChecked(False)
 
@@ -604,11 +602,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 eqsl_sent = 'Y' if self.eqslSentCheckBox.isChecked() else 'R'
                 eqsl_rcvd = 'Y' if self.eqslRcvdCheckBox.isChecked() else 'R'
 
-        lotw_sent = 'N'
-        lotw_rcvd = 'N'
-        if self.lotwGroupBox.isChecked():
-            lotw_sent = 'Y' if self.lotwSentCheckBox.isChecked() else 'R'
-            lotw_rcvd = 'Y' if self.lotwRcvdCheckBox.isChecked() else 'R'
+        lotw_sent = 'Y' if self.lotwSentCheckBox.isChecked() else 'N'
+        lotw_rcvd = 'Y' if self.lotwRcvdCheckBox.isChecked() else 'N'
 
         return (
             date_time_on,
@@ -756,10 +751,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                     self.eqslDownloadPushButton.setEnabled(True)
 
         if values['lotw_sent'] in ('R', 'Y') or values['lotw_rcvd'] in ('R', 'Y'):
-            self.lotwGroupBox.setChecked(True)
+            self.lotwGroupBox.setEnabled(True)
             self.lotwSentCheckBox.setChecked(values['lotw_sent'] == 'Y')
             self.lotwRcvdCheckBox.setChecked(values['lotw_rcvd'] == 'Y')
-            self.lotwInboxPushButton.setEnabled(True)
 
         match values['hamqth']:
             case 'Y' | 'M':
