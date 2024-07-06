@@ -163,7 +163,7 @@ class LoTW:
             'login': username,
             'password': password,
             'qso_query': '1',
-            'qso_callsing': record['CALL'],
+            'qso_callsign': record['CALL'],
             'qso_startdate': start_dt.date().toString('yyyy-MM-dd'),
             'qso_starttime': start_dt.time().toString('hh:mm'),
             'qso_enddate': end_dt.date().toString('yyyy-MM-dd'),
