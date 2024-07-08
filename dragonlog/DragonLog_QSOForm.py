@@ -274,6 +274,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def clear(self):
         self.__old_values__ = {}
         self.qso_id = None
+
+        if self.__change_mode__:
+            self.setChangeMode(False)
+
         self.callSignLineEdit.clear()
         self.nameLineEdit.clear()
         self.QTHLineEdit.clear()
