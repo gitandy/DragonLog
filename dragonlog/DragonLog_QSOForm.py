@@ -945,6 +945,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             record['COMMENT'] = self.dragonlog.replaceNonASCII(self.commentLineEdit.text().strip())
         if self.qslMessageTextEdit.toPlainText().strip():
             record['QSLMSG'] = self.dragonlog.replaceNonASCII(self.qslMessageTextEdit.toPlainText().strip())
+        if self.propComboBox.currentText():
+            record['PROP_MODE'] = self.prop_trans[self.propComboBox.currentText()]
 
         return record
 
