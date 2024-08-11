@@ -517,6 +517,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.__db_con__.setDatabaseName(db_file)
             self.__db_con__.open()
+            self.__db_con__.exec('pragma temp_store = MEMORY;')
+            self.__db_con__.exec('pragma journal_mode = WAL;')
+            # self.__db_con__.exec('pragma synchronous = normal;')  # TODO: Enable via config
+
+            self.log.debug('Initialise database if necessary...')
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
 
@@ -1194,6 +1199,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     f'XLSX import, QSO row {ln} already exists for {row[1].value} and {row[4].value}. Skipping row.')
                 continue
 
+            if not ln % 100:
+                self.log.info(f'XLSX import, processed rows {ln}. Continuing...')
+
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
 
@@ -1208,8 +1216,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 )
             else:
                 lines += 1
+                self.__db_con__.commit()
 
-        self.__db_con__.commit()
         self.refreshTableView()
         self.log.info(f'Imported {lines} QSOs from "{file}"')
 
@@ -1246,6 +1254,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         f'CSV import, QSO row {ln} already exists for {row[1]} and {row[4]}. Skipping row.')
                     continue
 
+                if not ln % 100:
+                    self.log.info(f'CSV import, processed rows {ln}. Continuing...')
+
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare(self.__db_insert_stmnt__)
 
@@ -1260,8 +1271,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     )
                 else:
                     lines += 1
+                    self.__db_con__.commit()
 
-        self.__db_con__.commit()
         self.refreshTableView()
         self.log.info(f'Imported {lines} QSOs from "{file}"')
 
@@ -1324,8 +1335,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 adi_time) == 4 else f'{adi_time[:2]}:{adi_time[2:4]}:{adi_time[4:6]}'
             timestamp = f'{adi_date[:4]}-{adi_date[4:6]}-{adi_date[6:8]} {time}'
 
-            query = QtSql.QSqlQuery(self.__db_con__)
+            if not i % 100:
+                self.log.info(f'ADIF import, processed records {i}. Continuing...')
 
+            query = QtSql.QSqlQuery(self.__db_con__)
             qso_values: list = self.findQSO(timestamp, r['CALL'])
             if qso_values:
                 self.log.info(f'ADIF import, updating QSO {qso_values[0]} for {timestamp} and {r["CALL"]}...')
@@ -1348,8 +1361,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 )
             else:
                 imported += 1
+                self.__db_con__.commit()
 
-        self.__db_con__.commit()
         self.refreshTableView()
 
         self.log.info(f'Imported {imported} QSOs from "{file}"')
@@ -1617,7 +1630,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def closeEvent(self, e):
         self.log.info(f'Quiting {__prog_name__}...')
-        self.__db_con__.close()
+        if self.__db_con__:
+            self.log.debug('Reducing and optimising database...')
+            self.__db_con__.exec('VACUUM;')
+            self.__db_con__.exec('PRAGMA optimize;')
+            self.log.debug('Closing database...')
+            self.__db_con__.close()
 
         self.settings.setValue('ui/show_log', int(self.logDockWidget.isVisible()))
         self.settings.setValue('ui/log_dock_area', self.dockWidgetArea(self.logDockWidget).value)
