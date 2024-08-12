@@ -803,25 +803,34 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def exportCSV(self, file: str):
         self.log.info('Exporting to CSV...')
 
-        with open(file, 'w', newline='', encoding='utf-8') as cf:
-            writer = csv.writer(cf)
+        try:
+            with open(file, 'w', newline='', encoding='utf-8') as cf:
+                writer = csv.writer(cf)
 
-            # Write header
-            writer.writerow(self.__headers__)
+                # Write header
+                writer.writerow(self.__headers__)
 
-            # Write content
-            query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent',
-                                                                  0) else self.__db_select_stmnt__
-            query = self.__db_con__.exec(query_str)
+                # Write content
+                query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent',
+                                                                      0) else self.__db_select_stmnt__
+                query = self.__db_con__.exec(query_str)
 
-            if query.lastError().text():
-                raise Exception(query.lastError().text())
+                if query.lastError().text():
+                    raise Exception(query.lastError().text())
 
-            while query.next():
-                row = []
-                for i in range(len(self.__sql_cols__)):
-                    row.append(query.value(i))
-                writer.writerow(row)
+                while query.next():
+                    row = []
+                    for i in range(len(self.__sql_cols__)):
+                        row.append(query.value(i))
+                    writer.writerow(row)
+
+            self.log.info(f'Saved "{file}"')
+        except OSError as e:
+            self.log.critical(e)
+            QtWidgets.QMessageBox.critical(
+                self,
+                f'{__prog_name__} - {self.tr("Error")}',
+                str(e))
 
     def exportExcel(self, file: str):
         self.log.info('Exporting to XLSX...')
@@ -903,6 +912,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.info(f'Saved "{file}"')
         except Exception as exc:
             self.log.exception(exc)
+            QtWidgets.QMessageBox.critical(
+                self,
+                f'{__prog_name__} - {self.tr("Error")}',
+                str(exc))
 
     def _build_adif_export_(self, query_str, is_adx=False, include_id=False):
         doc = {
