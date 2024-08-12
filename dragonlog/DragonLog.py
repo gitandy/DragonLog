@@ -453,6 +453,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.close()
             try:
                 os.rename(db_file, bck_name)
+                self.log.info(f'Database backup at "{bck_name}"')
             except FileExistsError:
                 self.log.error('A database backup could not be created. The file already exists.')
                 QtWidgets.QMessageBox.critical(self, self.tr('Database backup error'),
@@ -466,9 +467,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
             self.__db_con__.open()
+            self.__db_con__.exec('pragma temp_store = MEMORY;')
+            self.__db_con__.exec('pragma journal_mode = WAL;')
+            self.__db_con__.exec('pragma synchronous = NORMAL;')
+
             self.__db_con__.exec(self.__db_create_stmnt__)
+            self.__db_con__.exec(self.__db_create_idx_stmnt__)
+
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
+
+            self.log.debug('Initialised new database for conversion')
 
             # Open backup
             db_con_bck = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'backup')
@@ -479,6 +488,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.exec(self.__db_create_stmnt__)
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
+
+            self.log.debug('Opened DB backup for conversion')
 
             q_read = db_con_bck.exec(f'SELECT {db_cols} FROM qsos')
             if q_read.lastError().text():
@@ -503,6 +514,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.commit()
             db_con_bck.close()
 
+            self.log.info('Database conversion finished successfully')
             QtWidgets.QMessageBox.information(self, self.tr('Database conversion'),
                                               self.tr('Database conversion finished')
                                               )
@@ -519,7 +531,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.open()
             self.__db_con__.exec('pragma temp_store = MEMORY;')
             self.__db_con__.exec('pragma journal_mode = WAL;')
-            # self.__db_con__.exec('pragma synchronous = normal;')  # TODO: Enable via config
+            self.__db_con__.exec('pragma synchronous = NORMAL;')
 
             self.log.debug('Initialise database if necessary...')
             self.__db_con__.exec(self.__db_create_stmnt__)
