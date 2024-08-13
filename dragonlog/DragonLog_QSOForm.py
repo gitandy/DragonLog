@@ -5,7 +5,7 @@ import string
 import logging
 
 import maidenhead
-from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore
 
 from . import DragonLog_QSOForm_ui
 from .Logger import Logger
@@ -48,7 +48,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.cb_channels = cb_channels
         self.channelComboBox.insertItems(0, ['-'] + list(cb_channels.keys()))
 
-        self.bandComboBox.insertItems(0, bands.keys())
+        self.refreshBands()
 
         self.propComboBox.insertItems(0, self.prop.values())
 
@@ -118,6 +118,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.refreshAntennaList()
 
         self.clear()
+
+    def refreshBands(self):
+        self.bandComboBox.clear()
+        self.bandComboBox.insertItems(0, self.settings.value('ui/show_bands', self.bands.keys()))
+        self.bandComboBox.setCurrentIndex(0)
 
     def refreshQTHList(self):
         self.ownQTHComboBox.clear()
@@ -311,6 +316,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if self.modeComboBox.currentIndex() < 0:
             self.modeComboBox.setCurrentIndex(0)
 
+        self.bandComboBox.setPalette(ColorPalettes.PaletteOk)
+        self.modeComboBox.setPalette(ColorPalettes.PaletteOk)
+
         self.qslBurDirGroupBox.setChecked(False)
         self.qslViaLineEdit.clear()
         self.qslBureauRadioButton.setChecked(False)
@@ -378,14 +386,24 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
     def bandChanged(self, band: str):
         self.__last_band__ = band
-        self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
-        self.freqDoubleSpinBox.setValue(self.bands[band][0] - self.bands[band][2])
-        self.freqDoubleSpinBox.setMaximum(self.bands[band][1])
-        self.freqDoubleSpinBox.setSingleStep(self.bands[band][2])
+
+        if band in self.bands:
+            self.bandComboBox.setPalette(ColorPalettes.PaletteOk)
+            self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
+            self.freqDoubleSpinBox.setValue(self.bands[band][0] - self.bands[band][2])
+            self.freqDoubleSpinBox.setMaximum(self.bands[band][1])
+            self.freqDoubleSpinBox.setSingleStep(self.bands[band][2])
+        else:
+            self.bandComboBox.setPalette(ColorPalettes.PaletteFaulty)
+            self.freqDoubleSpinBox.setMinimum(0)
+            self.freqDoubleSpinBox.setValue(0)
+            self.freqDoubleSpinBox.setMaximum(self.bands['submm'][1])
+            self.freqDoubleSpinBox.setSingleStep(1)
 
         self.modeComboBox.clear()
         if band == '11m':
             self.modeComboBox.insertItems(0, self.modes['CB'].keys())
+            self.modeComboBox.setCurrentIndex(0)
             self.powerSpinBox.setMaximum(12)
             self.channelComboBox.setVisible(True)
             self.channelLabel.setVisible(True)
@@ -405,7 +423,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             if self.identityGroupBox.isChecked():
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
         else:
-            self.modeComboBox.insertItems(0, self.modes['AFU'].keys())
+            self.modeComboBox.insertItems(0, self.settings.value('ui/show_modes', self.modes['AFU'].keys()))
             self.modeComboBox.setCurrentIndex(0)
             self.powerSpinBox.setMaximum(1000)
             self.channelComboBox.setVisible(False)
@@ -426,18 +444,25 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
     def modeChanged(self, mode: str):
         self.__last_mode__ = mode
+
         self.submodeComboBox.clear()
-        self.submodeComboBox.setEnabled(True)
+        self.submodeComboBox.setEnabled(False)
         if self.bandComboBox.currentText() == '11m':
-            if mode in self.modes['CB'] and self.modes['CB'][mode]:
-                self.submodeComboBox.insertItems(0, [''] + self.modes['CB'][mode])
+            if mode in self.modes['CB']:
+                self.modeComboBox.setPalette(ColorPalettes.PaletteOk)
+                if self.modes['CB'][mode]:
+                    self.submodeComboBox.setEnabled(True)
+                    self.submodeComboBox.insertItems(0, [''] + self.modes['CB'][mode])
             else:
-                self.submodeComboBox.setEnabled(False)
+                self.modeComboBox.setPalette(ColorPalettes.PaletteFaulty)
         else:
-            if mode in self.modes['AFU'] and self.modes['AFU'][mode]:
-                self.submodeComboBox.insertItems(0, [''] + self.modes['AFU'][mode])
+            if mode in self.modes['AFU']:
+                self.modeComboBox.setPalette(ColorPalettes.PaletteOk)
+                if self.modes['AFU'][mode]:
+                    self.submodeComboBox.setEnabled(True)
+                    self.submodeComboBox.insertItems(0, [''] + self.modes['AFU'][mode])
             else:
-                self.submodeComboBox.setEnabled(False)
+                self.modeComboBox.setPalette(ColorPalettes.PaletteFaulty)
 
     def stationChanged(self, checked):
         if checked:
@@ -622,8 +647,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             band,
             self.modeComboBox.currentText(),
             self.submodeComboBox.currentText(),
-            self.freqDoubleSpinBox.value() if self.freqDoubleSpinBox.value() >= self.bands[band][
-                0] else '',
+            self.freqDoubleSpinBox.value() if self.freqDoubleSpinBox.value() > self.freqDoubleSpinBox.minimum() else '',
             self.channelComboBox.currentText() if band == '11m' else '-',
             self.powerSpinBox.value() if self.powerSpinBox.value() > 0 else '',
             prop,
@@ -699,10 +723,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if values['submode']:
             self.submodeComboBox.setCurrentText(values['submode'])
 
+        freq = 0
         try:
             freq = float(values['freq'])
         except ValueError:
-            freq = self.bands[band][0] - self.bands[band][2]
+            if band in self.bands:
+                freq = self.bands[band][0] - self.bands[band][2]
         self.freqDoubleSpinBox.setValue(freq)
 
         if band == '11m':

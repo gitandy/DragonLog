@@ -13,6 +13,7 @@ from .Logger import Logger
 from .RegEx import REGEX_CALL, check_format
 from .CallBook import CallBookType
 from .ListEdit import ListEdit
+from .SelectWidget import SelectWidget
 from . import ColorPalettes
 
 # Fix problems with importing win32 in frozen executable
@@ -29,7 +30,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     rigctldStatusChanged = QtCore.pyqtSignal(bool)
     settingsStored = QtCore.pyqtSignal()
 
-    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel, cols: typing.Iterable,
+    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel,
+                 bands: typing.Iterable, modes: typing.Iterable, cols: typing.Iterable,
                  logger: Logger):
         super().__init__(parent)
         self.setupUi(self)
@@ -50,6 +52,16 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.antsListEdit = ListEdit(self.listingsWidget, self.tr('Antennas'))
         self.listingsWidget.layout().addWidget(self.antsListEdit, 1, 1, 1, 1)
         self.antsListEdit.listChanged.connect(self.refreshAntsComboBox)
+
+        self.bandsSelectWidget = SelectWidget(self.bandsGroupBox, bands,
+                                              self.tr('Show bands'), self.tr('Hide bands'))
+        self.bandsGroupBox.layout().addWidget(self.bandsSelectWidget)
+        self.modesSelectWidget = SelectWidget(self.modesGroupBox, modes,
+                                              self.tr('Show modes'), self.tr('Hide modes'))
+        self.modesGroupBox.layout().addWidget(self.modesSelectWidget)
+        self.columnsSelectWidget = SelectWidget(self.columnsGroupBox, cols,
+                                                self.tr('Show columns'), self.tr('Hide columns'))
+        self.columnsGroupBox.layout().addWidget(self.columnsSelectWidget)
 
         self.settings = settings
         self.rig_ids = None
@@ -288,20 +300,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         else:
             self.callsignCBLineEdit.setPalette(ColorPalettes.PaletteOk)
 
-    def hideCol(self):
-        for item in self.colShowListWidget.selectedItems():
-            self.colHideListWidget.insertItem(0, item.text())
-            self.colShowListWidget.takeItem(self.colShowListWidget.row(item))
-
-        self.colHideListWidget.sortItems()
-
-    def showCol(self):
-        for item in self.colHideListWidget.selectedItems():
-            self.colShowListWidget.insertItem(0, item.text())
-            self.colHideListWidget.takeItem(self.colHideListWidget.row(item))
-
-        self.colShowListWidget.sortItems()
-
     def callbookSelected(self, service: str):
         """Slot (i.e. if callbookComboBox is changed)"""
         self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbooks[service]}_user', ''))
@@ -335,16 +333,12 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.sortAscRadioButton.setChecked(sort_order == 'ASC')
         self.sortDscRadioButton.setChecked(sort_order == 'DSC')
         self.recentQSOsComboBox.setCurrentText(self.settings.value('ui/recent_qsos', self.tr('Show all')))
-        self.colHideListWidget.clear()
-        self.colShowListWidget.clear()
-        h_cols = self.settings.value('ui/hidden_cols', '').split(',')
-        for i, c in enumerate(self.columns, 1):
-            if str(i) not in h_cols:
-                self.colShowListWidget.addItem(f'{i:02d} - {c}')
-            else:
-                self.colHideListWidget.addItem(f'{i:02d} - {c}')
-        self.colShowListWidget.sortItems()
-        self.colHideListWidget.sortItems()
+
+        self.columnsSelectWidget.indexesDisabled = [int(c) for c in self.settings.value('ui/hidden_cols',
+                                                                                        '').split(',')]
+        self.bandsSelectWidget.itemsEnabled = self.settings.value('ui/show_bands', self.bandsSelectWidget.items)
+        self.modesSelectWidget.itemsEnabled = self.settings.value('ui/show_modes', self.modesSelectWidget.items)
+
         self.logLevelComboBox.setCurrentText(str(self.settings.value('ui/log_level', 'Info')).capitalize())
         self.logToFileCheckBox.setChecked(bool(self.settings.setValue('ui/log_file', 0)))
 
@@ -419,9 +413,9 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('ui/sort_order', 'ASC' if self.sortAscRadioButton.isChecked() else 'DSC')
         self.settings.setValue('ui/recent_qsos', self.recentQSOsComboBox.currentText())
         self.settings.setValue('ui/hidden_cols',
-                               ','.join([str(int(i.text().split('-')[0].strip())) for i in
-                                         self.colHideListWidget.findItems('.*',
-                                                                          QtCore.Qt.MatchFlag.MatchRegularExpression)]))
+                               ','.join([str(c) for c in self.columnsSelectWidget.indexesDisabled]))
+        self.settings.setValue('ui/show_bands', self.bandsSelectWidget.itemsEnabled)
+        self.settings.setValue('ui/show_modes', self.modesSelectWidget.itemsEnabled)
         self.settings.setValue('ui/log_level', self.logLevelComboBox.currentText().upper())
         self.settings.setValue('ui/log_file', int(self.logToFileCheckBox.isChecked()))
 

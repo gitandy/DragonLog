@@ -340,7 +340,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
 
-        self.settings_form = Settings(self, self.settings, self.hamlib_status, self.__headers__, self.log)
+        self.settings_form = Settings(self, self.settings, self.hamlib_status,
+                                      self.bands, self.modes['AFU'], self.__headers__, self.log)
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
@@ -383,6 +384,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.lotw = LoTW(self.log)
 
+        self.settings_form.settingsStored.connect(self.qso_form.refreshBands)
         self.settings_form.settingsStored.connect(self.qso_form.refreshQTHList)
         self.settings_form.settingsStored.connect(self.qso_form.refreshRadioList)
         self.settings_form.settingsStored.connect(self.qso_form.refreshAntennaList)

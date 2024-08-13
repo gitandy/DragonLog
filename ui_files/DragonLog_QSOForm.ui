@@ -206,6 +206,21 @@
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
             <widget class="QComboBox" name="bandComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <property name="minimumContentsLength">
               <number>4</number>
              </property>
@@ -278,6 +293,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_14">
            <item>
             <widget class="QComboBox" name="modeComboBox">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <property name="minimumContentsLength">
               <number>2</number>
              </property>
@@ -546,7 +564,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>465</width>
+        <width>332</width>
         <height>484</height>
        </rect>
       </property>
@@ -911,8 +929,8 @@ This is not the QSL manager/bureau address.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>460</height>
+        <width>172</width>
+        <height>158</height>
        </rect>
       </property>
       <attribute name="label">
