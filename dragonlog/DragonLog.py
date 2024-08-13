@@ -389,6 +389,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings_form.settingsStored.connect(self.qso_form.refreshRadioList)
         self.settings_form.settingsStored.connect(self.qso_form.refreshAntennaList)
 
+        if 'station' not in self.settings.childGroups():
+            QtWidgets.QMessageBox.information(self, self.tr('Initial startup'),
+                                              self.tr('It seems you are running DragonLog for the first time\n'
+                                                      'Please configure some information first'))
+            self.showSettings()
+
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
         dock_area = QtCore.Qt.DockWidgetArea.NoDockWidgetArea
