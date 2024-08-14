@@ -3,6 +3,7 @@ import csv
 import platform
 import sys
 import json
+from enum import Enum, auto
 import datetime
 from typing import Iterable
 
@@ -120,6 +121,33 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
                     return self.no_icon
 
         return value
+
+
+class ADISourceType(Enum):
+    Other = auto()
+    HamQTH = auto()
+    QRZCQ = auto()
+    QRZ = auto()
+    eQSLInbox = auto()
+    eQSLOutbox = auto()
+    LoTW = auto()
+    DCL = auto()
+
+
+__adi_src_map__ = {
+    'eQSL.cc DownloadInBox': ADISourceType.eQSLInbox,
+    'eQSL.cc DownloadADIF': ADISourceType.eQSLOutbox,
+    'LoTW': ADISourceType.LoTW,
+    'QRZLogbook': ADISourceType.QRZ,
+    'DCL': ADISourceType.DCL,
+}
+
+
+def eval_adi_type(prog_id: str) -> ADISourceType:
+    if prog_id in __adi_src_map__:
+        return __adi_src_map__[prog_id]
+    else:
+        return ADISourceType.Other
 
 
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
@@ -1313,23 +1341,23 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info('Importing from ADIF...')
 
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
-        is_eqsl_in: bool = False
-        is_eqsl_out: bool = False
+        adi_src_type = ADISourceType.Other
         if is_adx:
             records: list = adx.load(file)['RECORDS']
         else:
             adi_doc: dict = adi.load(file)
+
             if 'HEADER' in adi_doc and 'PROGRAMID' in adi_doc['HEADER']:
-                is_eqsl_in = adi_doc['HEADER']['PROGRAMID'].strip() == 'eQSL.cc DownloadInBox'
-                is_eqsl_out = adi_doc['HEADER']['PROGRAMID'].strip() == 'eQSL.cc DownloadADIF'
+                adi_src_type = eval_adi_type(adi_doc['HEADER']['PROGRAMID'].strip())
+
             records: list = adi_doc['RECORDS']
 
         imported = 0
         i: int
         r: dict
         for i, r in enumerate(records, 1):
-            # Fix eQSL export
-            if is_eqsl_in:
+            # Fix ADI data
+            if adi_src_type == ADISourceType.eQSLInbox:
                 self.log.debug('Fixing eQSL inbox data')
                 if 'QSL_SENT' in r:  # Wrong tag, missing tag
                     r['EQSL_QSL_RCVD'] = r.pop('QSL_SENT')
@@ -1337,12 +1365,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     r.pop('QSLMSG')
                 if 'RST_SENT' in r:  # Wrong direction
                     r['RST_RCVD'] = r.pop('RST_SENT')
-            elif is_eqsl_out:
+            elif adi_src_type == ADISourceType.eQSLOutbox:
                 self.log.debug('Fixing eQSL outbox data')
                 if 'QSL_SENT' in r:  # Wrong tag
                     r['EQSL_QSL_SENT'] = r.pop('QSL_SENT')
                 if 'QSL_SENT_VIA' in r:  # Wrong usage
                     r.pop('QSL_SENT_VIA')
+            elif adi_src_type == ADISourceType.LoTW:
+                self.log.debug('Fixing LoTW data')
+                if 'QSL_RCVD' in r:  # Wrong tag
+                    r['LOTW_QSL_RCVD'] = r.pop('QSL_RCVD')
+                r['LOTW_QSL_SENT'] = 'Y'
+            elif adi_src_type == ADISourceType.DCL:
+                if 'QSL_RCVD' in r:  # Wrong tag
+                    r.pop('QSL_RCVD')
 
             if 'QSO_DATE' not in r or 'TIME_ON' not in r:
                 self.log.warning(f'ADIF import, QSO date/time missing in record {i}.\nSkipped record.')
@@ -1405,6 +1441,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             values = update
         else:
             values = [''] * (len(self.__sql_cols__) - 1)
+            values[self.__sql_cols__.index('qsl_sent') - 1] = 'N'
+            values[self.__sql_cols__.index('qsl_rcvd') - 1] = 'N'
+            values[self.__sql_cols__.index('eqsl_sent') - 1] = 'N'
+            values[self.__sql_cols__.index('eqsl_rcvd') - 1] = 'N'
+            values[self.__sql_cols__.index('lotw_sent') - 1] = 'N'
+            values[self.__sql_cols__.index('lotw_rcvd') - 1] = 'N'
 
         date = r['QSO_DATE']
         timex = r['TIME_ON']

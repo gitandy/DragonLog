@@ -79,7 +79,7 @@ If automatic time is selected, the end time gets updated at saving the QSO.
 
 QSOs can be edited by double-clicking on an entry in the database view.
 
-DragonLog can retreive additional OM data from HamQTH.com callbook and upload the QSO.
+DragonLog can retrieve additional OM data from HamQTH.com callbook and upload the QSO.
 
 In log and change mode there is a second view for QSL and different upload status.
 Here you can check the status of your eQSL inbox or LoTW QSLs.
@@ -98,7 +98,7 @@ If you secured your TQSL set DragonLog correspondingly. DragonLog will then requ
 each upload action.
 
 ### Automatic log import
-If you want to automatically log QSOs from other programms i.e. WSJT-X or JS8Call 
+If you want to automatically log QSOs from other programs i.e. WSJT-X or JS8Call 
 DragonLog can watch an ADIF file for changes and import new logs as they are created.
 
 Starting file watching opens a file dialog where you have to point to the log in question.
@@ -121,7 +121,7 @@ Following formats are supported for export
 ADIF ADX is the best choice for creating a backup.
 
 ### ADIF format export
-ADX should be prefered over ADI as UTF-8 is supported. 
+ADX should be preferred over ADI as UTF-8 is supported. 
 For ADX where UTF-8 (*_INTL fields) is supported additionally the ASCII counterpart is exported.
 
 For ADX ASCII only fields (all ADI fields) all german umlauts and ligatures are converted 
@@ -143,7 +143,10 @@ So best practice is to export QSOs with the current program version and adjust t
 Empty rows are skipped. A row is considered empty if the date/time is missing.
 
 ### ADIF format import
-UTF-8 content (*_INTL fields) are prefered over ASCII counterparts when importing ADX files.
+UTF-8 content (*_INTL fields) are preferred over ASCII counterparts when importing ADX files.
+
+For ADI files DragonLog fixes different problems 
+depending on the source of the file (see [ADIF Compatibility](ADIF_COMPATIBILITY.md))
 
 Hamlib integration
 ------------------
