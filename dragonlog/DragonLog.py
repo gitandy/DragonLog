@@ -41,11 +41,12 @@ __copyright__ = 'Copyright 2023-2024 by Andreas Schawo,licensed under CC BY-SA 4
 from . import __version__ as version
 
 __version__ = version.__version__
+__version_str__ = version.__version_str__
 
-if version.__branch__:
-    __version__ += '-' + version.__branch__
+if version.__branch__ != 'master':
+    __version_str__ += '-' + version.__branch__
 if version.__unclean__:
-    __version__ += '-unclean'
+    __version_str__ += '-unclean'
 
 
 class DatabaseOpenException(Exception):
@@ -239,10 +240,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.app_path = app_path
         self.help_dialog = None
 
-        self.settings = QtCore.QSettings(self.tr(__prog_name__))
+        self.settings = QtCore.QSettings(self.programName)
 
         self.log = Logger(self.logTextEdit, self.settings)
-        self.log.info(f'Starting {__prog_name__} {__version__}...')
+        self.log.info(f'Starting {self.programName} {self.programVersion}...')
 
         if int(self.settings.value('ui/log_dock_float', 0)):
             self.logDockWidget.setFloating(True)
@@ -403,7 +404,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 self.log.warning(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
 
-        self.watchAppSelect = AppSelect(self, f'{self.tr(__prog_name__)} - {self.tr("Watch application log")}',
+        self.watchAppSelect = AppSelect(self, f'{self.programName} - {self.tr("Watch application log")}',
                                         self.settings)
         self.watchTimer = QtCore.QTimer(self)
         self.watchTimer.timeout.connect(self.watchFile)
@@ -596,7 +597,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.log.info(f'Opened database {db_file}')
             self.settings.setValue('lastDatabase', db_file)
-            self.setWindowTitle(__prog_name__ + ' - ' + db_file)
+            self.setWindowTitle(self.programName + ' - ' + db_file)
 
             self.actionExport.setEnabled(True)
             self.actionExport_TB.setEnabled(True)
@@ -610,7 +611,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             QtWidgets.QMessageBox.critical(
                 self,
-                f'{__prog_name__} - {self.tr("Error")}',
+                f'{self.programName} - {self.tr("Error")}',
                 str(exc))
 
     def refreshTableView(self, sort: bool = True):
@@ -865,14 +866,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.critical(e)
             QtWidgets.QMessageBox.critical(
                 self,
-                f'{__prog_name__} - {self.tr("Error")}',
+                f'{self.programName} - {self.tr("Error")}',
                 str(e))
 
     def exportExcel(self, file: str):
         self.log.info('Exporting to XLSX...')
         xl_wb = openpyxl.Workbook()
         xl_wb.properties.title = self.tr('Exported QSO log')
-        xl_wb.properties.description = f'{__prog_name__} {__version__}'
+        xl_wb.properties.description = f'{self.programName} {self.programVersion}'
         xl_wb.properties.creator = os.getlogin()
 
         xl_ws = xl_wb.active
@@ -918,7 +919,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.critical(e)
             QtWidgets.QMessageBox.critical(
                 self,
-                f'{__prog_name__} - {self.tr("Error")}',
+                f'{self.programName} - {self.tr("Error")}',
                 str(e))
 
     def replaceNonASCII(self, text: str) -> str:
@@ -950,7 +951,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.exception(exc)
             QtWidgets.QMessageBox.critical(
                 self,
-                f'{__prog_name__} - {self.tr("Error")}',
+                f'{self.programName} - {self.tr("Error")}',
                 str(exc))
 
     def _build_adif_export_(self, query_str, is_adx=False, include_id=False):
@@ -958,8 +959,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             'HEADER':
                 {
                     'ADIF_VER': '3.1.4',
-                    'PROGRAMID': __prog_name__,
-                    'PROGRAMVERSION': __version__,
+                    'PROGRAMID': self.programName,
+                    'PROGRAMVERSION': self.programVersion,
                     'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString('yyyyMMdd HHmmss')
                 },
             'RECORDS': None,
@@ -1644,7 +1645,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 help_text = hf.read()
 
             self.help_dialog = QtWidgets.QDialog(self)
-            self.help_dialog.setWindowTitle(f'{self.tr(__prog_name__)} - {self.tr("Help")}')
+            self.help_dialog.setWindowTitle(f'{self.programName} - {self.tr("Help")}')
             self.help_dialog.resize(500, 500)
             verticalLayout = QtWidgets.QVBoxLayout(self.help_dialog)
             scrollArea = QtWidgets.QScrollArea(self.help_dialog)
@@ -1680,7 +1681,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     @property
     def programVersion(self):
-        return __version__
+        return __version_str__
 
     def showAbout(self):
         cr = sys.copyright.replace('\n\n', '\n')
@@ -1689,8 +1690,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         QtWidgets.QMessageBox.about(
             self,
-            f'{__prog_name__} - {self.tr("About")}',
-            f'{self.tr("Version")}: {__version__}\n'
+            f'{self.programName} - {self.tr("About")}',
+            f'{self.tr("Version")}: {self.programVersion}\n'
             f'{self.tr("Author")}: {__author_name__} <{__author_email__}>\n{__copyright__}'
             f'\n\nPython {sys.version.split()[0]}: {cr}' +
             op_txt +
@@ -1701,10 +1702,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         )
 
     def showAboutQt(self):
-        QtWidgets.QMessageBox.aboutQt(self, __prog_name__ + ' - ' + self.tr('About Qt'))
+        QtWidgets.QMessageBox.aboutQt(self, self.programName + ' - ' + self.tr('About Qt'))
 
     def closeEvent(self, e):
-        self.log.info(f'Quiting {__prog_name__}...')
+        self.log.info(f'Quiting {self.programName}...')
         if self.__db_con__:
             self.log.debug('Reducing and optimising database...')
             self.__db_con__.exec('VACUUM;')
