@@ -942,7 +942,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         doc = self._build_adif_export_(query_str, is_adx)
         try:
             if is_adx:
-                adx.dump(file, doc)
+                errors = adx.dump(file, doc, False)
+                for err in errors:
+                    self.log.warning('ADX validation error: ' + str(err))
+                if errors:
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        f'{self.programName} - {self.tr("ADX-Export")}',
+                        self.tr('ADX validation detected one or more error(s)\nSee log for detail'))
             else:
                 adi.dump(file, doc, 'ADIF Export by DragonLog')
 
