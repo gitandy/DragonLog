@@ -1,6 +1,5 @@
 from PyQt6 import QtGui, QtWidgets
 
-
 PaletteDefault = QtWidgets.QApplication.palette('QLineEdit')
 
 PaletteOk = QtGui.QPalette()
@@ -13,7 +12,11 @@ PaletteEmpty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole
 
 PaletteFaulty = QtGui.QPalette()
 PaletteFaulty.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
-                       QtGui.QColor(255, 0, 0, 63))
+                       QtGui.QColor(255, 127, 0, 63))
+
+PaletteRequired = QtGui.QPalette()
+PaletteRequired.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,
+                         QtGui.QColor(255, 0, 0, 63))
 
 PaletteWorked = QtGui.QPalette()
 PaletteWorked.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base,

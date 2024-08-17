@@ -75,6 +75,18 @@ use a log loop to enter multiple QSOs via Ctrl+Shift+L.
 
 The displayed form can be handled the easiest if you use TAB key to jump from field to field.
 
+The form requires a callsign from your QSO partner and a start date to save/upload the data.
+It gives a colourful feedback for the quality of your supplied data.
+The colour feedback highlights required and recommended data only.
+
+| Colour                                               | Meaning         |
+|------------------------------------------------------|-----------------|
+| <span style="background-color:#ff0000">red</span>    | required        |
+| <span style="background-color:#ff7f00">orange</span> | wrong format    |
+| <span style="background-color:#ffff00">yellow</span> | empty           |
+| <span style="background-color:#00ff00">green</span>  | ok              |
+| <span style="background-color:#0000ff">blue</span>   | worked before   |
+
 If automatic time is selected, the end time gets updated at saving the QSO.
 
 QSOs can be edited by double-clicking on an entry in the database view.

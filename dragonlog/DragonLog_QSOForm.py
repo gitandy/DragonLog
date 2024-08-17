@@ -393,6 +393,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.freqDoubleSpinBox.setValue(self.bands[band][0] - self.bands[band][2])
             self.freqDoubleSpinBox.setMaximum(self.bands[band][1])
             self.freqDoubleSpinBox.setSingleStep(self.bands[band][2])
+        elif not band:
+            self.bandComboBox.setPalette(ColorPalettes.PaletteEmpty)
         else:
             self.bandComboBox.setPalette(ColorPalettes.PaletteFaulty)
             self.freqDoubleSpinBox.setMinimum(0)
@@ -453,6 +455,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 if self.modes['CB'][mode]:
                     self.submodeComboBox.setEnabled(True)
                     self.submodeComboBox.insertItems(0, [''] + self.modes['CB'][mode])
+            elif not mode:
+                self.modeComboBox.setPalette(ColorPalettes.PaletteEmpty)
             else:
                 self.modeComboBox.setPalette(ColorPalettes.PaletteFaulty)
         else:
@@ -461,6 +465,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 if self.modes['AFU'][mode]:
                     self.submodeComboBox.setEnabled(True)
                     self.submodeComboBox.insertItems(0, [''] + self.modes['AFU'][mode])
+            elif not mode:
+                self.modeComboBox.setPalette(ColorPalettes.PaletteEmpty)
             else:
                 self.modeComboBox.setPalette(ColorPalettes.PaletteFaulty)
 
@@ -509,10 +515,19 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         else:
             self.RSTSentLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
+    def checkRequired(self):
+        if self.callSignLineEdit.text() and self.timeOnEdit.text():
+            self.uploadPushButton.setEnabled(True)
+            self.savePushButton.setEnabled(True)
+        else:
+            self.uploadPushButton.setEnabled(False)
+            self.savePushButton.setEnabled(False)
+
     def callSignChanged(self, txt):
+        self.checkRequired()
         self.setWorkedBefore()
         if not txt:
-            self.callSignLineEdit.setPalette(ColorPalettes.PaletteEmpty)
+            self.callSignLineEdit.setPalette(ColorPalettes.PaletteRequired)
         elif check_format(REGEX_CALL, txt):
             worked = self.dragonlog.workedBefore(check_call(txt)[1])
             if not self.__change_mode__ and worked:
@@ -552,8 +567,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.ownQTHComboBox.setPalette(ColorPalettes.PaletteFaulty)
 
     def timeOnChanged(self, txt):
+        self.checkRequired()
         if not txt:
-            self.timeOnEdit.setPalette(ColorPalettes.PaletteEmpty)
+            self.timeOnEdit.setPalette(ColorPalettes.PaletteRequired)
         elif check_format(REGEX_TIME, txt):
             self.timeOnEdit.setPalette(ColorPalettes.PaletteOk)
         else:
