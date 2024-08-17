@@ -815,7 +815,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def export(self):
         exp_formats = {
-            self.tr('ADIF 3 (*.adx *.adi *.adif)'): self.exportADIF,
+            self.tr('ADIF 3 (*.adi *.adif)'): self.exportADIF,
+            self.tr('ADIF 3 XML (*.adx)'): self.exportADIF,
             self.tr('CSV-File (*.csv)'): self.exportCSV,
         }
 
@@ -1211,7 +1212,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 return
 
         imp_formats = {
-            self.tr('ADIF 3 (*.adx *.adi *.adif)'): self.logImportADIF,
+            self.tr('ADIF 3 (*.adi *.adif)'): self.logImportADIF,
+            self.tr('ADIF 3 XML (*.adx)'): self.logImportADIF,
             self.tr('CSV-File (*.csv)'): self.logImportCSV,
         }
 
