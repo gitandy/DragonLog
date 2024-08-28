@@ -120,7 +120,7 @@ If you want to use the worked before feature of the other program consider to ex
 QSOs beforehand.
 Dragonlog will only import QSOs which are not already included in the current database.
 
-[Keyboard shortcuts](SHORTCUTS.md)
+[Keyboard shortcuts](https://github.com/gitandy/DragonLog/blob/master/SHORTCUTS.md)
 ----------------------------------
 
 Export
@@ -158,7 +158,7 @@ Empty rows are skipped. A row is considered empty if the date/time is missing.
 UTF-8 content (*_INTL fields) are preferred over ASCII counterparts when importing ADX files.
 
 For ADI files DragonLog fixes different problems 
-depending on the source of the file (see [ADIF Compatibility](ADIF_COMPATIBILITY.md))
+depending on the source of the file (see [ADIF Compatibility](https://github.com/gitandy/DragonLog/blob/master/ADIF_COMPATIBILITY.md))
 
 Hamlib integration
 ------------------

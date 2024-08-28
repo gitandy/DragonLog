@@ -7,11 +7,13 @@ UNCLEAN = "True"
 endif
 
 BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
-
+MD_FILES = $(wildcard *.md)
 NO_OBSOLETE=
 
-all:  dragonlog/__version__.py ui_files i18n
-	cp *.md dragonlog/data;
+all:  dragonlog/__version__.py ui_files i18n $(MD_FILES)
+
+*.md:
+	cp $@ dragonlog/data
 
 ui_files:
 	$(MAKE) -C ui_files
@@ -39,7 +41,7 @@ release:
 	python -m pip install --upgrade twine;
 	python -m twine upload dist/*;
 
-.PHONY: dragonlog/__version__.py ui_files i18n
+.PHONY: dragonlog/__version__.py ui_files i18n $(MD_FILES)
 
 clean:
 	rm -rf build
