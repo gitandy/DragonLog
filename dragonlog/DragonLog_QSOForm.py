@@ -808,9 +808,19 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.hamQTHCheckBox.setChecked(False)
 
         self.contestComboBox.setCurrentText(values['contest_id'])
-        self.sentQSOSpinBox.setValue(values['ctx_qso_id'] if values['ctx_qso_id'] else -1)
-        self.rcvdQSOSpinBox.setValue(values['crx_qso_id'] if values['crx_qso_id'] else -1)
         self.rcvdDataLineEdit.setText(values['crx_data'])
+        try:
+            self.sentQSOSpinBox.setValue(int(values['ctx_qso_id']) if values['ctx_qso_id'] else -1)
+        except ValueError:
+            self.log.warning(f'Sent QSO ID "{values["ctx_qso_id"]}" is not a number')
+
+        try:
+            self.rcvdQSOSpinBox.setValue(int(values['crx_qso_id']) if values['crx_qso_id'] else -1)
+        except ValueError:
+            self.log.warning(f'Rcvd QSO ID "{values["crx_qso_id"]}" is not a number')
+            if not values['crx_data']:
+                self.rcvdDataLineEdit.setText(values['crx_qso_id'])
+                self.log.info(f'Stored QSO ID as rcvd data instead')
 
     def searchHamQTH(self):
         self.searchCallbook(self.callbook_hamqth)
