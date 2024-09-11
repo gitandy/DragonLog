@@ -2,7 +2,7 @@
 import re
 
 REGEX_CALL = re.compile(r'([a-zA-Z0-9]{1,3}?/)?([a-zA-Z0-9]{1,3}?[0-9][a-zA-Z0-9]{0,3}?[a-zA-Z])(/[aAmMpPrRtT]{1,2}?)?')
-REGEX_RSTFIELD = re.compile(r'([1-5][1-9][1-9aAcCkKmMsSxX]?)|([-+][0-9]{1,2})')
+REGEX_RSTFIELD = re.compile(r'([1-5]([1-9]([1-9][aAcCkKmMsSxX]?)?)?)|([-+][0-9]{1,2})')
 REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
 REGEX_NONASCII = re.compile(r'[ -~\n\r]*(.)?')
 REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3])):([0-5][0-9])(:[0-5][0-9])?')
