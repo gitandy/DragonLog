@@ -8,7 +8,7 @@ all: $(QM_FILES)
 	cp *.json ../dragonlog/data/i18n;
 
 %.qm: %.ts
-	pylupdate6 $(NO_OBSOLETE) ../dragonlog ../ui_files -ts $<;
+	pylupdate6 $(NO_OBSOLETE) ../dragonlog ../ui_files -ts $< ;
 	lrelease $< -qm $@;
 	cp $@ ../dragonlog/data/i18n;
 
@@ -17,3 +17,4 @@ clean:
 	rm -f ../dragonlog/data/i18n/*.qm
 	rm -f ../dragonlog/data/i18n/*.json
 
+.PHONY: $(TS_FILES)
