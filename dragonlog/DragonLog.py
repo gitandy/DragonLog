@@ -11,6 +11,7 @@ from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
 from adif_file import adi, adx
 import xmltodict
+import hamcc
 
 OPTION_OPENPYXL = False
 try:
@@ -30,6 +31,7 @@ from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
 from .LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
+from .CassiopeiaConsole import CassiopeiaConsole
 from . import ColorPalettes
 
 __prog_name__ = 'DragonLog'
@@ -388,6 +390,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(qso_dock_area,
                                self.qsoDockWidget)
         self.qsoDockWidget.setVisible(bool(int(self.settings.value('ui/show_qso', 0))))
+
+        # HamCCForm
+        self.cc_widget = CassiopeiaConsole(self, self, self.settings, self.log)
+        self.cc_widget.qsosChached.connect(self.retrieveCCQSO)
+        self.ccDockWidget.setWidget(self.cc_widget)
+        if int(self.settings.value('ui/cc_dock_float', 0)):
+            self.ccDockWidget.setFloating(True)
+        else:
+            cc_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/cc_dock_area',
+                                        QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
+            self.addDockWidget(cc_dock_area,
+                               self.ccDockWidget)
+        self.ccDockWidget.setVisible(bool(int(self.settings.value('ui/show_cc', 0))))
 
         self.keep_logging = False
 
@@ -1533,6 +1549,28 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         return values
 
+    def retrieveCCQSO(self):
+        added = False
+        while self.cc_widget.hasQSOs():
+            self.log.info(f'Adding QSO from CassiopeiaConsole to logbook...')
+
+            query = QtSql.QSqlQuery(self.__db_con__)
+            query.prepare(self.__db_insert_stmnt__)
+
+            for j, val in enumerate(self._build_adif_import_(self.cc_widget.retrieveQSO())):
+                query.bindValue(j, val)
+            query.exec()
+            if query.lastError().text():
+                self.log.error(
+                    f'Import error from watched file ("{query.lastError().text()}").'
+                    'Skipped.')
+
+            self.__db_con__.commit()
+            added = True
+
+        if added:
+            self.refreshTableView()
+
     def watchFile(self):
         with open(self.watchFileName, encoding='ASCII') as adi_f:
             adi_str = adi_f.read()
@@ -1647,6 +1685,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.actionWatch_file_for_QSOs.setChecked(False)
         self.actionWatch_file_for_QSOs_TB.setChecked(False)
 
+    def showCC(self):
+        self.cc_widget.inputLineEdit.setFocus()
+
     # noinspection PyPep8Naming
     def showHelp(self):
         if not self.help_dialog:
@@ -1706,6 +1747,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             op_txt +
             '\nmaidenhead: Copyright (c) 2018 Michael Hirsch, Ph.D.' +
             f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
+            f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nDragon icon by Icons8 https://icons8.com'
         )
@@ -1733,6 +1775,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings.setValue('ui/show_qso', int(self.qsoDockWidget.isVisible()))
         self.settings.setValue('ui/qso_dock_area', self.dockWidgetArea(self.qsoDockWidget).value)
         self.settings.setValue('ui/qso_dock_float', int(self.qsoDockWidget.isFloating()))
+
+        self.settings.setValue('ui/show_cc', int(self.ccDockWidget.isVisible()))
+        self.settings.setValue('ui/cc_dock_area', self.dockWidgetArea(self.ccDockWidget).value)
+        self.settings.setValue('ui/cc_dock_float', int(self.ccDockWidget.isFloating()))
 
         self.settings_form.ctrlRigctld(False)
         e.accept()

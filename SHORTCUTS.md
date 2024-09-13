@@ -12,6 +12,7 @@ Main actions
 | Watch file    | Ctrl + W |
 | Show filter   | Ctrl + F |
 | Reset filter  | Ctrl + R |
+| Show console  | Ctrl + K |
 | Quit          | Ctrl + Q |
 
 

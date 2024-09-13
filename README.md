@@ -34,6 +34,7 @@ Features
 * filter recent QSOs (last week, month, half year, year)
 * UTF-8 (i.e. use german umlauts)
 * convert non ASCII characters for ADIF export (for supported languages)
+* integrates [CassiopeiaConsole](https://github.com/gitandy/HamCC#hamcc---cassiopeiaconsole)
 
 Installation
 ------------

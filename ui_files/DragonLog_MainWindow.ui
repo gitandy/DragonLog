@@ -81,6 +81,7 @@
     </property>
     <addaction name="actionHelp"/>
     <addaction name="separator"/>
+    <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
     <addaction name="actionShow_log"/>
     <addaction name="separator"/>
@@ -112,6 +113,12 @@
    <addaction name="actionWatch_file_for_QSOs_TB"/>
   </widget>
   <widget class="QDockWidget" name="logDockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -396,6 +403,18 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="ccDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>CassiopeiaConsole</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="ccDockWidgetContents"/>
+  </widget>
   <action name="actionLog_QSO">
    <property name="icon">
     <iconset>
@@ -635,6 +654,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionShow_CassiopeiaConsole">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:terminal.png</normaloff>icons:terminal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show CassiopeiaConsole</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
    </property>
   </action>
  </widget>
@@ -1120,6 +1151,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionShow_CassiopeiaConsole</sender>
+   <signal>triggered()</signal>
+   <receiver>ccDockWidget</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1138</x>
+     <y>761</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_CassiopeiaConsole</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showCC()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1138,5 +1201,6 @@
   <slot>clearQSOForm()</slot>
   <slot>setTableFilter()</slot>
   <slot>resetTableFilter()</slot>
+  <slot>showCC()</slot>
  </slots>
 </ui>
