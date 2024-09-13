@@ -161,7 +161,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         'remarks', 'comments', 'dist',
         'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
         'eqsl_sent', 'eqsl_rcvd', 'lotw_sent', 'lotw_rcvd', 'hamqth',
-        'contest_id', 'ctx_qso_id', 'crx_qso_id', 'crx_data',
+        'contest_id', 'ctx_qso_id', 'crx_qso_id', 'crx_data', 'event', 'evt_tx_exch', 'evt_rx_exch',
     )
 
     __adx_cols__ = (
@@ -171,7 +171,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE',
         'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
         'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'LOTW_QSL_SENT', 'LOTW_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS',
-        'CONTEST_ID', 'STX', 'SRX', 'SRX_STRING',
+        'CONTEST_ID', 'STX', 'SRX', 'SRX_STRING', 'MY_SIG_INTL', 'MY_SIG_INFO_INTL', 'SIG_INFO_INTL',
     )
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
@@ -213,7 +213,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "contest_id" TEXT,
                             "ctx_qso_id" INTEGER,
                             "crx_qso_id" INTEGER,
-                            "crx_data" TEXT
+                            "crx_data" TEXT,
+                            "event" TEXT, 
+                            "evt_tx_exch" TEXT, 
+                            "evt_rx_exch" TEXT
                         );'''
 
     __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
@@ -367,6 +370,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('Tx QSO ID'),
             self.tr('Rx QSO ID'),
             self.tr('Rx data'),
+            self.tr('Event'),
+            self.tr('Tx Exch'),
+            self.tr('Rx Exch'),
         )
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
@@ -1132,6 +1138,21 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['SRX'] = query.value(self.__sql_cols__.index('crx_qso_id'))
             if query.value(self.__sql_cols__.index('crx_data')):
                 record['SRX_STRING'] = query.value(self.__sql_cols__.index('crx_data'))
+            if query.value(self.__sql_cols__.index('event')):
+                event = query.value(self.__sql_cols__.index('event'))
+                event_ascii = self.replaceNonASCII(event)
+                record['MY_SIG_INTL'] = event
+                record['MY_SIG'] = event_ascii
+                record['SIG_INTL'] = event
+                record['SIG'] = event_ascii
+            if query.value(self.__sql_cols__.index('evt_tx_exch')):
+                exch = query.value(self.__sql_cols__.index('evt_tx_exch'))
+                record['MY_SIG_INFO_INTL'] = exch
+                record['MY_SIG_INFO'] = self.replaceNonASCII(exch)
+            if query.value(self.__sql_cols__.index('evt_rx_exch')):
+                exch = query.value(self.__sql_cols__.index('evt_rx_exch'))
+                record['SIG_INFO_INTL'] = exch
+                record['SIG_INFO'] = self.replaceNonASCII(exch)
 
             if not record['APP']:
                 record.pop('APP')

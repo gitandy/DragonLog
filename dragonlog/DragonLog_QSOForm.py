@@ -348,6 +348,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.rcvdQSOSpinBox.setValue(0)
         self.rcvdDataLineEdit.clear()
 
+        self.eventComboBox.setCurrentIndex(0)
+        self.txExchLineEdit.clear()
+        self.rxExchLineEdit.clear()
+
         self.toolBox.setCurrentIndex(0)
 
     def reset(self):
@@ -653,25 +657,25 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         return (
             date_time_on,
             date_time_off,
-            self.ownCallSignLineEdit.text().upper() if band != '11m' else self.ownCallSignLineEdit.text(),
-            self.callSignLineEdit.text().upper() if band != '11m' else self.callSignLineEdit.text(),
-            self.nameLineEdit.text(),
-            self.QTHLineEdit.text(),
-            self.locatorLineEdit.text(),
-            self.RSTSentLineEdit.text(),
-            self.RSTRcvdLineEdit.text(),
+            self.ownCallSignLineEdit.text().strip().upper() if band != '11m' else self.ownCallSignLineEdit.text().strip(),
+            self.callSignLineEdit.text().strip().upper() if band != '11m' else self.callSignLineEdit.text().strip(),
+            self.nameLineEdit.text().strip(),
+            self.QTHLineEdit.text().strip(),
+            self.locatorLineEdit.text().strip(),
+            self.RSTSentLineEdit.text().strip(),
+            self.RSTRcvdLineEdit.text().strip(),
             band,
-            self.modeComboBox.currentText(),
-            self.submodeComboBox.currentText(),
+            self.modeComboBox.currentText().strip(),
+            self.submodeComboBox.currentText().strip(),
             self.freqDoubleSpinBox.value() if self.freqDoubleSpinBox.value() > self.freqDoubleSpinBox.minimum() else '',
             self.channelComboBox.currentText() if band == '11m' else '-',
             self.powerSpinBox.value() if self.powerSpinBox.value() > 0 else '',
             prop,
-            self.ownNameLineEdit.text(),
+            self.ownNameLineEdit.text().strip(),
             own_qth,
             own_locator,
-            self.radioComboBox.currentText(),
-            self.antennaComboBox.currentText(),
+            self.radioComboBox.currentText().strip(),
+            self.antennaComboBox.currentText().strip(),
             self.remarksTextEdit.toPlainText().strip(),
             self.commentLineEdit.text().strip(),
             self.calc_distance(self.locatorLineEdit.text(), own_locator),
@@ -685,10 +689,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             lotw_sent,
             lotw_rcvd,
             'Y' if self.hamQTHCheckBox.isChecked() else 'N',
-            self.contestComboBox.currentText(),
-            self.sentQSOSpinBox.value(),
-            self.rcvdQSOSpinBox.value(),
-            self.rcvdDataLineEdit.text(),
+            self.contestComboBox.currentText().strip(),
+            self.sentQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
+            self.rcvdQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
+            self.rcvdDataLineEdit.text().strip() if self.contestComboBox.currentText().strip() else '',
+            self.eventComboBox.currentText(),
+            self.txExchLineEdit.text().strip() if self.eventComboBox.currentText().strip() else '',
+            self.rxExchLineEdit.text().strip() if self.eventComboBox.currentText().strip() else '',
         )
 
     @values.setter
@@ -821,6 +828,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             if not values['crx_data']:
                 self.rcvdDataLineEdit.setText(values['crx_qso_id'])
                 self.log.info(f'Stored QSO ID as rcvd data instead')
+
+        self.eventComboBox.setCurrentText(values['event'])
+        self.txExchLineEdit.setText(values['evt_tx_exch'])
+        self.rxExchLineEdit.setText(values['evt_rx_exch'])
 
     def searchHamQTH(self):
         self.searchCallbook(self.callbook_hamqth)
@@ -1096,6 +1107,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
                                               'lotw/username', '') + f'\n{exc}')
+
+    def contestChanged(self, text: str):
+        self.xotaGroupBox.setDisabled(bool(text))
+
+    def eventChanged(self, text: str):
+        self.contestGroupBox.setDisabled(bool(text))
 
     def keyPressEvent(self, e):
         if e.key() != QtCore.Qt.Key.Key_Escape:
