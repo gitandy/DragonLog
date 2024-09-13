@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>600</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>500</width>
-    <height>600</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -29,15 +29,15 @@
    <item>
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="mainPage">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>465</width>
-        <height>493</height>
+        <width>482</width>
+        <height>330</height>
        </rect>
       </property>
       <attribute name="label">
@@ -97,6 +97,13 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -334,96 +341,14 @@
           </layout>
          </item>
          <item>
-          <widget class="QGroupBox" name="identityGroupBox">
-           <property name="title">
-            <string>Configured identity</string>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <widget class="QLineEdit" name="ownCallSignLineEdit">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Own call sign</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="ownNameLineEdit">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Own name</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="stationGroupBox">
-           <property name="title">
-            <string>Configured station</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QComboBox" name="ownQTHComboBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="autoFillBackground">
-                 <bool>true</bool>
-                </property>
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QComboBox" name="radioComboBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="antennaComboBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,2,0">
+          <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0,0">
            <item row="0" column="3">
             <widget class="QPushButton" name="timeNowPushButton">
              <property name="sizePolicy">
@@ -437,30 +362,6 @@
              </property>
              <property name="shortcut">
               <string>Ctrl+Alt+N</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>End</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLineEdit" name="timeOnEdit">
-             <property name="placeholderText">
-              <string>Time start</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QCheckBox" name="autoDateCheckBox">
-             <property name="text">
-              <string>Automatically</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -484,6 +385,16 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="2">
+            <widget class="QLineEdit" name="timeOffEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="placeholderText">
+              <string>Time end</string>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="1">
             <widget class="QDateEdit" name="dateOnEdit">
              <property name="displayFormat">
@@ -493,6 +404,26 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>End</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>200</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item row="1" column="1">
             <widget class="QDateEdit" name="dateOffEdit">
@@ -510,30 +441,31 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="4">
-            <spacer name="horizontalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="1" column="3">
+            <widget class="QCheckBox" name="autoDateCheckBox">
+             <property name="text">
+              <string>Automatically</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>200</width>
-               <height>20</height>
-              </size>
+             <property name="checked">
+              <bool>true</bool>
              </property>
-            </spacer>
+            </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QLineEdit" name="timeOffEdit">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
+           <item row="0" column="2">
+            <widget class="QLineEdit" name="timeOnEdit">
              <property name="placeholderText">
-              <string>Time end</string>
+              <string>Time start</string>
              </property>
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="commentLineEdit">
@@ -542,20 +474,142 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QTextEdit" name="remarksTextEdit">
-           <property name="acceptRichText">
-            <bool>false</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-           </property>
-           <property name="placeholderText">
-            <string>Own notes</string>
-           </property>
-          </widget>
-         </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="stationPage">
+      <attribute name="label">
+       <string>Own data</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <widget class="QGroupBox" name="identityGroupBox">
+         <property name="title">
+          <string>Configured identity</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLineEdit" name="ownCallSignLineEdit">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="placeholderText">
+               <string>Own call sign</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="ownNameLineEdit">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="placeholderText">
+               <string>Own name</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="stationGroupBox">
+         <property name="title">
+          <string>Configured station</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QComboBox" name="ownQTHComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="autoFillBackground">
+               <bool>true</bool>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QComboBox" name="radioComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="antennaComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="remarksTextEdit">
+         <property name="acceptRichText">
+          <bool>false</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+         <property name="placeholderText">
+          <string>Own notes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>70</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -930,7 +984,7 @@ This is not the QSL manager/bureau address.</string>
         <x>0</x>
         <y>0</y>
         <width>482</width>
-        <height>460</height>
+        <height>330</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1202,10 +1256,6 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>locatorLineEdit</tabstop>
   <tabstop>powerSpinBox</tabstop>
   <tabstop>propComboBox</tabstop>
-  <tabstop>identityGroupBox</tabstop>
-  <tabstop>ownCallSignLineEdit</tabstop>
-  <tabstop>ownNameLineEdit</tabstop>
-  <tabstop>stationGroupBox</tabstop>
   <tabstop>timeNowPushButton</tabstop>
   <tabstop>autoDateCheckBox</tabstop>
   <tabstop>dateOnEdit</tabstop>
@@ -1287,70 +1337,6 @@ This is not the QSL manager/bureau address.</string>
    </hints>
   </connection>
   <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>QSOForm</receiver>
-   <slot>stationChanged(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>179</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>230</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>identityGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>QSOForm</receiver>
-   <slot>identityChanged(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>164</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>identityGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ownCallSignLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>164</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>168</x>
-     <y>172</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>identityGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ownNameLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>164</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>469</x>
-     <y>172</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>channelComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>QSOForm</receiver>
@@ -1423,22 +1409,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="sourcelabel">
      <x>163</x>
      <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>226</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ownCallSignLineEdit</sender>
-   <signal>textEdited(QString)</signal>
-   <receiver>QSOForm</receiver>
-   <slot>ownCallSignChanged(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>168</x>
-     <y>174</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -1663,70 +1633,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="sourcelabel">
      <x>442</x>
      <y>91</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>249</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>antennaComboBox</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>241</x>
-     <y>311</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>348</x>
-     <y>334</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>radioComboBox</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>241</x>
-     <y>311</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>334</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>stationGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ownQTHComboBox</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>241</x>
-     <y>311</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>241</x>
-     <y>304</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ownQTHComboBox</sender>
-   <signal>editTextChanged(QString)</signal>
-   <receiver>QSOForm</receiver>
-   <slot>ownQTHChanged(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>241</x>
-     <y>304</y>
     </hint>
     <hint type="destinationlabel">
      <x>249</x>

@@ -1839,16 +1839,6 @@ Siehe Anwendungslog für Details</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Own call sign</source>
-      <translation>Eigenes Rufzeichen</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Own name</source>
-      <translation>Eigener Name</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Now</source>
       <translation>Jetzt</translation>
     </message>
@@ -1859,28 +1849,7 @@ Siehe Anwendungslog für Details</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>End</source>
-      <translation>Ende</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Time start</source>
-      <translation>Startzeit</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Automatically</source>
-      <translation>Automatisch</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Start</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>yyyy-MM-dd</source>
       <translation />
     </message>
     <message>
@@ -1890,8 +1859,44 @@ Siehe Anwendungslog für Details</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>yyyy-MM-dd</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>End</source>
+      <translation>Ende</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Automatically</source>
+      <translation>Automatisch</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Time start</source>
+      <translation>Startzeit</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>QSO comment</source>
       <translation>QSO-Kommentar</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Own data</source>
+      <translation>Eigene Daten</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Own call sign</source>
+      <translation>Eigenes Rufzeichen</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Own name</source>
+      <translation>Eigener Name</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
