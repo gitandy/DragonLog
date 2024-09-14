@@ -5,7 +5,7 @@ import sys
 import json
 from enum import Enum, auto
 import datetime
-from typing import Iterable
+from typing import Iterable, Iterator
 
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
@@ -767,21 +767,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.hamlib_error.setText('')  # TODO: Why???
 
+    def selectedQSOIds(self) -> Iterator:
+        yielded_ids = []
+
+        for i in self.QSOTableView.selectedIndexes():
+            qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
+
+            if qso_id in yielded_ids or qso_id is None:
+                continue
+            else:
+                yielded_ids.append(qso_id)
+                yield qso_id
+
     def deleteQSO(self):
         res = QtWidgets.QMessageBox.question(self, self.tr('Delete QSO'),
                                              self.tr('Do you really want to delete the selected QSO(s)?'),
                                              defaultButton=QtWidgets.QMessageBox.StandardButton.No)
 
         if res == QtWidgets.QMessageBox.StandardButton.Yes:
-            done_ids = []
-
-            for i in self.QSOTableView.selectedIndexes():
-                qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
-
-                if qso_id in done_ids or qso_id is None:
-                    continue
-                done_ids.append(qso_id)
-
+            for qso_id in self.selectedQSOIds():
                 self.log.info(f'Deleting QSO #{qso_id}...')
                 query = QtSql.QSqlQuery(self.__db_con__)
                 query.prepare('DELETE FROM qsos where id == ?')
