@@ -1332,6 +1332,11 @@ See log for detail</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Upload</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
       <source>Toolbar</source>
       <translation />
     </message>
