@@ -1285,16 +1285,19 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             except LoTWCommunicationException:
                 QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                               self.tr('Server communication error'))
+                break
             except LoTWRequestException as exc:
                 QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                               self.tr('Bad request result') + f'\n{exc}')
+                break
             except LoTWLoginException as exc:
                 QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
                                               self.tr('Login failed for user') + ': ' + self.settings.value(
                                                   'lotw/username', '') + f'\n{exc}')
-
-            self.updateQSOStatus('lotw_sent', qso_id, lotw_sent)
-            self.updateQSOStatus('lotw_rcvd', qso_id, lotw_rcvd)
+                break
+            finally:
+                self.updateQSOStatus('lotw_sent', qso_id, lotw_sent)
+                self.updateQSOStatus('lotw_rcvd', qso_id, lotw_rcvd)
 
     def uploadToHamQTH(self):
         logbook = None
@@ -1325,18 +1328,18 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                               self.tr('Login to HamQTH failed for user') + ': ' + self.settings.value(
                                                   f'callbook/HamQTH_user', ''))
+                break
             except QSORejectedException:
                 state = 'Y'
                 self.log.info('Log rejected, already exists')
             except MissingADIFFieldException as exc:
-                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                              self.tr('A field is missing for log upload to HamQTH') +
-                                              f':\n"{exc.args[0]}"')
+                self.log.warning(f'A field is missing in QSO #{qso_id} for log upload to HamQTH:\n"{exc.args[0]}"')
             except CommunicationException as exc:
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                               self.tr('An error occured on uploading to HamQTH') + f':\n"{exc}"')
-
-            self.updateQSOStatus('hamqth', qso_id, state)
+                break
+            finally:
+                self.updateQSOStatus('hamqth', qso_id, state)
 
     def updateQSOStatus(self, name, qso_id, state):
         if name in self.__sql_cols__:
