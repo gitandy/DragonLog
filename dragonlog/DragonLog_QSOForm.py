@@ -870,16 +870,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def uploadLog(self):
         record = self._build_record_()
 
-        adif_doc = {'HEADER':
-            {
-                'ADIF_VER': '3.1.4',
-                'PROGRAMID': self.dragonlog.programName,
-                'PROGRAMVERSION': self.dragonlog.programVersion,
-                'CREATED_TIMESTAMP': QtCore.QDateTime.currentDateTimeUtc().toString(
-                    'yyyyMMdd HHmmss')
-            },
-            'RECORDS': [record]}
-
         if self.eqslGroupBox.isChecked() and not self.eqslSentCheckBox.isChecked():
             try:
                 self.eqsl.upload_log(self.settings.value('eqsl/username', ''),
