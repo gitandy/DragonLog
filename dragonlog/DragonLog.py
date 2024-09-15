@@ -13,7 +13,6 @@ from adif_file import adi, adx
 import xmltodict
 import hamcc
 
-
 OPTION_OPENPYXL = False
 try:
     # noinspection PyUnresolvedReferences
@@ -31,7 +30,9 @@ from .RegEx import find_non_ascii, check_format, REGEX_DATE
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
-from .LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
+from .LoTW import (LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException,
+                   LoTWLoginException, LoTWNoRecordException)
+
 from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
@@ -1261,14 +1262,48 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             QtWidgets.QMessageBox.critical(self, self.tr('LoTW ADIF upload'),
                                            self.tr('Server rejected log'))
 
+    def lotwCheckQSL(self):
+        lotw = LoTW(self.log)
+
+        for qso_id in self.selectedQSOIds():
+            lotw_sent = 'N'
+            lotw_rcvd = 'N'
+
+            self.log.info(f'Checking LoTW QSL for #{qso_id}...')
+            try:
+                adif_doc = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')
+                rec = adif_doc['RECORDS'][0]
+                rcvd = lotw.check_inbox(self.settings.value('lotw/username', ''),
+                                        self.settings_form.lotwPassword(),
+                                        rec)
+                lotw_rcvd = 'Y' if rcvd else 'N'
+                lotw_sent = 'Y'
+
+                self.log.info(f'LoTW: QSL for QSO #{qso_id}' if rcvd else f'LoTW: No QSL for QSO #{qso_id}')
+            except LoTWNoRecordException:
+                self.log.info(f'LoTW: No record available for QSO #{qso_id}')
+            except LoTWCommunicationException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
+                                              self.tr('Server communication error'))
+            except LoTWRequestException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
+                                              self.tr('Bad request result') + f'\n{exc}')
+            except LoTWLoginException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
+                                              self.tr('Login failed for user') + ': ' + self.settings.value(
+                                                  'lotw/username', '') + f'\n{exc}')
+
+            self.updateQSOStatus('lotw_sent', qso_id, lotw_sent)
+            self.updateQSOStatus('lotw_rcvd', qso_id, lotw_rcvd)
+
     def uploadToHamQTH(self):
         logbook = None
 
         for qso_id in self.selectedQSOIds():
             if not logbook:
                 logbook = HamQTHCallBook(self.log,
-                                 f'{self.programName}-{self.programVersion}',
-                                 )
+                                         f'{self.programName}-{self.programVersion}',
+                                         )
 
             adif_doc = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')
             if adif_doc['RECORDS'][0].get('HAMQTH_QSO_UPLOAD_STATUS', 'N') != 'N':

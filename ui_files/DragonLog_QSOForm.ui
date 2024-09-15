@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>500</height>
+    <height>501</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>500</width>
-    <height>500</height>
+    <height>400</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
    <item>
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="mainPage">
       <property name="geometry">
@@ -37,7 +37,7 @@
         <x>0</x>
         <y>0</y>
         <width>482</width>
-        <height>330</height>
+        <height>331</height>
        </rect>
       </property>
       <attribute name="label">
@@ -481,10 +481,13 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -496,8 +499,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>184</width>
-        <height>257</height>
+        <width>482</width>
+        <height>331</height>
        </rect>
       </property>
       <attribute name="label">
@@ -595,6 +598,24 @@
        </item>
        <item>
         <widget class="QTextEdit" name="remarksTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
          <property name="acceptRichText">
           <bool>false</bool>
          </property>
@@ -611,10 +632,13 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>70</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -626,8 +650,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>465</width>
-        <height>422</height>
+        <width>482</width>
+        <height>331</height>
        </rect>
       </property>
       <attribute name="label">
@@ -635,89 +659,199 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QGroupBox" name="qslGroupBox">
-         <property name="title">
-          <string>QSL</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
-          <item>
-           <widget class="QLineEdit" name="qslViaLineEdit">
-            <property name="toolTip">
-             <string>The contacted station QSL route.
+        <widget class="QLineEdit" name="qslViaLineEdit">
+         <property name="toolTip">
+          <string>The contacted station QSL route.
 This is not the QSL manager/bureau address.</string>
-            </property>
-            <property name="placeholderText">
-             <string>QSL via</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextEdit" name="qslMessageTextEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-            </property>
-            <property name="placeholderText">
-             <string>QSL card message</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Accepts:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="qslAccBureauCheckBox">
+         </property>
+         <property name="placeholderText">
+          <string>QSL via</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="qslMessageTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+         <property name="placeholderText">
+          <string>QSL card message</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Accepts:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="qslAccBureauCheckBox">
+           <property name="text">
+            <string>Bureau</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="qslAccDirectCheckBox">
+           <property name="text">
+            <string>Direct</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="qslAcceQSLCheckBox">
+           <property name="text">
+            <string>eQSL</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="qslAccLoTWCheckBox">
+           <property name="text">
+            <string>LoTW</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="qslBurDirGroupBox">
+         <property name="title">
+          <string>Bureau/Direct</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="0">
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="qslBureauRadioButton">
               <property name="text">
                <string>Bureau</string>
               </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
-            <item>
-             <widget class="QCheckBox" name="qslAccDirectCheckBox">
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="qslDirectRadioButton">
               <property name="text">
                <string>Direct</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QCheckBox" name="qslAcceQSLCheckBox">
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="qslSentCheckBox">
               <property name="text">
-               <string>eQSL</string>
+               <string>QSL sent</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="qslRcvdCheckBox">
+              <property name="text">
+               <string>QSL received</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_12">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="eqslGroupBox">
+         <property name="title">
+          <string>eQSL</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QCheckBox" name="eqslSentCheckBox">
+              <property name="text">
+               <string>eQSL sent</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="qslAccLoTWCheckBox">
+             <widget class="QCheckBox" name="eqslRcvdCheckBox">
               <property name="text">
-               <string>LoTW</string>
+               <string>eQSL received</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_8">
+             <widget class="QPushButton" name="eqslInboxPushButton">
+              <property name="text">
+               <string>Check Inbox</string>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+Alt+E</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_10">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -732,212 +866,44 @@ This is not the QSL manager/bureau address.</string>
            </layout>
           </item>
           <item>
-           <widget class="QGroupBox" name="qslBurDirGroupBox">
-            <property name="title">
-             <string>Bureau/Direct</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="1" column="0">
-              <layout class="QGridLayout" name="gridLayout_4">
-               <item row="0" column="0">
-                <widget class="QRadioButton" name="qslBureauRadioButton">
-                 <property name="text">
-                  <string>Bureau</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QRadioButton" name="qslDirectRadioButton">
-                 <property name="text">
-                  <string>Direct</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QCheckBox" name="qslSentCheckBox">
-                 <property name="text">
-                  <string>QSL sent</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QCheckBox" name="qslRcvdCheckBox">
-                 <property name="text">
-                  <string>QSL received</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="1">
-              <spacer name="horizontalSpacer_12">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="eqslGroupBox">
-            <property name="title">
-             <string>eQSL</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_8">
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_10">
-               <item>
-                <widget class="QCheckBox" name="eqslSentCheckBox">
-                 <property name="text">
-                  <string>eQSL sent</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="eqslRcvdCheckBox">
-                 <property name="text">
-                  <string>eQSL received</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="eqslInboxPushButton">
-                 <property name="text">
-                  <string>Check Inbox</string>
-                 </property>
-                 <property name="shortcut">
-                  <string>Ctrl+Alt+E</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_10">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
-               <item>
-                <widget class="QLabel" name="eqslLinkLabel">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Link to eQSL Card</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="eqslDownloadPushButton">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Download eQSL</string>
-                 </property>
-                 <property name="shortcut">
-                  <string>Ctrl+Shift+E</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_11">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="lotwGroupBox">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="title">
-             <string>LoTW</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <widget class="QCheckBox" name="lotwSentCheckBox">
-               <property name="text">
-                <string>LoTW sent</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="lotwRcvdCheckBox">
-               <property name="text">
-                <string>LoTW received</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="lotwInboxPushButton">
-               <property name="text">
-                <string>Check Inbox</string>
-               </property>
-               <property name="shortcut">
-                <string>Ctrl+Alt+I</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_9">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="eqslLinkLabel">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Link to eQSL Card</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="eqslDownloadPushButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Download eQSL</string>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+Shift+E</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -947,10 +913,13 @@ This is not the QSL manager/bureau address.</string>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -962,8 +931,8 @@ This is not the QSL manager/bureau address.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>192</width>
-        <height>290</height>
+        <width>482</width>
+        <height>331</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1158,10 +1127,13 @@ This is not the QSL manager/bureau address.</string>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -1240,27 +1212,19 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>dateOnEdit</tabstop>
   <tabstop>dateOffEdit</tabstop>
   <tabstop>eqslSentCheckBox</tabstop>
-  <tabstop>lotwSentCheckBox</tabstop>
   <tabstop>qslAccBureauCheckBox</tabstop>
-  <tabstop>qslViaLineEdit</tabstop>
-  <tabstop>qslMessageTextEdit</tabstop>
-  <tabstop>qslBurDirGroupBox</tabstop>
   <tabstop>qslBureauRadioButton</tabstop>
   <tabstop>qslDirectRadioButton</tabstop>
   <tabstop>qslSentCheckBox</tabstop>
   <tabstop>qslRcvdCheckBox</tabstop>
-  <tabstop>eqslGroupBox</tabstop>
   <tabstop>eqslInboxPushButton</tabstop>
   <tabstop>eqslDownloadPushButton</tabstop>
-  <tabstop>lotwGroupBox</tabstop>
-  <tabstop>lotwInboxPushButton</tabstop>
   <tabstop>uploadPushButton</tabstop>
   <tabstop>savePushButton</tabstop>
   <tabstop>cancelPushButton</tabstop>
   <tabstop>qslAccDirectCheckBox</tabstop>
   <tabstop>qslAcceQSLCheckBox</tabstop>
   <tabstop>qslAccLoTWCheckBox</tabstop>
-  <tabstop>lotwRcvdCheckBox</tabstop>
   <tabstop>eqslRcvdCheckBox</tabstop>
  </tabstops>
  <resources/>
@@ -1486,22 +1450,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>287</x>
      <y>273</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>lotwInboxPushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>QSOForm</receiver>
-   <slot>lotwCheckInbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>255</x>
-     <y>515</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>287</x>
-     <y>295</y>
     </hint>
    </hints>
   </connection>

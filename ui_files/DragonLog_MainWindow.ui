@@ -91,6 +91,8 @@
      <string>Upload</string>
     </property>
     <addaction name="actionUpload_logs_to_LoTW"/>
+    <addaction name="actionCheck_LoTW_QSL"/>
+    <addaction name="separator"/>
     <addaction name="actionUpload_to_HamQTH"/>
    </widget>
    <addaction name="menuFile"/>
@@ -702,6 +704,15 @@
     <string>Upload to HamQTH</string>
    </property>
   </action>
+  <action name="actionCheck_LoTW_QSL">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:check_lotw.png</normaloff>icons:check_lotw.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check LoTW QSL</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1233,6 +1244,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCheck_LoTW_QSL</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>lotwCheckQSL()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1253,5 +1280,6 @@
   <slot>resetTableFilter()</slot>
   <slot>showCC()</slot>
   <slot>uploadToHamQTH()</slot>
+  <slot>lotwCheckQSL()</slot>
  </slots>
 </ui>

@@ -15,8 +15,6 @@ from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                    EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
-from .LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
-                   LoTWLoginException, LoTWNoRecordException)
 from . import ColorPalettes
 
 
@@ -95,8 +93,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.eqsl = EQSL(self.dragonlog.programName, self.logger)
         self.eqsl_url = ''
 
-        self.lotw = LoTW(self.logger)
-
         view_only_widgets = (
             self.qslAccBureauCheckBox,
             self.qslAccDirectCheckBox,
@@ -104,8 +100,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.qslAccLoTWCheckBox,
             self.eqslSentCheckBox,
             self.eqslRcvdCheckBox,
-            self.lotwSentCheckBox,
-            self.lotwRcvdCheckBox,
         )
 
         for w in view_only_widgets:
@@ -335,10 +329,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.eqslLinkLabel.setEnabled(False)
         self.eqslLinkLabel.setText(self.tr('Link to eQSL Card'))
         self.eqslDownloadPushButton.setEnabled(False)
-
-        self.lotwGroupBox.setEnabled(False)
-        self.lotwSentCheckBox.setChecked(False)
-        self.lotwRcvdCheckBox.setChecked(False)
 
         self.contestComboBox.setCurrentText('')
         self.sentQSOSpinBox.setValue(0)
@@ -648,9 +638,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 eqsl_sent = 'Y' if self.eqslSentCheckBox.isChecked() else 'R'
                 eqsl_rcvd = 'Y' if self.eqslRcvdCheckBox.isChecked() else 'R'
 
-        lotw_sent = 'Y' if self.lotwSentCheckBox.isChecked() else 'N'
-        lotw_rcvd = 'Y' if self.lotwRcvdCheckBox.isChecked() else 'N'
-
         return (
             date_time_on,
             date_time_off,
@@ -683,8 +670,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             qsl_rcvd,
             eqsl_sent,
             eqsl_rcvd,
-            lotw_sent,
-            lotw_rcvd,
+            None,  # LoTW sent
+            None,  # LoTW rcvd
             None,  # HamQTH
             self.contestComboBox.currentText().strip(),
             self.sentQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
@@ -799,11 +786,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 if self.eqslRcvdCheckBox.isChecked():
                     self.eqslLinkLabel.setEnabled(True)
                     self.eqslDownloadPushButton.setEnabled(True)
-
-        if values['lotw_sent'] in ('R', 'Y') or values['lotw_rcvd'] in ('R', 'Y'):
-            self.lotwGroupBox.setEnabled(True)
-            self.lotwSentCheckBox.setChecked(values['lotw_sent'] == 'Y')
-            self.lotwRcvdCheckBox.setChecked(values['lotw_rcvd'] == 'Y')
 
         self.contestComboBox.setCurrentText(values['contest_id'])
         self.rcvdDataLineEdit.setText(values['crx_data'])
@@ -1044,29 +1026,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                     self.settings.setValue('eqsl/lastExportDir', res)
                 except Exception as exc:
                     self.log.exception(exc)
-
-    def lotwCheckInbox(self):
-        try:
-            rcvd = self.lotw.check_inbox(self.settings.value('lotw/username', ''),
-                                         self.settings_form.lotwPassword(),
-                                         self._build_record_())
-
-            self.lotwRcvdCheckBox.setChecked(rcvd)
-            self.lotwSentCheckBox.setChecked(True)
-        except LoTWNoRecordException:
-            self.lotwRcvdCheckBox.setChecked(False)
-            QtWidgets.QMessageBox.information(self, self.tr('Check LoTW QSL'),
-                                              self.tr('No QSL available'))
-        except LoTWCommunicationException:
-            QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
-                                          self.tr('Server communication error'))
-        except LoTWRequestException as exc:
-            QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
-                                          self.tr('Bad request result') + f'\n{exc}')
-        except LoTWLoginException as exc:
-            QtWidgets.QMessageBox.warning(self, self.tr('Check LoTW Inbox error'),
-                                          self.tr('Login failed for user') + ': ' + self.settings.value(
-                                              'lotw/username', '') + f'\n{exc}')
 
     def contestChanged(self, text: str):
         self.xotaGroupBox.setDisabled(bool(text))
