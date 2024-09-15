@@ -11,9 +11,8 @@ from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call, check_qth
-from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookType, CallBookData,
-                       SessionExpiredException, MissingADIFFieldException, LoginException, CallsignNotFoundException,
-                       QSORejectedException, CommunicationException)
+from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
+                       SessionExpiredException, LoginException, CallsignNotFoundException)
 from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
                    EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
 from .LoTW import (LoTW, LoTWRequestException, LoTWCommunicationException,
@@ -340,8 +339,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.lotwGroupBox.setEnabled(False)
         self.lotwSentCheckBox.setChecked(False)
         self.lotwRcvdCheckBox.setChecked(False)
-
-        self.hamQTHCheckBox.setChecked(False)
 
         self.contestComboBox.setCurrentText('')
         self.sentQSOSpinBox.setValue(0)
@@ -688,7 +685,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             eqsl_rcvd,
             lotw_sent,
             lotw_rcvd,
-            'Y' if self.hamQTHCheckBox.isChecked() else 'N',
+            None,  # HamQTH
             self.contestComboBox.currentText().strip(),
             self.sentQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
             self.rcvdQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
@@ -808,12 +805,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.lotwSentCheckBox.setChecked(values['lotw_sent'] == 'Y')
             self.lotwRcvdCheckBox.setChecked(values['lotw_rcvd'] == 'Y')
 
-        match values['hamqth']:
-            case 'Y' | 'M':
-                self.hamQTHCheckBox.setChecked(True)
-            case _:
-                self.hamQTHCheckBox.setChecked(False)
-
         self.contestComboBox.setCurrentText(values['contest_id'])
         self.rcvdDataLineEdit.setText(values['crx_data'])
         try:
@@ -886,9 +877,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                           self.tr('During callbook search an error occured') + f':\n{exc}')
 
     def saveLog(self):
-        if self.__old_values__ and self.__old_values__['hamqth'] in ('Y', 'M'):
-            self.hamQTHCheckBox.setChecked(True)
-
         if self.__change_mode__:
             self.dragonlog.updateQSO(self.qso_id)
         else:
@@ -909,34 +897,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                     'yyyyMMdd HHmmss')
             },
             'RECORDS': [record]}
-
-        upload_hamqth = self.__old_values__['hamqth'] not in ('Y', 'M') if self.__old_values__ else True
-
-        if self.hamQTHCheckBox.isChecked() and upload_hamqth:
-            logbook = HamQTHCallBook(self.logger,
-                                     f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
-                                     )
-            try:
-                logbook.upload_log(self.settings.value(f'callbook/HamQTH_user', ''),
-                                   self.settings_form.callbookPassword(CallBookType.HamQTH),
-                                   adif_doc)
-
-                self.log.info(f'Uploaded log to HamQTH')
-            except LoginException:
-                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                              self.tr('Login to HamQTH failed for user') + ': ' + self.settings.value(
-                                                  f'callbook/HamQTH_user', ''))
-            except QSORejectedException:
-                self.hamQTHCheckBox.setChecked(True)
-                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                              self.tr('QSO rejected on HamQTH'))
-            except MissingADIFFieldException as exc:
-                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                              self.tr('A field is missing for log upload to HamQTH') +
-                                              f':\n"{exc.args[0]}"')
-            except CommunicationException as exc:
-                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
-                                              self.tr('An error occured on uploading to HamQTH') + f':\n"{exc}"')
 
         if self.eqslGroupBox.isChecked() and not self.eqslSentCheckBox.isChecked():
             try:

@@ -91,6 +91,7 @@
      <string>Upload</string>
     </property>
     <addaction name="actionUpload_logs_to_LoTW"/>
+    <addaction name="actionUpload_to_HamQTH"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -692,6 +693,15 @@
     <string>Ctrl+K</string>
    </property>
   </action>
+  <action name="actionUpload_to_HamQTH">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:hamqth.png</normaloff>icons:hamqth.png</iconset>
+   </property>
+   <property name="text">
+    <string>Upload to HamQTH</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1207,6 +1217,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionUpload_to_HamQTH</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>uploadToHamQTH()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1226,5 +1252,6 @@
   <slot>setTableFilter()</slot>
   <slot>resetTableFilter()</slot>
   <slot>showCC()</slot>
+  <slot>uploadToHamQTH()</slot>
  </slots>
 </ui>

@@ -13,6 +13,7 @@ from adif_file import adi, adx
 import xmltodict
 import hamcc
 
+
 OPTION_OPENPYXL = False
 try:
     # noinspection PyUnresolvedReferences
@@ -32,6 +33,9 @@ from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
 from .LoTW import LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException
 from .CassiopeiaConsole import CassiopeiaConsole
+from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
+    CommunicationException
+
 from . import ColorPalettes
 
 __prog_name__ = 'DragonLog'
@@ -767,8 +771,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.hamlib_error.setText('')  # TODO: Why???
 
-    def selectedQSOIds(self) -> Iterator:
-        yielded_ids = []
+    def selectedQSOIds(self) -> Iterator[int]:
+        yielded_ids: list[int] = []
 
         for i in self.QSOTableView.selectedIndexes():
             qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
@@ -778,6 +782,19 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 yielded_ids.append(qso_id)
                 yield qso_id
+
+    # def selectedQSOs(self) -> Iterator[dict[str, str]]:
+    #     for qso_id in self.selectedQSOIds():
+    #         query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
+    #         if query.lastError().text():
+    #             raise Exception(query.lastError().text())
+    #
+    #         values = []
+    #         while query.next():
+    #             for col in range(len(self.__sql_cols__)):
+    #                 values.append(query.value(col))
+    #             break
+    #         yield dict(zip(self.__sql_cols__, values))
 
     def deleteQSO(self):
         res = QtWidgets.QMessageBox.question(self, self.tr('Delete QSO'),
@@ -1243,6 +1260,61 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         except LoTWRequestException:
             QtWidgets.QMessageBox.critical(self, self.tr('LoTW ADIF upload'),
                                            self.tr('Server rejected log'))
+
+    def uploadToHamQTH(self):
+        logbook = None
+
+        for qso_id in self.selectedQSOIds():
+            if not logbook:
+                logbook = HamQTHCallBook(self.log,
+                                 f'{self.programName}-{self.programVersion}',
+                                 )
+
+            adif_doc = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')
+            if adif_doc['RECORDS'][0].get('HAMQTH_QSO_UPLOAD_STATUS', 'N') != 'N':
+                self.log.debug(f'{qso_id} already uploaded to HamQTH')
+                continue
+
+            self.log.info(f'Uploading QSO #{qso_id} to HamQTH...')
+
+            state = 'N'
+
+            try:
+                logbook.upload_log(self.settings.value(f'callbook/HamQTH_user', ''),
+                                   self.settings_form.callbookPassword(CallBookType.HamQTH),
+                                   adif_doc)
+
+                self.log.debug(f'Uploaded log to HamQTH')
+                state = 'Y'
+            except LoginException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr('Login to HamQTH failed for user') + ': ' + self.settings.value(
+                                                  f'callbook/HamQTH_user', ''))
+            except QSORejectedException:
+                state = 'Y'
+                self.log.info('Log rejected, already exists')
+            except MissingADIFFieldException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr('A field is missing for log upload to HamQTH') +
+                                              f':\n"{exc.args[0]}"')
+            except CommunicationException as exc:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
+                                              self.tr('An error occured on uploading to HamQTH') + f':\n"{exc}"')
+
+            self.updateQSOStatus('hamqth', qso_id, state)
+
+    def updateQSOStatus(self, name, qso_id, state):
+        if name in self.__sql_cols__:
+            self.log.debug(f'Updating status {name} for QSO #{qso_id} to {state}...')
+            query = QtSql.QSqlQuery(self.__db_con__)
+            query.prepare(f'UPDATE qsos SET {name}=? WHERE id = ?')
+            query.bindValue(0, state)
+            query.bindValue(1, qso_id)
+            query.exec()
+            if query.lastError().text():
+                self.log.error(query.lastError().text())
+            self.__db_con__.commit()
+            self.refreshTableView(sort=False)
 
     def logImport(self):
         if not self.__db_con__.isOpen():
