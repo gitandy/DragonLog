@@ -1606,6 +1606,11 @@ See log for detail</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Ctrl+Alt+L</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
       <source>Upload to eQSL</source>
       <translation type="unfinished" />
     </message>
@@ -1616,7 +1621,17 @@ See log for detail</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Ctrl+Alt+E</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
       <source>Download eQSL</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Ctrl+Shift+E</source>
       <translation type="unfinished" />
     </message>
   </context>

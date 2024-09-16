@@ -1623,6 +1623,11 @@ Siehe Anwendungslog für Details</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Ctrl+Alt+L</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
       <source>Upload to eQSL</source>
       <translation>Log auf eQSL hochladen</translation>
     </message>
@@ -1633,8 +1638,18 @@ Siehe Anwendungslog für Details</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Ctrl+Alt+E</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
       <source>Download eQSL</source>
       <translation>eQSL speichern</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_MainWindow.ui" line="0" />
+      <source>Ctrl+Shift+E</source>
+      <translation />
     </message>
   </context>
   <context>

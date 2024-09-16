@@ -22,7 +22,6 @@ QSO form actions
 | Action         | Shortcut         |
 |----------------|------------------|
 | Save QSO       | Ctrl + S         |
-| Upload QSO     | Ctrl + U         |
 | Search HamQTH  | Ctrl + Alt + H   |
 | Search QRZCQ   | Ctrl + Alt + Z   |
 | Start time now | Ctrl + Alt + N   |
