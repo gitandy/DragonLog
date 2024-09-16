@@ -88,8 +88,12 @@
    </widget>
    <widget class="QMenu" name="menuUpload">
     <property name="title">
-     <string>Upload</string>
+     <string>Upload &amp;&amp; QSL</string>
     </property>
+    <addaction name="actionUpload_to_eQSL"/>
+    <addaction name="actionCheck_eQSL"/>
+    <addaction name="actionDownload_eQSL"/>
+    <addaction name="separator"/>
     <addaction name="actionUpload_logs_to_LoTW"/>
     <addaction name="actionCheck_LoTW_QSL"/>
     <addaction name="separator"/>
@@ -713,6 +717,33 @@
     <string>Check LoTW QSL</string>
    </property>
   </action>
+  <action name="actionUpload_to_eQSL">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:upload_eqsl.png</normaloff>icons:upload_eqsl.png</iconset>
+   </property>
+   <property name="text">
+    <string>Upload to eQSL</string>
+   </property>
+  </action>
+  <action name="actionCheck_eQSL">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:check_eqsl.png</normaloff>icons:check_eqsl.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check eQSL</string>
+   </property>
+  </action>
+  <action name="actionDownload_eQSL">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:download_eqsl.png</normaloff>icons:download_eqsl.png</iconset>
+   </property>
+   <property name="text">
+    <string>Download eQSL</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1260,6 +1291,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCheck_eQSL</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>eqslCheckInboxSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDownload_eQSL</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>eqslDownload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionUpload_to_eQSL</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>eqslUpload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1281,5 +1360,8 @@
   <slot>showCC()</slot>
   <slot>uploadToHamQTH()</slot>
   <slot>lotwCheckQSL()</slot>
+  <slot>eqslCheckInboxSelected()</slot>
+  <slot>eqslDownload()</slot>
+  <slot>eqslUpload()</slot>
  </slots>
 </ui>

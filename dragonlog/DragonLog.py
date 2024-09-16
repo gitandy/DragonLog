@@ -1,8 +1,9 @@
 import os
 import csv
-import platform
 import sys
 import json
+import string
+import platform
 from enum import Enum, auto
 import datetime
 from typing import Iterable, Iterator
@@ -32,7 +33,8 @@ from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
 from .LoTW import (LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException,
                    LoTWLoginException, LoTWNoRecordException)
-
+from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
+                   EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
 from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
@@ -450,6 +452,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                               self.tr('It seems you are running DragonLog for the first time\n'
                                                       'Please configure some information first'))
             self.showSettings()
+
+        self.eqsl = EQSL(self.programName, self.log)
+        self.eqsl_urls: dict[str, str] = {}
 
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
@@ -1183,6 +1188,125 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         doc['RECORDS'] = records
         return doc
 
+    def eqslUpload(self):
+        for qso_id in self.selectedQSOIds():
+            rec = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')['RECORDS'][0]
+
+            if rec.get('EQSL_QSL_SENT', 'N') != 'N':
+                self.log.info(f'QSO #{qso_id} already uploaded to eQSL')
+                continue
+
+            eqsl_sent = 'N'
+            try:
+                self.eqsl.upload_log(self.settings.value('eqsl/username', ''),
+                                     self.settings_form.eqslPassword(),
+                                     rec)
+                eqsl_sent = 'Y'
+                self.log.info(f'Uploaded QSO #{qso_id} to eQSL')
+            except EQSLLoginException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('Login failed for user') + ': ' + self.settings.value(
+                                                  'eqsl/username', ''))
+                break
+            except EQSLADIFFieldException as exc:
+                self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
+            except EQSLQSODuplicateException:
+                eqsl_sent = 'Y'
+                self.log.info(f'QSO #{qso_id} is a dublicate, already uploaded to eQSL')
+            except EQSLUserCallMatchException:
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('User call does not match') + ': ' + self.settings.value(
+                                                  'eqsl/username', ''))
+                break
+            except EQSLRequestException as exc:
+                QtWidgets.QMessageBox.information(self, self.tr('Upload eQSL error'),
+                                                  self.tr('Error on upload') + f':\n"{exc.args[0]}"')
+                break
+            finally:
+                self.updateQSOStatus('eqsl_sent', qso_id, eqsl_sent)
+
+    def eqslCheckInboxSelected(self):
+        for qso_id in self.selectedQSOIds():
+            res = self.eqslCheckInbox(qso_id)
+            if not res:
+                break
+
+    def eqslCheckInbox(self, qso_id) -> bool:
+        self.log.info(f'Checking eQSL for QSO #{qso_id}...')
+
+        rec = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')['RECORDS'][0]
+        eqsl_sent = 'Y' if rec.get('EQSL_QSL_SENT', 'N') in ('Y', 'R') else 'N'
+        eqsl_rcvd = 'N'
+
+        try:
+            res = self.eqsl.check_inbox(self.settings.value('eqsl/username', ''),
+                                   self.settings_form.eqslPassword(),
+                                   rec)
+            if res:
+                qso_uuid = rec['QSO_DATE']+rec['TIME_ON']+rec['CALL']
+                self.eqsl_urls[qso_uuid] = res
+                self.log.debug(f'eQSL available at "{res}"')
+                eqsl_rcvd = 'Y'
+                eqsl_sent = 'Y'
+        except EQSLLoginException as exc:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
+                                          self.tr('Login failed for user') + ': ' + self.settings.value(
+                                              'eqsl/username', '') + f'\n{exc}')
+            return False
+        except EQSLUserCallMatchException:
+            QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
+                                          self.tr('User call does not match') + ': ' + self.settings.value(
+                                              'eqsl/username', ''))
+            return False
+        except EQSLRequestException:
+            self.log.info('No eQSL available')
+        except EQSLADIFFieldException as exc:
+            self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
+        finally:
+            self.updateQSOStatus('eqsl_sent', qso_id, eqsl_sent)
+            self.updateQSOStatus('eqsl_rcvd', qso_id, eqsl_rcvd)
+
+        return True
+
+    def eqslDownload(self):
+        res = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            self.tr('Select eQSL folder'),
+            self.settings.value('eqsl/lastExportDir', os.path.abspath(os.curdir)))
+
+        if not res:
+            return
+
+        for qso_id in self.selectedQSOIds():
+            self.log.info(f'Downloading eQSL for QSO #{qso_id}...')
+
+            rec = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')['RECORDS'][0]
+            qso_uuid = rec['QSO_DATE'] + rec['TIME_ON'] + rec['CALL']
+
+            if qso_uuid not in self.eqsl_urls:
+                if not self.eqslCheckInbox(qso_id):
+                    break
+
+            if self.eqsl_urls[qso_uuid]:
+                image_type = self.eqsl_urls[qso_uuid].split('/')[-1].split('.')[-1]
+                call_sign = rec['CALL']
+                for c in string.punctuation:
+                    call_sign = call_sign.replace(c, '_')
+
+                image_name = (f'{rec["QSO_DATE"]} {call_sign} {rec["MODE"]} '
+                              f'{rec["BAND"]}.{image_type}')
+                image_path = os.path.join(res, image_name)
+                self.log.debug(f'eQSL path: "{image_path}"')
+
+                try:
+                    eqsl_image = self.eqsl.receive_qsl_card(self.eqsl_urls[qso_uuid])
+                    with open(image_path, 'wb') as eqslf:
+                        eqslf.write(eqsl_image)
+                    self.log.info(f'Stored eQSL to "{image_path}"')
+                    self.settings.setValue('eqsl/lastExportDir', res)
+                except Exception as exc:
+                    self.log.exception(exc)
+
     def lotwUpload(self):
         self.log.info('Signing and uploading to LoTW...')
         if platform.system() == 'Windows':
@@ -1333,7 +1457,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 state = 'Y'
                 self.log.info('Log rejected, already exists')
             except MissingADIFFieldException as exc:
-                self.log.warning(f'A field is missing in QSO #{qso_id} for log upload to HamQTH:\n"{exc.args[0]}"')
+                self.log.warning(f'A field is missing in QSO #{qso_id} for log upload to HamQTH: "{exc.args[0]}"')
             except CommunicationException as exc:
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload log error'),
                                               self.tr('An error occured on uploading to HamQTH') + f':\n"{exc}"')
