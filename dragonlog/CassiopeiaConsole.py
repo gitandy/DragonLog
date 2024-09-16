@@ -27,10 +27,15 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
 
+        self.pushDirectlyCheckBox.setChecked(bool(self.__settings__.value('hamcc/push_directly', 0)))
+
         self.__qso_nr__ = 0
         self.qsoSpinBox.valueChanged.connect(self.selectQSO)
 
         self.refreshDisplay()
+
+    def pushDirectlyChanged(self, state:bool):
+        self.__settings__.setValue('hamcc/push_directly', int(state))
 
     def refreshDisplay(self):
         qso = self.__cc__.current_qso

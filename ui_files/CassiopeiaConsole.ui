@@ -918,6 +918,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushDirectlyCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>pushDirectlyChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>941</x>
+     <y>209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>117</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearInput()</slot>
@@ -925,5 +941,6 @@
   <slot>finaliseQSO()</slot>
   <slot>pushQSOs()</slot>
   <slot>deleteQSO()</slot>
+  <slot>pushDirectlyChanged(bool)</slot>
  </slots>
 </ui>

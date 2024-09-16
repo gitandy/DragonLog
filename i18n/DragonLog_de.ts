@@ -4,42 +4,42 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="163" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="168" />
       <source>Removed QSO #{0} from cache</source>
       <translation>QSO #{0} aus Cache entfernt</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="176" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="181" />
       <source>Error: Wrong call format</source>
       <translation>Fehler: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="177" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="182" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation>Fehler: Kein gültiges QTH/Maidenhead-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="178" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="183" />
       <source>Error: No active event</source>
       <translation>Fehler: Kein aktives Event</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="179" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="184" />
       <source>Error: Unknown prefix</source>
       <translation>Fehler: Unbekanntes Präfix</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="180" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="185" />
       <source>Error: Wrong RST format</source>
       <translation>Fehler: Kein gültiges RST-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="181" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="186" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation>Warnung: Call fehlt für letztes QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="182" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="187" />
       <source>Last QSO cached</source>
       <translation>Letztes QSO</translation>
     </message>
