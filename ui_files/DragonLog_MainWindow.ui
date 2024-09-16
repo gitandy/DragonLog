@@ -78,6 +78,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionHelp"/>
+    <addaction name="actionShortcuts"/>
     <addaction name="separator"/>
     <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
@@ -753,6 +754,15 @@
     <string>Ctrl+Shift+E</string>
    </property>
   </action>
+  <action name="actionShortcuts">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:shortcuts.png</normaloff>icons:shortcuts.png</iconset>
+   </property>
+   <property name="text">
+    <string>Shortcuts</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1348,6 +1358,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionShortcuts</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showShortcuts()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1372,5 +1398,6 @@
   <slot>eqslCheckInboxSelected()</slot>
   <slot>eqslDownload()</slot>
   <slot>eqslUpload()</slot>
+  <slot>showShortcuts()</slot>
  </slots>
 </ui>

@@ -251,6 +251,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.app_path = app_path
         self.help_dialog = None
+        self.help_sc_dialog = None
 
         self.settings = QtCore.QSettings(self.programName)
 
@@ -1983,6 +1984,42 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             helpLabel.setText(help_text)
 
         self.help_dialog.show()
+
+    def showShortcuts(self):
+        if not self.help_sc_dialog:
+            with open(self.searchFile('help:SHORTCUTS.md')) as hf:
+                help_text = hf.read()
+
+            self.help_sc_dialog = QtWidgets.QDialog(self)
+            self.help_sc_dialog.setWindowTitle(f'{self.programName} - {self.tr("Shortcuts")}')
+            self.help_sc_dialog.resize(500, 500)
+            verticalLayout = QtWidgets.QVBoxLayout(self.help_sc_dialog)
+            scrollArea = QtWidgets.QScrollArea(self.help_sc_dialog)
+            scrollArea.setWidgetResizable(True)
+            scrollAreaWidgetContents = QtWidgets.QWidget()
+            verticalLayout_2 = QtWidgets.QVBoxLayout(scrollAreaWidgetContents)
+            helpLabel = QtWidgets.QLabel(scrollAreaWidgetContents)
+            helpLabel.setTextFormat(QtCore.Qt.TextFormat.MarkdownText)
+            helpLabel.setWordWrap(True)
+            helpLabel.setOpenExternalLinks(True)
+            verticalLayout_2.addWidget(helpLabel)
+            scrollArea.setWidget(scrollAreaWidgetContents)
+            verticalLayout.addWidget(scrollArea)
+            horizontalLayout = QtWidgets.QHBoxLayout()
+            horizontalSpacer = QtWidgets.QSpacerItem(40, 20,
+                                                     QtWidgets.QSizePolicy.Policy.Expanding,
+                                                     QtWidgets.QSizePolicy.Policy.Minimum)
+            horizontalLayout.addItem(horizontalSpacer)
+            pushButton = QtWidgets.QPushButton(self.help_sc_dialog)
+            pushButton.setText(self.tr('Ok'))
+            horizontalLayout.addWidget(pushButton)
+            verticalLayout.addLayout(horizontalLayout)
+            # noinspection PyUnresolvedReferences
+            pushButton.clicked.connect(self.help_sc_dialog.accept)
+
+            helpLabel.setText(help_text)
+
+        self.help_sc_dialog.show()
 
     @property
     def programName(self):
