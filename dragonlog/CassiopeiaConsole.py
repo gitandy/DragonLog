@@ -87,7 +87,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             for c in '{}\'':
                 qso = qso.replace(c, '')
             self.resultLabel.setText(qso)
-            self.inputWidget.setStyleSheet('background-color: rgba(0, 255, 0, 63)')
+            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
         elif text.startswith('"'):
             if text.endswith('"'):
@@ -102,9 +102,9 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             res = self.__cc__.evaluate(text)
             self.resultLabel.setText(self.tr(res))
             if res.startswith('Error:'):
-                self.inputWidget.setStyleSheet('background-color: rgba(255, 0, 0, 63)')
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 0, 0, 63)}')
             else:
-                self.inputWidget.setStyleSheet('background-color: rgba(0, 255, 0, 63)')
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
 
     def pushQSOs(self):
@@ -121,11 +121,11 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         res = self.__cc__.finalize_qso()
         self.resultLabel.setText(self.tr(res))
         if res.startswith('Error:'):
-            self.inputWidget.setStyleSheet('background-color: rgba(255, 0, 0, 63)')
+            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 0, 0, 63)}')
         elif res.startswith('Warning:'):
-            self.inputWidget.setStyleSheet('background-color: rgba(255, 127, 0, 63)')
+            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 127, 0, 63)}')
         else:
-            self.inputWidget.setStyleSheet('background-color: rgba(0, 255, 0, 63)')
+            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
 
         self.clearInput()
         self.refreshDisplay()
@@ -161,7 +161,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             res = self.__cc__.del_selected()
             self.refreshDisplay()
             self.resultLabel.setText(self.tr('Removed QSO #{0} from cache').format(str(res + 1)))
-            self.inputWidget.setStyleSheet('background-color: rgba(0, 255, 0, 63)')
+            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
         self.inputLineEdit.setFocus()
 
     def tr(self, text: str, **kwargs) -> str:
