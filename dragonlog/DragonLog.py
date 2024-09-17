@@ -1814,6 +1814,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         return values
 
     def retrieveCCQSO(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Saving QSO'),
+                                              self.tr('No database opened for saving'))
+                return
+
         added = False
         while self.cc_widget.hasQSOs():
             self.log.info(f'Adding QSO from CassiopeiaConsole to logbook...')
