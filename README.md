@@ -60,8 +60,11 @@ Or if your python scripts folder is on PATH you can start DragonLog with
 For windows there is also an installable MSI and ZIP package available for convenience.
 
 
-First start
------------
+Starting and first start
+------------------------
+At first start DragonLog opens the settings dialog for you. You should configure
+at least your callsign, name and locator for a sufficient experience. 
+
 Before you can start to log QSOs a database has to be selected.
 It can be placed on a path where you wish to.
 The database is created and initialised.
@@ -69,6 +72,20 @@ The database is created and initialised.
 At the next start of the program the last database gets opened automatically.
 
 You can switch between different databases as you like.
+
+### Commandline Arguments
+If you want to manage different QSO databases you can select them via commandline argument i.e.
+
+    # DragonLog QSOs-2024.qlog
+
+If you also want to provide a separate configuration you can use i.e.
+
+    # DragonLog -ini DF1ASC.ini
+
+The arguments must follow the format in this order
+
+    DragonLog [-ini INI_FILE] [QSODB_FILE]
+
 
 QSOs
 ----
@@ -121,9 +138,6 @@ Check the manual of the other program to find the correct path.
 If you want to use the worked before feature of the other program consider to export your 
 QSOs beforehand.
 Dragonlog will only import QSOs which are not already included in the current database.
-
-[Keyboard shortcuts](https://github.com/gitandy/DragonLog/blob/master/SHORTCUTS.md)
-----------------------------------
 
 Export
 ------

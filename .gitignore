@@ -12,3 +12,4 @@ __version__.py
 DragonLog.egg-info
 /dist_exe
 /dragonlog/data/i18n/ascii_replace_*.json
+*.ini

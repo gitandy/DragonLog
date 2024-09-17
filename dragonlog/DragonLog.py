@@ -244,7 +244,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if file.exists():
             return file.fileName()
 
-    def __init__(self, file=None, app_path='.'):
+    def __init__(self, file=None, app_path='.', ini_file=''):
         super().__init__()
 
         self.setupUi(self)
@@ -253,10 +253,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_dialog = None
         self.help_sc_dialog = None
 
-        self.settings = QtCore.QSettings(self.programName)
+        if ini_file:
+            self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
+        else:
+            self.settings = QtCore.QSettings(self.programName)
 
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {self.programName} {self.programVersion}...')
+        self.log.info(f'Using settings {self.settings.format()} from "{self.settings.fileName()}"')
 
         if int(self.settings.value('ui/log_dock_float', 0)):
             self.logDockWidget.setFloating(True)
@@ -2096,17 +2100,22 @@ def main():
     app.installTranslator(translator)
 
     file = None
+    ini = None
     args = app.arguments()
-    if len(args) > 1:
-        file = args[1]
-        if not (os.path.isfile(file) and os.path.splitext(file)[-1] in ('.qlog', '.sqlite')):
-            file = None
+    while len(args) > 1:
+        arg = args.pop(1)
+        if arg == '-ini':
+            ini = args.pop(1) if len(args) > 1 else None
+        else:
+            file = arg
+            if not (os.path.isfile(file) and os.path.splitext(file)[-1] in ('.qlog', '.sqlite')):
+                file = None
 
     QtCore.QDir.addSearchPath('icons', app_path + '/icons')
     QtCore.QDir.addSearchPath('data', app_path + '/data')
     QtCore.QDir.addSearchPath('help', app_path + '/data')
 
-    dl = DragonLog(file, app_path)
+    dl = DragonLog(file, app_path, ini)
     dl.show()
 
     sys.exit(app.exec())
