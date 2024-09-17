@@ -641,6 +641,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.actionChange_log_entry.setEnabled(True)
             self.actionDelete_log_entry.setEnabled(True)
             self.actionUpload_logs_to_LoTW.setEnabled(True)
+            self.actionCheck_LoTW_QSL.setEnabled(True)
+            self.actionUpload_to_eQSL.setEnabled(True)
+            self.actionCheck_eQSL.setEnabled(True)
+            self.actionDownload_eQSL.setEnabled(True)
+            self.actionUpload_to_HamQTH.setEnabled(True)
         except DatabaseOpenException as exc:
             self.log.exception(exc)
             if db_file == self.settings.value('lastDatabase', None):

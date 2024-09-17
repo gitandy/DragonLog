@@ -701,6 +701,9 @@
    </property>
   </action>
   <action name="actionUpload_to_HamQTH">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:hamqth.png</normaloff>icons:hamqth.png</iconset>
@@ -710,6 +713,9 @@
    </property>
   </action>
   <action name="actionCheck_LoTW_QSL">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:check_lotw.png</normaloff>icons:check_lotw.png</iconset>
@@ -722,6 +728,9 @@
    </property>
   </action>
   <action name="actionUpload_to_eQSL">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:upload_eqsl.png</normaloff>icons:upload_eqsl.png</iconset>
@@ -731,6 +740,9 @@
    </property>
   </action>
   <action name="actionCheck_eQSL">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:check_eqsl.png</normaloff>icons:check_eqsl.png</iconset>
@@ -743,6 +755,9 @@
    </property>
   </action>
   <action name="actionDownload_eQSL">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:download_eqsl.png</normaloff>icons:download_eqsl.png</iconset>
