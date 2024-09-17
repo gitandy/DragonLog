@@ -48,10 +48,10 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.qsosLabel.setText(str(len(self.__cc__.qsos)) if self.__cc__.qsos else '-')
         self.qsoSpinBox.setMaximum(len(self.__cc__.qsos))
 
-        self.myCallLineEdit.setText(qso['STATION_CALLSIGN'])
-        my_loc = f'{qso["MY_CITY"]} ({qso["MY_GRIDSQUARE"]})' if 'MY_CITY' in qso else qso["MY_GRIDSQUARE"]
+        self.myCallLineEdit.setText(qso.get('STATION_CALLSIGN', ''))
+        my_loc = f'{qso["MY_CITY"]} ({qso.get("MY_GRIDSQUARE", "")})' if 'MY_CITY' in qso else qso.get('MY_GRIDSQUARE', '')
         self.myLocLineEdit.setText(my_loc)
-        self.myNameLineEdit.setText(qso['MY_NAME'])
+        self.myNameLineEdit.setText(qso.get('MY_NAME', ''))
 
         if 'CONTEST_ID' in qso:
             self.eventLineEdit.setText(qso['CONTEST_ID'])

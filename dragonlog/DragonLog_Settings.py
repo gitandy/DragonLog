@@ -4,6 +4,7 @@ import typing
 import logging
 import platform
 import subprocess
+from optparse import Values
 
 from PyQt6 import QtWidgets, QtCore
 import keyring
@@ -334,8 +335,12 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.sortDscRadioButton.setChecked(sort_order == 'DSC')
         self.recentQSOsComboBox.setCurrentText(self.settings.value('ui/recent_qsos', self.tr('Show all')))
 
-        self.columnsSelectWidget.indexesDisabled = [int(c) for c in self.settings.value('ui/hidden_cols',
-                                                                                        '').split(',')]
+        try:
+            self.columnsSelectWidget.indexesDisabled = [int(c) for c in self.settings.value('ui/hidden_cols',
+                                                                                            '1').split(',')]
+        except ValueError as exc:
+            self.logger.exception(f'Reading "ui/hidden_cols": {self.settings.value("ui/hidden_cols","")}')
+
         self.bandsSelectWidget.itemsEnabled = self.settings.value('ui/show_bands', self.bandsSelectWidget.items)
         self.modesSelectWidget.itemsEnabled = self.settings.value('ui/show_modes', self.modesSelectWidget.items)
 
