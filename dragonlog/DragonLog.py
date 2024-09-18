@@ -252,6 +252,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.app_path = app_path
         self.help_dialog = None
         self.help_sc_dialog = None
+        self.help_cc_dialog = None
 
         if ini_file:
             self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
@@ -813,42 +814,44 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     #         yield dict(zip(self.__sql_cols__, values))
 
     def deleteQSO(self):
-        res = QtWidgets.QMessageBox.question(self, self.tr('Delete QSO'),
-                                             self.tr('Do you really want to delete the selected QSO(s)?'),
-                                             defaultButton=QtWidgets.QMessageBox.StandardButton.No)
+        if self.QSOTableView.selectedIndexes():
+            res = QtWidgets.QMessageBox.question(self, self.tr('Delete QSO'),
+                                                 self.tr('Do you really want to delete the selected QSO(s)?'),
+                                                 defaultButton=QtWidgets.QMessageBox.StandardButton.No)
 
-        if res == QtWidgets.QMessageBox.StandardButton.Yes:
-            for qso_id in self.selectedQSOIds():
-                self.log.info(f'Deleting QSO #{qso_id}...')
-                query = QtSql.QSqlQuery(self.__db_con__)
-                query.prepare('DELETE FROM qsos where id == ?')
-                query.bindValue(0, qso_id)
-                query.exec()
+            if res == QtWidgets.QMessageBox.StandardButton.Yes:
+                for qso_id in self.selectedQSOIds():
+                    self.log.info(f'Deleting QSO #{qso_id}...')
+                    query = QtSql.QSqlQuery(self.__db_con__)
+                    query.prepare('DELETE FROM qsos where id == ?')
+                    query.bindValue(0, qso_id)
+                    query.exec()
 
-                if query.lastError().text():
-                    raise Exception(query.lastError().text())
+                    if query.lastError().text():
+                        raise Exception(query.lastError().text())
 
-            self.__db_con__.commit()
-            self.refreshTableView(sort=False)
+                self.__db_con__.commit()
+                self.refreshTableView(sort=False)
 
     def changeQSO(self):
-        self.qso_form.clear()
-        self.qsoDockWidget.setVisible(True)
-        self.qso_form.setChangeMode()
+        if self.QSOTableView.selectedIndexes():
+            self.qso_form.clear()
+            self.qsoDockWidget.setVisible(True)
+            self.qso_form.setChangeMode()
 
-        i = self.QSOTableView.selectedIndexes().pop(0)
-        qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
+            i = self.QSOTableView.selectedIndexes().pop(0)
+            qso_id = self.QSOTableView.model().data(i.siblingAtColumn(0))
 
-        query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
-        if query.lastError().text():
-            raise Exception(query.lastError().text())
+            query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
+            if query.lastError().text():
+                raise Exception(query.lastError().text())
 
-        values = []
-        while query.next():
-            for col in range(len(self.__sql_cols__)):
-                values.append(query.value(col))
-            break
-        self.qso_form.values = dict(zip(self.__sql_cols__, values))
+            values = []
+            while query.next():
+                for col in range(len(self.__sql_cols__)):
+                    values.append(query.value(col))
+                break
+            self.qso_form.values = dict(zip(self.__sql_cols__, values))
 
     def updateQSO(self, qso_id: int):
         self.log.info(f'Changing QSO {qso_id}...')
@@ -1250,10 +1253,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         try:
             res = self.eqsl.check_inbox(self.settings.value('eqsl/username', ''),
-                                   self.settings_form.eqslPassword(),
-                                   rec)
+                                        self.settings_form.eqslPassword(),
+                                        rec)
             if res:
-                qso_uuid = rec['QSO_DATE']+rec['TIME_ON']+rec['CALL']
+                qso_uuid = rec['QSO_DATE'] + rec['TIME_ON'] + rec['CALL']
                 self.eqsl_urls[qso_uuid] = res
                 self.log.debug(f'eQSL available at "{res}"')
                 eqsl_rcvd = 'Y'
@@ -1964,78 +1967,57 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def showCC(self):
         self.cc_widget.inputLineEdit.setFocus()
 
+    def createHelpDlg(self, title: str, help_text: str):
+        help_dialog = QtWidgets.QDialog(self)
+        help_dialog.setWindowTitle(f'{self.programName} - {title}')
+        help_dialog.resize(500, 500)
+        verticalLayout = QtWidgets.QVBoxLayout(help_dialog)
+        scrollArea = QtWidgets.QScrollArea(help_dialog)
+        scrollArea.setWidgetResizable(True)
+        scrollAreaWidgetContents = QtWidgets.QWidget()
+        verticalLayout_2 = QtWidgets.QVBoxLayout(scrollAreaWidgetContents)
+        helpLabel = QtWidgets.QLabel(scrollAreaWidgetContents)
+        helpLabel.setTextFormat(QtCore.Qt.TextFormat.MarkdownText)
+        helpLabel.setWordWrap(True)
+        helpLabel.setOpenExternalLinks(True)
+        verticalLayout_2.addWidget(helpLabel)
+        scrollArea.setWidget(scrollAreaWidgetContents)
+        verticalLayout.addWidget(scrollArea)
+        horizontalLayout = QtWidgets.QHBoxLayout()
+        horizontalSpacer = QtWidgets.QSpacerItem(40, 20,
+                                                 QtWidgets.QSizePolicy.Policy.Expanding,
+                                                 QtWidgets.QSizePolicy.Policy.Minimum)
+        horizontalLayout.addItem(horizontalSpacer)
+        pushButton = QtWidgets.QPushButton(help_dialog)
+        pushButton.setText(self.tr('Ok'))
+        horizontalLayout.addWidget(pushButton)
+        verticalLayout.addLayout(horizontalLayout)
+        # noinspection PyUnresolvedReferences
+        pushButton.clicked.connect(help_dialog.accept)
+        helpLabel.setText(help_text)
+        return help_dialog
+
     # noinspection PyPep8Naming
     def showHelp(self):
         if not self.help_dialog:
             with open(self.searchFile('help:README.md')) as hf:
                 help_text = hf.read()
-
-            self.help_dialog = QtWidgets.QDialog(self)
-            self.help_dialog.setWindowTitle(f'{self.programName} - {self.tr("Help")}')
-            self.help_dialog.resize(500, 500)
-            verticalLayout = QtWidgets.QVBoxLayout(self.help_dialog)
-            scrollArea = QtWidgets.QScrollArea(self.help_dialog)
-            scrollArea.setWidgetResizable(True)
-            scrollAreaWidgetContents = QtWidgets.QWidget()
-            verticalLayout_2 = QtWidgets.QVBoxLayout(scrollAreaWidgetContents)
-            helpLabel = QtWidgets.QLabel(scrollAreaWidgetContents)
-            helpLabel.setTextFormat(QtCore.Qt.TextFormat.MarkdownText)
-            helpLabel.setWordWrap(True)
-            helpLabel.setOpenExternalLinks(True)
-            verticalLayout_2.addWidget(helpLabel)
-            scrollArea.setWidget(scrollAreaWidgetContents)
-            verticalLayout.addWidget(scrollArea)
-            horizontalLayout = QtWidgets.QHBoxLayout()
-            horizontalSpacer = QtWidgets.QSpacerItem(40, 20,
-                                                     QtWidgets.QSizePolicy.Policy.Expanding,
-                                                     QtWidgets.QSizePolicy.Policy.Minimum)
-            horizontalLayout.addItem(horizontalSpacer)
-            pushButton = QtWidgets.QPushButton(self.help_dialog)
-            pushButton.setText(self.tr('Ok'))
-            horizontalLayout.addWidget(pushButton)
-            verticalLayout.addLayout(horizontalLayout)
-            # noinspection PyUnresolvedReferences
-            pushButton.clicked.connect(self.help_dialog.accept)
-
-            helpLabel.setText(help_text)
-
+            self.help_dialog = self.createHelpDlg(self.tr("Help"), help_text)
         self.help_dialog.show()
 
     def showShortcuts(self):
         if not self.help_sc_dialog:
             with open(self.searchFile('help:SHORTCUTS.md')) as hf:
                 help_text = hf.read()
-
-            self.help_sc_dialog = QtWidgets.QDialog(self)
-            self.help_sc_dialog.setWindowTitle(f'{self.programName} - {self.tr("Shortcuts")}')
-            self.help_sc_dialog.resize(500, 500)
-            verticalLayout = QtWidgets.QVBoxLayout(self.help_sc_dialog)
-            scrollArea = QtWidgets.QScrollArea(self.help_sc_dialog)
-            scrollArea.setWidgetResizable(True)
-            scrollAreaWidgetContents = QtWidgets.QWidget()
-            verticalLayout_2 = QtWidgets.QVBoxLayout(scrollAreaWidgetContents)
-            helpLabel = QtWidgets.QLabel(scrollAreaWidgetContents)
-            helpLabel.setTextFormat(QtCore.Qt.TextFormat.MarkdownText)
-            helpLabel.setWordWrap(True)
-            helpLabel.setOpenExternalLinks(True)
-            verticalLayout_2.addWidget(helpLabel)
-            scrollArea.setWidget(scrollAreaWidgetContents)
-            verticalLayout.addWidget(scrollArea)
-            horizontalLayout = QtWidgets.QHBoxLayout()
-            horizontalSpacer = QtWidgets.QSpacerItem(40, 20,
-                                                     QtWidgets.QSizePolicy.Policy.Expanding,
-                                                     QtWidgets.QSizePolicy.Policy.Minimum)
-            horizontalLayout.addItem(horizontalSpacer)
-            pushButton = QtWidgets.QPushButton(self.help_sc_dialog)
-            pushButton.setText(self.tr('Ok'))
-            horizontalLayout.addWidget(pushButton)
-            verticalLayout.addLayout(horizontalLayout)
-            # noinspection PyUnresolvedReferences
-            pushButton.clicked.connect(self.help_sc_dialog.accept)
-
-            helpLabel.setText(help_text)
-
+            self.help_sc_dialog = self.createHelpDlg(self.tr("Shortcuts"), help_text)
         self.help_sc_dialog.show()
+
+    def showCCHelp(self):
+        if not self.help_cc_dialog:
+            with open(self.searchFile('help:README_HAMCC.md')) as hf:
+                help_text = hf.read()
+            self.help_cc_dialog = self.createHelpDlg(self.tr("CassipeiaConsole"), help_text)
+        self.help_cc_dialog.show()
 
     @property
     def programName(self):

@@ -79,6 +79,7 @@
     </property>
     <addaction name="actionHelp"/>
     <addaction name="actionShortcuts"/>
+    <addaction name="actionHelpCassiopeiaConsole"/>
     <addaction name="separator"/>
     <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
@@ -778,6 +779,15 @@
     <string>Shortcuts</string>
    </property>
   </action>
+  <action name="actionHelpCassiopeiaConsole">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:help_terminal.png</normaloff>icons:help_terminal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Help on CassiopeiaConsole</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1389,6 +1399,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionHelpCassiopeiaConsole</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showCCHelp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1414,5 +1440,6 @@
   <slot>eqslDownload()</slot>
   <slot>eqslUpload()</slot>
   <slot>showShortcuts()</slot>
+  <slot>showCCHelp()</slot>
  </slots>
 </ui>
