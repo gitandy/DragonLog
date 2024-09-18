@@ -27,26 +27,10 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
 
-        self.pushDirectlyCheckBox.setChecked(bool(self.__settings__.value('hamcc/push_directly', 0)))
-
-        self.__qso_nr__ = 0
-        self.qsoSpinBox.valueChanged.connect(self.selectQSO)
-
         self.refreshDisplay()
-
-    def pushDirectlyChanged(self, state:bool):
-        self.__settings__.setValue('hamcc/push_directly', int(state))
 
     def refreshDisplay(self):
         qso = self.__cc__.current_qso
-
-        self.qsoSpinBox.valueChanged.disconnect()
-        self.qsoSpinBox.setValue(self.__cc__.edit_pos + 1)
-        self.qsoSpinBox.valueChanged.connect(self.selectQSO)
-        self.delPushButton.setEnabled(self.__cc__.edit_pos > -1)
-
-        self.qsosLabel.setText(str(len(self.__cc__.qsos)) if self.__cc__.qsos else '-')
-        self.qsoSpinBox.setMaximum(len(self.__cc__.qsos))
 
         self.myCallLineEdit.setText(qso.get('STATION_CALLSIGN', ''))
         my_loc = f'{qso["MY_CITY"]} ({qso.get("MY_GRIDSQUARE", "")})' if 'MY_CITY' in qso else qso.get('MY_GRIDSQUARE', '')
@@ -112,11 +96,6 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
 
-    def pushQSOs(self):
-        if self.__cc__.has_qsos():
-            self.qsosChached.emit()
-        self.inputLineEdit.setFocus()
-
     def finaliseQSO(self):
         text = self.inputLineEdit.text()
         if text.startswith('"'):
@@ -133,10 +112,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
 
         self.clearInput()
-        self.refreshDisplay()
-
-        if self.pushDirectlyCheckBox.isChecked():
-            self.qsosChached.emit()
+        self.qsosChached.emit()
 
     def hasQSOs(self) -> bool:
         return self.__cc__.has_qsos()
@@ -149,24 +125,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
     def clearInput(self):
         self.__cc__.clear()
         self.inputLineEdit.clear()
-        self.__qso_nr__ = 0
         self.refreshDisplay()
-        self.inputLineEdit.setFocus()
-
-    def selectQSO(self, qso_nr:int):
-        if self.__qso_nr__ < qso_nr:
-            self.__cc__.load_next()
-        elif qso_nr > 0:
-            self.__cc__.load_prev()
-        self.__qso_nr__ = qso_nr
-        self.refreshDisplay()
-
-    def deleteQSO(self):
-        if self.__cc__.edit_pos > -1:
-            res = self.__cc__.del_selected()
-            self.refreshDisplay()
-            self.resultLabel.setText(self.tr('Removed QSO #{0} from cache').format(str(res + 1)))
-            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
         self.inputLineEdit.setFocus()
 
     def tr(self, text: str, **kwargs) -> str:

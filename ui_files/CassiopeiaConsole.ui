@@ -35,51 +35,6 @@
       <number>10</number>
      </property>
      <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>QSO Cache</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="leftMargin">
-         <number>6</number>
-        </property>
-        <property name="rightMargin">
-         <number>6</number>
-        </property>
-        <item>
-         <widget class="QSpinBox" name="qsoSpinBox">
-          <property name="specialValueText">
-           <string>*</string>
-          </property>
-          <property name="minimum">
-           <number>0</number>
-          </property>
-          <property name="maximum">
-           <number>10</number>
-          </property>
-          <property name="value">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>/</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="qsosLabel">
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="styleSheet">
         <string notr="true">QGroupBox {background-color: rgba(0, 0, 255, 63)}</string>
@@ -706,6 +661,28 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="clearPushButton">
+           <property name="toolTip">
+            <string>Clear</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>icons:no.png</normaloff>icons:no.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addQSOPushButton">
+           <property name="toolTip">
+            <string>Push to Log</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>icons:edit_add.png</normaloff>icons:edit_add.png</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -738,41 +715,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QPushButton" name="pushPushButton">
-         <property name="text">
-          <string>Push to Log</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="clearPushButton">
-         <property name="text">
-          <string>Clear</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="pushDirectlyCheckBox">
-         <property name="text">
-          <string>Push directly</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="delPushButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Delete</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
     </layout>
    </item>
    <item>
@@ -795,11 +737,6 @@
  </widget>
  <tabstops>
   <tabstop>inputLineEdit</tabstop>
-  <tabstop>pushDirectlyCheckBox</tabstop>
-  <tabstop>pushPushButton</tabstop>
-  <tabstop>clearPushButton</tabstop>
-  <tabstop>delPushButton</tabstop>
-  <tabstop>qsoSpinBox</tabstop>
   <tabstop>myCallLineEdit</tabstop>
   <tabstop>myLocLineEdit</tabstop>
   <tabstop>myNameLineEdit</tabstop>
@@ -871,26 +808,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushDirectlyCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushPushButton</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>784</x>
-     <y>150</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>695</x>
-     <y>150</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushPushButton</sender>
+   <sender>addQSOPushButton</sender>
    <signal>clicked()</signal>
    <receiver>CassiopeiaConsoleWidget</receiver>
-   <slot>pushQSOs()</slot>
+   <slot>finaliseQSO()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>695</x>
@@ -899,38 +820,6 @@
     <hint type="destinationlabel">
      <x>420</x>
      <y>98</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>delPushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CassiopeiaConsoleWidget</receiver>
-   <slot>deleteQSO()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>902</x>
-     <y>178</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>479</x>
-     <y>119</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushDirectlyCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>CassiopeiaConsoleWidget</receiver>
-   <slot>pushDirectlyChanged(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>941</x>
-     <y>209</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>498</x>
-     <y>117</y>
     </hint>
    </hints>
   </connection>
