@@ -102,24 +102,28 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self._evaluate_(text[1:])
         else:
             self._evaluate_(text)
-        res = self.__cc__.finalize_qso()
-        self.resultLabel.setText(self.tr(res))
-        if res.startswith('Error:'):
-            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 0, 0, 63)}')
-        elif res.startswith('Warning:'):
-            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 127, 0, 63)}')
-        else:
-            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
 
-        self.clearInput()
-        self.qsosChached.emit()
+        if self.__cc__.current_qso.get('CALL', ''):
+            res = self.__cc__.finalize_qso()
+            self.resultLabel.setText(self.tr(res))
+            if res.startswith('Error:'):
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 0, 0, 63)}')
+            elif res.startswith('Warning:'):
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 127, 0, 63)}')
+            else:
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
+
+            self.clearInput()
+            self.qsosChached.emit()
+        else:
+            self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 127, 0, 63)}')
+            self.resultLabel.setText(self.tr('Error: Callsign missing for QSO'))
 
     def hasQSOs(self) -> bool:
         return self.__cc__.has_qsos()
 
     def retrieveQSO(self) -> dict[str, str]:
         qso = self.__cc__.pop_qso()
-        self.refreshDisplay()
         return qso
 
     def clearInput(self):
