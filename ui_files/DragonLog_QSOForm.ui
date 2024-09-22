@@ -1164,6 +1164,70 @@ This is not the QSL manager/bureau address.</string>
    </hints>
   </connection>
   <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>stationChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>identityGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>identityChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>identityGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ownCallSignLineEdit</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>identityGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ownNameLineEdit</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>channelComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>QSOForm</receiver>
@@ -1236,6 +1300,22 @@ This is not the QSL manager/bureau address.</string>
     <hint type="sourcelabel">
      <x>163</x>
      <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ownCallSignLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>ownCallSignChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>174</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -1396,6 +1476,70 @@ This is not the QSL manager/bureau address.</string>
     <hint type="sourcelabel">
      <x>442</x>
      <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>antennaComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>348</x>
+     <y>334</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>334</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ownQTHComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ownQTHComboBox</sender>
+   <signal>editTextChanged(QString)</signal>
+   <receiver>QSOForm</receiver>
+   <slot>ownQTHChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>304</y>
     </hint>
     <hint type="destinationlabel">
      <x>249</x>
