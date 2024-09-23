@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>998</width>
-    <height>236</height>
+    <height>238</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -109,6 +109,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myNameLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
           <property name="placeholderText">
            <string>Your Name</string>
           </property>
@@ -301,13 +304,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>B</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLineEdit" name="bandLineEdit">
           <property name="maximumSize">
            <size>
@@ -327,13 +323,6 @@
          <widget class="Line" name="line">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>M</string>
           </property>
          </widget>
         </item>
@@ -369,13 +358,6 @@
          <widget class="Line" name="line_4">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>C</string>
           </property>
          </widget>
         </item>
