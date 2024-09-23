@@ -1912,17 +1912,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         return row
 
-    def workedBefore(self, call):
-        query = self.__db_con__.exec(f'SELECT call_sign from qsos '
-                                     f'where call_sign LIKE"%{call}%"')
+    def workedBefore(self, call: str) -> dict[str, dict[str, str]]:
+        query = self.__db_con__.exec(f'SELECT call_sign, date_time, contest_id, event from qsos '
+                                     f'where call_sign LIKE"%{call}%" ORDER BY date_time')
         if query.lastError().text():
             raise Exception(query.lastError().text())
 
-        worked = []
+        worked = {}
         while query.next():
             call = query.value(0)
-            if not call in worked:
-                worked.append(call)
+            if call:
+                worked[call] = {
+                    'date_time': query.value(1),
+                    'event': query.value(2) if query.value(2) else query.value(3)
+                }
 
         return worked
 

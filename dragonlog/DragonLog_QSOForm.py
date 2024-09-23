@@ -501,7 +501,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if not txt:
             self.callSignLineEdit.setPalette(ColorPalettes.PaletteRequired)
         elif check_format(REGEX_CALL, txt):
-            worked = self.dragonlog.workedBefore(check_call(txt)[1])
+            # worked_dict:dict = self.dragonlog.workedBefore(check_call(txt)[1])
+            worked = self.dragonlog.workedBefore(check_call(txt)[1]).keys()
+            # for call, data in zip(worked_dict.keys(), worked_dict.values()):
+            #     worked.append(f'{call} on {data["date_time"]}')
             if not self.__change_mode__ and worked:
                 self.setWorkedBefore(worked)
                 self.callSignLineEdit.setPalette(ColorPalettes.PaletteWorked)

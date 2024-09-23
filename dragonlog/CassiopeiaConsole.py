@@ -26,7 +26,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.__cc__ = hamcc.CassiopeiaConsole(self.__settings__.value('station/callsign', ''),
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
-
+        self.__current_call__ = ''
         self.refreshDisplay()
 
     def refreshDisplay(self):
@@ -64,8 +64,9 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def evaluate(self, text: str):
         if text.endswith('~'):
-            self.__cc__.clear()
-            self.inputLineEdit.clear()
+            # self.__cc__.clear()
+            # self.inputLineEdit.clear()
+            self.clearInput()
         elif text.endswith('!'):
             self.inputLineEdit.setText(self.inputLineEdit.text()[:-1])
             self.inputLineEdit.clear()
@@ -95,6 +96,18 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             else:
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
+
+            call = self.__cc__.current_qso.get('CALL', '')
+            if call != self.__current_call__:
+                self.__current_call__ = call
+                worked_dict = self.dragonlog.workedBefore(call)
+                worked_list = []
+                if worked_dict:
+                    for call, data in zip(worked_dict.keys(), worked_dict.values()):
+                        if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
+                            continue
+                        worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
+                self.resultLabel.setText('\n'.join(worked_list))
 
     def finaliseQSO(self):
         text = self.inputLineEdit.text()
@@ -128,6 +141,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def clearInput(self):
         self.__cc__.clear()
+        self.__current_call__ = ''
         self.inputLineEdit.clear()
         self.refreshDisplay()
         self.inputLineEdit.setFocus()
