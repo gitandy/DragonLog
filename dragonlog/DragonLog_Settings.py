@@ -353,6 +353,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.useCfgStationImportCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_adif', 0)))
         self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
         self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
+        self.useCfgStationCCCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_hamcc', 0)))
 
         self.callbookComboBox.setCurrentText(self.callbook_dname)
         self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbook_id}_user', ''))
@@ -430,6 +431,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('imp_exp/use_station_adif', int(self.useCfgStationImportCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_watch', int(self.useCfgStationWatchCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/use_station_hamcc', int(self.useCfgStationCCCheckBox.isChecked()))
 
         self.settings.setValue('callbook/service', self.callbooks[self.callbookComboBox.currentText()])
         self.settings.setValue(f'callbook/{self.callbook_id}_user', self.callbookUserLineEdit.text())

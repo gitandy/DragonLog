@@ -648,7 +648,7 @@
       <attribute name="title">
        <string>Import/Export</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
@@ -713,6 +713,22 @@
           </item>
           <item>
            <widget class="QCheckBox" name="useCfgStationWatchCheckBox">
+            <property name="text">
+             <string>Use configured Station for missing values</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_10">
+         <property name="title">
+          <string>CassiopeiaConsole</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_15">
+          <item>
+           <widget class="QCheckBox" name="useCfgStationCCCheckBox">
             <property name="text">
              <string>Use configured Station for missing values</string>
             </property>

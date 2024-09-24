@@ -4,47 +4,52 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="109" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="111" />
       <source>at</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="133" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="137" />
       <source>Error: Callsign missing for QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="158" />
-      <source>Error: Wrong call format</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="159" />
-      <source>Error: Wrong QTH/maidenhead format</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="160" />
-      <source>Error: No active event</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="161" />
-      <source>Error: Unknown prefix</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
       <location filename="..\dragonlog\CassiopeiaConsole.py" line="162" />
-      <source>Error: Wrong RST format</source>
+      <source>Warning: Wrong call format</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\dragonlog\CassiopeiaConsole.py" line="163" />
-      <source>Warning: Callsign missing for last QSO</source>
+      <source>Error: Wrong call format</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\dragonlog\CassiopeiaConsole.py" line="164" />
+      <source>Error: Wrong QTH/maidenhead format</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="165" />
+      <source>Error: No active event</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="166" />
+      <source>Error: Unknown prefix</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="167" />
+      <source>Error: Wrong RST format</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="168" />
+      <source>Warning: Callsign missing for last QSO</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="169" />
       <source>Last QSO cached</source>
       <translation type="unfinished" />
     </message>
@@ -546,12 +551,18 @@
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Use configured Station for missing values</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Watch File</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>CassiopeiaConsole</source>
       <translation type="unfinished" />
     </message>
     <message>
@@ -617,15 +628,15 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1965" />
-      <location filename="..\dragonlog\DragonLog.py" line="1959" />
-      <location filename="..\dragonlog\DragonLog.py" line="1937" />
+      <location filename="..\dragonlog\DragonLog.py" line="1972" />
+      <location filename="..\dragonlog\DragonLog.py" line="1966" />
+      <location filename="..\dragonlog\DragonLog.py" line="1944" />
       <location filename="..\dragonlog\DragonLog.py" line="291" />
       <source>Watching file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1965" />
+      <location filename="..\dragonlog\DragonLog.py" line="1972" />
       <location filename="..\dragonlog\DragonLog.py" line="293" />
       <location filename="..\dragonlog\DragonLog.py" line="291" />
       <source>inactiv</source>
@@ -1061,13 +1072,13 @@ The file already exists.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1828" />
+      <location filename="..\dragonlog\DragonLog.py" line="1832" />
       <location filename="..\dragonlog\DragonLog.py" line="773" />
       <source>Saving QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1829" />
+      <location filename="..\dragonlog\DragonLog.py" line="1833" />
       <location filename="..\dragonlog\DragonLog.py" line="774" />
       <source>No database opened for saving</source>
       <translation type="unfinished" />
@@ -1083,7 +1094,7 @@ The file already exists.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1947" />
+      <location filename="..\dragonlog\DragonLog.py" line="1954" />
       <location filename="..\dragonlog\DragonLog.py" line="1503" />
       <location filename="..\dragonlog\DragonLog.py" line="880" />
       <source>ADIF 3 (*.adi *.adif)</source>
@@ -1280,52 +1291,52 @@ See log for detail</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1938" />
+      <location filename="..\dragonlog\DragonLog.py" line="1945" />
       <source>No database opened for watching files</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1945" />
+      <location filename="..\dragonlog\DragonLog.py" line="1952" />
       <source>Select file to watch</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1995" />
+      <location filename="..\dragonlog\DragonLog.py" line="2002" />
       <source>Ok</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2008" />
+      <location filename="..\dragonlog\DragonLog.py" line="2015" />
       <source>Help</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2015" />
+      <location filename="..\dragonlog\DragonLog.py" line="2022" />
       <source>Shortcuts</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2022" />
+      <location filename="..\dragonlog\DragonLog.py" line="2029" />
       <source>CassipeiaConsole</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2040" />
+      <location filename="..\dragonlog\DragonLog.py" line="2047" />
       <source>About</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2041" />
+      <location filename="..\dragonlog\DragonLog.py" line="2048" />
       <source>Version</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2042" />
+      <location filename="..\dragonlog\DragonLog.py" line="2049" />
       <source>Author</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2053" />
+      <location filename="..\dragonlog\DragonLog.py" line="2060" />
       <source>About Qt</source>
       <translation type="unfinished" />
     </message>
