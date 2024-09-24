@@ -23,6 +23,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.log.debug(f'HamCC version: {hamcc.__version_str__}...')
 
         self.__settings__ = settings
+
         self.__cc__ = hamcc.CassiopeiaConsole(self.__settings__.value('station/callsign', ''),
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
@@ -33,7 +34,8 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         qso = self.__cc__.current_qso
 
         self.myCallLineEdit.setText(qso.get('STATION_CALLSIGN', ''))
-        my_loc = f'{qso["MY_CITY"]} ({qso.get("MY_GRIDSQUARE", "")})' if 'MY_CITY' in qso else qso.get('MY_GRIDSQUARE', '')
+        my_loc = f'{qso["MY_CITY"]} ({qso.get("MY_GRIDSQUARE", "")})' if 'MY_CITY' in qso else qso.get('MY_GRIDSQUARE',
+                                                                                                       '')
         self.myLocLineEdit.setText(my_loc)
         self.myNameLineEdit.setText(qso.get('MY_NAME', ''))
 
@@ -64,8 +66,6 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def evaluate(self, text: str):
         if text.endswith('~'):
-            # self.__cc__.clear()
-            # self.inputLineEdit.clear()
             self.clearInput()
         elif text.endswith('!'):
             self.inputLineEdit.setText(self.inputLineEdit.text()[:-1])
@@ -83,7 +83,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             if text.endswith('"'):
                 self._evaluate_(text[1:-1])
         elif text.endswith(' '):
-            self._evaluate_(text[:-1])
+            self._evaluate_(text.strip())
 
         self.refreshDisplay()
 
@@ -93,6 +93,8 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self.resultLabel.setText(self.tr(res))
             if res.startswith('Error:'):
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 0, 0, 63)}')
+            elif res.startswith('Warning:'):
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(255, 127, 0, 63)}')
             else:
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
@@ -107,7 +109,9 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                         if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
                             continue
                         worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
-                self.resultLabel.setText('\n'.join(worked_list))
+                if worked_list:
+                    self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
+                    self.resultLabel.setText('\n'.join(worked_list))
 
     def finaliseQSO(self):
         text = self.inputLineEdit.text()
@@ -155,6 +159,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def __(self):
         # Stub for translations
+        self.tr('Warning: Wrong call format')
         self.tr('Error: Wrong call format')
         self.tr('Error: Wrong QTH/maidenhead format')
         self.tr('Error: No active event')
@@ -162,4 +167,3 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.tr('Error: Wrong RST format')
         self.tr('Warning: Callsign missing for last QSO')
         self.tr('Last QSO cached')
-
