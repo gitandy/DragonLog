@@ -11,7 +11,7 @@ Compatibility table
 
 | Application/Service   | DragonLog import        | Comment                                                                               |
 |-----------------------|-------------------------|---------------------------------------------------------------------------------------|
-| QRZ.com               | ok                      |                                                                                       |                                         |
+| QRZ.com               | ok                      |                                                                                       |
 | eQSL.cc Inbox/Archive | ok<br/>fixes wrong tags | only partial QSO data also import outbox before, <br/>manually fix non ASCII chars    |
 | eQSL.cc Outbox        | ok<br/>fixes wrong tags | only partial QSO data also import inbox afterwards, <br/>manually fix non ASCII chars |
 | WSJTX                 | ok                      |                                                                                       |
@@ -24,5 +24,7 @@ Compatibility table
 
 If ok is shown in the table the corresponding programs ADI output was tested and works with DragonLog.  
 
+HamQTH.com and QRZCQ.com are not listed here as the provided download seems to be the uploaded file.
+
 Other applications or services ADI exports are currently untested. If you are experiencing issues 
-please contact me so I am able to implement a fix.
+please contact me, so I am able to implement a fix.
