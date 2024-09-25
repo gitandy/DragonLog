@@ -419,7 +419,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             cc_dock_area = self.int2dock_area(
                 int(self.settings.value('ui/cc_dock_area',
-                                        QtCore.Qt.DockWidgetArea.RightDockWidgetArea.value)))
+                                        QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
             self.addDockWidget(cc_dock_area,
                                self.ccDockWidget)
         self.ccDockWidget.setVisible(bool(int(self.settings.value('ui/show_cc', 0))))
@@ -1975,6 +1975,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.actionWatch_file_for_QSOs_TB.setChecked(False)
 
     def showCC(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Log QSO'),
+                                              self.tr('No database opened for logging'))
+                return
+
+        self.ccDockWidget.show()
         self.cc_widget.inputLineEdit.setFocus()
 
     def createHelpDlg(self, title: str, help_text: str):

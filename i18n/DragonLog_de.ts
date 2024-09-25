@@ -1066,11 +1066,13 @@ Die Datei existiert bereits.</translation>
       <translation>letztes Jahr</translation>
     </message>
     <message>
+      <location filename="..\dragonlog\DragonLog.py" line="1981" />
       <location filename="..\dragonlog\DragonLog.py" line="759" />
       <source>Log QSO</source>
       <translation>QSO loggen</translation>
     </message>
     <message>
+      <location filename="..\dragonlog\DragonLog.py" line="1982" />
       <location filename="..\dragonlog\DragonLog.py" line="760" />
       <source>No database opened for logging</source>
       <translation>Keine Datenbank zum Loggen geöffnet</translation>
@@ -1306,42 +1308,42 @@ Siehe Anwendungslog für Details</translation>
       <translation>Zu überwachende Datei wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2002" />
+      <location filename="..\dragonlog\DragonLog.py" line="2010" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2015" />
+      <location filename="..\dragonlog\DragonLog.py" line="2023" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2022" />
+      <location filename="..\dragonlog\DragonLog.py" line="2030" />
       <source>Shortcuts</source>
       <translation>Tastenkürzel</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2029" />
+      <location filename="..\dragonlog\DragonLog.py" line="2037" />
       <source>CassipeiaConsole</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2047" />
+      <location filename="..\dragonlog\DragonLog.py" line="2055" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2048" />
+      <location filename="..\dragonlog\DragonLog.py" line="2056" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2049" />
+      <location filename="..\dragonlog\DragonLog.py" line="2057" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2060" />
+      <location filename="..\dragonlog\DragonLog.py" line="2068" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
