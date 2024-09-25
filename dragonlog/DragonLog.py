@@ -1203,7 +1203,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def eqslUpload(self):
         for qso_id in self.selectedQSOIds():
-            rec = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')['RECORDS'][0]
+            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            if not adif_doc['RECORDS']:
+                self.log.info(f'Skipped CB QSO #{qso_id}')
+                continue
+
+            rec = adif_doc['RECORDS'][0]
 
             if rec.get('EQSL_QSL_SENT', 'N') != 'N':
                 self.log.info(f'QSO #{qso_id} already uploaded to eQSL')
@@ -1245,9 +1250,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 break
 
     def eqslCheckInbox(self, qso_id) -> bool:
+        adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+        if not adif_doc['RECORDS']:
+            self.log.info(f'Skipped CB QSO #{qso_id}')
+            return
+
         self.log.info(f'Checking eQSL for QSO #{qso_id}...')
 
-        rec = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')['RECORDS'][0]
+        rec = adif_doc['RECORDS'][0]
         eqsl_sent = 'Y' if rec.get('EQSL_QSL_SENT', 'N') in ('Y', 'R') else 'N'
         eqsl_rcvd = 'N'
 
@@ -1291,9 +1301,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             return
 
         for qso_id in self.selectedQSOIds():
+            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            if not adif_doc['RECORDS']:
+                self.log.info(f'Skipped CB QSO #{qso_id}')
+                continue
+
             self.log.info(f'Downloading eQSL for QSO #{qso_id}...')
 
-            rec = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')['RECORDS'][0]
+            rec = adif_doc['RECORDS'][0]
             qso_uuid = rec['QSO_DATE'] + rec['TIME_ON'] + rec['CALL']
 
             if qso_uuid not in self.eqsl_urls:
@@ -1403,12 +1418,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         lotw = LoTW(self.log)
 
         for qso_id in self.selectedQSOIds():
+            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            if not adif_doc['RECORDS']:
+                self.log.info(f'Skipped CB QSO #{qso_id}')
+                continue
+
             lotw_sent = 'N'
             lotw_rcvd = 'N'
 
             self.log.info(f'Checking LoTW QSL for #{qso_id}...')
             try:
-                adif_doc = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')
                 rec = adif_doc['RECORDS'][0]
                 rcvd = lotw.check_inbox(self.settings.value('lotw/username', ''),
                                         self.settings_form.lotwPassword(),
@@ -1445,7 +1464,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                          f'{self.programName}-{self.programVersion}',
                                          )
 
-            adif_doc = self._build_adif_export_(f'SELECT * FROM qsos WHERE id = {qso_id}')
+            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            if not adif_doc['RECORDS']:
+                self.log.info(f'Skipped CB QSO #{qso_id}')
+                continue
+
             if adif_doc['RECORDS'][0].get('HAMQTH_QSO_UPLOAD_STATUS', 'N') != 'N':
                 self.log.debug(f'{qso_id} already uploaded to HamQTH')
                 continue
