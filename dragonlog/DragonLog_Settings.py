@@ -326,8 +326,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.callsignCBLineEdit.setText(self.settings.value('station_cb/callSign', ''))
         self.radioCBLineEdit.setText(self.settings.value('station_cb/radio', ''))
         self.antennaCBLineEdit.setText(self.settings.value('station_cb/antenna', ''))
-        self.cbDefaultCheckBox.setChecked(bool(self.settings.value('station_cb/cb_by_default', 0)))
-        self.expCBQSOsCheckBox.setChecked(bool(self.settings.value('station_cb/cb_exp_adif', 0)))
+        self.cbDefaultCheckBox.setChecked(bool(int(self.settings.value('station_cb/cb_by_default', 0))))
+        self.expCBQSOsCheckBox.setChecked(bool(int(self.settings.value('station_cb/cb_exp_adif', 0))))
 
         self.sortComboBox.setCurrentText(self.settings.value('ui/sort_col', self.tr('Date/Time start')))
         sort_order = self.settings.value('ui/sort_order', 'ASC')
@@ -345,22 +345,22 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.modesSelectWidget.itemsEnabled = self.settings.value('ui/show_modes', self.modesSelectWidget.items)
 
         self.logLevelComboBox.setCurrentText(str(self.settings.value('ui/log_level', 'Info')).capitalize())
-        self.logToFileCheckBox.setChecked(bool(self.settings.setValue('ui/log_file', 0)))
+        self.logToFileCheckBox.setChecked(bool(int(self.settings.value('ui/log_file', 0))))
 
-        self.expOwnNotesADIFCheckBox.setChecked(bool(self.settings.value('imp_exp/own_notes_adif', 0)))
-        self.expRecentOnlyCheckBox.setChecked(bool(self.settings.value('imp_exp/only_recent', 0)))
-        self.useCfgIDImportCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_adif', 0)))
-        self.useCfgStationImportCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_adif', 0)))
-        self.useCfgIDWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_id_watch', 0)))
-        self.useCfgStationWatchCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_watch', 0)))
-        self.useCfgStationCCCheckBox.setChecked(bool(self.settings.value('imp_exp/use_station_hamcc', 0)))
+        self.expOwnNotesADIFCheckBox.setChecked(bool(int(self.settings.value('imp_exp/own_notes_adif', 0))))
+        self.expRecentOnlyCheckBox.setChecked(bool(int(self.settings.value('imp_exp/only_recent', 0))))
+        self.useCfgIDImportCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_id_adif', 0))))
+        self.useCfgStationImportCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_station_adif', 0))))
+        self.useCfgIDWatchCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_id_watch', 0))))
+        self.useCfgStationWatchCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_station_watch', 0))))
+        self.useCfgStationCCCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_station_hamcc', 0))))
 
         self.callbookComboBox.setCurrentText(self.callbook_dname)
         self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbook_id}_user', ''))
 
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
         self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
-        self.lotwCertPwdCheckBox.setChecked(bool(self.settings.value('lotw/cert_needs_pwd', 0)))
+        self.lotwCertPwdCheckBox.setChecked(bool(int(self.settings.value('lotw/cert_needs_pwd', 0))))
 
         return super().exec()
 

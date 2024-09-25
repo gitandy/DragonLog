@@ -291,7 +291,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.timeOnEdit.setText('')
         self.timeOnChanged('')
 
-        if bool(self.settings.value('station_cb/cb_by_default', 0)):
+        if bool(int(self.settings.value('station_cb/cb_by_default', 0))):
             self.bandComboBox.setCurrentText('11m')
 
         if self.bandComboBox.currentIndex() < 0:
