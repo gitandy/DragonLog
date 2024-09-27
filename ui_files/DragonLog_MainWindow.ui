@@ -84,6 +84,7 @@
     <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
     <addaction name="actionShow_log"/>
+    <addaction name="actionShow_DX_Spots"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
@@ -448,6 +449,18 @@
     </property>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dxSpotsDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>DX Spots</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents"/>
+  </widget>
   <action name="actionLog_QSO">
    <property name="icon">
     <iconset>
@@ -786,6 +799,14 @@
    </property>
    <property name="text">
     <string>Help on CassiopeiaConsole</string>
+   </property>
+  </action>
+  <action name="actionShow_DX_Spots">
+   <property name="text">
+    <string>Show DX Spots</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>
@@ -1396,6 +1417,22 @@
     <hint type="destinationlabel">
      <x>642</x>
      <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_DX_Spots</sender>
+   <signal>triggered()</signal>
+   <receiver>dxSpotsDockWidget</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>63</x>
+     <y>395</y>
     </hint>
    </hints>
   </connection>

@@ -38,6 +38,7 @@ from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
 from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
+from .DxSpots import DxSpots
 
 from . import ColorPalettes
 
@@ -423,6 +424,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(cc_dock_area,
                                self.ccDockWidget)
         self.ccDockWidget.setVisible(bool(int(self.settings.value('ui/show_cc', 0))))
+
+        # DxSpotsForm
+        self.dxspots_widget = DxSpots(self, self, self.settings, self.log)
+        #self.dxspots_widget.qsosChached.connect(self.retrieveCCQSO)
+        self.dxSpotsDockWidget.setWidget(self.dxspots_widget)
+        if int(self.settings.value('ui/dxspots_dock_float', 0)):
+            self.dxSpotsDockWidget.setFloating(True)
+        else:
+            dxspots_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/dxspots_dock_area',
+                                        QtCore.Qt.DockWidgetArea.LeftDockWidgetArea.value)))
+            self.addDockWidget(dxspots_dock_area,
+                               self.dxSpotsDockWidget)
+        self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
 
         self.keep_logging = False
 
@@ -2114,6 +2129,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings.setValue('ui/show_cc', int(self.ccDockWidget.isVisible()))
         self.settings.setValue('ui/cc_dock_area', self.dockWidgetArea(self.ccDockWidget).value)
         self.settings.setValue('ui/cc_dock_float', int(self.ccDockWidget.isFloating()))
+
+        self.settings.setValue('ui/show_dxspots', int(self.dxSpotsDockWidget.isVisible()))
+        self.settings.setValue('ui/dxspots_dock_area', self.dockWidgetArea(self.dxSpotsDockWidget).value)
+        self.settings.setValue('ui/dxspots_dock_float', int(self.dxSpotsDockWidget.isFloating()))
 
         self.settings_form.ctrlRigctld(False)
         e.accept()

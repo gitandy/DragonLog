@@ -36,6 +36,7 @@ Features
 * UTF-8 (i.e. use german umlauts)
 * convert non ASCII characters for ADIF export (for supported languages)
 * integrates [CassiopeiaConsole](https://github.com/gitandy/HamCC#hamcc---cassiopeiaconsole)
+* display DX spots from HamQTH
 
 Installation
 ------------
