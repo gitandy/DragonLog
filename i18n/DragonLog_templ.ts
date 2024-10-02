@@ -364,6 +364,7 @@
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>...</source>
       <translation type="unfinished" />
     </message>
@@ -510,6 +511,36 @@
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Log to file</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>DxSpots</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>DX Cluster</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Address</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>hamqth.com</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Port</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Country Data</source>
       <translation type="unfinished" />
     </message>
     <message>
@@ -1346,58 +1377,57 @@ See log for detail</source>
   <context>
     <name>DxSpots</name>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="57" />
-      <location filename="..\dragonlog\DxSpots.py" line="32" />
-      <source>- all -</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\DxSpots.py" line="36" />
+      <location filename="..\dragonlog\DxSpots.py" line="90" />
       <source>Spotter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="37" />
+      <location filename="..\dragonlog\DxSpots.py" line="91" />
       <source>Freq.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="38" />
+      <location filename="..\dragonlog\DxSpots.py" line="92" />
       <source>DX Call</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="39" />
+      <location filename="..\dragonlog\DxSpots.py" line="93" />
       <source>Comments</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="40" />
+      <location filename="..\dragonlog\DxSpots.py" line="94" />
       <source>Time</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="41" />
+      <location filename="..\dragonlog\DxSpots.py" line="95" />
       <source>Cont.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="42" />
+      <location filename="..\dragonlog\DxSpots.py" line="96" />
       <source>Band</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="43" />
+      <location filename="..\dragonlog\DxSpots.py" line="97" />
       <source>Country</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="76" />
+      <location filename="..\dragonlog\DxSpots.py" line="104" />
+      <source>- all -</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\DxSpots.py" line="118" />
       <source>Stop</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="80" />
+      <location filename="..\dragonlog\DxSpots.py" line="122" />
       <source>Start</source>
       <translation type="unfinished" />
     </message>
@@ -1411,22 +1441,12 @@ See log for detail</source>
     </message>
     <message>
       <location filename="..\ui_files\DxSpots.ui" line="0" />
-      <source>Display spots</source>
+      <source>Keep spots</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\DxSpots.ui" line="0" />
       <source>Band</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\DxSpots.ui" line="0" />
-      <source>Refresh</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\DxSpots.ui" line="0" />
-      <source> s</source>
       <translation type="unfinished" />
     </message>
     <message>

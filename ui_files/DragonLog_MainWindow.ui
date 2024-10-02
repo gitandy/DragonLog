@@ -802,6 +802,10 @@
    </property>
   </action>
   <action name="actionShow_DX_Spots">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:find.png</normaloff>icons:find.png</iconset>
+   </property>
    <property name="text">
     <string>Show DX Spots</string>
    </property>

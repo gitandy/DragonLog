@@ -427,7 +427,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         # DxSpotsForm
         self.dxspots_widget = DxSpots(self, self, self.settings, self.log)
-        #self.dxspots_widget.qsosChached.connect(self.retrieveCCQSO)
+        # self.dxspots_widget.qsosChached.connect(self.retrieveCCQSO)
         self.dxSpotsDockWidget.setWidget(self.dxspots_widget)
         if int(self.settings.value('ui/dxspots_dock_float', 0)):
             self.dxSpotsDockWidget.setFloating(True)
@@ -2088,6 +2088,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         op_txt = f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl' if OPTION_OPENPYXL else ''
 
+        cty_ver = self.dxspots_widget.cty_version
+        cty_ent = self.dxspots_widget.cty_ver_entity
+
         QtWidgets.QMessageBox.about(
             self,
             f'{self.programName} - {self.tr("About")}',
@@ -2100,6 +2103,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nDragon icon by Icons8 https://icons8.com'
+            f'\n\nCountry Data: by AD1C, Copyright (c) since 1994\nVersion: {cty_ver}, Entity: {cty_ent}'
         )
 
     def showAboutQt(self):

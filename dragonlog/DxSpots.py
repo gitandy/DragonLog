@@ -1,12 +1,76 @@
+# DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import logging
+import socket
 from audioop import reverse
 from collections.abc import Generator
 
 import requests
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6.QtCore import QModelIndex
+from PyQt6.QtGui import QStandardItem
 
 from . import DxSpots_ui
 from .Logger import Logger
+from . import cty
+
+
+class DxCluster(QtCore.QThread):
+    spotReceived = QtCore.pyqtSignal(str)
+
+    def __init__(self, parent, logger: Logger, address: str, port: int, call: str):
+        super().__init__()
+
+        self.log = logging.getLogger('DxCluster')
+        self.log.addHandler(logger)
+        self.log.setLevel(logger.loglevel)
+        self.logger = logger
+        self.log.debug('Initialising...')
+
+        self.__address__ = address, port
+        self.__callsign__ = call
+        self.__receive__ = True
+        self.__socket__ = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__is_connected__ = False
+        self.__connect__()
+
+    def __connect__(self):
+        self.__socket__.connect(self.__address__)
+        data = self.__socket__.recv(1024).decode()
+        self.log.debug('Received login request')
+        if data.startswith('login:'):
+            self.__socket__.sendall(f'{self.__callsign__}\n'.encode())
+            data = self.__socket__.recv(1024).decode()
+            if data.startswith(f'Hello {self.__callsign__}'):
+                self.__is_connected__ = True
+                self.log.info(
+                    f'Loggedin to DX cluster {self.__address__[0]}:{self.__address__[1]} as {self.__callsign__}')
+            elif data.startswith(f'Sorry {self.__callsign__} is an invalid callsign'):
+                raise Exception(f'Login error with call "{self.__callsign__}": valid callsign required')
+            else:
+                raise Exception(f'Login failed to DX cluster {self.__address__[0]}:{self.__address__[1]}')
+
+    @property
+    def isConnected(self) -> bool:
+        return self.__is_connected__
+
+    def stop(self):
+        self.__receive__ = False
+        self.__is_connected__ = False
+        self.__socket__.close()
+        self.log.debug('Stopped receiving spots')
+
+    def run(self):
+        while self.__receive__:
+            try:
+                data = self.__socket__.recv(1024).decode()
+                if data.startswith('DX de'):
+                    self.spotReceived.emit(data.strip())
+            except ConnectionAbortedError:
+                self.__receive__ = False
+            except UnicodeDecodeError:
+                pass
 
 
 class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
@@ -23,14 +87,15 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.logger = logger
         self.log.debug('Initialising...')
 
+        self.__dragonlog__ = dragonlog
         self.__settings__ = settings
 
         self.__refresh_timer__ = QtCore.QTimer(self)
 
-        bands: list = self.__settings__.value('ui/show_bands', dragonlog.bands.keys())
-        bands.pop(bands.index('11m'))
-        self.bandComboBox.insertItem(0, self.tr('- all -'))
-        self.bandComboBox.insertItems(1, bands)
+        self.tableModel = QtGui.QStandardItemModel()
+        self.filterModel = QtCore.QSortFilterProxyModel()
+        self.filterModel.setSourceModel(self.tableModel)
+        self.tableView.setModel(self.filterModel)
 
         header = [
             self.tr('Spotter'),
@@ -42,79 +107,117 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             self.tr('Band'),
             self.tr('Country'),
         ]
+        self.tableModel.setHorizontalHeaderLabels(header)
+        self.tableView.resizeColumnsToContents()
 
-        self.tableWidget.setColumnCount(len(header))
-        self.tableWidget.setHorizontalHeaderLabels(header)
+        bands: list = self.__settings__.value('ui/show_bands', dragonlog.bands.keys())
+        bands.pop(bands.index('11m'))
+        self.bandComboBox.insertItem(0, self.tr('- all -'))
+        self.bandComboBox.insertItems(1, bands)
 
         self.__refresh__ = False
-        self.__spots_idx__ = []
 
-        self.__url__ = 'https://www.hamqth.com/dxc_csv.php'
+        self.__cty__ = None
+        self.load_cty(self.__settings__.value('dx_spots/cty_data', ''))
 
-    def retreiveSpots(self) -> Generator[list[str]]:
-        band = self.bandComboBox.currentText().upper()
-        params = {'limits': self.nrSpotsSpinBox.value()}
-        if band and band != self.tr('- all -').upper():
-            self.log.debug(f'Request DX Spots for {band.lower()} band...')
-            params['band'] = band
-        else:
-            self.log.debug(f'Request DX Spots for all bands...')
+        self.dxc = None
 
-        r = requests.get(self.__url__, params=params)
-        if r.status_code == 200:
-            for row in reversed(r.text.split('\n')):
-                if not row.strip():
-                    continue
-                yield row.split('^')
-        else:
-            raise Exception(f'error: HTTP-Error {r.status_code}')
+    def load_cty(self, cty_path:str):
+        try:
+            self.__cty__ = cty.CountryData(cty_path)
+            self.log.debug(f'Using country data from "{cty_path}"')
+        except Exception:
+            self.__cty__ = cty.CountryData(self.__dragonlog__.searchFile('data:cty/cty.csv'))
+            self.log.debug(f'Using country data default')
+
+    @property
+    def cty_version(self):
+        return self.__cty__.version
+
+    @property
+    def cty_ver_entity(self):
+        cty = self.__cty__.country('VERSION')
+        return f'{cty.name}, {cty.code}'
 
     def control(self, state: bool):
         if state:
-            self.__refresh__ = True
-            self.refreshSpotsView()
-            self.startPushButton.setText(self.tr('Stop'))
+            try:
+                self.__refresh__ = True
+                self.dxc = DxCluster(self, self.logger,
+                                     self.__settings__.value('dx_spots/address', 'hamqth.com'),
+                                     self.__settings__.value('dx_spots/port', 7300),
+                                     self.__settings__.value('station/callSign', ''))
+                self.dxc.spotReceived.connect(self.processSpot)
+                self.dxc.start()
+                self.startPushButton.setText(self.tr('Stop'))
+            except Exception as exc:
+                self.log.error(str(exc))
+                self.startPushButton.setChecked(False)
+                QtWidgets.QMessageBox.warning(self, self.tr('DX Spot'),
+                                              self.tr('Error connectiong to DX Cluster'))
         else:
             self.__refresh__ = False
-            self.__refresh_timer__.stop()
+            if self.dxc:
+                self.dxc.stop()
             self.startPushButton.setText(self.tr('Start'))
 
-    def refreshSpotsView(self):
-        # ['NU4N', '14336.0', 'NC4XL', 'US POTA 10406 N.C.', '1411 2024-09-26', 'L', '', 'NA', '20M', 'United States', '291']]
-        today = QtCore.QDateTime.currentDateTimeUtc().date().toString('yyyy-MM-dd')
+    def band_from_freq(self, freq: float) -> str:
+        """Get band from frequenzy
+        :param freq: frequency in kHz
+        :return: band"""
+        freq = float(freq)
+        for b in self.__dragonlog__.bands:
+            if freq < self.__dragonlog__.bands[b][1]:
+                if freq > self.__dragonlog__.bands[b][0]:
+                    return b
+        return ''
 
-        for spot in self.retreiveSpots():
-            tstamp, dstamp = spot[4].split()
-
-            if (spot[2] + spot[4]) not in self.__spots_idx__ and dstamp == today:
-                self.__spots_idx__.append(spot[2] + spot[4])
-                self.tableWidget.insertRow(0)
-                self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(spot[0]))
-                self.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(spot[1]))
-                self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(spot[2]))
-                self.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(spot[3]))
-                self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(f'{tstamp[:2]}:{tstamp[2:]}'))
-                self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(spot[7]))
-                self.tableWidget.setItem(0, 6, QtWidgets.QTableWidgetItem(spot[8].lower()))
-                self.tableWidget.setItem(0, 7, QtWidgets.QTableWidgetItem(spot[9]))
-
-
-            if self.tableWidget.rowCount() > self.nrSpotsSpinBox.value():
-                self.tableWidget.removeRow(self.tableWidget.rowCount() - 1)
-
-        self.tableWidget.resizeColumnsToContents()
-
-        if self.__refresh__:
-            self.__refresh_timer__.singleShot(self.refreshRateSpinBox.value() * 1000, self.refreshSpotsView)
-
-    def selectSpot(self, row: int, col: int):
-        call = self.tableWidget.item(row, 2).text()
-        band = self.tableWidget.item(row, 6).text()
+    def processSpot(self, data: str):
+        self.log.debug(data)
+        spot = [''] * 8
         try:
-            freq = float(self.tableWidget.item(row, 1).text())
+            spotter, freq = data[6:24].split(':')
+            call = data[26:39].strip()
+            comment = data[39:70].strip()
+            tstamp = f'{data[70:72]}:{data[72:74]}'
+
+            spot[0] = spotter
+            spot[1] = freq.strip()
+            spot[2] = call
+            spot[3] = comment
+            spot[4] = tstamp
+            spot[6] = self.band_from_freq(float(freq.strip()))
+
+            if self.__cty__:
+                cty = self.__cty__.country(call)
+                spot[5] = cty.continent
+                spot[7] = cty.name
+        except Exception as exc:
+            self.log.exception(exc)
+
+        self.addSpotToTable(spot)
+
+    def addSpotToTable(self, data: list):
+        self.tableModel.insertRow(0, [QStandardItem(d) for d in data])
+        self.tableView.resizeColumnsToContents()
+
+        if self.tableModel.rowCount() > self.nrSpotsSpinBox.value():
+            self.tableModel.removeRow(self.tableModel.rowCount() - 1)
+
+    def bandChanged(self, band: str):
+        self.filterModel.setFilterKeyColumn(6)
+        if not band.startswith('-'):
+            self.filterModel.setFilterFixedString(band)
+        else:
+            self.filterModel.setFilterFixedString('')
+
+    def selectSpot(self, index: QModelIndex):
+        call = self.tableModel.item(index.row(), 2).text()
+        band = self.tableModel.item(index.row(), 6).text()
+        try:
+            freq = float(self.tableModel.item(index.row(), 1).text())
         except ValueError:
             freq = 0.0
 
         self.log.debug(f'Selected spot {call}, {band}, {freq}')
         self.spotSelected.emit(call, band, freq)
-

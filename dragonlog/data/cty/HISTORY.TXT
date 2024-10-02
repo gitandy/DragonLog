@@ -1,0 +1,35 @@
+    Big CTY - 27 September 2024
+    Version entity is Libya, 5A
+
+    Added/changed Entities/Prefixes/Callsigns:
+
+	* 9M67M is West Malaysia, 9M2
+	* 9M67MQ and 9M67MS are both East Malaysia, 9M6
+	* BG2LTC/0 is China, BY in CQ zone 23
+	* EA9PD is Spain, EA
+	* TX7XG is French Polynesia, FO
+	* TX9A is Austral Islands, FO/a
+	* GB2ZL is Scotland, GM
+	* IK7YTQ/LNX is Italy, I
+	* IR0ROLB is Sardinia, IS
+	* KL8SU is in ITU zone 6, not ITU zone 7
+	* KL8SU is in CQ zone 3, not CQ zone 4
+	* WH6GCV is United States, K in CQ zone 3, ITU zone 6
+	* KC7DNT is United States, K in CQ zone 4, ITU zone 7
+	* KL7V is United States, K in CQ zone 4, ITU zone 8
+	* KH6HH and WH6GNK/4 are both United States, K in CQ zone 5, ITU zone 8
+	* K1JHR is Hawaii, KH6
+	* OI1MPK/T4 and OI1MPK/T5 are both Finland, OH
+	* RA9FEU/M is European Russia, UA in CQ zone 17, ITU zone 30
+	* RI42SP is European Russia, UA in CQ zone 40
+	* RV1CC/2 is Kaliningrad, UA2
+	* UA9JKM/M is in ITU zone 31, not ITU zone 20
+	* UA9JKM/M is in CQ zone 18, not CQ zone 17
+	* RA8CP/M is Asiatic Russia, UA9
+	* RA9WU/P is Asiatic Russia, UA9 in CQ zone 16
+
+    Removed Entities/Prefixes/Callsigns:
+
+	* KC7DNT in Alaska, KL
+	* RA8CP/M and RA9WU/P in European Russia, UA
+	* RA9FEU/M in Asiatic Russia, UA9

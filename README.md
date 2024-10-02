@@ -202,6 +202,15 @@ If no package is available for your distribution you have to compile the hamlib 
 Download the release .tar.gz (not source), unpack, ./configure, make, make install.
 The rigctld is assumed to be in /usr/local/bin and thus on your path.
 
+Country Data
+------------
+Each release of DragonLog provides a very recent country data file. 
+If you want to update it manually visit https://www.country-files.com/category/big-cty/ by Jim, AD1C 
+and download a Big CTY Zip file. 
+Unpack the Zip and goto Settings - Dx Spots to select the file.
+You can check if the file is correctly loaded via Help - About. 
+Check if the Version date and Version entity corresponds to the website.
+
 Copyright
 ---------
 DragonLog &copy; 2023-2024 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
