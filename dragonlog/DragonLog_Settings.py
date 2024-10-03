@@ -310,7 +310,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         cty_path = QtWidgets.QFileDialog.getOpenFileName(
             self,
             self.tr('Choose Country data file'),
-            self.settings.value('dx_spots/cty_path', None),
+            os.path.split(self.settings.value('dx_spots/cty_data', ''))[0],
             'Country data (*.csv)'
         )
 

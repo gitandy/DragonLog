@@ -438,6 +438,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(dxspots_dock_area,
                                self.dxSpotsDockWidget)
         self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
+        self.settings_form.ctyDataChanged.connect(self.dxspots_widget.load_cty)
 
         self.keep_logging = False
 
