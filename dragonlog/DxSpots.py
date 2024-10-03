@@ -145,7 +145,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
                 self.__refresh__ = True
                 self.dxc = DxCluster(self, self.logger,
                                      self.__settings__.value('dx_spots/address', 'hamqth.com'),
-                                     self.__settings__.value('dx_spots/port', 7300),
+                                     int(self.__settings__.value('dx_spots/port', 7300)),
                                      self.__settings__.value('station/callSign', ''))
                 self.dxc.spotReceived.connect(self.processSpot)
                 self.dxc.start()
