@@ -110,7 +110,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.tableModel.setHorizontalHeaderLabels(header)
         self.tableView.resizeColumnsToContents()
 
-        bands: list = self.__settings__.value('ui/show_bands', dragonlog.bands.keys())
+        bands: list = self.__settings__.value('ui/show_bands', list(dragonlog.bands.keys()))
         bands.pop(bands.index('11m'))
         self.bandComboBox.insertItem(0, self.tr('- all -'))
         self.bandComboBox.insertItems(1, bands)
