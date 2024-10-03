@@ -73,6 +73,28 @@ class DxCluster(QtCore.QThread):
                 pass
 
 
+class DxSpotsFilterProxy(QtCore.QSortFilterProxyModel):
+    def __init__(self, parent, columns: int):
+        super().__init__(parent)
+
+        self.columns = columns
+        self.filter: dict[int, str] = None
+        self.clearFilter()
+
+    def clearFilter(self):
+        self.filter = dict(enumerate([''] * self.columns))
+
+    def setFilter(self, column: int, filter: str):
+        self.filter[column] = filter
+        self.invalidateFilter()
+
+    def filterAcceptsRow(self, sourceRow, sourceParent):
+        indexes = [self.sourceModel().index(sourceRow, i, sourceParent) for i in range(self.columns)]
+
+        return all([self.filter[i] == '' or self.sourceModel().data(indexes[i]) == self.filter[i] for i in
+               range(self.columns)])
+
+
 class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
     spotSelected = QtCore.pyqtSignal(str, str, float)
 
@@ -92,13 +114,9 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
         self.__refresh_timer__ = QtCore.QTimer(self)
 
-        self.tableModel = QtGui.QStandardItemModel()
-        self.filterModel = QtCore.QSortFilterProxyModel()
-        self.filterModel.setSourceModel(self.tableModel)
-        self.tableView.setModel(self.filterModel)
-
         header = [
             self.tr('Spotter'),
+            self.tr('Sp.Cnt.'),
             self.tr('Freq.'),
             self.tr('DX Call'),
             self.tr('Comments'),
@@ -107,6 +125,12 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             self.tr('Band'),
             self.tr('Country'),
         ]
+
+        self.tableModel = QtGui.QStandardItemModel()
+        self.filterModel = DxSpotsFilterProxy(self, len(header))
+        self.filterModel.setSourceModel(self.tableModel)
+        self.tableView.setModel(self.filterModel)
+
         self.tableModel.setHorizontalHeaderLabels(header)
         self.tableView.resizeColumnsToContents()
 
@@ -115,6 +139,8 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.bandComboBox.insertItem(0, self.tr('- all -'))
         self.bandComboBox.insertItems(1, bands)
 
+        self.spContComboBox.insertItems(0, [self.tr('- all -'), 'AF', 'AN', 'AS', 'EU', 'NA', 'OC', 'SA'])
+
         self.__refresh__ = False
 
         self.__cty__ = None
@@ -122,7 +148,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
         self.dxc = None
 
-    def load_cty(self, cty_path:str):
+    def load_cty(self, cty_path: str):
         try:
             self.__cty__ = cty.CountryData(cty_path)
             self.log.debug(f'Using country data from "{cty_path}"')
@@ -154,7 +180,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
                 self.log.error(str(exc))
                 self.startPushButton.setChecked(False)
                 QtWidgets.QMessageBox.warning(self, self.tr('DX Spot'),
-                                              self.tr('Error connectiong to DX Cluster'))
+                                              self.tr('Error connecting to DX Cluster'))
         else:
             self.__refresh__ = False
             if self.dxc:
@@ -174,7 +200,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
     def processSpot(self, data: str):
         self.log.debug(data)
-        spot = [''] * 8
+        spot = [''] * 9
         try:
             spotter, freq = data[6:24].split(':')
             call = data[26:39].strip()
@@ -182,16 +208,18 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             tstamp = f'{data[70:72]}:{data[72:74]}'
 
             spot[0] = spotter
-            spot[1] = freq.strip()
-            spot[2] = call
-            spot[3] = comment
-            spot[4] = tstamp
-            spot[6] = self.band_from_freq(float(freq.strip()))
+            spot[2] = freq.strip()
+            spot[3] = call
+            spot[4] = comment
+            spot[5] = tstamp
+            spot[7] = self.band_from_freq(float(freq.strip()))
 
             if self.__cty__:
+                sp_cty = self.__cty__.country(spotter)
+                spot[1] = sp_cty.continent
                 cty = self.__cty__.country(call)
-                spot[5] = cty.continent
-                spot[7] = cty.name
+                spot[6] = cty.continent
+                spot[8] = cty.name
         except Exception as exc:
             self.log.exception(exc)
 
@@ -205,11 +233,16 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             self.tableModel.removeRow(self.tableModel.rowCount() - 1)
 
     def bandChanged(self, band: str):
-        self.filterModel.setFilterKeyColumn(6)
         if not band.startswith('-'):
-            self.filterModel.setFilterFixedString(band)
+            self.filterModel.setFilter(7, band)
         else:
-            self.filterModel.setFilterFixedString('')
+            self.filterModel.setFilter(7, '')
+
+    def spContChanged(self, cont: str):
+        if not cont.startswith('-'):
+            self.filterModel.setFilter(1, cont)
+        else:
+            self.filterModel.setFilter(1, '')
 
     def selectSpot(self, index: QModelIndex):
         call = self.tableModel.item(index.row(), 2).text()
