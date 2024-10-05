@@ -1423,12 +1423,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.log.info(f'Skipped CB QSO #{qso_id}')
                 continue
 
-            lotw_sent = 'N'
+            rec = adif_doc['RECORDS'][0]
+            lotw_sent = 'Y' if rec.get('LOTW_QSL_SENT', 'N') in ('Y', 'R') else 'N'
             lotw_rcvd = 'N'
 
             self.log.info(f'Checking LoTW QSL for #{qso_id}...')
             try:
-                rec = adif_doc['RECORDS'][0]
                 rcvd = lotw.check_inbox(self.settings.value('lotw/username', ''),
                                         self.settings_form.lotwPassword(),
                                         rec)
