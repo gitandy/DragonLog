@@ -646,11 +646,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             qsl_msg,
             qsl_sent,
             qsl_rcvd,
-            None,  # eQSL sent
-            None,  # eQSL rcvd
-            None,  # LoTW sent
-            None,  # LoTW rcvd
-            None,  # HamQTH
+            self.__old_values__['eqsl_sent'],
+            self.__old_values__['eqsl_rcvd'],
+            self.__old_values__['lotw_sent'],
+            self.__old_values__['lotw_rcvd'],
+            self.__old_values__['hamqth'],
             self.contestComboBox.currentText().strip(),
             self.sentQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
             self.rcvdQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
