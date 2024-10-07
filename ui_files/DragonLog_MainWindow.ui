@@ -58,6 +58,8 @@
     <addaction name="actionExport"/>
     <addaction name="actionImport"/>
     <addaction name="separator"/>
+    <addaction name="actionExport_Contest_Log"/>
+    <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -997,6 +999,15 @@
     <string>Ctrl+D</string>
    </property>
   </action>
+  <action name="actionExport_Contest_Log">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:contest.png</normaloff>icons:contest.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Contest Log...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1625,6 +1636,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionExport_Contest_Log</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportContestLog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>fQSLsComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
@@ -1746,5 +1773,6 @@
   <slot>eqslUpload()</slot>
   <slot>showShortcuts()</slot>
   <slot>showCCHelp()</slot>
+  <slot>exportContestLog()</slot>
  </slots>
 </ui>

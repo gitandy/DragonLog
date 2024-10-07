@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ContestDialog</class>
+ <widget class="QDialog" name="ContestDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>299</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Contest Export</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Contest</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="contestComboBox"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Band</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Date from</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Date to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="bandComboBox"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDateEdit" name="fromDateEdit">
+       <property name="minimumDate">
+        <date>
+         <year>1900</year>
+         <month>1</month>
+         <day>1</day>
+        </date>
+       </property>
+       <property name="currentSection">
+        <enum>QDateTimeEdit::YearSection</enum>
+       </property>
+       <property name="displayFormat">
+        <string>yyyy-MM-dd</string>
+       </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDateEdit" name="toDateEdit">
+       <property name="displayFormat">
+        <string>yyyy-MM-dd</string>
+       </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Callsign</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Fullname</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Street</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="specificLabel">
+       <property name="text">
+        <string>Specific</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Club</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>eMail</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Locator</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="1">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Power</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="callLineEdit">
+       <property name="placeholderText">
+        <string>DX1XX</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="locatorLineEdit">
+       <property name="placeholderText">
+        <string>AA11aa</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLineEdit" name="nameLineEdit">
+       <property name="placeholderText">
+        <string>Max Example</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLineEdit" name="emailLineEdit">
+       <property name="placeholderText">
+        <string>dx1xx@darc.de</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <widget class="QLineEdit" name="specificLineEdit">
+       <property name="placeholderText">
+        <string>Contest specific information</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="QLineEdit" name="clubLineEdit">
+       <property name="placeholderText">
+        <string>DARC</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QComboBox" name="powerComboBox"/>
+     </item>
+     <item row="15" column="1">
+      <widget class="QComboBox" name="modeComboBox"/>
+     </item>
+     <item row="9" column="1">
+      <widget class="QLineEdit" name="streetLineEdit">
+       <property name="placeholderText">
+        <string>Street 1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>City</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QLineEdit" name="cityLineEdit">
+       <property name="placeholderText">
+        <string>11111 Berlin</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="exportPathLineEdit"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="choosePathToolButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelPushButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>exportPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>271</x>
+     <y>447</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>352</x>
+     <y>447</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contestComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>contestChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>229</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fromDateEdit</sender>
+   <signal>dateChanged(QDate)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>fromDateChanged(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>choosePathToolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>choosePath()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>277</x>
+     <y>452</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>callChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>locatorLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>locatorChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>nameChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cityLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>cityChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>streetLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>streetChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>emailLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>emailChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>225</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clubLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>clubChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>specificLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>specificChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>309</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>contestChanged(QString)</slot>
+  <slot>fromDateChanged(QDate)</slot>
+  <slot>choosePath()</slot>
+  <slot>callChanged(QString)</slot>
+  <slot>locatorChanged(QString)</slot>
+  <slot>nameChanged(QString)</slot>
+  <slot>emailChanged(QString)</slot>
+  <slot>streetChanged(QString)</slot>
+  <slot>specificChanged(QString)</slot>
+  <slot>clubChanged(QString)</slot>
+  <slot>cityChanged(QString)</slot>
+ </slots>
+</ui>

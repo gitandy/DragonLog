@@ -40,6 +40,8 @@ from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
 from .DxSpots import DxSpots
+from .ContestDlg import ContestDialog
+from .adi2contest import CONTESTS
 
 from . import ColorPalettes
 
@@ -408,7 +410,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
-                                self.cb_channels, self.hamlib_error, self.log)
+                                self.cb_channels, self.hamlib_error, self.log, CONTESTS.keys())
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.clear)
@@ -2104,6 +2106,30 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.ccDockWidget.show()
         self.cc_widget.inputLineEdit.setFocus()
+
+    def exportContestLog(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
+                                              self.tr('No database opened for contest export'))
+                return
+
+        query = self.__db_con__.exec('SELECT DISTINCT contest_id FROM qsos')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        contests = []
+        while query.next():
+            if query.value(0) in CONTESTS:
+                contests.append(query.value(0))
+
+        if contests:
+            contest_dlg = ContestDialog(self, self, self.settings, self.log, contests)
+            contest_dlg.exec()
+        else:
+            QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
+                                          self.tr('No contest data available for export'))
 
     def createHelpDlg(self, title: str, help_text: str):
         help_dialog = QtWidgets.QDialog(self)
