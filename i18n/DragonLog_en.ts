@@ -271,10 +271,6 @@
       <source>Push to Log</source>
       <translation type="unfinished" />
     </message>
-    <message>
-      <source>M</source>
-      <translation type="vanished">Modified</translation>
-    </message>
   </context>
   <context>
     <name>ContestDialog</name>
@@ -284,33 +280,33 @@
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="229" />
+      <location filename="..\dragonlog\ContestDlg.py" line="230" />
       <source>Contest Export written</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="230" />
+      <location filename="..\dragonlog\ContestDlg.py" line="231" />
       <source>Contest data written to</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="231" />
+      <location filename="..\dragonlog\ContestDlg.py" line="232" />
       <source>Claimed points</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="232" />
+      <location filename="..\dragonlog\ContestDlg.py" line="233" />
       <source>Please check the file patiently before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="235" />
+      <location filename="..\dragonlog\ContestDlg.py" line="236" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="236" />
+      <location filename="..\dragonlog\ContestDlg.py" line="237" />
       <source>No contest data found for export</source>
       <translation type="unfinished" />
     </message>

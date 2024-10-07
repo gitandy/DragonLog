@@ -280,33 +280,33 @@
       <translation>Verzeichnis für Export wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="229" />
+      <location filename="..\dragonlog\ContestDlg.py" line="230" />
       <source>Contest Export written</source>
       <translation>Contest-Export geschrieben</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="230" />
+      <location filename="..\dragonlog\ContestDlg.py" line="231" />
       <source>Contest data written to</source>
       <translation>Kontestdaten exportiert in</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="231" />
+      <location filename="..\dragonlog\ContestDlg.py" line="232" />
       <source>Claimed points</source>
       <translation>Beanspruchte Punkte</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="232" />
+      <location filename="..\dragonlog\ContestDlg.py" line="233" />
       <source>Please check the file patiently before sending!</source>
       <translation>Bitte überprüfen Sie die Datei sorgfältig vor dem Versenden!</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="235" />
+      <location filename="..\dragonlog\ContestDlg.py" line="236" />
       <source>Contest Export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="236" />
+      <location filename="..\dragonlog\ContestDlg.py" line="237" />
       <source>No contest data found for export</source>
       <translation>Keine Contest-Daten für Export verfügbar</translation>
     </message>
@@ -440,10 +440,6 @@
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>Cancel</source>
       <translation>Abbrechen</translation>
-    </message>
-    <message>
-      <source>Address</source>
-      <translation type="vanished">Adresse</translation>
     </message>
   </context>
   <context>
