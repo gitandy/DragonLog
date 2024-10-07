@@ -6,7 +6,7 @@ from . import ContestDlg_ui
 from .Logger import Logger
 from .RegEx import *
 from .adi2contest import *
-import ColorPalettes
+from . import ColorPalettes
 
 
 class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
