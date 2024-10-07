@@ -22,7 +22,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     rigPowerChanged = QtCore.pyqtSignal(int)
 
     def __init__(self, parent, dragonlog, bands: dict, modes: dict, prop: dict, settings: QtCore.QSettings,
-                 settings_form: Settings, cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
+                 settings_form: Settings, cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger, contests):
         super().__init__(parent)
         self.dragonlog = dragonlog
         self.setupUi(self)
@@ -113,6 +113,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.refreshQTHList()
         self.refreshRadioList()
         self.refreshAntennaList()
+
+        self.contestComboBox.insertItem(0, '')
+        self.contestComboBox.insertItems(1, contests)
 
         self.clear()
 
