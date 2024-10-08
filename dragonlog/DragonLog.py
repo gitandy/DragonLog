@@ -2103,6 +2103,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
+            '\nFlags: Flagpedia.net, https://flagpedia.net'
             '\nDragon icon by Icons8 https://icons8.com'
             f'\n\nCountry Data: by AD1C, Copyright (c) since 1994\nVersion: {cty_ver}, Entity: {cty_ent}'
         )

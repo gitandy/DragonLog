@@ -1,8 +1,9 @@
 # DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
-import logging
+import json
 import socket
+import logging
 from audioop import reverse
 from collections.abc import Generator
 
@@ -92,7 +93,34 @@ class DxSpotsFilterProxy(QtCore.QSortFilterProxyModel):
         indexes = [self.sourceModel().index(sourceRow, i, sourceParent) for i in range(self.columns)]
 
         return all([self.filter[i] == '' or self.sourceModel().data(indexes[i]) == self.filter[i] for i in
-               range(self.columns)])
+                    range(self.columns)])
+
+
+class FlagsTableModel(QtGui.QStandardItemModel):
+    """Show flags in country column"""
+
+    def __init__(self, parent, dragonlog, country_col: int, ):
+        super(FlagsTableModel, self).__init__(parent)
+
+        self.country_col = country_col
+
+        self.countries: dict = {}
+        with open(dragonlog.searchFile(f'icons:flags/flags_map.json')) as fm_f:
+            self.countries: dict = json.load(fm_f)
+
+        for c in self.countries:
+            self.countries[c] = QtGui.QIcon(dragonlog.searchFile(f'icons:flags/{self.countries[c]}.png'))
+
+    def data(self, idx, role=QtCore.Qt.ItemDataRole.DisplayRole):
+        value = super().data(idx, role)
+
+        if role == QtCore.Qt.ItemDataRole.DecorationRole:
+            if idx.column() == self.country_col:
+                txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole).replace('&', 'and')
+                if txt in self.countries:
+                    return self.countries[txt]
+
+        return value
 
 
 class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
@@ -126,7 +154,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             self.tr('Country'),
         ]
 
-        self.tableModel = QtGui.QStandardItemModel()
+        self.tableModel = FlagsTableModel(self, dragonlog, 8)
         self.filterModel = DxSpotsFilterProxy(self, len(header))
         self.filterModel.setSourceModel(self.tableModel)
         self.tableView.setModel(self.filterModel)

@@ -4,6 +4,7 @@
 import re
 import csv
 from collections import namedtuple
+from collections.abc import Generator
 
 Country = namedtuple('Country', ('code', 'name', 'dxcc',
                                  'continent', 'cq', 'itu',
@@ -109,6 +110,11 @@ class CountryData:
             cty_data = cty_data._replace(itu=data['itu_or'])
 
         return cty_data
+
+    @property
+    def countries(self) -> Generator:
+        for c in self.__countries__.values():
+            yield c.name
 
 
 if __name__ == '__main__':

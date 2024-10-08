@@ -211,6 +211,13 @@ Unpack the Zip and goto Settings - Dx Spots to select the file.
 You can check if the file is correctly loaded via Help - About. 
 Check if the Version date and Version entity corresponds to the website.
 
+The flag display is based on the mapping from [Flagpedia.net](https://flagpedia.net) 
+and matched against the Big CTY data. This is sometimes weak and thus error prone and needed manual fixes. 
+There are still 30% unmapped (mostly islands).
+
+If a flag is mapped wrong please stay calm and drop me a mail. 
+The mapping does not reflect my view on country borders.
+
 Copyright
 ---------
 DragonLog &copy; 2023-2024 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
