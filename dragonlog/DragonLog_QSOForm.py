@@ -57,6 +57,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                           'RTTYR': ('RTTY', ''),
                           'AM': ('AM', ''),
                           'FM': ('FM', ''),
+                          'FMN': ('FM', ''),
                           'WFM': ('FM', ''),
                           'PKTUSB': ('SSB', 'USB'),
                           'PKTLSB': ('SSB', 'LSB'),
@@ -174,6 +175,41 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.timeOffChanged('')
         else:
             self.refreshTime()
+
+    def setQSO(self, call:str, band:str, freq:float):
+        if self.settings_form.isRigctldActive():
+            self.setRigFreq(freq)
+        else:
+            self.bandComboBox.setCurrentText(band)
+            self.freqDoubleSpinBox.setValue(freq)
+
+        self.callSignLineEdit.setText(call)
+        self.callSignChanged(call)
+
+    def setRigFreq(self, freq):
+        self.sendToRig(f'set_freq {int(freq*1000)}')
+
+    def sendToRig(self, cmd:str):
+        if not self.settings_form.isRigctldActive():
+            return
+
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect(('127.0.0.1', 4532))
+                s.settimeout(1)
+                try:
+                    s.sendall(f'\\{cmd}\n'.encode())
+                    res = s.recv(1024).decode('utf-8').strip()
+                    if not res.startswith('RPRT 0'):
+                        self.hamlib_error.setText(self.tr('Error') + ':' + res.split()[1])
+                        self.log.error(f'rigctld error "{cmd}": {res.split()[1]}')
+                    else:
+                        self.log.debug(f'rigctld "{cmd}" successful')
+                except socket.timeout:
+                    self.hamlib_error.setText(self.tr('rigctld timeout'))
+                    self.log.error('rigctld error: timeout')
+        except ConnectionRefusedError:
+            self.log.error('Could not connect to rigctld')
 
     # noinspection PyBroadException
     def refreshRigData(self):

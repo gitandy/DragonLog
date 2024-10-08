@@ -1785,63 +1785,65 @@ See log for detail</source>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="246" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="236" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="215" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="190" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="282" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="272" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="251" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="226" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="204" />
       <source>Error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="257" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="293" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="209" />
       <source>rigctld timeout</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="345" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="381" />
       <source>Station</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="348" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="384" />
       <source>Identity</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="354" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="390" />
       <source>Configured station</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="357" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="393" />
       <source>Configured identity</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="826" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="818" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="862" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="854" />
       <source>Callbook search error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="819" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="855" />
       <source>Login failed for user</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="822" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="858" />
       <source>Callbook search result</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="823" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="859" />
       <source>Callsign not found</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="827" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="863" />
       <source>During callbook search an error occured</source>
       <translation type="unfinished" />
     </message>

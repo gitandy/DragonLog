@@ -427,7 +427,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         # DxSpotsForm
         self.dxspots_widget = DxSpots(self, self, self.settings, self.log)
-        # self.dxspots_widget.qsosChached.connect(self.retrieveCCQSO)
         self.dxSpotsDockWidget.setWidget(self.dxspots_widget)
         if int(self.settings.value('ui/dxspots_dock_float', 0)):
             self.dxSpotsDockWidget.setFloating(True)
@@ -439,6 +438,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                self.dxSpotsDockWidget)
         self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
         self.settings_form.ctyDataChanged.connect(self.dxspots_widget.load_cty)
+        self.dxspots_widget.spotSelected.connect(self.qso_form.setQSO)
 
         self.keep_logging = False
 

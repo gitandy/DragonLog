@@ -273,10 +273,10 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             self.filterModel.setFilter(1, '')
 
     def selectSpot(self, index: QModelIndex):
-        call = self.tableModel.item(index.row(), 2).text()
-        band = self.tableModel.item(index.row(), 6).text()
+        call = self.tableModel.item(index.row(), 3).text()
+        band = self.tableModel.item(index.row(), 7).text()
         try:
-            freq = float(self.tableModel.item(index.row(), 1).text())
+            freq = float(self.tableModel.item(index.row(), 2).text())
         except ValueError:
             freq = 0.0
 
