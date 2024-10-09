@@ -424,6 +424,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(cc_dock_area,
                                self.ccDockWidget)
         self.ccDockWidget.setVisible(bool(int(self.settings.value('ui/show_cc', 0))))
+        self.qso_form.rigFrequencyChanged.connect(self.cc_widget.setFrequency)
+        self.qso_form.rigBandChanged.connect(self.cc_widget.setBand)
+        self.qso_form.rigModeChanged.connect(self.cc_widget.setMode)
+        self.qso_form.rigPowerChanged.connect(self.cc_widget.setPower)
 
         # DxSpotsForm
         self.dxspots_widget = DxSpots(self, self, self.settings, self.log)

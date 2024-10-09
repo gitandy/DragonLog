@@ -87,10 +87,22 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
         self.refreshDisplay()
 
-    def setQSO(self, call:str, band:str, freq:float):
+    def setQSO(self, call: str, band: str, freq: float):
         self.evaluate(f'{call} ')
         self.evaluate(f'{band} ')
         self.evaluate(f'{freq:.3f}f ')
+
+    def setFrequency(self, freq: float):
+        self.evaluate(f'{freq:.3f}f ')
+
+    def setBand(self, band: str):
+        self.evaluate(f'{band} ')
+
+    def setMode(self, mode: str):
+        self.evaluate(f'{mode} ')
+
+    def setPower(self, pwr: int):
+        self.evaluate(f'{int(pwr)}p ')
 
     def _evaluate_(self, text):
         if text:
