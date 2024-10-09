@@ -15,6 +15,12 @@ from . import ColorPalettes
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
+    rigFrequencyChanged = QtCore.pyqtSignal(float)
+    rigBandChanged = QtCore.pyqtSignal(str)
+    rigModeChanged = QtCore.pyqtSignal(str)
+    rigSubModeChanged = QtCore.pyqtSignal(str)
+    rigPowerChanged = QtCore.pyqtSignal(int)
+
     def __init__(self, parent, dragonlog, bands: dict, modes: dict, prop: dict, settings: QtCore.QSettings,
                  settings_form: Settings, cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
         super().__init__(parent)
@@ -70,6 +76,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.settings_form.rigctldStatusChanged.connect(self.rigctldChanged)
 
         self.__change_mode__ = False
+
+        self.rigBandChanged.connect(self.bandComboBox.setCurrentText)
+        self.rigFrequencyChanged.connect(self.freqDoubleSpinBox.setValue)
+        self.rigModeChanged.connect(self.modeComboBox.setCurrentText)
+        self.rigSubModeChanged.connect(self.submodeComboBox.setCurrentText)
+        self.rigPowerChanged.connect(self.powerSpinBox.setValue)
 
         self.refreshTimer = QtCore.QTimer(self)
         self.refreshTimer.timeout.connect(self.refreshRigData)
@@ -234,12 +246,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                     if freq < self.bands[b][1]:
                                         if freq > self.bands[b][0]:
                                             if b != self.__last_band__:
-                                                self.bandComboBox.setCurrentText(b)
+                                                self.rigBandChanged.emit(b)
                                                 self.log.info(f'CAT changed band to {b}')
                                                 self.__last_band__ = b
                                                 self.__last_mode__ = ''
                                         break
-                                self.freqDoubleSpinBox.setValue(freq)
+                                self.rigFrequencyChanged.emit(freq)
                                 self.__last_freq__ = freq
                         except Exception:
                             pass
@@ -255,10 +267,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                         try:
                             mode, passband = [v.strip() for v in mode_s.split('\n')]
                             if mode in self.rig_modes and mode != self.__last_mode__:
-                                self.modeComboBox.setCurrentText(self.rig_modes[mode][0])
+                                self.rigModeChanged.emit(self.rig_modes[mode][0])
                                 self.log.info(f'CAT changed mode to {self.rig_modes[mode][0]}')
                                 if self.rig_modes[mode][1]:
-                                    self.submodeComboBox.setCurrentText(self.rig_modes[mode][1])
+                                    self.rigSubModeChanged.emit(self.rig_modes[mode][1])
                                 self.__last_mode__ = mode
                         except Exception:
                             pass
@@ -285,8 +297,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
                                 try:
                                     pwr = int(int(pwr_s) / 1000 + .9)
-                                    self.powerSpinBox.setValue(pwr)
-                                    self.log.info(f'CAT changed power to {pwr} W')
+                                    self.rigPowerChanged.emit(pwr)
+                                    #self.log.info(f'CAT changed power to {pwr} W')
                                 except Exception:
                                     pass
                     except socket.timeout:
