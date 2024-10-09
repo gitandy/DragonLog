@@ -38,6 +38,7 @@ from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
 from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
+from .DxSpots import DxSpots
 
 from . import ColorPalettes
 
@@ -423,6 +424,26 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(cc_dock_area,
                                self.ccDockWidget)
         self.ccDockWidget.setVisible(bool(int(self.settings.value('ui/show_cc', 0))))
+        self.qso_form.rigFrequencyChanged.connect(self.cc_widget.setFrequency)
+        self.qso_form.rigBandChanged.connect(self.cc_widget.setBand)
+        self.qso_form.rigModeChanged.connect(self.cc_widget.setMode)
+        self.qso_form.rigPowerChanged.connect(self.cc_widget.setPower)
+
+        # DxSpotsForm
+        self.dxspots_widget = DxSpots(self, self, self.settings, self.log)
+        self.dxSpotsDockWidget.setWidget(self.dxspots_widget)
+        if int(self.settings.value('ui/dxspots_dock_float', 0)):
+            self.dxSpotsDockWidget.setFloating(True)
+        else:
+            dxspots_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/dxspots_dock_area',
+                                        QtCore.Qt.DockWidgetArea.LeftDockWidgetArea.value)))
+            self.addDockWidget(dxspots_dock_area,
+                               self.dxSpotsDockWidget)
+        self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
+        self.settings_form.ctyDataChanged.connect(self.dxspots_widget.load_cty)
+        self.dxspots_widget.spotSelected.connect(self.qso_form.setQSO)
+        self.dxspots_widget.spotSelected.connect(self.cc_widget.setQSO)
 
         self.keep_logging = False
 
@@ -2073,6 +2094,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         op_txt = f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl' if OPTION_OPENPYXL else ''
 
+        cty_ver = self.dxspots_widget.cty_version
+        cty_ent = self.dxspots_widget.cty_ver_entity
+
         QtWidgets.QMessageBox.about(
             self,
             f'{self.programName} - {self.tr("About")}',
@@ -2084,7 +2108,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
+            '\nFlags: Flagpedia.net, https://flagpedia.net'
             '\nDragon icon by Icons8 https://icons8.com'
+            f'\n\nCountry Data: by AD1C, Copyright (c) since 1994\nVersion: {cty_ver}, Entity: {cty_ent}'
         )
 
     def showAboutQt(self):
@@ -2114,6 +2140,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings.setValue('ui/show_cc', int(self.ccDockWidget.isVisible()))
         self.settings.setValue('ui/cc_dock_area', self.dockWidgetArea(self.ccDockWidget).value)
         self.settings.setValue('ui/cc_dock_float', int(self.ccDockWidget.isFloating()))
+
+        self.settings.setValue('ui/show_dxspots', int(self.dxSpotsDockWidget.isVisible()))
+        self.settings.setValue('ui/dxspots_dock_area', self.dockWidgetArea(self.dxSpotsDockWidget).value)
+        self.settings.setValue('ui/dxspots_dock_float', int(self.dxSpotsDockWidget.isFloating()))
 
         self.settings_form.ctrlRigctld(False)
         e.accept()

@@ -30,6 +30,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     callbookChanged = QtCore.pyqtSignal(str)
     rigctldStatusChanged = QtCore.pyqtSignal(bool)
     settingsStored = QtCore.pyqtSignal()
+    ctyDataChanged = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel,
                  bands: typing.Iterable, modes: typing.Iterable, cols: typing.Iterable,
@@ -305,6 +306,19 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         """Slot (i.e. if callbookComboBox is changed)"""
         self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbooks[service]}_user', ''))
 
+    def chooseCtyDataFile(self):
+        cty_path = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr('Choose Country data file'),
+            os.path.split(self.settings.value('dx_spots/cty_data', ''))[0],
+            'Country data (*.csv)'
+        )
+
+        if os.path.isfile(cty_path[0]):
+            self.ctyPathLineEdit.setText(cty_path[0])
+            self.settings.setValue('dx_spots/cty_data', cty_path[0])
+            self.ctyDataChanged.emit(cty_path[0])
+
     def exec(self):
         self.log.info('Loading settings...')
         self.catInterfaceLineEdit.setText(self.settings.value('cat/interface', ''))
@@ -346,6 +360,11 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.logLevelComboBox.setCurrentText(str(self.settings.value('ui/log_level', 'Info')).capitalize())
         self.logToFileCheckBox.setChecked(bool(int(self.settings.value('ui/log_file', 0))))
+
+        self.dxAddrLineEdit.setText(self.settings.value('dx_spots/address', 'hamqth.com'))
+        dxPort = int(self.settings.value('dx_spots/port', 7300))
+        self.dxPortSpinBox.setValue(dxPort if 0 < dxPort <= self.dxPortSpinBox.maximum() else 7300)
+        self.ctyPathLineEdit.setText(self.settings.value('dx_spots/cty_data', ''))
 
         self.expOwnNotesADIFCheckBox.setChecked(bool(int(self.settings.value('imp_exp/own_notes_adif', 0))))
         self.expRecentOnlyCheckBox.setChecked(bool(int(self.settings.value('imp_exp/only_recent', 0))))
@@ -424,6 +443,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('ui/show_modes', self.modesSelectWidget.itemsEnabled)
         self.settings.setValue('ui/log_level', self.logLevelComboBox.currentText().upper())
         self.settings.setValue('ui/log_file', int(self.logToFileCheckBox.isChecked()))
+
+        self.settings.setValue('dx_spots/address', self.dxAddrLineEdit.text())
+        self.settings.setValue('dx_spots/port', self.dxPortSpinBox.value())
+        self.settings.setValue('dx_spots/cty_data', self.ctyPathLineEdit.text())
 
         self.settings.setValue('imp_exp/own_notes_adif', int(self.expOwnNotesADIFCheckBox.isChecked()))
         self.settings.setValue('imp_exp/only_recent', int(self.expRecentOnlyCheckBox.isChecked()))

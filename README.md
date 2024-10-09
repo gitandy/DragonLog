@@ -36,6 +36,7 @@ Features
 * UTF-8 (i.e. use german umlauts)
 * convert non ASCII characters for ADIF export (for supported languages)
 * integrates [CassiopeiaConsole](https://github.com/gitandy/HamCC#hamcc---cassiopeiaconsole)
+* display DX spots from HamQTH
 
 Installation
 ------------
@@ -200,6 +201,22 @@ On the CAT settings tab you have to select your hamlib unpack/installation direc
 If no package is available for your distribution you have to compile the hamlib release first. 
 Download the release .tar.gz (not source), unpack, ./configure, make, make install.
 The rigctld is assumed to be in /usr/local/bin and thus on your path.
+
+Country Data
+------------
+Each release of DragonLog provides a very recent country data file. 
+If you want to update it manually visit https://www.country-files.com/category/big-cty/ by Jim, AD1C 
+and download a Big CTY Zip file. 
+Unpack the Zip and goto Settings - Dx Spots to select the file.
+You can check if the file is correctly loaded via Help - About. 
+Check if the Version date and Version entity corresponds to the website.
+
+The flag display is based on the mapping from [Flagpedia.net](https://flagpedia.net) 
+and matched against the Big CTY data. This is sometimes weak and thus error prone and needed manual fixes. 
+There are still 30% unmapped (mostly islands).
+
+If a flag is mapped wrong please stay calm and drop me a mail. 
+The mapping does not reflect my view on country borders.
 
 Copyright
 ---------
