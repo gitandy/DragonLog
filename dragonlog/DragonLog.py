@@ -27,7 +27,7 @@ except ImportError:
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
-from .RegEx import find_non_ascii, check_format, REGEX_DATE
+from .RegEx import find_non_ascii, check_format, REGEX_DATE, check_call
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
@@ -1965,14 +1965,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def workedBefore(self, call: str) -> dict[str, dict[str, str]]:
         query = self.__db_con__.exec(f'SELECT call_sign, date_time, contest_id, event from qsos '
-                                     f'where call_sign LIKE"%{call}%" ORDER BY date_time')
+                                     f'where call_sign LIKE"%{call}%" ORDER BY date_time DESC')
         if query.lastError().text():
             raise Exception(query.lastError().text())
 
         worked = {}
         while query.next():
             call = query.value(0)
-            if call:
+            if not call in worked:
                 worked[call] = {
                     'date_time': query.value(1),
                     'event': query.value(2) if query.value(2) else query.value(3)

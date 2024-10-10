@@ -5,6 +5,7 @@ from hamcc import hamcc
 
 from . import CassiopeiaConsole_ui
 from .Logger import Logger
+from .RegEx import check_call
 
 
 class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaConsoleWidget):
@@ -119,16 +120,19 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             call = self.__cc__.current_qso.get('CALL', '')
             if call != self.__current_call__:
                 self.__current_call__ = call
-                worked_dict = self.dragonlog.workedBefore(call)
-                worked_list = []
-                if worked_dict:
-                    for call, data in zip(worked_dict.keys(), worked_dict.values()):
-                        if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
-                            continue
-                        worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
-                if worked_list:
-                    self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
-                    self.resultLabel.setText('\n'.join(worked_list))
+                if check_call(call):
+                    worked_dict = self.dragonlog.workedBefore(call)
+                    worked_list = []
+                    if worked_dict:
+                        for call, data in zip(worked_dict.keys(), worked_dict.values()):
+                            if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
+                                continue
+                            worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
+                            if len(worked_list) == 3:
+                                break
+                    if worked_list:
+                        self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
+                        self.resultLabel.setText('\n'.join(worked_list))
 
     def finaliseQSO(self):
         text = self.inputLineEdit.text()

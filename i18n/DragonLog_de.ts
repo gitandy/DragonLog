@@ -4,52 +4,52 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="128" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="130" />
       <source>at</source>
       <translation>am</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="154" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="158" />
       <source>Error: Callsign missing for QSO</source>
       <translation>Warnung: Call fehlt für QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="179" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="183" />
       <source>Warning: Wrong call format</source>
       <translation>Warnung: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="180" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="184" />
       <source>Error: Wrong call format</source>
       <translation>Fehler: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="181" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="185" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation>Fehler: Kein gültiges QTH/Maidenhead-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="182" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="186" />
       <source>Error: No active event</source>
       <translation>Fehler: Kein aktives Event</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="183" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="187" />
       <source>Error: Unknown prefix</source>
       <translation>Fehler: Unbekanntes Präfix</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="184" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="188" />
       <source>Error: Wrong RST format</source>
       <translation>Fehler: Kein gültiges RST-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="185" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="189" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation>Warnung: Call fehlt für letztes QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="186" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="190" />
       <source>Last QSO cached</source>
       <translation>Letztes QSO</translation>
     </message>
@@ -659,15 +659,15 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2016" />
-      <location filename="..\dragonlog\DragonLog.py" line="2010" />
-      <location filename="..\dragonlog\DragonLog.py" line="1988" />
+      <location filename="..\dragonlog\DragonLog.py" line="2017" />
+      <location filename="..\dragonlog\DragonLog.py" line="2011" />
+      <location filename="..\dragonlog\DragonLog.py" line="1989" />
       <location filename="..\dragonlog\DragonLog.py" line="292" />
       <source>Watching file</source>
       <translation>Dateiüberwachung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2016" />
+      <location filename="..\dragonlog\DragonLog.py" line="2017" />
       <location filename="..\dragonlog\DragonLog.py" line="294" />
       <location filename="..\dragonlog\DragonLog.py" line="292" />
       <source>inactiv</source>
@@ -1097,13 +1097,13 @@ Die Datei existiert bereits.</translation>
       <translation>letztes Jahr</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2025" />
+      <location filename="..\dragonlog\DragonLog.py" line="2026" />
       <location filename="..\dragonlog\DragonLog.py" line="780" />
       <source>Log QSO</source>
       <translation>QSO loggen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2026" />
+      <location filename="..\dragonlog\DragonLog.py" line="2027" />
       <location filename="..\dragonlog\DragonLog.py" line="781" />
       <source>No database opened for logging</source>
       <translation>Keine Datenbank zum Loggen geöffnet</translation>
@@ -1131,7 +1131,7 @@ Die Datei existiert bereits.</translation>
       <translation>Wollen sie die selektierten QSOs wirklich löschen?</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1998" />
+      <location filename="..\dragonlog\DragonLog.py" line="1999" />
       <location filename="..\dragonlog\DragonLog.py" line="1547" />
       <location filename="..\dragonlog\DragonLog.py" line="901" />
       <source>ADIF 3 (*.adi *.adif)</source>
@@ -1329,52 +1329,52 @@ Siehe Anwendungslog für Details</translation>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1989" />
+      <location filename="..\dragonlog\DragonLog.py" line="1990" />
       <source>No database opened for watching files</source>
       <translation>Keine Datenbank für Dateiüberwachung geöffnet</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1996" />
+      <location filename="..\dragonlog\DragonLog.py" line="1997" />
       <source>Select file to watch</source>
       <translation>Zu überwachende Datei wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2054" />
+      <location filename="..\dragonlog\DragonLog.py" line="2055" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2067" />
+      <location filename="..\dragonlog\DragonLog.py" line="2068" />
       <source>Help</source>
       <translation>Hilfe</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2074" />
+      <location filename="..\dragonlog\DragonLog.py" line="2075" />
       <source>Shortcuts</source>
       <translation>Tastenkürzel</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2081" />
+      <location filename="..\dragonlog\DragonLog.py" line="2082" />
       <source>CassipeiaConsole</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2102" />
+      <location filename="..\dragonlog\DragonLog.py" line="2103" />
       <source>About</source>
       <translation>Über</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2103" />
+      <location filename="..\dragonlog\DragonLog.py" line="2104" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2104" />
+      <location filename="..\dragonlog\DragonLog.py" line="2105" />
       <source>Author</source>
       <translation>Autor</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2117" />
+      <location filename="..\dragonlog\DragonLog.py" line="2118" />
       <source>About Qt</source>
       <translation>Über Qt</translation>
     </message>
