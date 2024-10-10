@@ -361,8 +361,11 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.logLevelComboBox.setCurrentText(str(self.settings.value('ui/log_level', 'Info')).capitalize())
         self.logToFileCheckBox.setChecked(bool(int(self.settings.value('ui/log_file', 0))))
 
-        self.dxAddrLineEdit.setText(self.settings.value('dx_spots/address', 'hamqth.com'))
-        dxPort = int(self.settings.value('dx_spots/port', 7300))
+        dx_call = self.settings.value('dx_spots/call', '')
+        self.dxCallLineEdit.setText(dx_call if dx_call else self.settings.value('station/callSign', ''))
+        dx_addr = self.settings.value('dx_spots/address', '')
+        self.dxAddrLineEdit.setText(dx_addr if dx_addr else 'hamqth.com')
+        dxPort = int(self.settings.value('dx_spots/port', 7300)) if dx_addr else 7300
         self.dxPortSpinBox.setValue(dxPort if 0 < dxPort <= self.dxPortSpinBox.maximum() else 7300)
         self.ctyPathLineEdit.setText(self.settings.value('dx_spots/cty_data', ''))
 
@@ -444,6 +447,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('ui/log_level', self.logLevelComboBox.currentText().upper())
         self.settings.setValue('ui/log_file', int(self.logToFileCheckBox.isChecked()))
 
+        self.settings.setValue('dx_spots/call', self.dxCallLineEdit.text())
         self.settings.setValue('dx_spots/address', self.dxAddrLineEdit.text())
         self.settings.setValue('dx_spots/port', self.dxPortSpinBox.value())
         self.settings.setValue('dx_spots/cty_data', self.ctyPathLineEdit.text())

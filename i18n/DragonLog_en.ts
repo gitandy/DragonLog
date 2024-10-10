@@ -540,6 +540,11 @@
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
+      <source>Call</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>Country Data</source>
       <translation type="unfinished" />
     </message>
@@ -659,15 +664,15 @@
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2017" />
-      <location filename="..\dragonlog\DragonLog.py" line="2011" />
-      <location filename="..\dragonlog\DragonLog.py" line="1989" />
+      <location filename="..\dragonlog\DragonLog.py" line="2016" />
+      <location filename="..\dragonlog\DragonLog.py" line="2010" />
+      <location filename="..\dragonlog\DragonLog.py" line="1988" />
       <location filename="..\dragonlog\DragonLog.py" line="292" />
       <source>Watching file</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2017" />
+      <location filename="..\dragonlog\DragonLog.py" line="2016" />
       <location filename="..\dragonlog\DragonLog.py" line="294" />
       <location filename="..\dragonlog\DragonLog.py" line="292" />
       <source>inactiv</source>
@@ -1093,13 +1098,13 @@ The file already exists.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2026" />
+      <location filename="..\dragonlog\DragonLog.py" line="2025" />
       <location filename="..\dragonlog\DragonLog.py" line="780" />
       <source>Log QSO</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2027" />
+      <location filename="..\dragonlog\DragonLog.py" line="2026" />
       <location filename="..\dragonlog\DragonLog.py" line="781" />
       <source>No database opened for logging</source>
       <translation />
@@ -1127,7 +1132,7 @@ The file already exists.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1999" />
+      <location filename="..\dragonlog\DragonLog.py" line="1998" />
       <location filename="..\dragonlog\DragonLog.py" line="1547" />
       <location filename="..\dragonlog\DragonLog.py" line="901" />
       <source>ADIF 3 (*.adi *.adif)</source>
@@ -1324,52 +1329,52 @@ See log for detail</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1990" />
+      <location filename="..\dragonlog\DragonLog.py" line="1989" />
       <source>No database opened for watching files</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="1997" />
+      <location filename="..\dragonlog\DragonLog.py" line="1996" />
       <source>Select file to watch</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2055" />
+      <location filename="..\dragonlog\DragonLog.py" line="2054" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2068" />
+      <location filename="..\dragonlog\DragonLog.py" line="2067" />
       <source>Help</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2075" />
+      <location filename="..\dragonlog\DragonLog.py" line="2074" />
       <source>Shortcuts</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2082" />
+      <location filename="..\dragonlog\DragonLog.py" line="2081" />
       <source>CassipeiaConsole</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2103" />
+      <location filename="..\dragonlog\DragonLog.py" line="2102" />
       <source>About</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2104" />
+      <location filename="..\dragonlog\DragonLog.py" line="2103" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2105" />
+      <location filename="..\dragonlog\DragonLog.py" line="2104" />
       <source>Author</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2118" />
+      <location filename="..\dragonlog\DragonLog.py" line="2117" />
       <source>About Qt</source>
       <translation />
     </message>
@@ -1428,22 +1433,22 @@ See log for detail</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="206" />
+      <location filename="..\dragonlog\DxSpots.py" line="207" />
       <source>Stop</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="210" />
+      <location filename="..\dragonlog\DxSpots.py" line="211" />
       <source>DX Spot</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="211" />
+      <location filename="..\dragonlog\DxSpots.py" line="212" />
       <source>Error connecting to DX Cluster</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="216" />
+      <location filename="..\dragonlog\DxSpots.py" line="217" />
       <source>Start</source>
       <translation type="unfinished" />
     </message>

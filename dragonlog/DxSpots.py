@@ -197,10 +197,11 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         if state:
             try:
                 self.__refresh__ = True
+                dx_call = self.__settings__.value('dx_spots/call', '')
                 self.dxc = DxCluster(self, self.logger,
                                      self.__settings__.value('dx_spots/address', 'hamqth.com'),
                                      int(self.__settings__.value('dx_spots/port', 7300)),
-                                     self.__settings__.value('station/callSign', ''))
+                                     dx_call if dx_call else self.__settings__.value('station/callSign', ''))
                 self.dxc.spotReceived.connect(self.processSpot)
                 self.dxc.start()
                 self.startPushButton.setText(self.tr('Stop'))
