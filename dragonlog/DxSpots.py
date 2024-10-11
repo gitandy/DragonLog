@@ -59,15 +59,18 @@ class DxCluster(QtCore.QThread):
     def stop(self):
         self.__receive__ = False
         self.__is_connected__ = False
+        self.__socket__.sendall(b'bye\n')
         self.__socket__.close()
         self.log.debug('Stopped receiving spots')
 
     def run(self):
+        self.__socket__.sendall(b'show/dx 10 real\n')
         while self.__receive__:
             try:
                 data = self.__socket__.recv(1024).decode()
-                if data.startswith('DX de'):
-                    self.spotReceived.emit(data.strip())
+                for sp in data.strip().split('\n'):  # For show/dx
+                    if sp.startswith('DX de'):
+                        self.spotReceived.emit(sp.strip())
             except ConnectionAbortedError:
                 self.__receive__ = False
             except UnicodeDecodeError:
@@ -229,6 +232,9 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
     def processSpot(self, data: str):
         self.log.debug(data)
+        if len(data) < 74 and not data.startswith('DX de'):
+            return
+
         spot = [''] * 9
         try:
             spotter, freq = data[6:24].split(':')
