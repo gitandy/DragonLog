@@ -236,6 +236,10 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             return
 
         spot = [''] * 9
+        spot[1] = '-'
+        spot[6] = '-'
+        spot[8] = self.tr('- unknown -')
+
         try:
             spotter, freq = data[6:24].split(':')
             call = data[26:39].strip()
@@ -251,10 +255,13 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
             if self.__cty__:
                 sp_cty = self.__cty__.country(spotter)
-                spot[1] = sp_cty.continent
+                if sp_cty:
+                    spot[1] = sp_cty.continent
+
                 cty = self.__cty__.country(call)
-                spot[6] = cty.continent
-                spot[8] = cty.name
+                if cty:
+                    spot[6] = cty.continent
+                    spot[8] = cty.name
         except Exception as exc:
             self.log.exception(exc)
 

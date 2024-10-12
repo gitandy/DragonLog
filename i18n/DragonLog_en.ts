@@ -1452,6 +1452,11 @@ See log for detail</source>
       <source>Start</source>
       <translation type="unfinished" />
     </message>
+    <message>
+      <location filename="..\dragonlog\DxSpots.py" line="241" />
+      <source>- unknown -</source>
+      <translation type="unfinished" />
+    </message>
   </context>
   <context>
     <name>DxSpotsForm</name>

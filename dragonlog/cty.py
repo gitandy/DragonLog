@@ -5,6 +5,7 @@ import re
 import csv
 from collections import namedtuple
 from collections.abc import Generator
+from pprint import pprint
 
 Country = namedtuple('Country', ('code', 'name', 'dxcc',
                                  'continent', 'cq', 'itu',
@@ -54,7 +55,7 @@ class CountryData:
                     else:
                         self.__prefixes__[pfx] = data
 
-        self.__pfx_list__ = list(self.__prefixes__.keys())
+        self.__pfx_list__ = sorted(self.__prefixes__)
 
     @property
     def version(self) -> str:
@@ -79,21 +80,24 @@ class CountryData:
             except ValueError:
                 if found:
                     break
-                found = True
+                if pfx:
+                    found = True
                 continue
 
         return pfx
 
-    def cty_code(self, call):
+    def cty_code(self, call) -> dict:
         """Get the country code for a callsign
         :param call: the callsign (upper or lowercase)
         :return: the country code"""
 
         if call in self.__calls__:
-            data = self.__calls__[call.upper()]
+            return self.__calls__[call.upper()]
+        elif self.prefix(call.upper()):
+            return self.__prefixes__[self.prefix(call.upper())]
         else:
-            data = self.__prefixes__[self.prefix(call.upper())]
-        return data
+            raise Exception(f'Country code not found for "{call}"')
+
 
     def country(self, call: str) -> Country:
         """Get the country data from a callsign
@@ -101,15 +105,17 @@ class CountryData:
         :return: the country data"""
 
         data = self.cty_code(call)
+        if data:
+            cty_code = data['cty_code']
+            cty_data = self.__countries__[cty_code]
+            if 'cq_or' in data:
+                cty_data = cty_data._replace(cq=data['cq_or'])
+            if 'itu_or' in data:
+                cty_data = cty_data._replace(itu=data['itu_or'])
 
-        cty_code = data['cty_code']
-        cty_data = self.__countries__[cty_code]
-        if 'cq_or' in data:
-            cty_data = cty_data._replace(cq=data['cq_or'])
-        if 'itu_or' in data:
-            cty_data = cty_data._replace(itu=data['itu_or'])
-
-        return cty_data
+            return cty_data
+        else:
+            raise Exception(f'Country not found for "{call}"')
 
     @property
     def countries(self) -> Generator:
