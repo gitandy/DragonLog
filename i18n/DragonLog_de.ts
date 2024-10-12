@@ -1387,78 +1387,78 @@ Siehe Anwendungslog für Details</translation>
   <context>
     <name>DxSpots</name>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="150" />
+      <location filename="..\dragonlog\DxSpots.py" line="151" />
       <source>Spotter</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="151" />
+      <location filename="..\dragonlog\DxSpots.py" line="152" />
       <source>Sp.Cnt.</source>
       <translation>Sp.Kont.</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="152" />
+      <location filename="..\dragonlog\DxSpots.py" line="153" />
       <source>Freq.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="153" />
+      <location filename="..\dragonlog\DxSpots.py" line="154" />
       <source>DX Call</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="154" />
+      <location filename="..\dragonlog\DxSpots.py" line="155" />
       <source>Comments</source>
       <translation>Kommentar</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="155" />
+      <location filename="..\dragonlog\DxSpots.py" line="156" />
       <source>Time</source>
       <translation>Zeit</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="156" />
+      <location filename="..\dragonlog\DxSpots.py" line="157" />
       <source>Cont.</source>
       <translation>Kont.</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="157" />
+      <location filename="..\dragonlog\DxSpots.py" line="158" />
       <source>Band</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="158" />
+      <location filename="..\dragonlog\DxSpots.py" line="159" />
       <source>Country</source>
       <translation>Land</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="174" />
-      <location filename="..\dragonlog\DxSpots.py" line="171" />
+      <location filename="..\dragonlog\DxSpots.py" line="175" />
+      <location filename="..\dragonlog\DxSpots.py" line="172" />
       <source>- all -</source>
       <translation>- Alle -</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="211" />
+      <location filename="..\dragonlog\DxSpots.py" line="212" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="215" />
+      <location filename="..\dragonlog\DxSpots.py" line="216" />
       <source>DX Spot</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="216" />
+      <location filename="..\dragonlog\DxSpots.py" line="217" />
       <source>Error connecting to DX Cluster</source>
       <translation>Fehler beim Verbinden mit DX-Cluster</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="221" />
+      <location filename="..\dragonlog\DxSpots.py" line="222" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="242" />
+      <location filename="..\dragonlog\DxSpots.py" line="243" />
       <source>- unknown -</source>
       <translation>- Unbekannt -</translation>
     </message>

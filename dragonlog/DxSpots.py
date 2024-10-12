@@ -43,13 +43,14 @@ class DxCluster(QtCore.QThread):
         if data.startswith('login:'):
             self.__socket__.sendall(f'{self.__callsign__}\n'.encode())
             data = self.__socket__.recv(1024).decode()
-            if data.startswith(f'Hello {self.__callsign__}'):
+            if data.startswith('Hello'):
                 self.__is_connected__ = True
                 self.log.info(
                     f'Loggedin to DX cluster {self.__address__[0]}:{self.__address__[1]} as {self.__callsign__}')
             elif data.startswith(f'Sorry {self.__callsign__} is an invalid callsign'):
                 raise Exception(f'Login error with call "{self.__callsign__}": valid callsign required')
             else:
+                self.log.debug(data)
                 raise Exception(f'Login failed to DX cluster {self.__address__[0]}:{self.__address__[1]}')
 
     @property
@@ -64,7 +65,7 @@ class DxCluster(QtCore.QThread):
         self.log.debug('Stopped receiving spots')
 
     def run(self):
-        self.__socket__.sendall(b'show/dx 10 real\n')
+        self.__socket__.sendall(b'show/dx 10 real\nset/dx\n')  #
         while self.__receive__:
             try:
                 data = self.__socket__.recv(1024).decode()
