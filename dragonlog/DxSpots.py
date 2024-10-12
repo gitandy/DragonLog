@@ -119,7 +119,8 @@ class FlagsTableModel(QtGui.QStandardItemModel):
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             if idx.column() == self.country_col:
-                txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole).replace('&', 'and')
+                txt = super().data(idx,
+                                   QtCore.Qt.ItemDataRole.DisplayRole).replace('&', 'and').replace('St. ', 'Saint ')
                 if txt in self.countries:
                     return self.countries[txt]
 
