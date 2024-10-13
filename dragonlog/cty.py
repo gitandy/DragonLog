@@ -12,6 +12,14 @@ Country = namedtuple('Country', ('code', 'name', 'dxcc',
                                  'lat', 'lon', 'time_off'))
 
 
+class CountryCodeNotFoundException(Exception):
+    pass
+
+
+class CountryNotFoundException(Exception):
+    pass
+
+
 class CountryData:
     """Loads country data from a cty CSV file
     Provides search for prefix, country code and country data by a given callsign"""
@@ -96,8 +104,7 @@ class CountryData:
         elif self.prefix(call.upper()):
             return self.__prefixes__[self.prefix(call.upper())]
         else:
-            raise Exception(f'Country code not found for "{call}"')
-
+            raise CountryCodeNotFoundException(f'for "{call}"')
 
     def country(self, call: str) -> Country:
         """Get the country data from a callsign
@@ -115,7 +122,7 @@ class CountryData:
 
             return cty_data
         else:
-            raise Exception(f'Country not found for "{call}"')
+            raise CountryNotFoundException(f'for "{call}"')
 
     @property
     def countries(self) -> Generator:
@@ -127,4 +134,3 @@ if __name__ == '__main__':
     cty = CountryData('data/cty/cty.csv')
     print(cty.version)
     print(cty.country('VERSION'))
-

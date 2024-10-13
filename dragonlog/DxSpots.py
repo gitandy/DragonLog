@@ -4,6 +4,7 @@
 import json
 import socket
 import logging
+import time
 from audioop import reverse
 from collections.abc import Generator
 
@@ -19,6 +20,10 @@ from . import cty
 
 class DxCluster(QtCore.QThread):
     spotReceived = QtCore.pyqtSignal(str)
+    auroraBeaconReceived = QtCore.pyqtSignal(str)
+    announcementReceived = QtCore.pyqtSignal(str)
+    dataReceived = QtCore.pyqtSignal(str)
+    newMailReceived = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, logger: Logger, address: str, port: int, call: str):
         super().__init__()
@@ -30,11 +35,18 @@ class DxCluster(QtCore.QThread):
         self.log.debug('Initialising...')
 
         self.__address__ = address, port
-        self.__callsign__ = call
+        self.__callsign__ = call.upper()
         self.__receive__ = True
         self.__socket__ = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__is_connected__ = False
         self.__connect__()
+        self.__cmds__: list = []
+        self.__lock__ = QtCore.QMutex()
+
+        self.dataReceived.connect(self.logData)
+        self.newMailReceived.connect(self.logMessage)
+        self.announcementReceived.connect(self.logMessage)
+        self.auroraBeaconReceived.connect(self.logAuroraBeacon)
 
     def __connect__(self):
         self.__socket__.connect(self.__address__)
@@ -47,6 +59,11 @@ class DxCluster(QtCore.QThread):
                 self.__is_connected__ = True
                 self.log.info(
                     f'Loggedin to DX cluster {self.__address__[0]}:{self.__address__[1]} as {self.__callsign__}')
+                for dt in data.split('\n'):
+                    if dt.startswith('New mail has arrived for you'):
+                        self.newMailReceived.emit(dt.strip())
+                        break
+                self.__socket__.settimeout(.1)
             elif data.startswith(f'Sorry {self.__callsign__} is an invalid callsign'):
                 raise Exception(f'Login error with call "{self.__callsign__}": valid callsign required')
             else:
@@ -58,24 +75,61 @@ class DxCluster(QtCore.QThread):
         return self.__is_connected__
 
     def stop(self):
+        self.sendCmd('bye')
+        time.sleep(.1)
         self.__receive__ = False
         self.__is_connected__ = False
-        self.__socket__.sendall(b'bye\n')
+        time.sleep(.1)
         self.__socket__.close()
-        self.log.debug('Stopped receiving spots')
+        self.log.debug('Diconnected from cluster')
 
     def run(self):
         self.__socket__.sendall(b'show/dx 10 real\nset/dx\n')  #
         while self.__receive__:
             try:
                 data = self.__socket__.recv(1024).decode()
-                for sp in data.strip().split('\n'):  # For show/dx
-                    if sp.startswith('DX de'):
-                        self.spotReceived.emit(sp.strip())
+                for dt in data.strip().split('\n'):  # For show/dx
+                    if dt.startswith('DX de'):
+                        # DX de S52WW:     14268.0  SK6BA        USB                            0636Z
+                        self.spotReceived.emit(dt.strip())
+                    elif dt.startswith('WCY de'):
+                        # WCY de DK0WCY-2 <08> : K=1 expK=0 A=22 R=95 SFI=214 SA=act GMF=act Au=no
+                        self.auroraBeaconReceived.emit(dt.strip())
+                    # elif dt.startswith('WWV de'):
+                    # WWV de AE5E <09>:   SFI=214, A=20, K=1, Minor w/G1 -> No Storms
+                    # self.auroraBeaconReceived.emit(dt.strip())
+                    elif dt.startswith('To ALL de'):
+                        # To ALL de ON5CAZ: Onff-0189 wca on-02734 pota be-0239
+                        self.announcementReceived.emit(dt.strip())
+                    elif dt.startswith('New mail has arrived for you'):
+                        self.newMailReceived.emit(dt.strip())
+                    else:
+                        self.dataReceived.emit(dt.strip())
+                if self.__cmds__:
+                    self.__lock__.lock()
+                    cmd = self.__cmds__.pop(0)
+                    self.__socket__.sendall(f'{cmd}\n'.encode())
+                    self.__lock__.unlock()
+            except TimeoutError:
+                pass
             except ConnectionAbortedError:
                 self.__receive__ = False
             except UnicodeDecodeError:
                 pass
+
+    def logData(self, data: str):
+        self.log.debug(data.replace('\a', ''))
+
+    def logMessage(self, data: str):
+        self.log.warning(data.replace('\a', ''))
+
+    def logAuroraBeacon(self, data: str):
+        self.log.info(data.replace('\a', ''))
+
+    def sendCmd(self, cmd: str):
+        self.__lock__.lock()
+        self.__cmds__.append(cmd)
+        self.__lock__.unlock()
 
 
 class DxSpotsFilterProxy(QtCore.QSortFilterProxyModel):
@@ -195,8 +249,8 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
     @property
     def cty_ver_entity(self):
-        cty = self.__cty__.country('VERSION')
-        return f'{cty.name}, {cty.code}'
+        cty_d = self.__cty__.country('VERSION')
+        return f'{cty_d.name}, {cty_d.code}'
 
     def control(self, state: bool):
         if state:
@@ -260,10 +314,12 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
                 if sp_cty:
                     spot[1] = sp_cty.continent
 
-                cty = self.__cty__.country(call)
-                if cty:
-                    spot[6] = cty.continent
-                    spot[8] = cty.name
+                cty_d = self.__cty__.country(call)
+                if cty_d:
+                    spot[6] = cty_d.continent
+                    spot[8] = cty_d.name
+        except (cty.CountryCodeNotFoundException, cty.CountryNotFoundException) as exc:
+            self.log.error(exc)
         except Exception as exc:
             self.log.exception(exc)
 
