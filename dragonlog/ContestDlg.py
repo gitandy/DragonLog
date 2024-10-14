@@ -22,7 +22,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.log.debug('Initialising...')
 
         self.contest = None
-        self.contestComboBox.insertItems(0, contests)
+        self.contestComboBox.insertItems(0, [CONTEST_NAMES[c] for c in contests])
 
         self.__validation__: dict[str, bool] = {}
 
@@ -56,7 +56,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.exportPathLineEdit.setText(self.__settings__.value('contest/last_export_dir', os.path.abspath(os.curdir)))
 
     def contestChanged(self, contest: str):
-        self.contest = CONTESTS[contest]
+        self.contest = CONTESTS[CONTEST_IDS[contest]]
 
         self.bandComboBox.clear()
         self.bandComboBox.insertItems(0, self.contest.valid_bands_list())
@@ -164,7 +164,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
             self.cityLineEdit.setPalette(ColorPalettes.PaletteRequired)
             self.__validation__['city'] = False
         elif find_non_ascii(txt):
-            self.citylLineEdit.setPalette(ColorPalettes.PaletteFaulty)
+            self.cityLineEdit.setPalette(ColorPalettes.PaletteFaulty)
             self.__validation__['city'] = True
         else:
             self.cityLineEdit.setPalette(ColorPalettes.PaletteOk)
@@ -202,7 +202,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.log.info(f'Exporting "{self.contestComboBox.currentText()}" from {self.fromDateEdit.text()}...')
 
         doc = self.dragonlog._build_adif_export_(f"SELECT * FROM qsos WHERE "
-                                                 f"contest_id = '{self.contestComboBox.currentText()}' AND "
+                                                 f"contest_id = '{CONTEST_IDS[self.contestComboBox.currentText()]}' AND "
                                                  f"DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND "
                                                  f"DATE(date_time) <= DATE('{self.toDateEdit.text()}') "
                                                  "ORDER BY date_time")
@@ -219,19 +219,34 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
         if doc['RECORDS']:
-            for rec in doc['RECORDS']:
-                contest.append(rec)
-            self.log.info(f'Contest statistics < {contest.statistics()} >')
-            contest.open_file(self.exportPathLineEdit.text())
-            contest.write_records()
-            contest.close_file()
-            self.log.info(f'Records written to "{contest.file_name}"')
+            try:
+                errors = 0
+                for rec in doc['RECORDS']:
+                    try:
+                        contest.append(rec)
+                    except ProcessContestException as c_exc:
+                        self.log.error(str(c_exc))
+                        errors += 1
+                self.log.info(f'Contest statistics < {contest.statistics()} >')
+                contest.open_file(self.exportPathLineEdit.text())
+                contest.write_records()
+                contest.close_file()
+                self.log.info(f'Records written to "{contest.file_name}"')
 
-            QtWidgets.QMessageBox.information(self, self.tr('Contest Export written'),
-                                              self.tr('Contest data written to') + f' {contest.file_name}\n' +
-                                              self.tr('Claimed points') + f': {contest.claimed_points}\n\n' +
-                                              self.tr('Please check the file patiently before sending!')
-                                              )
+                if errors:
+                    QtWidgets.QMessageBox.information(self, self.tr('Contest Export'),
+                                                  self.tr('There were {} errors when processing the contest data').format(errors) +
+                                                      '\n\n' +
+                                                  self.tr('Export will be written anyway. Please check the application log before sending!')
+                                                  )
+
+                QtWidgets.QMessageBox.information(self, self.tr('Contest Export'),
+                                                  self.tr('Contest data written to') + f' {contest.file_name}\n' +
+                                                  self.tr('Claimed points') + f': {contest.claimed_points}\n\n' +
+                                                  self.tr('Please check the file patiently before sending!')
+                                                  )
+            except Exception as exc:
+                self.log.exception(exc)
         else:
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
                                           self.tr('No contest data found for export') +

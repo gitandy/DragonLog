@@ -14,6 +14,7 @@ from adif_file import adi, adx
 import xmltodict
 import hamcc
 
+
 OPTION_OPENPYXL = False
 try:
     # noinspection PyUnresolvedReferences
@@ -40,7 +41,7 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
     CommunicationException
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
-from .adi2contest import CONTESTS
+from .adi2contest import CONTEST_IDS, CONTEST_NAMES
 
 from . import ColorPalettes
 
@@ -98,7 +99,7 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class TranslatedTableModel(QtSql.QSqlTableModel):
     """Translate propagation values and status to clear text and fancy icon for status"""
 
-    def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict):
+    def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict, contest_col:int):
         super(TranslatedTableModel, self).__init__(parent, db_conn)
 
         self.status_cols = status_cols
@@ -112,6 +113,8 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
         self.prop_col = prop_col
         self.prop_translation = prop_tr
 
+        self.contest_col = contest_col
+
         # noinspection PyUnresolvedReferences
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
         # noinspection PyUnresolvedReferences
@@ -124,6 +127,8 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
                 return self.status_translation[value]
             elif idx.column() == self.prop_col and value in self.prop_translation:
                 return self.prop_translation[value]
+            elif idx.column() == self.contest_col and value in CONTEST_NAMES:
+                return CONTEST_NAMES[value]
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)
@@ -398,7 +403,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
-                                self.cb_channels, self.hamlib_error, self.log, CONTESTS.keys())
+                                self.cb_channels, self.hamlib_error, self.log)
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.clear)
@@ -645,7 +650,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                          status_cols=tuple(range(self.__sql_cols__.index('qsl_sent'),
                                                                  self.__sql_cols__.index('hamqth') + 1)),
                                          prop_col=self.__sql_cols__.index('propagation'),
-                                         prop_tr=self.prop)
+                                         prop_tr=self.prop,
+                                         contest_col=self.__sql_cols__.index('contest_id'))
             model.setTable('qsos')
             self.QSOTableView.setModel(model)
 
@@ -2045,7 +2051,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         contests = []
         while query.next():
-            if query.value(0) in CONTESTS:
+            if query.value(0) in CONTEST_IDS.values():
                 contests.append(query.value(0))
 
         if contests:
