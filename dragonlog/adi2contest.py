@@ -1,6 +1,5 @@
 import os
 import re
-from datetime import datetime
 from enum import Enum, auto
 import logging
 from dataclasses import dataclass
@@ -113,7 +112,13 @@ class CategoryTransmitter(Enum):
     SWL = auto()
 
 
+class ProcessContestException(Exception):
+    pass
+
+
 class ContestLog:
+    contest_name = 'Contest'
+
     REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])')
     REGEX_DATE = re.compile(r'([1-9][0-9]{3})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-2]))')
     REGEX_CALL = re.compile(
@@ -163,6 +168,7 @@ class ContestLog:
 
         self.__out_file__ = None
 
+
     def __init_header__(self, callsign, name, club, address, email, locator,
                         band: CategoryBand, mode: CategoryMode,
                         pwr: CategoryPower = CategoryPower.HIGH,
@@ -176,7 +182,7 @@ class ContestLog:
         if not self.check_format(self.REGEX_LOCATOR, locator):
             log.error(f'Locator "{locator}" does not match locator format')
 
-        self.__header__['CONTEST'] = 'DEFAULT'
+        self.__header__['CONTEST'] = self.contest_name
         self.__header__['CREATED-BY'] = 'ContestLog v0.1'
         self.__header__['CALLSIGN'] = callsign
         self.__header__['NAME'] = name
@@ -204,16 +210,16 @@ class ContestLog:
         :return: True if pattern matches"""
         return bool(re.fullmatch(exp, txt))
 
-    def check_band(self, adif_rec: dict[str,str]) -> bool:
+    def check_band(self, adif_rec: dict[str, str]) -> bool:
         if (adif_rec['BAND'].upper() != self.__header__['CATEGORY-BAND'] and
                 BAND_MAP_CBR[adif_rec['BAND'].lower()] != self.__header__['CATEGORY-BAND'].lower()):
             log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].upper()}" does not match with '
-                           f'contest band "{self.__header__["CATEGORY-BAND"]}"')
+                        f'contest band "{self.__header__["CATEGORY-BAND"]}"')
             if self.__skip_warn__:
                 return False
         return True
 
-    def append(self, adif_rec: dict[str,str]):
+    def append(self, adif_rec: dict[str, str]):
         self.__adif_cnt__ += 1
         if self.__skip_id__:
             if 'CONTEST_ID' not in adif_rec:
@@ -221,7 +227,7 @@ class ContestLog:
                 return
             if adif_rec['CONTEST_ID'] != self.__header__['CONTEST']:
                 log.warning(f'QSO #{self.__adif_cnt__} contest ID "{adif_rec["CONTEST_ID"]}" does not match '
-                               f'"{self.__header__["CONTEST"]}". Skipping.')
+                            f'"{self.__header__["CONTEST"]}". Skipping.')
                 return
 
         if not self.check_band(adif_rec):
@@ -229,7 +235,7 @@ class ContestLog:
 
         if adif_rec['MODE'].upper() != self.__header__['CATEGORY-MODE']:
             log.warning(f'QSO #{self.__adif_cnt__} mode "{adif_rec["MODE"].upper()}" does not match with '
-                           f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
+                        f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
             if self.__skip_warn__:
                 return
 
@@ -292,7 +298,7 @@ class ContestLog:
                          '0'
                          )
 
-    def open_file(self, path:str= os.path.curdir):
+    def open_file(self, path: str = os.path.curdir):
         self.__out_file__ = open(os.path.join(path, self.file_name), 'w')
 
     def write_records(self):
@@ -391,6 +397,10 @@ class ContestLog:
     def is_single_day(cls) -> bool:
         return True
 
+    @classmethod
+    def contest_name(cls) -> str:
+        return cls.contest_name
+
 # class WAGLog(ContestLog):
 #     def __init__(self, callsign, name, club, address, email, locator,
 #                  band: CategoryBand, mode: CategoryMode,
@@ -456,6 +466,8 @@ class ContestLog:
 
 
 class RLPFALZABUKWLog(ContestLog):
+    contest_name = 'RLP Aktivitätsabend UKW'
+
     DISTRICT_DOKS = ('AJWK', 'DVK', '75K', 'RP', 'YLK', '70K07')
     DISTRICT_SPECIAL = ('DQ75RLP', 'DA0RP', 'DF0RLP', 'DF0RPJ', 'DK0RLP',
                         'DK0YLK', 'DL0K', 'DL0RP', 'DL0YLK', 'DM0K')
@@ -476,7 +488,7 @@ class RLPFALZABUKWLog(ContestLog):
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn)
 
-        self.__header__['CONTEST'] = 'RL-PFALZ-AB.UKW'
+        self.__header__['CONTEST'] = 'RLP Aktivitaetsabend UKW'
 
         self.__dok__ = specific
 
@@ -506,30 +518,34 @@ class RLPFALZABUKWLog(ContestLog):
         return self.points * (self.multis + self.district_calls)
 
     def process_points(self, rec: CBRRecord):
-        qso_point = 1
-        if rec.mode == 'CW':
-            qso_point = 3
-        elif rec.mode == 'PH':
-            qso_point = 2
+        try:
+            qso_point = 1
+            if rec.mode == 'CW':
+                qso_point = 3
+            elif rec.mode == 'PH':
+                qso_point = 2
 
-        if rec.rcvd_exch == self.__dok__:
-            qso_point = 0
-        else:
-            self.__rated__ += 1
-            if any((rec.rcvd_exch.upper().startswith('K'),
-                    rec.rcvd_exch.upper() in self.DISTRICT_DOKS + self.VFDB_DOKS,
-                    rec.rcvd_exch.upper() == 'NM')):
-                if rec.rcvd_exch not in self.__multis__:
-                    self.__multis__.append(rec.rcvd_exch)
-                if (rec.call in self.DISTRICT_SPECIAL and
-                        rec.call not in self.__district_calls__):
-                    self.__district_calls__.append(rec.call)
+            if rec.rcvd_exch == self.__dok__:
+                qso_point = 0
             else:
-                log.warning(f'DOK not counted as multi: {rec.rcvd_exch.upper()}')
+                self.__rated__ += 1
+                if any((rec.rcvd_exch.upper().startswith('K'),
+                        rec.rcvd_exch.upper() in self.DISTRICT_DOKS + self.VFDB_DOKS,
+                        rec.rcvd_exch.upper() == 'NM')):
+                    if rec.rcvd_exch not in self.__multis__:
+                        self.__multis__.append(rec.rcvd_exch)
+                    if (rec.call in self.DISTRICT_SPECIAL and
+                            rec.call not in self.__district_calls__):
+                        self.__district_calls__.append(rec.call)
+                else:
+                    log.warning(f'DOK not counted as multi: {rec.rcvd_exch.upper()}')
 
-        self.__points__ += qso_point
+            self.__points__ += qso_point
 
-        self.__header__['CLAIMED-SCORE'] = self.claimed_points
+            self.__header__['CLAIMED-SCORE'] = self.claimed_points
+        except Exception as exc:
+            raise ProcessContestException(str(exc)) from None
+
 
     @property
     def file_name(self) -> str:
@@ -549,6 +565,8 @@ class RLPFALZABUKWLog(ContestLog):
 
 
 class RLPFALZABKWLog(RLPFALZABUKWLog):
+    contest_name = 'RLP Aktivitätsabend KW'
+
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.HIGH,
@@ -556,7 +574,6 @@ class RLPFALZABKWLog(RLPFALZABUKWLog):
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
-
         # if band not in (CategoryBand.B_10M, CategoryBand.B_80M):
         #     log.error(f'Band "{band.name[2:]}" not supported for contest')
 
@@ -564,7 +581,8 @@ class RLPFALZABKWLog(RLPFALZABUKWLog):
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn)
 
-        self.__header__['CONTEST'] = 'RL-PFALZ-AB.KW'
+        self.__header__['CONTEST'] = 'RLP Aktivitaetsabend KW'
+
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
@@ -572,6 +590,8 @@ class RLPFALZABKWLog(RLPFALZABUKWLog):
 
 
 class K32KurzUKWLog(ContestLog):
+    contest_name = 'K32 FM-Kurzaktivität'
+
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.B,
@@ -587,8 +607,6 @@ class K32KurzUKWLog(ContestLog):
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn)
 
-        self.__header__['CONTEST'] = 'K32-KURZ-UKW'
-
         self.__dok__ = specific
 
         self.__multis__ = []
@@ -596,20 +614,20 @@ class K32KurzUKWLog(ContestLog):
         self.__xl_wb__: openpyxl.Workbook = None
         self.__out_path__ = ''
 
-    def check_band(self, adif_rec: dict[str,str]) -> bool:
+    def check_band(self, adif_rec: dict[str, str]) -> bool:
         if adif_rec['BAND'].lower() not in ('2m', '70cm'):
             log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].lower()}" does not match with '
-                           f'contest bands 2m / 70cm ')
+                        f'contest bands 2m / 70cm ')
             if self.__skip_warn__:
                 return False
         return True
 
-    def open_file(self, path:str= os.path.curdir):
+    def open_file(self, path: str = os.path.curdir):
         self.__out_path__ = path
 
         templ_path = os.path.join(os.path.split(__file__)[0], 'data/Logvorlage_V1_FM_K32.xlsx')
         self.__xl_wb__ = openpyxl.open(templ_path)
-        self.__xl_wb__.properties.title = 'Log K32 FM Kurzaktivität'
+        self.__xl_wb__.properties.title = self.contest_name
         self.__xl_wb__.properties.description = self.__header__['CREATED-BY']
         self.__xl_wb__.properties.creator = self.__header__['NAME']
 
@@ -678,24 +696,31 @@ class K32KurzUKWLog(ContestLog):
         return self.points * self.multis
 
     def process_points(self, rec: CBRRecord):
-        r_dok, r_pwr = rec.rcvd_exch.split(',')
-        r_dok = r_dok.strip()
-        r_pwr = r_pwr.strip()
+        try:
+            r_dok, r_pwr = rec.rcvd_exch.split(',')
+            r_dok = r_dok.strip()
+            r_pwr = r_pwr.strip()
+        except Exception:
+            raise ProcessContestException(
+                f'Error on processing received exchange "{rec.rcvd_exch}" for {rec.call} at {rec.date} {rec.time}') from None
 
-        qso_point = 2
-        if r_pwr == self.__header__['CATEGORY-POWER'] and r_pwr == CategoryPower.A.name:
-            qso_point = 3
-        elif r_pwr == self.__header__['CATEGORY-POWER'] and r_pwr == CategoryPower.C.name:
-            qso_point = 1
+        try:
+            qso_point = 2
+            if r_pwr == self.__header__['CATEGORY-POWER'] and r_pwr == CategoryPower.A.name:
+                qso_point = 3
+            elif r_pwr == self.__header__['CATEGORY-POWER'] and r_pwr == CategoryPower.C.name:
+                qso_point = 1
 
-        self.__rated__ += 1
+            self.__rated__ += 1
 
-        if r_dok not in self.__multis__:
-            self.__multis__.append(r_dok)
+            if r_dok not in self.__multis__:
+                self.__multis__.append(r_dok)
 
-        self.__points__ += qso_point
+            self.__points__ += qso_point
 
-        self.__header__['CLAIMED-SCORE'] = self.claimed_points
+            self.__header__['CLAIMED-SCORE'] = self.claimed_points
+        except Exception as exc:
+            raise ProcessContestException(str(exc)) from None
 
     @property
     def file_name(self) -> str:
@@ -724,3 +749,6 @@ CONTESTS: dict[str, Type[ContestLog]] = {
     'RL-PFALZ-AB.KW': RLPFALZABKWLog,
     'K32-KURZ-UKW': K32KurzUKWLog,
 }
+
+CONTEST_NAMES = dict(zip(CONTESTS.keys(), [c.contest_name for c in CONTESTS.values()]))
+CONTEST_IDS = dict(zip([c.contest_name for c in CONTESTS.values()], CONTESTS.keys()))
