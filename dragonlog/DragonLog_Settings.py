@@ -222,6 +222,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 cap, able = ln.split(':')
                 if able.strip() == 'Y':
                     self.rig_caps.append(cap[4:].lower())
+        self.log.info(f'Rig capabilities {self.rig_caps}')
 
     # noinspection PyUnresolvedReferences
     def ctrlRigctld(self, start):
