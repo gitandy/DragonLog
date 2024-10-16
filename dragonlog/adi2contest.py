@@ -72,7 +72,7 @@ class CategoryBand(Enum):
     B_10M = auto()
     B_2M = auto()
     B_432 = auto()
-    B_2M_70CM = auto()
+    B_70CM = auto()
 
 
 class CategoryOperator(Enum):
@@ -267,12 +267,13 @@ class ContestLog:
         try:
             rec = self.build_record(adif_rec)
 
-            self.process_points(rec)
-            self.__qsos__.append(rec)
+            if rec:
+                self.process_points(rec)
+                self.__qsos__.append(rec)
 
-            self.__header__['CLAIMED-SCORE'] = self.claimed_points
+                self.__header__['CLAIMED-SCORE'] = self.claimed_points
 
-            log.debug(self.statistics())
+                log.debug(self.statistics())
         except KeyError as exc:
             log.error(f'QSO #{self.__adif_cnt__} could not be processed field {exc} is missing')
 
@@ -600,7 +601,7 @@ class K32KurzUKWLog(ContestLog):
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
 
-        # if band != CategoryBand.B_2M_70CM:
+        # if band not in self.valid_bands():
         #     log.error(f'Band "{band.name[2:]}" not supported for contest')
 
         super().__init__(callsign, name, club, address, email, locator,
@@ -633,6 +634,7 @@ class K32KurzUKWLog(ContestLog):
 
         xl_ws: Worksheet = self.__xl_wb__['Log']
 
+        xl_ws['B3'] = self.__header__['CATEGORY-BAND'].lower()
         xl_ws['B4'] = self.__header__['GRID-LOCATOR']
 
         xl_ws['D1'] = self.__header__['SPECIFIC']
@@ -653,10 +655,11 @@ class K32KurzUKWLog(ContestLog):
                 f'Claimed points: {self.claimed_points}')
 
     def build_record(self, adif_rec) -> CBRRecord:
-        adif_rec['STX_STRING'] = f'{self.__dok__},{self.__header__["CATEGORY-POWER"]}'
-        rec = super().build_record(adif_rec)
+        if adif_rec['BAND'].upper() == self.__header__['CATEGORY-BAND']:
+            adif_rec['STX_STRING'] = f'{self.__dok__},{self.__header__["CATEGORY-POWER"]}'
+            rec = super().build_record(adif_rec)
 
-        return rec
+            return rec
 
     def write_records(self):
         if self.__xl_wb__:
@@ -724,7 +727,7 @@ class K32KurzUKWLog(ContestLog):
 
     @property
     def file_name(self) -> str:
-        return f'{self.__contest_date__}_K32_KURZ_UKW_{self.__header__["CALLSIGN"]}.xlsx'
+        return f'{self.__contest_date__}_K32_KURZ_UKW_{self.__header__["CALLSIGN"]}_{self.__header__["CATEGORY-BAND"]}.xlsx'
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
@@ -732,7 +735,7 @@ class K32KurzUKWLog(ContestLog):
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_2M_70CM,
+        return CategoryBand.B_2M, CategoryBand.B_70CM
 
     @classmethod
     def valid_power(cls) -> tuple[CategoryPower, ...]:
