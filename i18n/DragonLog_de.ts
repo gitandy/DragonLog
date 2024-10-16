@@ -4,52 +4,52 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="130" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="134" />
       <source>at</source>
       <translation>am</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="158" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="162" />
       <source>Error: Callsign missing for QSO</source>
       <translation>Warnung: Call fehlt für QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="183" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="187" />
       <source>Warning: Wrong call format</source>
       <translation>Warnung: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="184" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="188" />
       <source>Error: Wrong call format</source>
       <translation>Fehler: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="185" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="189" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation>Fehler: Kein gültiges QTH/Maidenhead-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="186" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="190" />
       <source>Error: No active event</source>
       <translation>Fehler: Kein aktives Event</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="187" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="191" />
       <source>Error: Unknown prefix</source>
       <translation>Fehler: Unbekanntes Präfix</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="188" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="192" />
       <source>Error: Wrong RST format</source>
       <translation>Fehler: Kein gültiges RST-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="189" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="193" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation>Warnung: Call fehlt für letztes QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="190" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="194" />
       <source>Last QSO cached</source>
       <translation>Letztes QSO</translation>
     </message>
@@ -1809,56 +1809,56 @@ Siehe Anwendungslog für Details</translation>
       <translation>Fehler</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="305" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="304" />
       <location filename="..\dragonlog\DragonLog_QSOForm.py" line="221" />
       <source>rigctld timeout</source>
       <translation>rigctld Zeitüberschreitung</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="393" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="392" />
       <source>Station</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="396" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="395" />
       <source>Identity</source>
       <translation>ID</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="402" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="401" />
       <source>Configured station</source>
       <translation>Konfigurierte Station</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="405" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="404" />
       <source>Configured identity</source>
       <translation>Konfigurierte ID</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="874" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="866" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="873" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="865" />
       <source>Callbook search error</source>
       <translation>Fehler bei der Rufzeichensuche</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="867" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="866" />
       <source>Login failed for user</source>
       <translation>Login fehlgeschlagen für Benutzer</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="870" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="869" />
       <source>Callbook search result</source>
       <translation>Callbook-Suchergebnis</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="871" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="870" />
       <source>Callsign not found</source>
       <translation>Rufzeichen nicht gefunden</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="875" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="874" />
       <source>During callbook search an error occured</source>
       <translation>Während der Rufzeichensuche ist ein Fehler aufgetreten</translation>
     </message>
@@ -2286,22 +2286,22 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <translation>Verstecke Spalten</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="284" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="285" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="120" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="287" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="275" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="266" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="288" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="276" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="267" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="124" />
       <source>Hamlib</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="287" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="266" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="288" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="267" />
       <location filename="..\dragonlog\DragonLog_Settings.py" line="124" />
       <source>inactiv</source>
       <translation>inaktiv</translation>
@@ -2327,55 +2327,55 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <translation>rigctld ist nicht verfügbar</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="286" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="265" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="247" />
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="233" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="287" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="266" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="248" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="234" />
       <source>Start hamlib</source>
       <translation>Starte Hamlib</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="242" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
       <source>CAT settings error</source>
       <translation>CAT-Einstellungen Fehler</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="243" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="244" />
       <source>CAT configuration was never saved or a parameter is missing</source>
       <translation>CAT-Einstellung wurd noch nie gespeichert or Parameter fehlen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="262" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="263" />
       <source>rigctld did not start properly</source>
       <translation>rigctld konnte nicht gestartet werden</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="270" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="271" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="272" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="273" />
       <source>Stop hamlib</source>
       <translation>Stoppe Hamlib</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="275" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="276" />
       <source>activ</source>
       <translation>aktiv</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="312" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="313" />
       <source>Choose Country data file</source>
       <translation>Datei mit Länderdaten wählen</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="346" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="347" />
       <source>Date/Time start</source>
       <translation>Datum/Zeit Start</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="350" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="351" />
       <source>Show all</source>
       <translation>zeige alle</translation>
     </message>

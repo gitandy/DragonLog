@@ -60,7 +60,9 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.rstRXLineEdit.setText(qso.get('RST_RCVD', ''))
         self.rstTXLineEdit.setText(qso.get('RST_SENT', ''))
         self.nameLineEdit.setText(qso.get('NAME', ''))
-        self.freqLineEdit.setText(qso.get('FREQ', ''))
+
+        freq = f'{float(qso.get("FREQ", "0")) * 1000:.3f}'.rstrip('0').rstrip('.')
+        self.freqLineEdit.setText('' if freq == '0' else freq)
         self.pwrLineEdit.setText(qso.get('TX_POWER', ''))
         self.qslLineEdit.setText(qso.get('QSL_RCVD', ''))
         self.commentLineEdit.setText(qso.get('COMMENT', ''))
@@ -91,10 +93,12 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
     def setQSO(self, call: str, band: str, freq: float):
         self.evaluate(f'{call} ')
         self.evaluate(f'{band} ')
-        self.evaluate(f'{freq:.3f}f ')
+        freq_s = f'{freq:0.3f}'.rstrip('0').rstrip('.')
+        self.evaluate(f'{freq_s}f ')
 
     def setFrequency(self, freq: float):
-        self.evaluate(f'{freq:.3f}f ')
+        freq_s = f'{freq:0.3f}'.rstrip('0').rstrip('.')
+        self.evaluate(f'{freq_s}f ')
 
     def setBand(self, band: str):
         self.evaluate(f'{band} ')

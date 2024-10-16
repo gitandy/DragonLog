@@ -1128,7 +1128,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('mode')):
                 record['MODE'] = query.value(self.__sql_cols__.index('mode'))
             if query.value(self.__sql_cols__.index("freq")):
-                record['FREQ'] = f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.3f}'
+                record['FREQ'] = f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.6f}'.rstrip('0').rstrip('.')
             if query.value(self.__sql_cols__.index('power')):
                 record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
             if query.value(self.__sql_cols__.index('own_callsign')):

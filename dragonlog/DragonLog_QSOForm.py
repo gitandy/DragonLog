@@ -188,7 +188,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         else:
             self.refreshTime()
 
-    def setQSO(self, call:str, band:str, freq:float):
+    def setQSO(self, call: str, band: str, freq: float):
         if self.settings_form.isRigctldActive():
             self.setRigFreq(freq)
         else:
@@ -199,9 +199,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.callSignChanged(call)
 
     def setRigFreq(self, freq):
-        self.sendToRig(f'set_freq {int(freq*1000)}')
+        self.sendToRig(f'set_freq {int(freq * 1000)}')
 
-    def sendToRig(self, cmd:str):
+    def sendToRig(self, cmd: str):
         if not self.settings_form.isRigctldActive():
             return
 
@@ -298,7 +298,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                 try:
                                     pwr = int(int(pwr_s) / 1000 + .9)
                                     self.rigPowerChanged.emit(pwr)
-                                    #self.log.info(f'CAT changed power to {pwr} W')
                                 except Exception:
                                     pass
                     except socket.timeout:
