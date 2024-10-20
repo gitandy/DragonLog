@@ -1382,78 +1382,78 @@ See log for detail</source>
   <context>
     <name>DxSpots</name>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="205" />
+      <location filename="..\dragonlog\DxSpots.py" line="222" />
       <source>Spotter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="206" />
+      <location filename="..\dragonlog\DxSpots.py" line="223" />
       <source>Sp.Cnt.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="207" />
+      <location filename="..\dragonlog\DxSpots.py" line="224" />
       <source>Freq.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="208" />
+      <location filename="..\dragonlog\DxSpots.py" line="225" />
       <source>DX Call</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="209" />
+      <location filename="..\dragonlog\DxSpots.py" line="226" />
       <source>Comments</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="210" />
+      <location filename="..\dragonlog\DxSpots.py" line="227" />
       <source>Time</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="211" />
+      <location filename="..\dragonlog\DxSpots.py" line="228" />
       <source>Cont.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="212" />
+      <location filename="..\dragonlog\DxSpots.py" line="229" />
       <source>Band</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="213" />
+      <location filename="..\dragonlog\DxSpots.py" line="230" />
       <source>Country</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="229" />
-      <location filename="..\dragonlog\DxSpots.py" line="226" />
+      <location filename="..\dragonlog\DxSpots.py" line="245" />
+      <location filename="..\dragonlog\DxSpots.py" line="242" />
       <source>- all -</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="266" />
+      <location filename="..\dragonlog\DxSpots.py" line="288" />
       <source>Stop</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="270" />
+      <location filename="..\dragonlog\DxSpots.py" line="292" />
       <source>DX Spot</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="271" />
+      <location filename="..\dragonlog\DxSpots.py" line="293" />
       <source>Error connecting to DX Cluster</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="276" />
+      <location filename="..\dragonlog\DxSpots.py" line="298" />
       <source>Start</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="297" />
+      <location filename="..\dragonlog\DxSpots.py" line="319" />
       <source>- unknown -</source>
       <translation type="unfinished" />
     </message>
@@ -2197,6 +2197,34 @@ This is not the QSL manager/bureau address.</source>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Clear</source>
       <translation />
+    </message>
+  </context>
+  <context>
+    <name>RigControl</name>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="100" />
+      <source>Error executing rigctld</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="107" />
+      <source>rigctld is not available</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="316" />
+      <location filename="..\dragonlog\RigControl.py" line="306" />
+      <location filename="..\dragonlog\RigControl.py" line="285" />
+      <location filename="..\dragonlog\RigControl.py" line="260" />
+      <location filename="..\dragonlog\RigControl.py" line="238" />
+      <source>Error</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="326" />
+      <location filename="..\dragonlog\RigControl.py" line="243" />
+      <source>rigctld timeout</source>
+      <translation type="unfinished" />
     </message>
   </context>
   <context>

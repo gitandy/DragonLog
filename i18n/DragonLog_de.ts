@@ -1387,78 +1387,78 @@ Siehe Anwendungslog für Details</translation>
   <context>
     <name>DxSpots</name>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="205" />
+      <location filename="..\dragonlog\DxSpots.py" line="222" />
       <source>Spotter</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="206" />
+      <location filename="..\dragonlog\DxSpots.py" line="223" />
       <source>Sp.Cnt.</source>
       <translation>Sp.Kont.</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="207" />
+      <location filename="..\dragonlog\DxSpots.py" line="224" />
       <source>Freq.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="208" />
+      <location filename="..\dragonlog\DxSpots.py" line="225" />
       <source>DX Call</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="209" />
+      <location filename="..\dragonlog\DxSpots.py" line="226" />
       <source>Comments</source>
       <translation>Kommentar</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="210" />
+      <location filename="..\dragonlog\DxSpots.py" line="227" />
       <source>Time</source>
       <translation>Zeit</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="211" />
+      <location filename="..\dragonlog\DxSpots.py" line="228" />
       <source>Cont.</source>
       <translation>Kont.</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="212" />
+      <location filename="..\dragonlog\DxSpots.py" line="229" />
       <source>Band</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="213" />
+      <location filename="..\dragonlog\DxSpots.py" line="230" />
       <source>Country</source>
       <translation>Land</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="229" />
-      <location filename="..\dragonlog\DxSpots.py" line="226" />
+      <location filename="..\dragonlog\DxSpots.py" line="245" />
+      <location filename="..\dragonlog\DxSpots.py" line="242" />
       <source>- all -</source>
       <translation>- Alle -</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="266" />
+      <location filename="..\dragonlog\DxSpots.py" line="288" />
       <source>Stop</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="270" />
+      <location filename="..\dragonlog\DxSpots.py" line="292" />
       <source>DX Spot</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="271" />
+      <location filename="..\dragonlog\DxSpots.py" line="293" />
       <source>Error connecting to DX Cluster</source>
       <translation>Fehler beim Verbinden mit DX-Cluster</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="276" />
+      <location filename="..\dragonlog\DxSpots.py" line="298" />
       <source>Start</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DxSpots.py" line="297" />
+      <location filename="..\dragonlog\DxSpots.py" line="319" />
       <source>- unknown -</source>
       <translation>- Unbekannt -</translation>
     </message>
@@ -2203,6 +2203,62 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Clear</source>
       <translation>Zurücksetzen</translation>
+    </message>
+  </context>
+  <context>
+    <name>RigControl</name>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="100" />
+      <source>Error executing rigctld</source>
+      <translation type="unfinished">Fehler beim Ausführen von rigctld</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="107" />
+      <source>rigctld is not available</source>
+      <translation type="unfinished">rigctld ist nicht verfügbar</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="316" />
+      <location filename="..\dragonlog\RigControl.py" line="306" />
+      <location filename="..\dragonlog\RigControl.py" line="285" />
+      <location filename="..\dragonlog\RigControl.py" line="260" />
+      <location filename="..\dragonlog\RigControl.py" line="238" />
+      <source>Error</source>
+      <translation type="unfinished">Fehler</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\RigControl.py" line="326" />
+      <location filename="..\dragonlog\RigControl.py" line="243" />
+      <source>rigctld timeout</source>
+      <translation type="unfinished">rigctld Zeitüberschreitung</translation>
+    </message>
+    <message>
+      <source>Start hamlib</source>
+      <translation type="vanished">Starte Hamlib</translation>
+    </message>
+    <message>
+      <source>CAT settings error</source>
+      <translation type="vanished">CAT-Einstellungen Fehler</translation>
+    </message>
+    <message>
+      <source>CAT configuration was never saved or a parameter is missing</source>
+      <translation type="vanished">CAT-Einstellung wurd noch nie gespeichert or Parameter fehlen</translation>
+    </message>
+    <message>
+      <source>rigctld did not start properly</source>
+      <translation type="vanished">rigctld konnte nicht gestartet werden</translation>
+    </message>
+    <message>
+      <source>inactiv</source>
+      <translation type="vanished">inaktiv</translation>
+    </message>
+    <message>
+      <source>Stop hamlib</source>
+      <translation type="vanished">Stoppe Hamlib</translation>
+    </message>
+    <message>
+      <source>activ</source>
+      <translation type="vanished">aktiv</translation>
     </message>
   </context>
   <context>

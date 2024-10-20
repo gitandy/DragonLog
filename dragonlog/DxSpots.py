@@ -50,25 +50,42 @@ class DxCluster(QtCore.QThread):
 
     def __connect__(self):
         self.__socket__.connect(self.__address__)
-        data = self.__socket__.recv(1024).decode()
-        self.log.debug('Received login request')
-        if data.startswith('login:'):
+        self.__socket__.settimeout(.1)
+        data = ''
+        login_rcvd = False
+        t_start = time.time()
+        while not login_rcvd and time.time() - t_start < 2000:
+            try:
+                data += self.__socket__.recv(1024).replace(b'\r', b'').decode()
+                if data.endswith('login: '):
+                    login_rcvd = True
+            except TimeoutError:
+                pass
+
+        if login_rcvd:
+            self.log.debug('Received login request')
+            login_rcvd = True
             self.__socket__.sendall(f'{self.__callsign__}\n'.encode())
-            data = self.__socket__.recv(1024).decode()
-            if data.startswith('Hello'):
-                self.__is_connected__ = True
-                self.log.info(
-                    f'Loggedin to DX cluster {self.__address__[0]}:{self.__address__[1]} as {self.__callsign__}')
-                for dt in data.split('\n'):
-                    if dt.startswith('New mail has arrived for you'):
-                        self.newMailReceived.emit(dt.strip())
-                        break
-                self.__socket__.settimeout(.1)
-            elif data.startswith(f'Sorry {self.__callsign__} is an invalid callsign'):
-                raise Exception(f'Login error with call "{self.__callsign__}": valid callsign required')
-            else:
-                self.log.debug(data)
-                raise Exception(f'Login failed to DX cluster {self.__address__[0]}:{self.__address__[1]}')
+
+            try:
+                data = self.__socket__.recv(1024).decode()
+                if data.startswith('Hello'):
+                    self.__is_connected__ = True
+                    self.log.info(
+                        f'Loggedin to DX cluster {self.__address__[0]}:{self.__address__[1]} as {self.__callsign__}')
+                    for dt in data.split('\n'):
+                        if dt.startswith('New mail has arrived for you'):
+                            self.newMailReceived.emit(dt.strip())
+                            break
+                elif data.startswith('Sorry'):
+                    raise Exception(f'Login error with call "{self.__callsign__}": valid callsign required')
+                else:
+                    self.log.debug(data)
+                    raise Exception(f'Login failed to DX cluster {self.__address__[0]}:{self.__address__[1]}')
+            except TimeoutError:
+                pass
+        else:
+            raise Exception(f'Connection failed to DX cluster {self.__address__[0]}:{self.__address__[1]}')
 
     @property
     def isConnected(self) -> bool:
@@ -84,11 +101,11 @@ class DxCluster(QtCore.QThread):
         self.log.debug('Diconnected from cluster')
 
     def run(self):
-        self.__socket__.sendall(b'show/dx 10 real\nset/dx\n')  #
+        self.__socket__.sendall(b'show/dx 10 real\nset/dx\n')
         while self.__receive__:
             try:
-                data = self.__socket__.recv(1024).decode()
-                for dt in data.strip().split('\n'):  # For show/dx
+                data = self.__socket__.recv(1024).replace(b'\r', b'').decode()
+                for dt in reversed(data.strip().split('\n')):
                     if dt.startswith('DX de'):
                         # DX de S52WW:     14268.0  SK6BA        USB                            0636Z
                         self.spotReceived.emit(dt.strip())
@@ -201,7 +218,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
         self.__refresh_timer__ = QtCore.QTimer(self)
 
-        header = [
+        self.header = [
             self.tr('Spotter'),
             self.tr('Sp.Cnt.'),
             self.tr('Freq.'),
@@ -214,12 +231,11 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         ]
 
         self.tableModel = FlagsTableModel(self, dragonlog, 8)
-        self.filterModel = DxSpotsFilterProxy(self, len(header))
+        self.filterModel = DxSpotsFilterProxy(self, len(self.header))
         self.filterModel.setSourceModel(self.tableModel)
         self.tableView.setModel(self.filterModel)
 
-        self.tableModel.setHorizontalHeaderLabels(header)
-        self.tableView.resizeColumnsToContents()
+        self.clear()
 
         bands: list = self.__settings__.value('ui/show_bands', list(dragonlog.bands.keys()))
         bands.pop(bands.index('11m'))
@@ -234,6 +250,11 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.load_cty(self.__settings__.value('dx_spots/cty_data', ''))
 
         self.dxc = None
+
+    def clear(self):
+        self.tableModel.clear()
+        self.tableModel.setHorizontalHeaderLabels(self.header)
+        self.tableView.resizeColumnsToContents()
 
     def load_cty(self, cty_path: str):
         try:
@@ -261,6 +282,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
                                      self.__settings__.value('dx_spots/address', 'hamqth.com'),
                                      int(self.__settings__.value('dx_spots/port', 7300)),
                                      dx_call if dx_call else self.__settings__.value('station/callSign', ''))
+                self.clear()
                 self.dxc.spotReceived.connect(self.processSpot)
                 self.dxc.start()
                 self.startPushButton.setText(self.tr('Stop'))
