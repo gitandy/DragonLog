@@ -1,9 +1,10 @@
 import os
-import re
 from enum import Enum, auto
 import logging
 from dataclasses import dataclass
 from typing import Type
+
+from .RegEx import *
 
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
@@ -119,12 +120,8 @@ class ProcessContestException(Exception):
 class ContestLog:
     contest_name = 'Contest'
 
-    REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])')
+    REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])?')
     REGEX_DATE = re.compile(r'([1-9][0-9]{3})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-2]))')
-    REGEX_CALL = re.compile(
-        r'([a-zA-Z0-9]{1,3}?/)?([a-zA-Z0-9]{1,3}?[0-9][a-zA-Z0-9]{0,3}?[a-zA-Z])(/[aAmMpPrRtT]{1,2}?)?')
-    REGEX_RSTFIELD = re.compile(r'([1-5][1-9][1-9aAcCkKmMsSxX]?)|([-+]?[0-9]{1,2})')
-    REGEX_LOCATOR = re.compile(r'[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)?')
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -168,7 +165,6 @@ class ContestLog:
 
         self.__out_file__ = None
 
-
     def __init_header__(self, callsign, name, club, address, email, locator,
                         band: CategoryBand, mode: CategoryMode,
                         pwr: CategoryPower = CategoryPower.HIGH,
@@ -177,9 +173,9 @@ class ContestLog:
                         tx: CategoryTransmitter = CategoryTransmitter.ONE,
                         operators: list[str] = None, specific=''):
 
-        if not self.check_format(self.REGEX_CALL, callsign):
+        if not check_format(REGEX_CALL, callsign):
             log.error(f'Callsign "{callsign}" does not match call format')
-        if not self.check_format(self.REGEX_LOCATOR, locator):
+        if not check_format(REGEX_LOCATOR, locator):
             log.error(f'Locator "{locator}" does not match locator format')
 
         self.__header__['CONTEST'] = self.contest_name
@@ -201,14 +197,6 @@ class ContestLog:
 
     def set_created_by(self, program_name: str):
         self.__header__['CREATED-BY'] = program_name
-
-    @staticmethod
-    def check_format(exp: re.Pattern, txt: str) -> bool:
-        """Test the given text against a regular expression
-        :param exp: a compiled pattern
-        :param txt: a text
-        :return: True if pattern matches"""
-        return bool(re.fullmatch(exp, txt))
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if (adif_rec['BAND'].upper() != self.__header__['CATEGORY-BAND'] and
@@ -239,27 +227,27 @@ class ContestLog:
             if self.__skip_warn__:
                 return
 
-        if not self.check_format(self.REGEX_CALL, adif_rec['CALL']):
+        if not check_format(REGEX_CALL, adif_rec['CALL']):
             log.warning(f'QSO #{self.__adif_cnt__} call "{adif_rec["CALL"]}" does not match call format')
             if self.__skip_warn__:
                 return
 
-        if not self.check_format(self.REGEX_RSTFIELD, adif_rec['RST_RCVD']):
+        if not check_format(REGEX_RSTFIELD, adif_rec['RST_RCVD']):
             log.warning(f'QSO #{self.__adif_cnt__} received RST "{adif_rec["RST_RCVD"]}" does not match RST format')
             if self.__skip_warn__:
                 return
 
-        if not self.check_format(self.REGEX_RSTFIELD, adif_rec['RST_SENT']):
+        if not check_format(REGEX_RSTFIELD, adif_rec['RST_SENT']):
             log.warning(f'QSO #{self.__adif_cnt__} sent RST "{adif_rec["RST_SENT"]}" does not match RST format')
             if self.__skip_warn__:
                 return
 
-        if not self.check_format(self.REGEX_DATE, adif_rec['QSO_DATE']):
+        if not check_format(self.REGEX_DATE, adif_rec['QSO_DATE']):
             log.warning(f'QSO #{self.__adif_cnt__} date "{adif_rec["QSO_DATE"]}" does not match date format')
             if self.__skip_warn__:
                 return
 
-        if not self.check_format(self.REGEX_TIME, adif_rec['TIME_ON']):
+        if not check_format(self.REGEX_TIME, adif_rec['TIME_ON']):
             log.warning(f'QSO #{self.__adif_cnt__} time "{adif_rec["TIME_ON"]}" does not match time format')
             if self.__skip_warn__:
                 return
@@ -289,7 +277,7 @@ class ContestLog:
         return CBRRecord(BAND_MAP_CBR[adif_rec['BAND'].lower()],
                          MODE_MAP_CBR[adif_rec['MODE']],
                          date,
-                         adif_rec['TIME_ON'],
+                         adif_rec['TIME_ON'][:4],
                          adif_rec['STATION_CALLSIGN'],
                          adif_rec['RST_SENT'],
                          adif_rec['STX_STRING'] if 'STX_STRING' in adif_rec else adif_rec['STX'],
@@ -546,7 +534,6 @@ class RLPFALZABUKWLog(ContestLog):
             self.__header__['CLAIMED-SCORE'] = self.claimed_points
         except Exception as exc:
             raise ProcessContestException(str(exc)) from None
-
 
     @property
     def file_name(self) -> str:
