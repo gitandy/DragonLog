@@ -281,39 +281,39 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="251" />
-      <location filename="..\dragonlog\ContestDlg.py" line="243" />
-      <location filename="..\dragonlog\ContestDlg.py" line="237" />
+      <location filename="..\dragonlog\ContestDlg.py" line="254" />
+      <location filename="..\dragonlog\ContestDlg.py" line="246" />
+      <location filename="..\dragonlog\ContestDlg.py" line="240" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="238" />
+      <location filename="..\dragonlog\ContestDlg.py" line="241" />
       <source>There were {} errors when processing the contest data</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="240" />
+      <location filename="..\dragonlog\ContestDlg.py" line="243" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="244" />
+      <location filename="..\dragonlog\ContestDlg.py" line="247" />
       <source>Contest data written to</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="245" />
+      <location filename="..\dragonlog\ContestDlg.py" line="248" />
       <source>Claimed points</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="246" />
+      <location filename="..\dragonlog\ContestDlg.py" line="249" />
       <source>Please check the file patiently before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="252" />
+      <location filename="..\dragonlog\ContestDlg.py" line="255" />
       <source>No contest data found for export</source>
       <translation type="unfinished" />
     </message>
@@ -431,6 +431,21 @@
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>11111 Berlin</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Soapbox</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Extra information</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Export path</source>
       <translation type="unfinished" />
     </message>
     <message>

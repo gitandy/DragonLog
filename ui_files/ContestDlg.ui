@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>299</width>
-    <height>500</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -226,6 +226,39 @@
        </property>
       </widget>
      </item>
+     <item row="16" column="1">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0">
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>Soapbox</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1">
+      <widget class="QPlainTextEdit" name="soapPlainTextEdit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Extra information</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -234,7 +267,11 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="exportPathLineEdit"/>
+      <widget class="QLineEdit" name="exportPathLineEdit">
+       <property name="placeholderText">
+        <string>Export path</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QToolButton" name="choosePathToolButton">
