@@ -218,10 +218,10 @@ class ContestLog:
                             f'"{self.__header__["CONTEST"]}". Skipping.')
                 return
 
-        if not self.check_band(adif_rec):
+        if self.__header__['CATEGORY-BAND'] != 'ALL' and not self.check_band(adif_rec):
             return
 
-        if adif_rec['MODE'].upper() != self.__header__['CATEGORY-MODE']:
+        if self.__header__['CATEGORY-MODE'] != 'MIXED' and adif_rec['MODE'].upper() != self.__header__['CATEGORY-MODE']:
             log.warning(f'QSO #{self.__adif_cnt__} mode "{adif_rec["MODE"].upper()}" does not match with '
                         f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
             if self.__skip_warn__:
