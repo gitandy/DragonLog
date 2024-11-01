@@ -386,10 +386,6 @@ class ContestLog:
     def is_single_day(cls) -> bool:
         return True
 
-    @classmethod
-    def contest_name(cls) -> str:
-        return cls.contest_name
-
 # class WAGLog(ContestLog):
 #     def __init__(self, callsign, name, club, address, email, locator,
 #                  band: CategoryBand, mode: CategoryMode,
@@ -469,10 +465,6 @@ class RLPFALZABUKWLog(ContestLog):
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
-
-        # if band not in (CategoryBand.B_432, CategoryBand.B_2M):
-        #     log.error(f'Band "{band.name[2:]}" not supported for contest')
-
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn)
@@ -562,15 +554,11 @@ class RLPFALZABKWLog(RLPFALZABUKWLog):
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
-        # if band not in (CategoryBand.B_10M, CategoryBand.B_80M):
-        #     log.error(f'Band "{band.name[2:]}" not supported for contest')
-
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn)
 
         self.__header__['CONTEST'] = 'RLP Aktivitaetsabend KW'
-
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
@@ -587,10 +575,6 @@ class K32KurzUKWLog(ContestLog):
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
-
-        # if band not in self.valid_bands():
-        #     log.error(f'Band "{band.name[2:]}" not supported for contest')
-
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn)
