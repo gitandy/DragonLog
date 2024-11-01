@@ -287,6 +287,9 @@ class ContestLog:
                          '0'
                          )
 
+    def add_soapbox(self, txt: str):
+        self.__header__['SOAPBOX'] = str(txt)
+
     def open_file(self, path: str = os.path.curdir):
         self.__out_file__ = open(os.path.join(path, self.file_name), 'w')
 
@@ -335,9 +338,9 @@ class ContestLog:
         yield 'START-OF-LOG: 3.0'
 
         for k in self.__header__:
-            if k == 'ADDRESS' and self.__header__[k]:
-                for a in self.__header__[k].split('\n'):
-                    yield f'{k}: {a}'
+            if k in ('ADDRESS', 'SOAPBOX') and self.__header__[k]:
+                for l in self.__header__[k].split('\n'):
+                    yield f'{k}: {l}'
             elif self.__header__[k]:
                 yield f'{k}: {self.__header__[k]}'
 

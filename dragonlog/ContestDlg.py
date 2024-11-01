@@ -218,6 +218,9 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            specific=self.specificLineEdit.text())
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
+        if self.soapPlainTextEdit.toPlainText().strip():
+            contest.add_soapbox(self.soapPlainTextEdit.toPlainText().strip())
+
         if doc['RECORDS']:
             try:
                 errors = 0

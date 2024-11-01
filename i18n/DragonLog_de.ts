@@ -281,39 +281,39 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="251" />
-      <location filename="..\dragonlog\ContestDlg.py" line="243" />
-      <location filename="..\dragonlog\ContestDlg.py" line="237" />
+      <location filename="..\dragonlog\ContestDlg.py" line="254" />
+      <location filename="..\dragonlog\ContestDlg.py" line="246" />
+      <location filename="..\dragonlog\ContestDlg.py" line="240" />
       <source>Contest Export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="238" />
+      <location filename="..\dragonlog\ContestDlg.py" line="241" />
       <source>There were {} errors when processing the contest data</source>
       <translation>Beim Verarbeiten der Contest-Daten traten {} Fehler auf</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="240" />
+      <location filename="..\dragonlog\ContestDlg.py" line="243" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation>Der Export wurde durchgeführt. Bitte Überprüfen Sie das Anwendungslog vor dem Senden!</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="244" />
+      <location filename="..\dragonlog\ContestDlg.py" line="247" />
       <source>Contest data written to</source>
       <translation>Contest-Export geschrieben nach</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="245" />
+      <location filename="..\dragonlog\ContestDlg.py" line="248" />
       <source>Claimed points</source>
       <translation>Beanspruchte Punkte</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="246" />
+      <location filename="..\dragonlog\ContestDlg.py" line="249" />
       <source>Please check the file patiently before sending!</source>
       <translation>Bitte prüfen Sie die Datei  vor dem Versenden sorgfältig!</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="252" />
+      <location filename="..\dragonlog\ContestDlg.py" line="255" />
       <source>No contest data found for export</source>
       <translation>Keine Contest-Daten verfügbar</translation>
     </message>
@@ -432,6 +432,21 @@
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>11111 Berlin</source>
       <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Soapbox</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Extra information</source>
+      <translation>Zusatzinformation</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Export path</source>
+      <translation>Exportpfad</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
