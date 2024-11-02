@@ -34,7 +34,7 @@ BAND_MAP_CBR = {
     # '': '222',
     '70cm': '432',
     # '': '902',
-    # '': '1.2G',
+    '23cm': '1.2G',
     # '': '2.3G',
     # '': '3.4G',
     # '': '5.7G',
@@ -66,14 +66,18 @@ class CBRRecord:
 
 class CategoryBand(Enum):
     B_ALL = auto()
+    B_160M = auto()
     B_80M = auto()
     B_40M = auto()
     B_20M = auto()
     B_15M = auto()
     B_10M = auto()
+    B_6M = auto()
+    B_4M = auto()
     B_2M = auto()
     B_432 = auto()
     B_70CM = auto()
+    B_23CM = auto()
 
 
 class CategoryOperator(Enum):
@@ -453,13 +457,123 @@ class ContestLog:
 #                 CategoryBand.B_20M, CategoryBand.B_15M, CategoryBand.B_10M)
 
 
-class RLPFALZABUKWLog(ContestLog):
-    contest_name = 'RLP Aktivitätsabend UKW'
-
-    DISTRICT_DOKS = ('AJWK', 'DVK', '75K', 'RP', 'YLK', '70K07')
-    DISTRICT_SPECIAL = ('DQ75RLP', 'DA0RP', 'DF0RLP', 'DF0RPJ', 'DK0RLP',
+class RLPMultis:
+    DOKS_RANGE = [f'K{i:02d}' for i in range(1, 57)]
+    DOKS = [d for d in DOKS_RANGE if d not in ('K20', 'K22', 'K23', 'K35', 'K37', 'K49', 'K51')]
+    DISTRICT_DOKS = ('AJWK', 'DVK', 'RP', 'YLK')
+    DISTRICT_SPECIAL = ('DA0RP', 'DF0RLP', 'DF0RPJ', 'DK0RLP',
                         'DK0YLK', 'DL0K', 'DL0RP', 'DL0YLK', 'DM0K')
     VFDB_DOKS = ('Z11', 'Z22', 'Z74', 'Z77')
+
+
+class RLPFALZAWLog(ContestLog):
+    contest_name = 'RLP Aktivitätswoche'
+
+    def __init__(self, callsign, name, club, address, email, locator,
+                 band: CategoryBand, mode: CategoryMode,
+                 pwr: CategoryPower = CategoryPower.HIGH,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
+                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
+        super().__init__(callsign, name, club, address, email, locator,
+                         band, mode, pwr, cat_operator,
+                         assisted, tx, operators, specific, skip_id, skip_warn)
+
+        self.__header__['CONTEST'] = 'RLP Aktivitaetswoche'
+
+        self.__dok__ = specific
+
+        self.__multis__ = []
+        self.__district_calls__ = []
+
+        self.__points_per_band__ = {}
+
+    @classmethod
+    def is_single_day(cls) -> bool:
+        return False
+
+    def statistics(self) -> str:
+        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
+                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
+                f'Claimed points: {self.claimed_points}')
+
+    def build_record(self, adif_rec) -> CBRRecord:
+        adif_rec['STX_STRING'] = self.__dok__
+        rec = super().build_record(adif_rec)
+        return rec
+
+    @property
+    def multis(self) -> int:
+        return len(self.__multis__)
+
+    @property
+    def district_calls(self) -> int:
+        return len(self.__district_calls__)
+
+    @property
+    def claimed_points(self) -> int:
+        return self.points * (self.multis + self.district_calls)
+
+    def process_points(self, rec: CBRRecord):
+        try:
+            qso_point = 1
+            if rec.mode == 'CW':
+                qso_point = 3
+            elif rec.mode == 'PH':
+                qso_point = 2
+
+            if rec.band == BAND_MAP_CBR['23cm']:
+                qso_point *= 2
+
+            if rec.rcvd_exch == self.__dok__:
+                qso_point = 0
+            else:
+                self.__rated__ += 1
+                if any((rec.rcvd_exch.upper() in RLPMultis.DOKS,
+                        rec.rcvd_exch.upper() in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
+                        rec.rcvd_exch.upper() == 'NM')):
+                    if rec.rcvd_exch not in self.__multis__:
+                        self.__multis__.append(rec.rcvd_exch)
+                    if (rec.call in RLPMultis.DISTRICT_SPECIAL and
+                            rec.call not in self.__district_calls__):
+                        self.__district_calls__.append(rec.call)
+                else:
+                    log.warning(f'DOK not counted as multi: {rec.rcvd_exch.upper()}')
+
+            self.__points__ += qso_point
+
+            if rec.band in self.__points_per_band__:
+                self.__points_per_band__[rec.band] += qso_point
+            else:
+                self.__points_per_band__[rec.band] = qso_point
+
+            self.__header__['CLAIMED-SCORE'] = self.claimed_points
+        except Exception as exc:
+            raise ProcessContestException(str(exc)) from None
+
+    @property
+    def file_name(self) -> str:
+        return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["SPECIFIC"]}.cbr'
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB, CategoryMode.FM
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return (CategoryBand.B_ALL, CategoryBand.B_23CM, CategoryBand.B_432,
+                CategoryBand.B_2M, CategoryBand.B_4M, CategoryBand.B_6M,
+                CategoryBand.B_10M, CategoryBand.B_15M, CategoryBand.B_20M,
+                CategoryBand.B_40M, CategoryBand.B_80M, CategoryBand.B_160M)
+
+    @classmethod
+    def descr_specific(cls) -> str:
+        return 'DOK'
+
+
+class RLPFALZABUKWLog(ContestLog):
+    contest_name = 'RLP Aktivitätsabend UKW'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -513,12 +627,12 @@ class RLPFALZABUKWLog(ContestLog):
                 qso_point = 0
             else:
                 self.__rated__ += 1
-                if any((rec.rcvd_exch.upper().startswith('K'),
-                        rec.rcvd_exch.upper() in self.DISTRICT_DOKS + self.VFDB_DOKS,
+                if any((rec.rcvd_exch.upper() in RLPMultis.DOKS,
+                        rec.rcvd_exch.upper() in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
                         rec.rcvd_exch.upper() == 'NM')):
                     if rec.rcvd_exch not in self.__multis__:
                         self.__multis__.append(rec.rcvd_exch)
-                    if (rec.call in self.DISTRICT_SPECIAL and
+                    if (rec.call in RLPMultis.DISTRICT_SPECIAL and
                             rec.call not in self.__district_calls__):
                         self.__district_calls__.append(rec.call)
                 else:
@@ -722,6 +836,7 @@ class K32KurzUKWLog(ContestLog):
 
 CONTESTS: dict[str, Type[ContestLog]] = {
     # 'WAG': WAGLog,
+    'RL-PFALZ-AW': RLPFALZAWLog,
     'RL-PFALZ-AB.UKW': RLPFALZABUKWLog,
     'RL-PFALZ-AB.KW': RLPFALZABKWLog,
     'K32-KURZ-UKW': K32KurzUKWLog,
