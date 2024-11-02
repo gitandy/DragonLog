@@ -6,7 +6,7 @@ import string
 import platform
 from enum import Enum, auto
 import datetime
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Type
 
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
@@ -41,7 +41,7 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
     CommunicationException
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
-from .adi2contest import CONTEST_IDS, CONTEST_NAMES
+from .adi2contest import ContestLog, CONTEST_NAMES, CONTESTS
 
 from . import ColorPalettes
 
@@ -272,6 +272,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_dialog = None
         self.help_sc_dialog = None
         self.help_cc_dialog = None
+        self.help_contest_dialog = None
 
         if ini_file:
             self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
@@ -2126,6 +2127,29 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 help_text = hf.read()
             self.help_cc_dialog = self.createHelpDlg(self.tr("CassipeiaConsole"), help_text)
         self.help_cc_dialog.show()
+
+    def showContestHelp(self):
+        if not self.help_contest_dialog:
+            help_text = '''
+Available Contests
+==================
+
+The table shows all available contests with the last date the contest definition was updated.
+
+The *Year* column shows the year the contest definition is targeted to. 
+If it does not show the current year you should check for a program update.
+
+The *Internal ID* is the ID which is imported or exported in ADIF format. 
+
+| Contest name | Internal ID | Year | Updated |
+|--------------|-------------|------|---------|
+'''
+            for c in CONTESTS:
+                cntst: Type[ContestLog] = CONTESTS[c]
+                help_text += f'| {cntst.contest_name} | {c} | ***{cntst.contest_year}*** | {cntst.contest_update} |\n'
+
+            self.help_contest_dialog = self.createHelpDlg(self.tr("Available Contests"), help_text)
+        self.help_contest_dialog.show()
 
     @property
     def programName(self):

@@ -80,8 +80,9 @@
      <string>Help</string>
     </property>
     <addaction name="actionHelp"/>
-    <addaction name="actionShortcuts"/>
     <addaction name="actionHelpCassiopeiaConsole"/>
+    <addaction name="actionShortcuts"/>
+    <addaction name="actionContests"/>
     <addaction name="separator"/>
     <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
@@ -824,6 +825,15 @@
     <string>Export Contest Log...</string>
    </property>
   </action>
+  <action name="actionContests">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:contest_help.png</normaloff>icons:contest_help.png</iconset>
+   </property>
+   <property name="text">
+    <string>Contests</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1467,6 +1477,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionContests</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showContestHelp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1494,5 +1520,6 @@
   <slot>showShortcuts()</slot>
   <slot>showCCHelp()</slot>
   <slot>exportContestLog()</slot>
+  <slot>showContestHelp()</slot>
  </slots>
 </ui>
