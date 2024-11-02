@@ -2200,34 +2200,6 @@ This is not the QSL manager/bureau address.</source>
     </message>
   </context>
   <context>
-    <name>RigControl</name>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="100" />
-      <source>Error executing rigctld</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="107" />
-      <source>rigctld is not available</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="316" />
-      <location filename="..\dragonlog\RigControl.py" line="306" />
-      <location filename="..\dragonlog\RigControl.py" line="285" />
-      <location filename="..\dragonlog\RigControl.py" line="260" />
-      <location filename="..\dragonlog\RigControl.py" line="238" />
-      <source>Error</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="326" />
-      <location filename="..\dragonlog\RigControl.py" line="243" />
-      <source>rigctld timeout</source>
-      <translation type="unfinished" />
-    </message>
-  </context>
-  <context>
     <name>SelectWidget</name>
     <message>
       <location filename="..\ui_files\SelectWidget.ui" line="0" />

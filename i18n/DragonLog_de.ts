@@ -2206,62 +2206,6 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
     </message>
   </context>
   <context>
-    <name>RigControl</name>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="100" />
-      <source>Error executing rigctld</source>
-      <translation type="unfinished">Fehler beim Ausführen von rigctld</translation>
-    </message>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="107" />
-      <source>rigctld is not available</source>
-      <translation type="unfinished">rigctld ist nicht verfügbar</translation>
-    </message>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="316" />
-      <location filename="..\dragonlog\RigControl.py" line="306" />
-      <location filename="..\dragonlog\RigControl.py" line="285" />
-      <location filename="..\dragonlog\RigControl.py" line="260" />
-      <location filename="..\dragonlog\RigControl.py" line="238" />
-      <source>Error</source>
-      <translation type="unfinished">Fehler</translation>
-    </message>
-    <message>
-      <location filename="..\dragonlog\RigControl.py" line="326" />
-      <location filename="..\dragonlog\RigControl.py" line="243" />
-      <source>rigctld timeout</source>
-      <translation type="unfinished">rigctld Zeitüberschreitung</translation>
-    </message>
-    <message>
-      <source>Start hamlib</source>
-      <translation type="vanished">Starte Hamlib</translation>
-    </message>
-    <message>
-      <source>CAT settings error</source>
-      <translation type="vanished">CAT-Einstellungen Fehler</translation>
-    </message>
-    <message>
-      <source>CAT configuration was never saved or a parameter is missing</source>
-      <translation type="vanished">CAT-Einstellung wurd noch nie gespeichert or Parameter fehlen</translation>
-    </message>
-    <message>
-      <source>rigctld did not start properly</source>
-      <translation type="vanished">rigctld konnte nicht gestartet werden</translation>
-    </message>
-    <message>
-      <source>inactiv</source>
-      <translation type="vanished">inaktiv</translation>
-    </message>
-    <message>
-      <source>Stop hamlib</source>
-      <translation type="vanished">Stoppe Hamlib</translation>
-    </message>
-    <message>
-      <source>activ</source>
-      <translation type="vanished">aktiv</translation>
-    </message>
-  </context>
-  <context>
     <name>SelectWidget</name>
     <message>
       <location filename="..\ui_files\SelectWidget.ui" line="0" />
