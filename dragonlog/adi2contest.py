@@ -123,6 +123,8 @@ class ProcessContestException(Exception):
 
 class ContestLog:
     contest_name = 'Contest'
+    contest_year = '2025'
+    contest_update = '2024-11-02'
 
     REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])?')
     REGEX_DATE = re.compile(r'([1-9][0-9]{3})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-2]))')
@@ -468,6 +470,8 @@ class RLPMultis:
 
 class RLPFALZAWLog(ContestLog):
     contest_name = 'RLP Aktivitätswoche'
+    contest_year = '2025'
+    contest_update = '2024-11-02'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -574,6 +578,8 @@ class RLPFALZAWLog(ContestLog):
 
 class RLPFALZABUKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend UKW'
+    contest_year = '2024'
+    contest_update = '2024-10-07'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -684,6 +690,8 @@ class RLPFALZABKWLog(RLPFALZABUKWLog):
 
 class K32KurzUKWLog(ContestLog):
     contest_name = 'K32 FM-Kurzaktivität'
+    contest_year = '2024'
+    contest_update = '2024-10-16'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
