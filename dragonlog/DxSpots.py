@@ -5,10 +5,7 @@ import json
 import socket
 import logging
 import time
-from audioop import reverse
-from collections.abc import Generator
 
-import requests
 from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import QModelIndex
 from PyQt6.QtGui import QStandardItem
@@ -64,7 +61,6 @@ class DxCluster(QtCore.QThread):
 
         if login_rcvd:
             self.log.debug('Received login request')
-            login_rcvd = True
             self.__socket__.sendall(f'{self.__callsign__}\n'.encode())
 
             try:
@@ -149,12 +145,13 @@ class DxCluster(QtCore.QThread):
         self.__lock__.unlock()
 
 
+# noinspection PyPep8Naming
 class DxSpotsFilterProxy(QtCore.QSortFilterProxyModel):
     def __init__(self, parent, columns: int):
         super().__init__(parent)
 
         self.columns = columns
-        self.filter: dict[int, str] = None
+        self.filter: dict[int, str] | None = None
         self.clearFilter()
 
     def clearFilter(self):
@@ -257,6 +254,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.tableView.resizeColumnsToContents()
 
     def load_cty(self, cty_path: str):
+        # noinspection PyBroadException
         try:
             self.__cty__ = cty.CountryData(cty_path)
             self.log.debug(f'Using country data from "{cty_path}"')

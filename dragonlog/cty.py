@@ -5,7 +5,6 @@ import re
 import csv
 from collections import namedtuple
 from collections.abc import Generator
-from pprint import pprint
 
 Country = namedtuple('Country', ('code', 'name', 'dxcc',
                                  'continent', 'cq', 'itu',
@@ -24,6 +23,7 @@ class CountryData:
     """Loads country data from a cty CSV file
     Provides search for prefix, country code and country data by a given callsign"""
 
+    # noinspection RegExpRedundantEscape
     RE_OVERRIDES = re.compile(r'([A-Z0-9/=]+)(?:\((\d+)\))?(?:\[(\d+)\])?.*')
 
     def __init__(self, cty_file):
@@ -130,7 +130,11 @@ class CountryData:
             yield c.name
 
 
-if __name__ == '__main__':
+def main():
     cty = CountryData('data/cty/cty.csv')
     print(cty.version)
     print(cty.country('VERSION'))
+
+
+if __name__ == '__main__':
+    main()

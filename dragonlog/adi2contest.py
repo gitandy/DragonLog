@@ -12,6 +12,7 @@ from openpyxl.styles import Font
 
 log = logging.getLogger(__name__)
 
+# noinspection SpellCheckingInspection
 MODE_MAP_CBR = {
     'CW': 'CW',
     'SSB': 'PH',
@@ -395,69 +396,6 @@ class ContestLog:
     def is_single_day(cls) -> bool:
         return True
 
-# class WAGLog(ContestLog):
-#     def __init__(self, callsign, name, club, address, email, locator,
-#                  band: CategoryBand, mode: CategoryMode,
-#                  pwr: CategoryPower = CategoryPower.HIGH,
-#                  cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
-#                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-#                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
-#                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
-#
-#         if band not in self.valid_bands():
-#             logger.error(f'Band "{band.name[2:]}" not supported for contest')
-#
-#         super().__init__(callsign, name, club, address, email, locator,
-#                          band, mode, pwr, cat_operator,
-#                          assisted, tx, operators, specific, skip_id, skip_warn)
-#
-#         self.__header__['CONTEST'] = 'WAG'
-#
-#         self.__multis__ = []
-#
-#     @property
-#     def multis(self) -> int:
-#         return len(self.__multis__)
-#
-#     @property
-#     def claimed_points(self) -> int:
-#         return self.points * self.multis
-#
-#     def process_points(self, rec: CBRRecord):
-#         qso_point = 1
-#         if rec.mode == 'CW':
-#             qso_point = 3
-#         elif rec.mode == 'PH':
-#             qso_point = 2
-#
-#         if rec.rcvd_exch == self.__dok__:
-#             qso_point = 0
-#         else:
-#             self.__rated__ += 1
-#             if any((rec.rcvd_exch.upper().startswith('K'),
-#                     rec.rcvd_exch.upper() in self.DISTRICT_DOKS + self.VFDB_DOKS,
-#                     rec.rcvd_exch.upper() == 'NM')):
-#                 if rec.rcvd_exch not in self.__multis__:
-#                     self.__multis__.append(rec.rcvd_exch)
-#                 if (rec.call in self.DISTRICT_SPECIAL and
-#                         rec.call not in self.__district_calls__):
-#                     self.__district_calls__.append(rec.call)
-#             else:
-#                 logger.warning(f'DOK not counted as multi: {rec.rcvd_exch.upper()}')
-#
-#         self.__points__ += qso_point
-#
-#         self.__header__['CLAIMED-SCORE'] = self.claimed_points
-#
-#     @classmethod
-#     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-#         return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB
-#
-#     @classmethod
-#     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-#         return (CategoryBand.B_ALL, CategoryBand.B_80M, CategoryBand.B_40M,
-#                 CategoryBand.B_20M, CategoryBand.B_15M, CategoryBand.B_10M)
-
 
 class RLPMultis:
     DOKS_RANGE = [f'K{i:02d}' for i in range(1, 57)]
@@ -708,7 +646,7 @@ class K32KurzUKWLog(ContestLog):
 
         self.__multis__ = []
 
-        self.__xl_wb__: openpyxl.Workbook = None
+        self.__xl_wb__: openpyxl.Workbook | None = None
         self.__out_path__ = ''
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
@@ -843,7 +781,6 @@ class K32KurzUKWLog(ContestLog):
 
 
 CONTESTS: dict[str, Type[ContestLog]] = {
-    # 'WAG': WAGLog,
     'RL-PFALZ-AW': RLPFALZAWLog,
     'RL-PFALZ-AB.UKW': RLPFALZABUKWLog,
     'RL-PFALZ-AB.KW': RLPFALZABKWLog,

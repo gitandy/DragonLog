@@ -90,7 +90,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.timeTimer = QtCore.QTimer(self)
         self.timeTimer.timeout.connect(self.refreshTime)
 
-        self.worked_dialog: QtWidgets.QListWidget = None
+        self.worked_dialog: QtWidgets.QListWidget | None = None
         self._create_worked_dlg_()
 
         self.callbook_hamqth = HamQTHCallBook(self.logger,
@@ -838,7 +838,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                self.settings_form.callbookPassword(callbook.callbook_type))
                 self.log.info(f'Logged into callbook {callbook.callbook_type.name}')
 
-            data: CallBookData = None
+            data: CallBookData | None = None
             for _ in range(2):
                 try:
                     data = callbook.get_dataset(self.callSignLineEdit.text())

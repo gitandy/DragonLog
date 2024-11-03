@@ -4,7 +4,6 @@ import typing
 import logging
 import platform
 import subprocess
-from optparse import Values
 
 from PyQt6 import QtWidgets, QtCore
 import keyring
@@ -353,7 +352,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         try:
             self.columnsSelectWidget.indexesDisabled = [int(c) for c in self.settings.value('ui/hidden_cols',
                                                                                             '1').split(',')]
-        except ValueError as exc:
+        except ValueError:
             self.logger.exception(f'Reading "ui/hidden_cols": {self.settings.value("ui/hidden_cols","")}')
 
         self.bandsSelectWidget.itemsEnabled = self.settings.value('ui/show_bands', self.bandsSelectWidget.items)
@@ -366,8 +365,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.dxCallLineEdit.setText(dx_call if dx_call else self.settings.value('station/callSign', ''))
         dx_addr = self.settings.value('dx_spots/address', '')
         self.dxAddrLineEdit.setText(dx_addr if dx_addr else 'hamqth.com')
-        dxPort = int(self.settings.value('dx_spots/port', 7300)) if dx_addr else 7300
-        self.dxPortSpinBox.setValue(dxPort if 0 < dxPort <= self.dxPortSpinBox.maximum() else 7300)
+        dx_port = int(self.settings.value('dx_spots/port', 7300)) if dx_addr else 7300
+        self.dxPortSpinBox.setValue(dx_port if 0 < dx_port <= self.dxPortSpinBox.maximum() else 7300)
         self.ctyPathLineEdit.setText(self.settings.value('dx_spots/cty_data', ''))
 
         self.expOwnNotesADIFCheckBox.setChecked(bool(int(self.settings.value('imp_exp/own_notes_adif', 0))))
