@@ -29,7 +29,7 @@ except ImportError:
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
-from .RegEx import find_non_ascii, check_format, REGEX_DATE, check_call
+from .RegEx import find_non_ascii, check_format, REGEX_DATE
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
@@ -180,6 +180,7 @@ def eval_adi_type(prog_id: str) -> ADISourceType:
         return ADISourceType.Other
 
 
+# noinspection PyPep8Naming
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = (
         'id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
@@ -356,6 +357,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         }
 
         self.ascii_replace: dict = {}
+        # noinspection PyBroadException
         try:
             with open(self.searchFile(f'data:i18n/ascii_replace_{QtCore.QLocale.system().name()[:2]}.json'),
                       encoding='utf-8') as arf:
@@ -1048,11 +1050,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             row += 1
 
         # Set auto filter
+        # noinspection PyUnresolvedReferences
         xl_ws.auto_filter.ref = f'A1:{openpyxl.utils.get_column_letter(len(self.__headers__))}1'
 
         # Fit size to content width approximation
         for c, w in zip(range(1, len(col_widths) + 1), col_widths):
             # Add 5 due to Excel filter drop down
+            # noinspection PyUnresolvedReferences
             xl_ws.column_dimensions[openpyxl.utils.get_column_letter(c)].width = w + 5
 
         # Finally save
@@ -1339,7 +1343,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
         if not adif_doc['RECORDS']:
             self.log.info(f'Skipped CB QSO #{qso_id}')
-            return
+            return False
 
         self.log.info(f'Checking eQSL for QSO #{qso_id}...')
 
@@ -2321,6 +2325,7 @@ def main():
 sys._excepthook = sys.excepthook
 
 
+# noinspection PyProtectedMember
 def except_hook(cls, exception, traceback):
     # noinspection PyUnresolvedReferences
     sys._excepthook(cls, exception, traceback)

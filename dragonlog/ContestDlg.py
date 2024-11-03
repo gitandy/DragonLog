@@ -4,7 +4,6 @@ from PyQt6 import QtWidgets, QtCore
 
 from . import ContestDlg_ui
 from .Logger import Logger
-from .RegEx import *
 from .adi2contest import *
 from . import ColorPalettes
 
