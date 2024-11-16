@@ -3,6 +3,7 @@ import csv
 import sys
 import json
 import string
+import zipfile
 import platform
 from enum import Enum, auto
 import datetime
@@ -952,6 +953,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         exp_formats = {
             self.tr('ADIF 3 (*.adi *.adif)'): self.exportADIF,
+            self.tr('ADIF 3 zipped (*.zip)'): self.exportADIF,
             self.tr('ADIF 3 XML (*.adx)'): self.exportADIF,
             self.tr('CSV-File (*.csv)'): self.exportCSV,
         }
@@ -1083,6 +1085,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         self,
                         f'{self.programName} - {self.tr("ADX-Export")}',
                         self.tr('ADX validation detected one or more error(s)\nSee log for detail'))
+            elif os.path.splitext(file)[-1] == '.zip':
+                with zipfile.ZipFile(file, 'w', zipfile.ZIP_DEFLATED) as z_file:
+                    a_zinfo = zipfile.ZipInfo(os.path.splitext(os.path.basename(file))[0]+'.adi',
+                                              tuple(datetime.datetime.now().timetuple())[:6])
+                    with z_file.open(a_zinfo, 'w') as a_file:
+                        a_file.write(adi.dumps(doc, 'ADIF Export by DragonLog').encode())
             else:
                 adi.dump(file, doc, 'ADIF Export by DragonLog')
 
@@ -1593,7 +1601,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 return
 
         imp_formats = {
-            self.tr('ADIF 3 (*.adi *.adif)'): self.logImportADIF,
+            self.tr('ADIF 3 (*.adi *.adif *.zip)'): self.logImportADIF,
             self.tr('ADIF 3 XML (*.adx)'): self.logImportADIF,
             self.tr('CSV-File (*.csv)'): self.logImportCSV,
         }
@@ -1736,7 +1744,26 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if is_adx:
             records: list = adx.load(file)['RECORDS']
         else:
-            adi_doc: dict = adi.load(file)
+            if os.path.splitext(file)[-1] == '.zip':
+                with zipfile.ZipFile(file) as z_file:
+                    adi_fname = ''
+                    for f in z_file.filelist:
+                        if os.path.splitext(f.filename)[-1] == '.adi':
+                            adi_fname = f.filename
+                            break
+                    if adi_fname:
+                        with z_file.open(adi_fname) as a_file:
+                            adi_doc = adi.loads(a_file.read().decode())
+                    else:
+                        self.log.error(f'ADIF import, no .adi file found in "{file}"')
+                        QtWidgets.QMessageBox.critical(
+                            self,
+                            self.tr('Log import ADIF'),
+                            f'ADIF import, no .adi file found in "{file}"'
+                        )
+                        return
+            else:
+                adi_doc = adi.load(file)
 
             if 'HEADER' in adi_doc and 'PROGRAMID' in adi_doc['HEADER']:
                 adi_src_type = eval_adi_type(adi_doc['HEADER']['PROGRAMID'].strip())
