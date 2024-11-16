@@ -97,7 +97,7 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
     """Translate propagation values and status to clear text and fancy icon for status"""
 
     def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict,
-                 freq_col: int, pwr_col: int, dist_col:int):
+                 freq_col: int, pwr_col: int, dist_col: int):
         super(TranslatedTableModel, self).__init__(parent, db_conn)
 
         self.status_cols = status_cols
@@ -931,6 +931,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form.setChangeMode(False)
 
     def export(self):
+        qso_filters = [
+            self.tr('All QSOs'),
+            self.tr('Filtered QSOs'),
+            self.tr('Selected QSOs'),
+        ]
+        qso_filter, ok = QtWidgets.QInputDialog.getItem(self, self.tr('QSO export'),
+                                                        self.tr('Select filter'),
+                                                        qso_filters,
+                                                        self.settings.value('imp_exp/only_recent', 0))
+        if not ok:
+            return
+
+        query_str = self.__db_select_stmnt__
+        if qso_filters.index(qso_filter) == 1:
+            query_str = self.getQueryStr()
+        elif qso_filters.index(qso_filter) == 2:
+            sel_qsos = [str(qso) for qso in self.selectedQSOIds()]
+            query_str = f"SELECT * FROM qsos WHERE id IN ({','.join(sel_qsos)})"
+
         exp_formats = {
             self.tr('ADIF 3 (*.adi *.adif)'): self.exportADIF,
             self.tr('ADIF 3 XML (*.adx)'): self.exportADIF,
@@ -949,13 +968,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if res[0]:
             try:
                 # noinspection PyArgumentList
-                exp_formats[res[1]](res[0])
+                exp_formats[res[1]](res[0], query_str)
             except Exception as exc:
                 self.log.exception(exc)
 
             self.settings.setValue('lastExportDir', os.path.abspath(os.path.dirname(res[0])))
 
-    def exportCSV(self, file: str):
+    def exportCSV(self, file: str, query_str: str):
         self.log.info('Exporting to CSV...')
 
         try:
@@ -966,8 +985,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 writer.writerow(self.__headers__)
 
                 # Write content
-                query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent',
-                                                                      0) else self.__db_select_stmnt__
                 query = self.__db_con__.exec(query_str)
 
                 if query.lastError().text():
@@ -987,7 +1004,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 f'{self.programName} - {self.tr("Error")}',
                 str(e))
 
-    def exportExcel(self, file: str):
+    def exportExcel(self, file: str, query_str: str):
         self.log.info('Exporting to XLSX...')
         xl_wb = openpyxl.Workbook()
         xl_wb.properties.title = self.tr('Exported QSO log')
@@ -1009,7 +1026,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             column += 1
 
         # Write content
-        query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
         query = self.__db_con__.exec(query_str)
         row = 2
         while query.next():
@@ -1052,10 +1068,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         return text
 
-    def exportADIF(self, file: str):
+    def exportADIF(self, file: str, query_str: str):
         self.log.info('Exporting to ADIF...')
 
-        query_str = self.getQueryStr() if self.settings.value('imp_exp/only_recent', 0) else self.__db_select_stmnt__
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
         doc = self._build_adif_export_(query_str, is_adx)
         try:
