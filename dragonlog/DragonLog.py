@@ -769,6 +769,19 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if self.fModeComboBox.currentText():
             filter_set.append(f'mode = "{self.fModeComboBox.currentText()}"')
 
+        if self.fQSLsComboBox.currentIndex() > 0:
+            filter_set.append(f'qsl_sent {"!" if self.fQSLsComboBox.currentIndex() == 2 else ""}= "Y"')
+        if self.fQSLrComboBox.currentIndex() > 0:
+            filter_set.append(f'qsl_rcvd {"!" if self.fQSLrComboBox.currentIndex() == 2 else ""}= "Y"')
+        if self.feQSLsComboBox.currentIndex() > 0:
+            filter_set.append(f'eqsl_sent {"!" if self.feQSLsComboBox.currentIndex() == 2 else ""}= "Y"')
+        if self.feQSLrComboBox.currentIndex() > 0:
+            filter_set.append(f'eqsl_rcvd {"!" if self.feQSLrComboBox.currentIndex() == 2 else ""}= "Y"')
+        if self.fLoTWsComboBox.currentIndex() > 0:
+            filter_set.append(f'lotw_sent {"!" if self.fLoTWsComboBox.currentIndex() == 2 else ""}= "Y"')
+        if self.fLoTWrComboBox.currentIndex() > 0:
+            filter_set.append(f'lotw_rcvd {"!" if self.fLoTWrComboBox.currentIndex() == 2 else ""}= "Y"')
+
         self.__table_filter__ = ' AND '.join(filter_set)
 
         self.setFilter()
@@ -784,6 +797,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.fCallsignLineEdit.clear()
         self.fBandComboBox.setCurrentIndex(0)
         self.fModeComboBox.setCurrentIndex(0)
+        self.fQSLsComboBox.setCurrentIndex(0)
+        self.fQSLrComboBox.setCurrentIndex(0)
+        self.feQSLsComboBox.setCurrentIndex(0)
+        self.feQSLrComboBox.setCurrentIndex(0)
+        self.fLoTWsComboBox.setCurrentIndex(0)
+        self.fLoTWrComboBox.setCurrentIndex(0)
 
     def ctrlHamlib(self, start):
         self.settings_form.ctrlRigctld(start)
