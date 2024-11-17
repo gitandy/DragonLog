@@ -548,6 +548,43 @@
         </layout>
        </item>
        <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Contest</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="fContestComboBox">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1766,6 +1803,22 @@
     <hint type="sourcelabel">
      <x>572</x>
      <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fContestComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTableFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>906</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel">
      <x>642</x>

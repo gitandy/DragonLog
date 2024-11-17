@@ -42,7 +42,7 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
     CommunicationException
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
-from .adi2contest import ContestLog, CONTEST_NAMES, CONTESTS
+from .adi2contest import ContestLog, CONTEST_NAMES, CONTEST_IDS, CONTESTS
 
 from . import ColorPalettes
 
@@ -328,9 +328,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
 
         self.fBandComboBox.insertItem(0, '')
-        self.fModeComboBox.insertItem(0, '')
         self.fBandComboBox.insertItems(1, self.bands.keys())
+        self.fModeComboBox.insertItem(0, '')
         self.fModeComboBox.insertItems(1, self.modes['AFU'].keys())
+        self.fContestComboBox.insertItem(0, '')
+        self.fContestComboBox.insertItems(1, CONTEST_NAMES.values())
 
         self.prop: dict = {
             '': '',
@@ -793,6 +795,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if self.fLoTWrComboBox.currentIndex() > 0:
             filter_set.append(f'lotw_rcvd {"!" if self.fLoTWrComboBox.currentIndex() == 2 else ""}= "Y"')
 
+        if self.fContestComboBox.currentText():
+            cntst_id = self.fContestComboBox.currentText()
+            if cntst_id in CONTEST_IDS:
+                cntst_id = CONTEST_IDS[cntst_id]
+            filter_set.append(f'contest_id = "{cntst_id}"')
+
         self.__table_filter__ = ' AND '.join(filter_set)
 
         self.setFilter()
@@ -814,6 +822,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.feQSLrComboBox.setCurrentIndex(0)
         self.fLoTWsComboBox.setCurrentIndex(0)
         self.fLoTWrComboBox.setCurrentIndex(0)
+        self.fContestComboBox.setCurrentIndex(0)
 
     def ctrlHamlib(self, start):
         self.settings_form.ctrlRigctld(start)
