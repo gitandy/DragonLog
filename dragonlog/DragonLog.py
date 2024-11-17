@@ -15,7 +15,6 @@ from adif_file import adi, adx
 import xmltodict
 import hamcc
 
-
 OPTION_OPENPYXL = False
 try:
     # noinspection PyUnresolvedReferences
@@ -101,7 +100,7 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
     """Translate propagation values and status to clear text and fancy icon for status"""
 
     def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict,
-                 freq_col: int, pwr_col: int, dist_col:int, contest_col:int):
+                 freq_col: int, pwr_col: int, dist_col: int, contest_col: int):
         super(TranslatedTableModel, self).__init__(parent, db_conn)
 
         self.status_cols = status_cols
@@ -1108,7 +1107,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         self.tr('ADX validation detected one or more error(s)\nSee log for detail'))
             elif os.path.splitext(file)[-1] == '.zip':
                 with zipfile.ZipFile(file, 'w', zipfile.ZIP_DEFLATED) as z_file:
-                    a_zinfo = zipfile.ZipInfo(os.path.splitext(os.path.basename(file))[0]+'.adi',
+                    a_zinfo = zipfile.ZipInfo(os.path.splitext(os.path.basename(file))[0] + '.adi',
                                               tuple(datetime.datetime.now().timetuple())[:6])
                     with z_file.open(a_zinfo, 'w') as a_file:
                         a_file.write(adi.dumps(doc, 'ADIF Export by DragonLog').encode())
@@ -2153,7 +2152,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def createHelpDlg(self, title: str, help_text: str):
         help_dialog = QtWidgets.QDialog(self)
         help_dialog.setWindowTitle(f'{self.programName} - {title}')
-        help_dialog.resize(500, 500)
+        help_dialog.setMinimumSize(500, 100)
+        help_dialog.setMaximumSize(500, 500)
+        help_dialog.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum,
+                                  QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         verticalLayout = QtWidgets.QVBoxLayout(help_dialog)
         scrollArea = QtWidgets.QScrollArea(help_dialog)
         scrollArea.setWidgetResizable(True)
