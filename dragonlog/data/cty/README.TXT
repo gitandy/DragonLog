@@ -1,4 +1,4 @@
-BIG cty.dat was released on 27 September 2024.
+BIG cty.dat was released on 05 November 2024.
 
 The following information can be found at:
 
