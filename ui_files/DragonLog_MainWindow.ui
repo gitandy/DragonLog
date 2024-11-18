@@ -73,6 +73,12 @@
     <addaction name="actionDelete_log_entry"/>
     <addaction name="actionChange_log_entry"/>
     <addaction name="separator"/>
+    <addaction name="actionMark_QSL_sent"/>
+    <addaction name="actionUnmark_QSL_sent"/>
+    <addaction name="actionMark_QSL_received"/>
+    <addaction name="actionUnmark_QSL_received"/>
+    <addaction name="actionMark_HamQTH_uploaded"/>
+    <addaction name="separator"/>
     <addaction name="actionWatch_file_for_QSOs"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -1055,6 +1061,66 @@
     <string>Contests</string>
    </property>
   </action>
+  <action name="actionMark_QSL_sent">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:ok.png</normaloff>icons:ok.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mark QSL sent</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+  <action name="actionMark_QSL_received">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:ok.png</normaloff>icons:ok.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mark QSL received</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+R</string>
+   </property>
+  </action>
+  <action name="actionMark_HamQTH_uploaded">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:ok.png</normaloff>icons:ok.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mark HamQTH uploaded</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+U</string>
+   </property>
+  </action>
+  <action name="actionUnmark_QSL_sent">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:no.png</normaloff>icons:no.png</iconset>
+   </property>
+   <property name="text">
+    <string>Unmark QSL sent</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionUnmark_QSL_received">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:no.png</normaloff>icons:no.png</iconset>
+   </property>
+   <property name="text">
+    <string>Unmark QSL received</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -1826,6 +1892,86 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionMark_HamQTH_uploaded</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>markQSO()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMark_QSL_received</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>markQSO()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMark_QSL_sent</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>markQSO()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionUnmark_QSL_received</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>markQSO()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionUnmark_QSL_sent</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>markQSO()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -1854,5 +2000,6 @@
   <slot>showCCHelp()</slot>
   <slot>exportContestLog()</slot>
   <slot>showContestHelp()</slot>
+  <slot>markQSO()</slot>
  </slots>
 </ui>

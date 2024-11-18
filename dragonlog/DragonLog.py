@@ -1339,7 +1339,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                   self.tr('Error on upload') + f':\n"{exc.args[0]}"')
                 break
             finally:
-                self.updateQSOStatus('eqsl_sent', qso_id, eqsl_sent)
+                self.updateQSOField('eqsl_sent', qso_id, eqsl_sent)
 
     def eqslCheckInboxSelected(self):
         for qso_id in self.selectedQSOIds():
@@ -1384,8 +1384,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         except EQSLADIFFieldException as exc:
             self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
         finally:
-            self.updateQSOStatus('eqsl_sent', qso_id, eqsl_sent)
-            self.updateQSOStatus('eqsl_rcvd', qso_id, eqsl_rcvd)
+            self.updateQSOField('eqsl_sent', qso_id, eqsl_sent)
+            self.updateQSOField('eqsl_rcvd', qso_id, eqsl_rcvd)
 
         return True
 
@@ -1550,8 +1550,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                   'lotw/username', '') + f'\n{exc}')
                 break
             finally:
-                self.updateQSOStatus('lotw_sent', qso_id, lotw_sent)
-                self.updateQSOStatus('lotw_rcvd', qso_id, lotw_rcvd)
+                self.updateQSOField('lotw_sent', qso_id, lotw_sent)
+                self.updateQSOField('lotw_rcvd', qso_id, lotw_rcvd)
 
     def uploadToHamQTH(self):
         logbook = None
@@ -1597,20 +1597,50 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                               self.tr('An error occured on uploading to HamQTH') + f':\n"{exc}"')
                 break
             finally:
-                self.updateQSOStatus('hamqth', qso_id, state)
+                self.updateQSOField('hamqth', qso_id, state)
 
-    def updateQSOStatus(self, name, qso_id, state):
-        if name in self.__sql_cols__:
-            self.log.debug(f'Updating status {name} for QSO #{qso_id} to {state}...')
+    def updateQSOField(self, field: str, qso_id: int, value: str):
+        """Update a single QSO field
+        :param field: the SQLite column name
+        :param qso_id: the QSO Id
+        :param value: the new content"""
+
+        if field in self.__sql_cols__:
+            self.log.debug(f'Updating {field} for QSO #{qso_id} to {value}...')
             query = QtSql.QSqlQuery(self.__db_con__)
-            query.prepare(f'UPDATE qsos SET {name}=? WHERE id = ?')
-            query.bindValue(0, state)
+            query.prepare(f'UPDATE qsos SET {field}=? WHERE id = ?')
+            query.bindValue(0, value)
             query.bindValue(1, qso_id)
             query.exec()
             if query.lastError().text():
                 self.log.error(query.lastError().text())
             self.__db_con__.commit()
             self.refreshTableView(sort=False)
+
+    def markQSO(self):
+        actions = {
+            self.actionMark_QSL_sent: ('qsl_sent', 'Y'),
+            self.actionUnmark_QSL_sent: ('qsl_sent', 'N'),
+            self.actionMark_QSL_received: ('qsl_rcvd', 'Y'),
+            self.actionUnmark_QSL_received: ('qsl_rcvd', 'N'),
+            self.actionMark_HamQTH_uploaded: ('hamqth', 'Y'),
+        }
+
+        # noinspection PyTypeChecker
+        action: QtGui.QAction = self.sender()
+
+        if action not in actions:
+            self.log.debug(f'Could not determin action "{action.objectName()}"')
+            return
+
+        question = QtWidgets.QMessageBox.question(self, action.text(),
+                                                  self.tr('Do you really want to change all selected QSOs?'),
+                                                  QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                                                  QtWidgets.QMessageBox.StandardButton.No)
+        if question == QtWidgets.QMessageBox.StandardButton.Yes:
+            field, state = actions[action]
+            for i in self.selectedQSOIds():
+                self.updateQSOField(field, i, state)
 
     def logImport(self):
         if not self.__db_con__.isOpen():
