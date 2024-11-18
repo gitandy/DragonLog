@@ -12,6 +12,7 @@ from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_
 from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from . import ColorPalettes
+from .adi2contest import CONTEST_NAMES, CONTEST_IDS
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
@@ -89,7 +90,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.timeTimer = QtCore.QTimer(self)
         self.timeTimer.timeout.connect(self.refreshTime)
 
-        self.worked_dialog: QtWidgets.QListWidget = None
+        self.worked_dialog: QtWidgets.QListWidget | None = None
         self._create_worked_dlg_()
 
         self.callbook_hamqth = HamQTHCallBook(self.logger,
@@ -113,6 +114,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.refreshQTHList()
         self.refreshRadioList()
         self.refreshAntennaList()
+
+        self.contestComboBox.insertItem(0, '')
+        self.contestComboBox.insertItems(1, CONTEST_IDS.keys())
 
         self.clear()
 
@@ -698,7 +702,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.__old_values__.get('lotw_sent', 'N'),
             self.__old_values__.get('lotw_rcvd', 'N'),
             self.__old_values__.get('hamqth', 'N'),
-            self.contestComboBox.currentText().strip(),
+            CONTEST_IDS.get(self.contestComboBox.currentText().strip(), self.contestComboBox.currentText().strip()),
             self.sentQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
             self.rcvdQSOSpinBox.value() if self.contestComboBox.currentText().strip() else 0,
             self.rcvdDataLineEdit.text().strip() if self.contestComboBox.currentText().strip() else '',
@@ -802,7 +806,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.qslSentCheckBox.setChecked(values['qsl_sent'] == 'Y')
                 self.qslRcvdCheckBox.setChecked(values['qsl_rcvd'] == 'Y')
 
-        self.contestComboBox.setCurrentText(values['contest_id'])
+        self.contestComboBox.setCurrentText(CONTEST_NAMES.get(values['contest_id'], ''))
         self.rcvdDataLineEdit.setText(values['crx_data'])
         try:
             self.sentQSOSpinBox.setValue(int(values['ctx_qso_id']) if values['ctx_qso_id'] else -1)
@@ -834,7 +838,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                                self.settings_form.callbookPassword(callbook.callbook_type))
                 self.log.info(f'Logged into callbook {callbook.callbook_type.name}')
 
-            data: CallBookData = None
+            data: CallBookData | None = None
             for _ in range(2):
                 try:
                     data = callbook.get_dataset(self.callSignLineEdit.text())

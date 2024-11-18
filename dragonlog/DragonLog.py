@@ -7,7 +7,7 @@ import zipfile
 import platform
 from enum import Enum, auto
 import datetime
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Type
 
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
@@ -28,7 +28,7 @@ except ImportError:
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
-from .RegEx import find_non_ascii, check_format, REGEX_DATE, check_call
+from .RegEx import find_non_ascii, check_format, REGEX_DATE
 from .DragonLog_QSOForm import QSOForm
 from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
@@ -40,6 +40,8 @@ from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
 from .DxSpots import DxSpots
+from .ContestDlg import ContestDialog
+from .adi2contest import ContestLog, CONTEST_NAMES, CONTEST_IDS, CONTESTS
 
 from . import ColorPalettes
 
@@ -98,7 +100,7 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
     """Translate propagation values and status to clear text and fancy icon for status"""
 
     def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict,
-                 freq_col: int, pwr_col: int, dist_col: int):
+                 freq_col: int, pwr_col: int, dist_col: int, contest_col: int):
         super(TranslatedTableModel, self).__init__(parent, db_conn)
 
         self.status_cols = status_cols
@@ -115,6 +117,8 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
         self.freq_col = freq_col
         self.pwr_col = pwr_col
         self.dist_col = dist_col
+
+        self.contest_col = contest_col
 
         # noinspection PyUnresolvedReferences
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
@@ -134,6 +138,8 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
                 return f'{int(value)} W'
             elif idx.column() == self.dist_col and value:
                 return f'{int(value)} km'
+            elif idx.column() == self.contest_col and value in CONTEST_NAMES:
+                return CONTEST_NAMES[value]
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)
@@ -173,6 +179,7 @@ def eval_adi_type(prog_id: str) -> ADISourceType:
         return ADISourceType.Other
 
 
+# noinspection PyPep8Naming
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __sql_cols__ = (
         'id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
@@ -266,6 +273,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_dialog = None
         self.help_sc_dialog = None
         self.help_cc_dialog = None
+        self.help_contest_dialog = None
 
         if ini_file:
             self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
@@ -319,9 +327,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.QSOTableView.setItemDelegate(BackgroundBrushDelegate(color_map, self.__sql_cols__.index('band')))
 
         self.fBandComboBox.insertItem(0, '')
-        self.fModeComboBox.insertItem(0, '')
         self.fBandComboBox.insertItems(1, self.bands.keys())
+        self.fModeComboBox.insertItem(0, '')
         self.fModeComboBox.insertItems(1, self.modes['AFU'].keys())
+        self.fContestComboBox.insertItem(0, '')
+        self.fContestComboBox.insertItems(1, CONTEST_NAMES.values())
 
         self.prop: dict = {
             '': '',
@@ -348,6 +358,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         }
 
         self.ascii_replace: dict = {}
+        # noinspection PyBroadException
         try:
             with open(self.searchFile(f'data:i18n/ascii_replace_{QtCore.QLocale.system().name()[:2]}.json'),
                       encoding='utf-8') as arf:
@@ -658,8 +669,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                          prop_tr=self.prop,
                                          freq_col=self.__sql_cols__.index('freq'),
                                          pwr_col=self.__sql_cols__.index('power'),
-                                         dist_col=self.__sql_cols__.index('dist')
-                                         )
+                                         dist_col=self.__sql_cols__.index('dist'),
+                                         contest_col=self.__sql_cols__.index('contest_id'))
             model.setTable('qsos')
             self.QSOTableView.setModel(model)
 
@@ -783,6 +794,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if self.fLoTWrComboBox.currentIndex() > 0:
             filter_set.append(f'lotw_rcvd {"!" if self.fLoTWrComboBox.currentIndex() == 2 else ""}= "Y"')
 
+        if self.fContestComboBox.currentText():
+            cntst_id = self.fContestComboBox.currentText()
+            if cntst_id in CONTEST_IDS:
+                cntst_id = CONTEST_IDS[cntst_id]
+            filter_set.append(f'contest_id = "{cntst_id}"')
+
         self.__table_filter__ = ' AND '.join(filter_set)
 
         self.setFilter()
@@ -804,6 +821,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.feQSLrComboBox.setCurrentIndex(0)
         self.fLoTWsComboBox.setCurrentIndex(0)
         self.fLoTWrComboBox.setCurrentIndex(0)
+        self.fContestComboBox.setCurrentIndex(0)
 
     def ctrlHamlib(self, start):
         self.settings_form.ctrlRigctld(start)
@@ -1040,11 +1058,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             row += 1
 
         # Set auto filter
+        # noinspection PyUnresolvedReferences
         xl_ws.auto_filter.ref = f'A1:{openpyxl.utils.get_column_letter(len(self.__headers__))}1'
 
         # Fit size to content width approximation
         for c, w in zip(range(1, len(col_widths) + 1), col_widths):
             # Add 5 due to Excel filter drop down
+            # noinspection PyUnresolvedReferences
             xl_ws.column_dimensions[openpyxl.utils.get_column_letter(c)].width = w + 5
 
         # Finally save
@@ -1087,7 +1107,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                         self.tr('ADX validation detected one or more error(s)\nSee log for detail'))
             elif os.path.splitext(file)[-1] == '.zip':
                 with zipfile.ZipFile(file, 'w', zipfile.ZIP_DEFLATED) as z_file:
-                    a_zinfo = zipfile.ZipInfo(os.path.splitext(os.path.basename(file))[0]+'.adi',
+                    a_zinfo = zipfile.ZipInfo(os.path.splitext(os.path.basename(file))[0] + '.adi',
                                               tuple(datetime.datetime.now().timetuple())[:6])
                     with z_file.open(a_zinfo, 'w') as a_file:
                         a_file.write(adi.dumps(doc, 'ADIF Export by DragonLog').encode())
@@ -1331,7 +1351,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
         if not adif_doc['RECORDS']:
             self.log.info(f'Skipped CB QSO #{qso_id}')
-            return
+            return False
 
         self.log.info(f'Checking eQSL for QSO #{qso_id}...')
 
@@ -2105,10 +2125,37 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.ccDockWidget.show()
         self.cc_widget.inputLineEdit.setFocus()
 
+    def exportContestLog(self):
+        if not self.__db_con__.isOpen():
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
+                                              self.tr('No database opened for contest export'))
+                return
+
+        query = self.__db_con__.exec('SELECT DISTINCT contest_id FROM qsos')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        contests = []
+        while query.next():
+            if query.value(0) in CONTEST_NAMES:
+                contests.append(query.value(0))
+
+        if contests:
+            contest_dlg = ContestDialog(self, self, self.settings, self.log, contests)
+            contest_dlg.exec()
+        else:
+            QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
+                                          self.tr('No contest data available for export'))
+
     def createHelpDlg(self, title: str, help_text: str):
         help_dialog = QtWidgets.QDialog(self)
         help_dialog.setWindowTitle(f'{self.programName} - {title}')
-        help_dialog.resize(500, 500)
+        help_dialog.setMinimumSize(500, 100)
+        help_dialog.setMaximumSize(500, 500)
+        help_dialog.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum,
+                                  QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         verticalLayout = QtWidgets.QVBoxLayout(help_dialog)
         scrollArea = QtWidgets.QScrollArea(help_dialog)
         scrollArea.setWidgetResizable(True)
@@ -2156,6 +2203,29 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 help_text = hf.read()
             self.help_cc_dialog = self.createHelpDlg(self.tr("CassipeiaConsole"), help_text)
         self.help_cc_dialog.show()
+
+    def showContestHelp(self):
+        if not self.help_contest_dialog:
+            help_text = '''
+Available Contests
+==================
+
+The table shows all available contests with the last date the contest definition was updated.
+
+The *Year* column shows the year the contest definition is targeted to. 
+If it does not show the current year you should check for a program update.
+
+The *Internal ID* is the ID which is imported or exported in ADIF format. 
+
+| Contest name | Internal ID | Year | Updated |
+|--------------|-------------|------|---------|
+'''
+            for c in CONTESTS:
+                cntst: Type[ContestLog] = CONTESTS[c]
+                help_text += f'| {cntst.contest_name} | {c} | ***{cntst.contest_year}*** | {cntst.contest_update} |\n'
+
+            self.help_contest_dialog = self.createHelpDlg(self.tr("Available Contests"), help_text)
+        self.help_contest_dialog.show()
 
     @property
     def programName(self):
@@ -2266,6 +2336,7 @@ def main():
 sys._excepthook = sys.excepthook
 
 
+# noinspection PyProtectedMember
 def except_hook(cls, exception, traceback):
     # noinspection PyUnresolvedReferences
     sys._excepthook(cls, exception, traceback)
