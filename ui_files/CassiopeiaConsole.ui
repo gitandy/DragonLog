@@ -403,36 +403,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>.</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="rstRXLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="placeholderText">
-           <string>RST Rx</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_5">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="label_13">
           <property name="text">
            <string>,</string>
@@ -452,6 +422,36 @@
           </property>
           <property name="placeholderText">
            <string>RST Tx</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="rstRXLineEdit">
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>RST Rx</string>
           </property>
          </widget>
         </item>
@@ -731,7 +731,6 @@
   <tabstop>modeLineEdit</tabstop>
   <tabstop>callLineEdit</tabstop>
   <tabstop>locLineEdit</tabstop>
-  <tabstop>rstRXLineEdit</tabstop>
   <tabstop>rstTXLineEdit</tabstop>
   <tabstop>nameLineEdit</tabstop>
   <tabstop>freqLineEdit</tabstop>
