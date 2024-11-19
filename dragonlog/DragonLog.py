@@ -982,7 +982,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         res = QtWidgets.QFileDialog.getSaveFileName(
             self,
             self.tr('Select export file'),
-            self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
+            os.path.join(self.settings.value('lastExportDir', os.path.abspath(os.curdir)),
+                         datetime.date.today().strftime('%Y-%m-%d ') + qso_filter),
             ';;'.join(exp_formats.keys()))
 
         if res[0]:
