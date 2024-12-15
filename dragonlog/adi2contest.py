@@ -10,7 +10,6 @@ import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import Font
 
-log = logging.getLogger(__name__)
 
 # noinspection SpellCheckingInspection
 MODE_MAP_CBR = {
@@ -136,7 +135,14 @@ class ContestLog:
                  cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None):
+
+        self.log = logging.getLogger(type(self).__name__)
+        if logger:
+            self.log.setLevel(logger.loglevel)
+            self.log.addHandler(logger)
+        self.log.debug('Initialising...')
+
         self.__header__ = {
             'CONTEST': '',  # Class
             'CALLSIGN': '',
@@ -160,6 +166,7 @@ class ContestLog:
                              band, mode, pwr, cat_operator, assisted, tx, operators, specific)
 
         self.__adif_cnt__ = 0
+        self.__rec_cnt__ = 0
         self.__qsos__: list[CBRRecord] = []
 
         self.__rated__ = 0
@@ -181,9 +188,9 @@ class ContestLog:
                         operators: list[str] = None, specific=''):
 
         if not check_format(REGEX_CALL, callsign):
-            log.error(f'Callsign "{callsign}" does not match call format')
+            self.log.error(f'Callsign "{callsign}" does not match call format')
         if not check_format(REGEX_LOCATOR, locator):
-            log.error(f'Locator "{locator}" does not match locator format')
+            self.log.error(f'Locator "{locator}" does not match locator format')
 
         self.__header__['CONTEST'] = self.contest_name
         self.__header__['CREATED-BY'] = 'ContestLog v0.1'
@@ -208,7 +215,7 @@ class ContestLog:
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if (adif_rec['BAND'].upper() != self.__header__['CATEGORY-BAND'] and
                 BAND_MAP_CBR[adif_rec['BAND'].lower()] != self.__header__['CATEGORY-BAND'].lower()):
-            log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].upper()}" does not match with '
+            self.log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].upper()}" does not match with '
                         f'contest band "{self.__header__["CATEGORY-BAND"]}"')
             if self.__skip_warn__:
                 return False
@@ -218,10 +225,10 @@ class ContestLog:
         self.__adif_cnt__ += 1
         if self.__skip_id__:
             if 'CONTEST_ID' not in adif_rec:
-                log.error(f'QSO #{self.__adif_cnt__} contest ID missing. Skipping.')
+                self.log.error(f'QSO #{self.__adif_cnt__} contest ID missing. Skipping.')
                 return
             if adif_rec['CONTEST_ID'] != self.__header__['CONTEST']:
-                log.warning(f'QSO #{self.__adif_cnt__} contest ID "{adif_rec["CONTEST_ID"]}" does not match '
+                self.log.warning(f'QSO #{self.__adif_cnt__} contest ID "{adif_rec["CONTEST_ID"]}" does not match '
                             f'"{self.__header__["CONTEST"]}". Skipping.')
                 return
 
@@ -229,33 +236,33 @@ class ContestLog:
             return
 
         if self.__header__['CATEGORY-MODE'] != 'MIXED' and adif_rec['MODE'].upper() != self.__header__['CATEGORY-MODE']:
-            log.warning(f'QSO #{self.__adif_cnt__} mode "{adif_rec["MODE"].upper()}" does not match with '
+            self.log.warning(f'QSO #{self.__adif_cnt__} mode "{adif_rec["MODE"].upper()}" does not match with '
                         f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
             if self.__skip_warn__:
                 return
 
         if not check_format(REGEX_CALL, adif_rec['CALL']):
-            log.warning(f'QSO #{self.__adif_cnt__} call "{adif_rec["CALL"]}" does not match call format')
+            self.log.warning(f'QSO #{self.__adif_cnt__} call "{adif_rec["CALL"]}" does not match call format')
             if self.__skip_warn__:
                 return
 
         if not check_format(REGEX_RSTFIELD, adif_rec['RST_RCVD']):
-            log.warning(f'QSO #{self.__adif_cnt__} received RST "{adif_rec["RST_RCVD"]}" does not match RST format')
+            self.log.warning(f'QSO #{self.__adif_cnt__} received RST "{adif_rec["RST_RCVD"]}" does not match RST format')
             if self.__skip_warn__:
                 return
 
         if not check_format(REGEX_RSTFIELD, adif_rec['RST_SENT']):
-            log.warning(f'QSO #{self.__adif_cnt__} sent RST "{adif_rec["RST_SENT"]}" does not match RST format')
+            self.log.warning(f'QSO #{self.__adif_cnt__} sent RST "{adif_rec["RST_SENT"]}" does not match RST format')
             if self.__skip_warn__:
                 return
 
         if not check_format(self.REGEX_DATE, adif_rec['QSO_DATE']):
-            log.warning(f'QSO #{self.__adif_cnt__} date "{adif_rec["QSO_DATE"]}" does not match date format')
+            self.log.warning(f'QSO #{self.__adif_cnt__} date "{adif_rec["QSO_DATE"]}" does not match date format')
             if self.__skip_warn__:
                 return
 
         if not check_format(self.REGEX_TIME, adif_rec['TIME_ON']):
-            log.warning(f'QSO #{self.__adif_cnt__} time "{adif_rec["TIME_ON"]}" does not match time format')
+            self.log.warning(f'QSO #{self.__adif_cnt__} time "{adif_rec["TIME_ON"]}" does not match time format')
             if self.__skip_warn__:
                 return
 
@@ -263,19 +270,20 @@ class ContestLog:
             rec = self.build_record(adif_rec)
 
             if rec:
+                self.__rec_cnt__ += 1
                 self.process_points(rec)
                 self.__qsos__.append(rec)
 
                 self.__header__['CLAIMED-SCORE'] = self.claimed_points
 
-                log.debug(self.statistics())
+                self.log.debug(self.statistics())
         except KeyError as exc:
-            log.error(f'QSO #{self.__adif_cnt__} could not be processed field {exc} is missing')
+            self.log.error(f'QSO #{self.__adif_cnt__} could not be processed field {exc} is missing')
 
     def build_record(self, adif_rec) -> CBRRecord:
         """Build the QSO info
         May be overridden"""
-        log.debug(adif_rec)
+        self.log.debug(adif_rec)
 
         date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
         if not self.__contest_date__:
@@ -417,10 +425,10 @@ class RLPFALZAWLog(ContestLog):
                  cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
 
         self.__header__['CONTEST'] = 'RLP Aktivitaetswoche'
 
@@ -481,7 +489,7 @@ class RLPFALZAWLog(ContestLog):
                             rec.call not in self.__district_calls__):
                         self.__district_calls__.append(rec.call)
                 else:
-                    log.warning(f'DOK not counted as multi: {rec.rcvd_exch.upper()}')
+                    self.log.info(f'Exported QSO #{self.__rec_cnt__} DOK not counted as multi: {rec.rcvd_exch.upper()}')
 
             self.__points__ += qso_point
 
@@ -516,8 +524,8 @@ class RLPFALZAWLog(ContestLog):
 
 class RLPFALZABUKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend UKW'
-    contest_year = '2024'
-    contest_update = '2024-10-07'
+    contest_year = '2025'
+    contest_update = '2024-12-15'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -525,12 +533,111 @@ class RLPFALZABUKWLog(ContestLog):
                  cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
 
         self.__header__['CONTEST'] = 'RLP Aktivitaetsabend UKW'
+
+        self.__dok__ = specific
+
+        self.__multis__ = []
+        self.__district_calls__ = []
+
+    def statistics(self) -> str:
+        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
+                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
+                f'Claimed points: {self.claimed_points}')
+
+    def build_record(self, adif_rec) -> CBRRecord:
+        adif_rec['STX_STRING'] = f'{self.__dok__} {self.__header__["GRID-LOCATOR"]}'
+        rec = super().build_record(adif_rec)
+        return rec
+
+    @property
+    def multis(self) -> int:
+        return len(self.__multis__)
+
+    @property
+    def district_calls(self) -> int:
+        return len(self.__district_calls__)
+
+    @property
+    def claimed_points(self) -> int:
+        return self.points * (self.multis + self.district_calls)
+
+    def process_points(self, rec: CBRRecord):
+        try:
+            qso_point = 1
+            if rec.mode == 'CW':
+                qso_point = 3
+            elif rec.mode == 'PH':
+                qso_point = 2
+
+            rcvd_exch = rec.rcvd_exch.strip().upper().split(' ', maxsplit=1)
+            if len(rcvd_exch) < 2:
+                self.log.warning(f'Exported QSO #{self.__rec_cnt__} received DOK or locator missing: {rec.rcvd_exch.upper()}')
+            else:
+                if len(rcvd_exch[1]) != 6:
+                    self.log.warning(f'Exported QSO #{self.__rec_cnt__} received locator does not have 6 characters: {rcvd_exch[1]}')
+            rcvd_dok = rcvd_exch[0]
+
+            if rcvd_dok == self.__dok__:
+                qso_point = 0
+            else:
+                self.__rated__ += 1
+                if any((rcvd_dok in RLPMultis.DOKS,
+                        rcvd_dok in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
+                        rcvd_dok == 'NM')):
+                    if rcvd_dok not in self.__multis__:
+                        self.__multis__.append(rcvd_dok)
+                    if (rec.call in RLPMultis.DISTRICT_SPECIAL and
+                            rec.call not in self.__district_calls__):
+                        self.__district_calls__.append(rec.call)
+                else:
+                    self.log.info(f'Exported QSO #{self.__rec_cnt__} DOK not counted as multi: {rec.rcvd_exch.upper()}')
+
+            self.__points__ += qso_point
+
+            self.__header__['CLAIMED-SCORE'] = self.claimed_points
+        except Exception as exc:
+            raise ProcessContestException(str(exc)) from None
+
+    @property
+    def file_name(self) -> str:
+        return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["SPECIFIC"]}-{self.__header__["CATEGORY-BAND"]}.cbr'
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return CategoryBand.B_432, CategoryBand.B_2M
+
+    @classmethod
+    def descr_specific(cls) -> str:
+        return 'DOK'
+
+
+class RLPFALZABKWLog(ContestLog):
+    contest_name = 'RLP Aktivitätsabend KW'
+    contest_year = '2025'
+    contest_update = '2024-12-15'
+
+    def __init__(self, callsign, name, club, address, email, locator,
+                 band: CategoryBand, mode: CategoryMode,
+                 pwr: CategoryPower = CategoryPower.HIGH,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
+                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None):
+        super().__init__(callsign, name, club, address, email, locator,
+                         band, mode, pwr, cat_operator,
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+
+        self.__header__['CONTEST'] = 'RLP Aktivitaetsabend KW'
 
         self.__dok__ = specific
 
@@ -580,7 +687,7 @@ class RLPFALZABUKWLog(ContestLog):
                             rec.call not in self.__district_calls__):
                         self.__district_calls__.append(rec.call)
                 else:
-                    log.warning(f'DOK not counted as multi: {rec.rcvd_exch.upper()}')
+                    self.log.info(f'Exported QSO #{self.__rec_cnt__} DOK not counted as multi: {rec.rcvd_exch.upper()}')
 
             self.__points__ += qso_point
 
@@ -598,32 +705,11 @@ class RLPFALZABUKWLog(ContestLog):
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_432, CategoryBand.B_2M
+        return CategoryBand.B_10M, CategoryBand.B_80M
 
     @classmethod
     def descr_specific(cls) -> str:
         return 'DOK'
-
-
-class RLPFALZABKWLog(RLPFALZABUKWLog):
-    contest_name = 'RLP Aktivitätsabend KW'
-
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
-        super().__init__(callsign, name, club, address, email, locator,
-                         band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn)
-
-        self.__header__['CONTEST'] = 'RLP Aktivitaetsabend KW'
-
-    @classmethod
-    def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_10M, CategoryBand.B_80M
 
 
 class K32KurzUKWLog(ContestLog):
@@ -637,10 +723,10 @@ class K32KurzUKWLog(ContestLog):
                  cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False):
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
 
         self.__dok__ = specific
 
@@ -651,7 +737,7 @@ class K32KurzUKWLog(ContestLog):
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if adif_rec['BAND'].lower() not in ('2m', '70cm'):
-            log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].lower()}" does not match with '
+            self.log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].lower()}" does not match with '
                         f'contest bands 2m / 70cm ')
             if self.__skip_warn__:
                 return False

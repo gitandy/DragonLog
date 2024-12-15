@@ -214,7 +214,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            self.locatorLineEdit.text(),
                                            CategoryBand['B_' + self.bandComboBox.currentText()],
                                            CategoryMode[self.modeComboBox.currentText()],
-                                           specific=self.specificLineEdit.text())
+                                           specific=self.specificLineEdit.text(),
+                                           logger=self.logger)
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
         if self.soapPlainTextEdit.toPlainText().strip():
