@@ -10,7 +10,6 @@ import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import Font
 
-
 # noinspection SpellCheckingInspection
 MODE_MAP_CBR = {
     'CW': 'CW',
@@ -117,14 +116,10 @@ class CategoryTransmitter(Enum):
     SWL = auto()
 
 
-class ProcessContestException(Exception):
-    pass
-
-
 class ContestLog:
     contest_name = 'Contest'
     contest_year = '2025'
-    contest_update = '2024-11-02'
+    contest_update = '2024-12-16'
 
     REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])?')
     REGEX_DATE = re.compile(r'([1-9][0-9]{3})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-2]))')
@@ -165,12 +160,16 @@ class ContestLog:
         self.__init_header__(callsign, name, club, address, email, locator,
                              band, mode, pwr, cat_operator, assisted, tx, operators, specific)
 
-        self.__adif_cnt__ = 0
-        self.__rec_cnt__ = 0
+        self.__qso_id__: int = 0
+
+        self.__errors__: int = 0
+        self.__warnings__: int = 0
+        self.__infos__: int = 0
+
         self.__qsos__: list[CBRRecord] = []
 
-        self.__rated__ = 0
-        self.__points__ = 0
+        self.__rated__: int = 0
+        self.__points__: int = 0
 
         self.__skip_id__ = skip_id
         self.__skip_warn__ = skip_warn
@@ -209,68 +208,97 @@ class ContestLog:
         self.__header__['CATEGORY-TRANSMITTER'] = tx.name
         self.__header__['SPECIFIC'] = specific
 
+    @property
+    def infos(self):
+        return self.__infos__
+
+    @property
+    def warnings(self):
+        return self.__warnings__
+
+    @property
+    def errors(self):
+        return self.__errors__
+
+    def info(self, txt):
+        self.__infos__ += 1
+        self.log.info(f'QSO #{self.__qso_id__}: {txt}')
+
+    def warning(self, txt):
+        self.__warnings__ += 1
+        self.log.warning(f'QSO #{self.__qso_id__}: {txt}')
+
+    def error(self, txt):
+        self.__errors__ += 1
+        self.log.error(f'QSO #{self.__qso_id__}: {txt}')
+
+    def exception(self, txt='Exception'):
+        self.__errors__ += 1
+        self.log.exception(f'QSO #{self.__qso_id__}: {txt}')
+
     def set_created_by(self, program_name: str):
         self.__header__['CREATED-BY'] = program_name
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if (adif_rec['BAND'].upper() != self.__header__['CATEGORY-BAND'] and
                 BAND_MAP_CBR[adif_rec['BAND'].lower()] != self.__header__['CATEGORY-BAND'].lower()):
-            self.log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].upper()}" does not match with '
-                        f'contest band "{self.__header__["CATEGORY-BAND"]}"')
+            self.log.warning(f'QSO #{self.__qso_id__} band "{adif_rec["BAND"].upper()}" does not match with '
+                             f'contest band "{self.__header__["CATEGORY-BAND"]}"')
             if self.__skip_warn__:
                 return False
         return True
 
     def append(self, adif_rec: dict[str, str]):
-        self.__adif_cnt__ += 1
-        if self.__skip_id__:
-            if 'CONTEST_ID' not in adif_rec:
-                self.log.error(f'QSO #{self.__adif_cnt__} contest ID missing. Skipping.')
-                return
-            if adif_rec['CONTEST_ID'] != self.__header__['CONTEST']:
-                self.log.warning(f'QSO #{self.__adif_cnt__} contest ID "{adif_rec["CONTEST_ID"]}" does not match '
-                            f'"{self.__header__["CONTEST"]}". Skipping.')
-                return
-
-        if self.__header__['CATEGORY-BAND'] != 'ALL' and not self.check_band(adif_rec):
-            return
-
-        if self.__header__['CATEGORY-MODE'] != 'MIXED' and adif_rec['MODE'].upper() != self.__header__['CATEGORY-MODE']:
-            self.log.warning(f'QSO #{self.__adif_cnt__} mode "{adif_rec["MODE"].upper()}" does not match with '
-                        f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
-            if self.__skip_warn__:
-                return
-
-        if not check_format(REGEX_CALL, adif_rec['CALL']):
-            self.log.warning(f'QSO #{self.__adif_cnt__} call "{adif_rec["CALL"]}" does not match call format')
-            if self.__skip_warn__:
-                return
-
-        if not check_format(REGEX_RSTFIELD, adif_rec['RST_RCVD']):
-            self.log.warning(f'QSO #{self.__adif_cnt__} received RST "{adif_rec["RST_RCVD"]}" does not match RST format')
-            if self.__skip_warn__:
-                return
-
-        if not check_format(REGEX_RSTFIELD, adif_rec['RST_SENT']):
-            self.log.warning(f'QSO #{self.__adif_cnt__} sent RST "{adif_rec["RST_SENT"]}" does not match RST format')
-            if self.__skip_warn__:
-                return
-
-        if not check_format(self.REGEX_DATE, adif_rec['QSO_DATE']):
-            self.log.warning(f'QSO #{self.__adif_cnt__} date "{adif_rec["QSO_DATE"]}" does not match date format')
-            if self.__skip_warn__:
-                return
-
-        if not check_format(self.REGEX_TIME, adif_rec['TIME_ON']):
-            self.log.warning(f'QSO #{self.__adif_cnt__} time "{adif_rec["TIME_ON"]}" does not match time format')
-            if self.__skip_warn__:
-                return
-
+        self.__qso_id__ = adif_rec['APP_DRAGONLOG_QSOID']
         try:
+            if self.__skip_id__:
+                if 'CONTEST_ID' not in adif_rec:
+                    self.error('Contest ID missing. Skipping.')
+                    return
+                if adif_rec['CONTEST_ID'] != self.__header__['CONTEST']:
+                    self.warning(f'Contest ID "{adif_rec["CONTEST_ID"]}" does not match '
+                                 f'"{self.__header__["CONTEST"]}". Skipping.')
+                    return
+
+            if self.__header__['CATEGORY-BAND'] != 'ALL' and not self.check_band(adif_rec):
+                return
+
+            if self.__header__['CATEGORY-MODE'] != 'MIXED' and adif_rec['MODE'].upper() != self.__header__[
+                'CATEGORY-MODE']:
+                self.warning(f'Mode "{adif_rec["MODE"].upper()}" does not match with '
+                                 f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
+                if self.__skip_warn__:
+                    return
+
+            if not check_format(REGEX_CALL, adif_rec['CALL']):
+                self.warning(f'Call "{adif_rec["CALL"]}" does not match call format')
+                if self.__skip_warn__:
+                    return
+
+            if not check_format(REGEX_RSTFIELD, adif_rec['RST_RCVD']):
+                self.warning(
+                    f'Rreceived RST "{adif_rec["RST_RCVD"]}" does not match RST format')
+                if self.__skip_warn__:
+                    return
+
+            if not check_format(REGEX_RSTFIELD, adif_rec['RST_SENT']):
+                self.warning(f'Sent RST "{adif_rec["RST_SENT"]}" does not match RST format')
+                if self.__skip_warn__:
+                    return
+
+            if not check_format(self.REGEX_DATE, adif_rec['QSO_DATE']):
+                self.warning(f'Date "{adif_rec["QSO_DATE"]}" does not match date format')
+                if self.__skip_warn__:
+                    return
+
+            if not check_format(self.REGEX_TIME, adif_rec['TIME_ON']):
+                self.warning(f'Time "{adif_rec["TIME_ON"]}" does not match time format')
+                if self.__skip_warn__:
+                    return
+
             rec = self.build_record(adif_rec)
 
             if rec:
-                self.__rec_cnt__ += 1
                 self.process_points(rec)
                 self.__qsos__.append(rec)
 
@@ -278,7 +306,7 @@ class ContestLog:
 
                 self.log.debug(self.statistics())
         except KeyError as exc:
-            self.log.error(f'QSO #{self.__adif_cnt__} could not be processed field {exc} is missing')
+            self.error(f'Could not be processed. Field {exc} is missing')
 
     def build_record(self, adif_rec) -> CBRRecord:
         """Build the QSO info
@@ -295,10 +323,10 @@ class ContestLog:
                          adif_rec['TIME_ON'][:4],
                          adif_rec['STATION_CALLSIGN'],
                          adif_rec['RST_SENT'],
-                         adif_rec['STX_STRING'] if 'STX_STRING' in adif_rec else adif_rec['STX'],
+                         adif_rec['STX_STRING'].upper() if 'STX_STRING' in adif_rec else adif_rec['STX'],
                          adif_rec['CALL'],
                          adif_rec['RST_RCVD'],
-                         adif_rec['SRX_STRING'] if 'SRX_STRING' in adif_rec else adif_rec['SRX'],
+                         adif_rec['SRX_STRING'].upper() if 'SRX_STRING' in adif_rec else adif_rec['SRX'],
                          '0'
                          )
 
@@ -449,7 +477,7 @@ class RLPFALZAWLog(ContestLog):
                 f'Claimed points: {self.claimed_points}')
 
     def build_record(self, adif_rec) -> CBRRecord:
-        adif_rec['STX_STRING'] = self.__dok__
+        adif_rec['STX_STRING'] = self.__dok__.upper()
         rec = super().build_record(adif_rec)
         return rec
 
@@ -489,7 +517,7 @@ class RLPFALZAWLog(ContestLog):
                             rec.call not in self.__district_calls__):
                         self.__district_calls__.append(rec.call)
                 else:
-                    self.log.info(f'Exported QSO #{self.__rec_cnt__} DOK not counted as multi: {rec.rcvd_exch.upper()}')
+                    self.info(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
 
             self.__points__ += qso_point
 
@@ -499,8 +527,8 @@ class RLPFALZAWLog(ContestLog):
                 self.__points_per_band__[rec.band] = qso_point
 
             self.__header__['CLAIMED-SCORE'] = self.claimed_points
-        except Exception as exc:
-            raise ProcessContestException(str(exc)) from None
+        except Exception:
+            self.exception()
 
     @property
     def file_name(self) -> str:
@@ -525,7 +553,7 @@ class RLPFALZAWLog(ContestLog):
 class RLPFALZABUKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend UKW'
     contest_year = '2025'
-    contest_update = '2024-12-15'
+    contest_update = '2024-12-16'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -551,7 +579,7 @@ class RLPFALZABUKWLog(ContestLog):
                 f'Claimed points: {self.claimed_points}')
 
     def build_record(self, adif_rec) -> CBRRecord:
-        adif_rec['STX_STRING'] = f'{self.__dok__} {self.__header__["GRID-LOCATOR"]}'
+        adif_rec['STX_STRING'] = f'{self.__dok__.upper()} {self.__header__["GRID-LOCATOR"].upper()}'
         rec = super().build_record(adif_rec)
         return rec
 
@@ -577,10 +605,12 @@ class RLPFALZABUKWLog(ContestLog):
 
             rcvd_exch = rec.rcvd_exch.strip().upper().split(' ', maxsplit=1)
             if len(rcvd_exch) < 2:
-                self.log.warning(f'Exported QSO #{self.__rec_cnt__} received DOK or locator missing: {rec.rcvd_exch.upper()}')
+                self.warning(
+                    f'Received DOK or locator missing "{rec.rcvd_exch.upper()}"')
             else:
                 if len(rcvd_exch[1]) != 6:
-                    self.log.warning(f'Exported QSO #{self.__rec_cnt__} received locator does not have 6 characters: {rcvd_exch[1]}')
+                    self.warning(
+                        f'Received locator does not have 6 characters "{rcvd_exch[1]}"')
             rcvd_dok = rcvd_exch[0]
 
             if rcvd_dok == self.__dok__:
@@ -596,13 +626,13 @@ class RLPFALZABUKWLog(ContestLog):
                             rec.call not in self.__district_calls__):
                         self.__district_calls__.append(rec.call)
                 else:
-                    self.log.info(f'Exported QSO #{self.__rec_cnt__} DOK not counted as multi: {rec.rcvd_exch.upper()}')
+                    self.info(f'DOK not counted as multi "{rcvd_dok}"')
 
             self.__points__ += qso_point
 
             self.__header__['CLAIMED-SCORE'] = self.claimed_points
-        except Exception as exc:
-            raise ProcessContestException(str(exc)) from None
+        except Exception:
+            self.exception()
 
     @property
     def file_name(self) -> str:
@@ -624,7 +654,7 @@ class RLPFALZABUKWLog(ContestLog):
 class RLPFALZABKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend KW'
     contest_year = '2025'
-    contest_update = '2024-12-15'
+    contest_update = '2024-12-16'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -650,7 +680,7 @@ class RLPFALZABKWLog(ContestLog):
                 f'Claimed points: {self.claimed_points}')
 
     def build_record(self, adif_rec) -> CBRRecord:
-        adif_rec['STX_STRING'] = self.__dok__
+        adif_rec['STX_STRING'] = self.__dok__.upper()
         rec = super().build_record(adif_rec)
         return rec
 
@@ -687,13 +717,13 @@ class RLPFALZABKWLog(ContestLog):
                             rec.call not in self.__district_calls__):
                         self.__district_calls__.append(rec.call)
                 else:
-                    self.log.info(f'Exported QSO #{self.__rec_cnt__} DOK not counted as multi: {rec.rcvd_exch.upper()}')
+                    self.info(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
 
             self.__points__ += qso_point
 
             self.__header__['CLAIMED-SCORE'] = self.claimed_points
-        except Exception as exc:
-            raise ProcessContestException(str(exc)) from None
+        except Exception:
+            self.exception()
 
     @property
     def file_name(self) -> str:
@@ -737,8 +767,8 @@ class K32KurzUKWLog(ContestLog):
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if adif_rec['BAND'].lower() not in ('2m', '70cm'):
-            self.log.warning(f'QSO #{self.__adif_cnt__} band "{adif_rec["BAND"].lower()}" does not match with '
-                        f'contest bands 2m / 70cm ')
+            self.warning(f'Band "{adif_rec["BAND"].lower()}" does not match with '
+                             f'contest bands 2m / 70cm ')
             if self.__skip_warn__:
                 return False
         return True
@@ -776,7 +806,7 @@ class K32KurzUKWLog(ContestLog):
 
     def build_record(self, adif_rec) -> CBRRecord:
         if adif_rec['BAND'].upper() == self.__header__['CATEGORY-BAND']:
-            adif_rec['STX_STRING'] = f'{self.__dok__},{self.__header__["CATEGORY-POWER"]}'
+            adif_rec['STX_STRING'] = f'{self.__dok__.upper()},{self.__header__["CATEGORY-POWER"]}'
             rec = super().build_record(adif_rec)
 
             return rec
@@ -824,8 +854,7 @@ class K32KurzUKWLog(ContestLog):
             r_dok = r_dok.strip()
             r_pwr = r_pwr.strip()
         except Exception:
-            raise ProcessContestException(
-                f'Error on processing received exchange "{rec.rcvd_exch}" for {rec.call} at {rec.date} {rec.time}') from None
+            self.exception(f'Error on processing received exchange "{rec.rcvd_exch}" for {rec.call} at {rec.date} {rec.time}')
 
         try:
             qso_point = 2
@@ -842,8 +871,8 @@ class K32KurzUKWLog(ContestLog):
             self.__points__ += qso_point
 
             self.__header__['CLAIMED-SCORE'] = self.claimed_points
-        except Exception as exc:
-            raise ProcessContestException(str(exc)) from None
+        except Exception:
+            self.exception()
 
     @property
     def file_name(self) -> str:

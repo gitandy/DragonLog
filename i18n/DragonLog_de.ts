@@ -283,19 +283,19 @@
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <location filename="..\dragonlog\ContestDlg.py" line="254" />
       <location filename="..\dragonlog\ContestDlg.py" line="246" />
-      <location filename="..\dragonlog\ContestDlg.py" line="240" />
+      <location filename="..\dragonlog\ContestDlg.py" line="237" />
       <source>Contest Export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="241" />
-      <source>There were {} errors when processing the contest data</source>
-      <translation>Beim Verarbeiten der Contest-Daten traten {} Fehler auf</translation>
+      <location filename="..\dragonlog\ContestDlg.py" line="238" />
+      <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
+      <translation>Beim Verarbeiten der Contest-Daten traten {} Fehler und {} Warnungen auf</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="243" />
+      <location filename="..\dragonlog\ContestDlg.py" line="242" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
-      <translation>Der Export wurde durchgeführt. Bitte Überprüfen Sie das Anwendungslog vor dem Senden!</translation>
+      <translation>Der Export wurde trotzdem durchgeführt. Bitte Überprüfen Sie das Anwendungslog vor dem Senden!</translation>
     </message>
     <message>
       <location filename="..\dragonlog\ContestDlg.py" line="247" />
@@ -462,6 +462,10 @@
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>Cancel</source>
       <translation>Abbrechen</translation>
+    </message>
+    <message>
+      <source>There were {} errors when processing the contest data</source>
+      <translation type="vanished">Beim Verarbeiten der Contest-Daten traten {} Fehler auf</translation>
     </message>
   </context>
   <context>

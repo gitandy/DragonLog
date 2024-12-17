@@ -204,7 +204,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                                  f"contest_id = '{CONTEST_IDS[self.contestComboBox.currentText()]}' AND "
                                                  f"DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND "
                                                  f"DATE(date_time) <= DATE('{self.toDateEdit.text()}') "
-                                                 "ORDER BY date_time")
+                                                 "ORDER BY date_time",
+                                                 include_id=True)
 
         contest: ContestLog = self.contest(self.callLineEdit.text(),
                                            self.nameLineEdit.text(),
@@ -223,25 +224,24 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         if doc['RECORDS']:
             try:
-                errors = 0
                 for rec in doc['RECORDS']:
-                    try:
-                        contest.append(rec)
-                    except ProcessContestException as c_exc:
-                        self.log.error(str(c_exc))
-                        errors += 1
+                    contest.append(rec)
+
                 self.log.info(f'Contest statistics < {contest.statistics()} >')
                 contest.open_file(self.exportPathLineEdit.text())
                 contest.write_records()
                 contest.close_file()
                 self.log.info(f'Records written to "{contest.file_name}"')
 
-                if errors:
+                if contest.errors or contest.warnings:
                     QtWidgets.QMessageBox.information(self, self.tr('Contest Export'),
-                                                  self.tr('There were {} errors when processing the contest data').format(errors) +
+                                                      self.tr('There were {} error(s) and {} warning(s) '
+                                                              'when processing the contest data').format(contest.errors,
+                                                                                                         contest.warnings) +
                                                       '\n\n' +
-                                                  self.tr('Export will be written anyway. Please check the application log before sending!')
-                                                  )
+                                                      self.tr(
+                                                          'Export will be written anyway. Please check the application log before sending!')
+                                                      )
 
                 QtWidgets.QMessageBox.information(self, self.tr('Contest Export'),
                                                   self.tr('Contest data written to') + f' {contest.file_name}\n' +

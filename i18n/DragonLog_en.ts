@@ -283,17 +283,17 @@
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <location filename="..\dragonlog\ContestDlg.py" line="254" />
       <location filename="..\dragonlog\ContestDlg.py" line="246" />
-      <location filename="..\dragonlog\ContestDlg.py" line="240" />
+      <location filename="..\dragonlog\ContestDlg.py" line="237" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="241" />
-      <source>There were {} errors when processing the contest data</source>
+      <location filename="..\dragonlog\ContestDlg.py" line="238" />
+      <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="243" />
+      <location filename="..\dragonlog\ContestDlg.py" line="242" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation type="unfinished" />
     </message>
