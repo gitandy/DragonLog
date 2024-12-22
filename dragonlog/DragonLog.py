@@ -1110,6 +1110,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 with zipfile.ZipFile(file, 'w', zipfile.ZIP_DEFLATED) as z_file:
                     a_zinfo = zipfile.ZipInfo(os.path.splitext(os.path.basename(file))[0] + '.adi',
                                               datetime.datetime.now().timetuple()[:6])
+                    a_zinfo.compress_type = zipfile.ZIP_DEFLATED
                     with z_file.open(a_zinfo, 'w') as a_file:
                         a_file.write(adi.dumps(doc, 'ADIF Export by DragonLog').encode())
             else:
