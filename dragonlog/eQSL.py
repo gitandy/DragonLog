@@ -51,7 +51,7 @@ class EQSL:
 
         record = record.copy()
 
-        for field in list(record.keys()):
+        for field in list(record.keys()):  # Create list object due to changes to dict below
             if not field in self.fields:
                 record.pop(field)
 

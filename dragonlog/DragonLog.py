@@ -1209,6 +1209,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['FREQ'] = f'{query.value(self.__sql_cols__.index("freq")) / 1000:0.6f}'.rstrip('0').rstrip('.')
             if query.value(self.__sql_cols__.index('power')):
                 record['TX_PWR'] = query.value(self.__sql_cols__.index('power'))
+            if query.value(self.__sql_cols__.index('propagation')):
+                record['PROP_MODE'] = query.value(self.__sql_cols__.index('propagation'))
             if query.value(self.__sql_cols__.index('own_callsign')):
                 if band == '11m' and is_adx:
                     record['APP'].append({'@PROGRAMID': 'DRAGONLOG',
