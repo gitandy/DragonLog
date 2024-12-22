@@ -780,6 +780,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         if values['propagation']:
             self.propComboBox.setCurrentText(self.prop[values['propagation']])
+        else:
+            self.propComboBox.setCurrentIndex(0)
 
         self.ownNameLineEdit.setText(values['own_name'])
 

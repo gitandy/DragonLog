@@ -2190,28 +2190,28 @@ Siehe Anwendungslog für Details</translation>
       <translation>Konfigurierte ID</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="877" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="869" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="879" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="871" />
       <source>Callbook search error</source>
       <translation>Fehler bei der Rufzeichensuche</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="870" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="872" />
       <source>Login failed for user</source>
       <translation>Login fehlgeschlagen für Benutzer</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="873" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="875" />
       <source>Callbook search result</source>
       <translation>Callbook-Suchergebnis</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="874" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="876" />
       <source>Callsign not found</source>
       <translation>Rufzeichen nicht gefunden</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="878" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="880" />
       <source>During callbook search an error occured</source>
       <translation>Während der Rufzeichensuche ist ein Fehler aufgetreten</translation>
     </message>
