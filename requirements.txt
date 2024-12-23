@@ -5,4 +5,4 @@ PyADIF-File==1.3
 requests
 xmltodict
 keyring
-HamCC==0.6
+HamCC==0.7

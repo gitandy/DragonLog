@@ -63,7 +63,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
         freq = f'{float(qso.get("FREQ", "0")) * 1000:.3f}'.rstrip('0').rstrip('.')
         self.freqLineEdit.setText('' if freq == '0' else freq)
-        self.pwrLineEdit.setText(qso.get('TX_POWER', ''))
+        self.pwrLineEdit.setText(qso.get('TX_PWR', ''))
         self.qslLineEdit.setText(qso.get('QSL_RCVD', ''))
         self.commentLineEdit.setText(qso.get('COMMENT', ''))
 
