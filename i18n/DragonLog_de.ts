@@ -4,54 +4,73 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="134" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="222" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="67" />
+      <source>Band</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="227" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="68" />
+      <source>Mode</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="146" />
       <source>at</source>
       <translation>am</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="162" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="174" />
       <source>Error: Callsign missing for QSO</source>
       <translation>Warnung: Call fehlt für QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="187" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="199" />
       <source>Warning: Wrong call format</source>
       <translation>Warnung: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="188" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="200" />
       <source>Error: Wrong call format</source>
       <translation>Fehler: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="189" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="201" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation>Fehler: Kein gültiges QTH/Maidenhead-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="190" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="202" />
       <source>Error: No active event</source>
       <translation>Fehler: Kein aktives Event</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="191" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="203" />
       <source>Error: Unknown prefix</source>
       <translation>Fehler: Unbekanntes Präfix</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="192" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="204" />
       <source>Error: Wrong RST format</source>
       <translation>Fehler: Kein gültiges RST-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="193" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="205" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation>Warnung: Call fehlt für letztes QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="194" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="206" />
       <source>Last QSO cached</source>
       <translation>Letztes QSO</translation>
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="278" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="273" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="264" />
+      <source>Event ID</source>
+      <translation />
     </message>
   </context>
   <context>
@@ -108,7 +127,18 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>Event ID</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>POTA</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>SOTA</source>
       <translation />
     </message>
     <message>
@@ -118,8 +148,15 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>Tx Exchange</source>
-      <translation>Ges. Austausch</translation>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>Exchange</source>
+      <translation>Austausch</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>Tx</source>
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -128,8 +165,9 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>Rx Exchange</source>
-      <translation>Empf. Austausch</translation>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>Rx</source>
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -138,8 +176,8 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>Date</source>
-      <translation>Datum</translation>
+      <source>yyyy-MM-dd</source>
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -148,20 +186,18 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>Time</source>
-      <translation>Zeit</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>t</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>Band</source>
       <translation />
     </message>
     <message>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>Mode</source>
       <translation />
@@ -188,17 +224,13 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>RST Tx</source>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>RST</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>.</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>RST Rx</source>
       <translation />
     </message>
     <message>
@@ -213,8 +245,14 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>Frequency</source>
-      <translation>Frequenz</translation>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>n.a.</source>
+      <translation>k.A.</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source> kHz</source>
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -223,8 +261,8 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>Power</source>
-      <translation>Leistung</translation>
+      <source> W</source>
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -238,8 +276,8 @@
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
-      <source>QSL</source>
-      <translation />
+      <source>QSL rcvd</source>
+      <translation>QSL empf.</translation>
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -270,6 +308,30 @@
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>Push to Log</source>
       <translation>Ins Log</translation>
+    </message>
+    <message>
+      <source>Tx Exchange</source>
+      <translation type="vanished">Ges. Austausch</translation>
+    </message>
+    <message>
+      <source>Rx Exchange</source>
+      <translation type="vanished">Empf. Austausch</translation>
+    </message>
+    <message>
+      <source>Frequency</source>
+      <translation type="vanished">Frequenz</translation>
+    </message>
+    <message>
+      <source>Power</source>
+      <translation type="vanished">Leistung</translation>
+    </message>
+    <message>
+      <source>Date</source>
+      <translation type="vanished">Datum</translation>
+    </message>
+    <message>
+      <source>Time</source>
+      <translation type="vanished">Zeit</translation>
     </message>
   </context>
   <context>

@@ -1,20 +1,33 @@
 Working with CassiopeiaConsole
 ==============================
 
-If you want to use CassiopeiaConsole to add QSO more quickly start typing in the input field right hand of `QSO>`.
+If you want to use CassiopeiaConsole to add QSOs more quickly, start typing in the input field right hand of `QSO>`.
+The single words must conform to a special format (s. below) to be evaluated as valid QSO information.
 
-The single words must conform to a format to be evaluated as valid QSO information.
+You also can edit the fields directly.
+This is not encouraged as it slows down massivly but may help to get the contest ID right.
+
+Your own data (call, locator, name) should already be filled with your default settings. 
+If not, edit your station settings (recommended) or type it in manually (via QSO line or directly in to the fields).
+
 
 Example session
+---------------
+
+Press `CTRL+K` to open CassiopeiaConsole. The cursor should jump to the `QSO>` line. Now:
 
 1. Type in `8` or `80m` followed by SPACE and CassiopeiaConsole recons you are using the 80m band 
-2. Now type `s` or `ssb` and HamCC saves the mode SSB after you hit SPACE
+2. Now type `s` or `ssb` and CassiopeiaConsole saves the mode SSB after you hit SPACE
 3. We are ready for the first QSO? Ah, `DF1ASC` is calling so type it in and hit SPACE (I won't repeat it from now on)
 4. He told you his name Andreas and we prefix it like `'Andreas`
 5. You want to leave some comments? Type in `"#Ant Dipol, Rig FT-991A"`
 
 After hitting ENTER the QSO will be added to the database. You can also use the button with the `+` sign.
-Typing `~` or pushing the button with the `x` sign will clear all input (except type memory).
+Typing `~` or pushing the button with the `x` sign will clear all input (except that of type memory and auto).
+
+
+Input format
+------------
 
 The table shows all available pre- and postfixes. The following will work for API and if run as program.
 
@@ -25,8 +38,8 @@ Types marked with auto are prefilled but can be overwritten. Types marked with m
 |--------------|--------------------------|---------|-----------------------------------------------------------------|
 | Callsign     | xx9xx                    |         | format checked                                                  |
 | Locator/QTH  | @xx99xx or @QTH(Locator) |         | format checked (max. 8 digit locator)                           |
-| Name         | 'xxxx                    |         | _ for spaces                                                    |
-| Comment      | #xxxx                    |         | _ for spaces                                                    |
+| Name         | 'xxxx                    |         |                                                                 |
+| Comment      | #xxxx                    | memory  |                                                                 |
 | Band         | valid ADIF band          | memory  |                                                                 |
 | Mode         | valid ADIF mode          | memory  |                                                                 | 
 | RST rcvd     | .599                     | auto    | default CW 599, phone 59                                        |
@@ -37,11 +50,11 @@ Types marked with auto are prefilled but can be overwritten. Types marked with m
 | Time         | HHMMt                    | memory  | partly time will be filled (see comments below)                 |
 | Date         | YYYYMMDDd                | memory  | partly date will be filled (see comments below)                 |
 | Date/Time    | =                        | auto    | sync date/time to now                                           |
-| Frequency    | 99999f                   |         | in kHz                                                          |
-| TX Power     | 99p                      |         | in W                                                            | 
-| Your Call    | -cxx9xx                  | memory  |                                                                 | 
-| Your Locator | -lxx99xx                 | memory  |                                                                 | 
-| Your Name    | -nxxxx                   | memory  | _ for spaces                                                    |
+| Frequency    | 99999f                   | memory  | in kHz                                                          |
+| TX Power     | 99p                      | memory  | in W                                                            | 
+| Your Call    | -cxx9xx                  | memory  | Preset with your default from station settings                  | 
+| Your Locator | -lxx99xx                 | memory  | Preset with your default from station settings                  | 
+| Your Name    | -nxxxx                   | memory  | Preset with your default from station settings                  |
 | Finish QSO   | ENTER-Key                | command |                                                                 |
 | Clear QSO    | ~                        | command | clears input not cached QSO                                     |
 | Show QSO     | ?                        | command |                                                                 |
@@ -58,11 +71,14 @@ It is also possible to enclose the sequence in quotes to type spaces instead.
 
     QSO> "#Long comment" "'Long name"
 
+### RST
+
 RST fields supports the whole range like `59` for phone, `599` for CW or `-06` for digimodes. 
 For CW the last digit can also be an `a` for aurora, `s` for scatter or alike 
 (see [R-S-T System](https://en.wikipedia.org/wiki/R-S-T_system) on Wikipedia).
 
-If you only give minutes to time i.e. `23t` the time will be filled with the last hour as if `1823t` was given 
+### Date and Time
+If you only give minutes to time e.g. `23t` the time will be filled with the last hour as if `1823t` was given 
 (assuming last time is something like 18:12 or so).
 For partial dates it will be filled in the same manner for each 2 digits missing from left to right. 
 So the date `240327d`, `0327d` or `27d` will be filled as if `20240327d` was given.
@@ -129,7 +145,7 @@ If it is a number it is stored as SRX and SRX_STRING. Else it is stored as SRX_S
 To leave the event mode for the following QSOs type a single `$` followed by a SPACE.
 
 ### xOTA
-For xOTA just enter one of SOTA, POTA i.e. `$pota` instead of the contest ID. 
+For xOTA just enter one of SOTA, POTA e.g. `$pota` instead of the contest ID. 
 Then set your own xOTA reference with `-Nxx-999` and track the QSO partners reference with `%xx-999`.
 
 Source Code of HamCC

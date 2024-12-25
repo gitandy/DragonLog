@@ -6,6 +6,7 @@ from hamcc import hamcc
 from . import CassiopeiaConsole_ui
 from .Logger import Logger
 from .RegEx import check_call
+from .adi2contest import CONTEST_NAMES, CONTEST_IDS
 
 
 class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaConsoleWidget):
@@ -29,7 +30,15 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
         self.__current_call__ = ''
+
+        self.__initWidgets__()
+
         self.refreshDisplay()
+
+    def __initWidgets__(self):
+        self.bandComboBox.insertItems(1, self.__settings__.value('ui/show_bands', []))
+        self.modeComboBox.insertItems(1, self.__settings__.value('ui/show_modes', []))
+        self.eventComboBox.insertItems(3, CONTEST_IDS.keys())
 
     def refreshDisplay(self):
         qso = self.__cc__.current_qso
@@ -41,30 +50,33 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.myNameLineEdit.setText(qso.get('MY_NAME', ''))
 
         if 'CONTEST_ID' in qso:
-            self.eventLineEdit.setText(qso['CONTEST_ID'])
+            self.eventComboBox.setCurrentText(CONTEST_NAMES.get(qso['CONTEST_ID'], qso['CONTEST_ID']))
             self.exchTXLineEdit.setText(qso.get('STX', qso.get('STX_STRING', '')))
             self.exchRXLineEdit.setText(qso.get('SRX', qso.get('SRX_STRING', '')))
         elif 'MY_SIG' in qso:
-            self.eventLineEdit.setText(qso['MY_SIG'])
+            self.eventComboBox.setCurrentText(qso['MY_SIG'])
             self.exchTXLineEdit.setText(qso.get('MY_SIG_INFO', ''))
             self.exchRXLineEdit.setText(qso.get('SIG_INFO', ''))
+        else:
+            self.exchTXLineEdit.setText('')
+            self.exchRXLineEdit.setText('')
+            # self.eventComboBox.setCurrentText(self.tr('Event ID'))
 
-        self.dateLineEdit.setText(hamcc.adif_date2iso(qso['QSO_DATE']))
-        self.timeLineEdit.setText(hamcc.adif_time2iso(qso['TIME_ON']))
-        self.bandLineEdit.setText(qso['BAND'])
-        self.modeLineEdit.setText(qso['MODE'])
+        self.dateEdit.setDate(QtCore.QDate.fromString(qso['QSO_DATE'], 'yyyyMMdd'))
+        self.timeEdit.setTime(QtCore.QTime.fromString(qso['TIME_ON'], 'HHmm'))
+        self.bandComboBox.setCurrentText(qso['BAND'].lower() if qso['BAND'] else self.tr('Band'))
+        self.modeComboBox.setCurrentText(qso['MODE'].upper() if qso['MODE'] else self.tr('Mode'))
         self.callLineEdit.setText(qso['CALL'])
-        loc = f'{qso["QTH"]} ({qso["GRIDSQUARE"]})' if 'QTH' in qso else qso["GRIDSQUARE"]
+        loc = f'{qso["QTH"]} ({qso["GRIDSQUARE"]})' if 'QTH' in qso else qso.get('GRIDSQUARE', '')
         self.locLineEdit.setText(loc)
 
         self.rstRXLineEdit.setText(qso.get('RST_RCVD', ''))
         self.rstTXLineEdit.setText(qso.get('RST_SENT', ''))
         self.nameLineEdit.setText(qso.get('NAME', ''))
 
-        freq = f'{float(qso.get("FREQ", "0")) * 1000:.3f}'.rstrip('0').rstrip('.')
-        self.freqLineEdit.setText('' if freq == '0' else freq)
-        self.pwrLineEdit.setText(qso.get('TX_PWR', ''))
-        self.qslLineEdit.setText(qso.get('QSL_RCVD', ''))
+        self.freqSpinBox.setValue(int(float(qso.get("FREQ", "0")) * 1000))
+        self.powerSpinBox.setValue(int(qso.get('TX_PWR', '0')))
+        self.qslCheckBox.setChecked(qso.get('QSL_RCVD', 'N') == 'Y')
         self.commentLineEdit.setText(qso.get('COMMENT', ''))
 
     def evaluate(self, text: str):
@@ -192,3 +204,76 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.tr('Error: Wrong RST format')
         self.tr('Warning: Callsign missing for last QSO')
         self.tr('Last QSO cached')
+
+    def callChanged(self, call: str):
+        if len(call) > 2:
+            self._evaluate_(call)
+
+    def locatorChanged(self):
+        self._evaluate_('@' + self.locLineEdit.text())
+
+    def nameChanged(self):
+        self._evaluate_('\'' + self.nameLineEdit.text())
+
+    def commentChanged(self):
+        self._evaluate_('#' + self.commentLineEdit.text())
+
+    def bandChanged(self, band: str):
+        if band and band != self.tr('Band'):
+            self._evaluate_(band)
+        self.refreshDisplay()
+
+    def modeChanged(self, mode: str):
+        if mode and mode != self.tr('Mode'):
+            self._evaluate_(mode)
+        self.refreshDisplay()
+
+    def dateChanged(self, date: QtCore.QDate):
+        self._evaluate_(date.toString('yyyyMMdd') + 'd')
+
+    def timeChanged(self, time: QtCore.QTime):
+        self._evaluate_(time.toString('HHmm') + 't')
+
+    def freqChanged(self, freq: int):
+        self._evaluate_(f'{freq}f')
+
+    def powerChanged(self, power: int):
+        self._evaluate_(f'{power}p')
+
+    def qslChanged(self, state: bool):
+        self._evaluate_('*')
+
+    def rstRxChanged(self):
+        if self.rstRXLineEdit.text():
+            self._evaluate_('.' + self.rstRXLineEdit.text())
+
+    def rstTxChanged(self):
+        if self.rstTXLineEdit.text():
+            self._evaluate_(',' + self.rstTXLineEdit.text())
+
+    def myCallChanged(self):
+        self._evaluate_('-c' + self.myCallLineEdit.text())
+
+    def myLocChanged(self):
+        self._evaluate_('-l' + self.myLocLineEdit.text())
+
+    def myNameChanged(self):
+        self._evaluate_('-n' + self.myNameLineEdit.text())
+
+    def eventChanged(self, event: str):
+        if event and event != self.tr('Event ID'):
+            event = CONTEST_IDS.get(self.eventComboBox.currentText().strip(), self.eventComboBox.currentText().strip())
+            self._evaluate_('$' + event)
+        else:
+            self._evaluate_('$')
+        self.refreshDisplay()
+
+    def exchRxChanged(self):
+        event = self.eventComboBox.currentText()
+        if event and event != self.tr('Event ID'):
+            self._evaluate_('%' + self.exchRXLineEdit.text())
+
+    def exchTxChanged(self):
+        event = self.eventComboBox.currentText()
+        if event and event != self.tr('Event ID'):
+            self._evaluate_('-N' + self.exchTXLineEdit.text())

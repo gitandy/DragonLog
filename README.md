@@ -36,7 +36,7 @@ Features
   * Excel/CSV
 * log 11m band QSOs
 * filter preset for recent QSOs (last week, month, half year, year)
-* UTF-8 support (i.e. use german umlauts)
+* UTF-8 support (e.g. use german umlauts)
 * convert non ASCII characters for ADIF export (for supported languages)
 * integrates [CassiopeiaConsole](https://github.com/gitandy/HamCC#hamcc---cassiopeiaconsole)
 * display DX spots from DX cluster via telnet
@@ -67,22 +67,25 @@ For windows there is also an installable MSI and ZIP package available for conve
 Starting and first start
 ------------------------
 At first start DragonLog opens the settings dialog for you. You should configure
-at least your callsign, name and locator for a sufficient experience. 
+at least your callsign, name and locator for a sufficient experience.
+
+To select a default QTH/locator go to the `QTH & Rig` tab and 
+add your first QTH and locator e.g. `Koblenz (JO30si)`.  
 
 Before you can start to log QSOs a database has to be selected.
 It can be placed on a path where you wish to.
-The database is created and initialised.
+The database will be created and initialised.
 
 At the next start of the program the last database gets opened automatically.
 
 You can switch between different databases as you like.
 
 ### Commandline Arguments
-If you want to manage different QSO databases you can select them via commandline argument i.e.
+If you want to manage different QSO databases you can select them via commandline argument e.g.
 
     # DragonLog QSOs-2024.qlog
 
-If you also want to provide a separate configuration you can use i.e.
+If you also want to provide a separate configuration you can use e.g.
 
     # DragonLog -ini DF1ASC.ini
 
@@ -119,7 +122,7 @@ In log and change mode there is a second view for QSL and different upload statu
 Here you can check the status of your paper QSL, eQSL inbox or LoTW QSLs.
 
 Make sure that you properly set the credentials for each online service in the settings.
-The password is stored in the systems key vault (i.e. Credential Manager on Windows or KWallet on KDE/Linux).
+The password is stored in the systems key vault (e.g. Credential Manager on Windows or KWallet on KDE/Linux).
 
 ### LoTW sign and upload
 Only QSOs with a matching locator in the TQSL application (installation required) can be signed and uploaded.
@@ -130,7 +133,7 @@ If you secured your TQSL (which is not recommended) set DragonLog correspondingl
 DragonLog will then request your password on each upload action.
 
 ### Automatic log import
-If you want to automatically log QSOs from other programs i.e. WSJT-X or JS8Call 
+If you want to automatically log QSOs from other programs e.g. WSJT-X or JS8Call 
 DragonLog can watch their ADIF file for changes and import new logs as they are created.
 
 Starting file watching opens a file dialog where you have to point to the log in question.

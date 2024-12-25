@@ -61,9 +61,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myCallLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Your callsign</string>
           </property>
@@ -85,9 +82,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myLocLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Your Locator</string>
           </property>
@@ -109,9 +103,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myNameLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Your Name</string>
           </property>
@@ -146,13 +137,37 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="eventLineEdit">
-          <property name="readOnly">
+         <widget class="QComboBox" name="eventComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="editable">
            <bool>true</bool>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
           </property>
           <property name="placeholderText">
            <string>Event ID</string>
           </property>
+          <item>
+           <property name="text">
+            <string>Event ID</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>POTA</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>SOTA</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -177,11 +192,20 @@
             <height>16777215</height>
            </size>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
-           <string>Tx Exchange</string>
+           <string>Exchange</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Tx</string>
           </property>
          </widget>
         </item>
@@ -207,11 +231,20 @@
             <height>16777215</height>
            </size>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
-           <string>Rx Exchange</string>
+           <string>Exchange</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Rx</string>
           </property>
          </widget>
         </item>
@@ -244,18 +277,12 @@
          <number>9</number>
         </property>
         <item>
-         <widget class="QLineEdit" name="dateLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
+         <widget class="QDateEdit" name="dateEdit">
+          <property name="displayFormat">
+           <string>yyyy-MM-dd</string>
           </property>
-          <property name="readOnly">
+          <property name="calendarPopup">
            <bool>true</bool>
-          </property>
-          <property name="placeholderText">
-           <string>Date</string>
           </property>
          </widget>
         </item>
@@ -274,20 +301,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="timeLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="placeholderText">
-           <string>Time</string>
-          </property>
-         </widget>
+         <widget class="QTimeEdit" name="timeEdit"/>
         </item>
         <item>
          <widget class="QLabel" name="label_4">
@@ -304,19 +318,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="bandLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
+         <widget class="QComboBox" name="bandComboBox">
+          <property name="editable">
            <bool>true</bool>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
           </property>
           <property name="placeholderText">
            <string>Band</string>
           </property>
+          <item>
+           <property name="text">
+            <string>Band</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -327,31 +343,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="modeLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
+         <widget class="QComboBox" name="modeComboBox">
+          <property name="editable">
            <bool>true</bool>
+          </property>
+          <property name="currentText">
+           <string>Mode</string>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
           </property>
           <property name="placeholderText">
            <string>Mode</string>
           </property>
+          <item>
+           <property name="text">
+            <string>Mode</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -363,9 +372,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="callLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Call</string>
           </property>
@@ -387,9 +393,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="locLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Locator</string>
           </property>
@@ -417,11 +420,20 @@
             <height>16777215</height>
            </size>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
-           <string>RST Tx</string>
+           <string>RST</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Tx</string>
           </property>
          </widget>
         </item>
@@ -447,11 +459,20 @@
             <height>16777215</height>
            </size>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
-           <string>RST Rx</string>
+           <string>RST</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>Rx</string>
           </property>
          </widget>
         </item>
@@ -484,9 +505,6 @@
             <height>16777215</height>
            </size>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Name</string>
           </property>
@@ -500,24 +518,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="freqLineEdit">
-          <property name="minimumSize">
-           <size>
-            <width>60</width>
-            <height>0</height>
-           </size>
+         <widget class="QSpinBox" name="freqSpinBox">
+          <property name="specialValueText">
+           <string>n.a.</string>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
+          <property name="suffix">
+           <string> kHz</string>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
+          <property name="maximum">
+           <number>999999999</number>
           </property>
-          <property name="placeholderText">
-           <string>Frequency</string>
+          <property name="stepType">
+           <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+          </property>
+          <property name="value">
+           <number>0</number>
           </property>
          </widget>
         </item>
@@ -536,18 +551,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="pwrLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>60</width>
-            <height>16777215</height>
-           </size>
+         <widget class="QSpinBox" name="powerSpinBox">
+          <property name="specialValueText">
+           <string>n.a.</string>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
+          <property name="suffix">
+           <string> W</string>
           </property>
-          <property name="placeholderText">
-           <string>Power</string>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="stepType">
+           <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+          </property>
+          <property name="value">
+           <number>0</number>
           </property>
          </widget>
         </item>
@@ -573,18 +594,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="qslLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>30</width>
-            <height>16777215</height>
-           </size>
+         <widget class="QCheckBox" name="qslCheckBox">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
           </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="placeholderText">
-           <string>QSL</string>
+          <property name="text">
+           <string>QSL rcvd</string>
           </property>
          </widget>
         </item>
@@ -604,9 +621,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="commentLineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
           <property name="placeholderText">
            <string>Comment</string>
           </property>
@@ -722,20 +736,12 @@
   <tabstop>myCallLineEdit</tabstop>
   <tabstop>myLocLineEdit</tabstop>
   <tabstop>myNameLineEdit</tabstop>
-  <tabstop>eventLineEdit</tabstop>
   <tabstop>exchTXLineEdit</tabstop>
   <tabstop>exchRXLineEdit</tabstop>
-  <tabstop>dateLineEdit</tabstop>
-  <tabstop>timeLineEdit</tabstop>
-  <tabstop>bandLineEdit</tabstop>
-  <tabstop>modeLineEdit</tabstop>
   <tabstop>callLineEdit</tabstop>
   <tabstop>locLineEdit</tabstop>
   <tabstop>rstTXLineEdit</tabstop>
   <tabstop>nameLineEdit</tabstop>
-  <tabstop>freqLineEdit</tabstop>
-  <tabstop>pwrLineEdit</tabstop>
-  <tabstop>qslLineEdit</tabstop>
   <tabstop>commentLineEdit</tabstop>
  </tabstops>
  <resources/>
@@ -804,6 +810,310 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>bandComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>bandChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateEdit</sender>
+   <signal>userDateChanged(QDate)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>dateChanged(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeEdit</sender>
+   <signal>userTimeChanged(QTime)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>timeChanged(QTime)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>148</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freqSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>freqChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>powerSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>powerChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>414</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>modeComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>modeChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>321</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>callChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>471</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>commentLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>commentChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>771</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nameLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>nameChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>locLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>locatorChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>714</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qslCheckBox</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>qslChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rstRXLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>rstRxChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>955</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rstTXLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>rstTxChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>872</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eventComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>eventChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>665</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exchRXLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>exchRxChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>950</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exchTXLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>exchTxChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>850</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>myCallLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>myCallChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>myNameLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>myNameChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>449</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>myLocLineEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>myLocChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>274</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>498</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearInput()</slot>
@@ -812,5 +1122,24 @@
   <slot>pushQSOs()</slot>
   <slot>deleteQSO()</slot>
   <slot>pushDirectlyChanged(bool)</slot>
+  <slot>bandChanged(QString)</slot>
+  <slot>dateChanged(QDate)</slot>
+  <slot>timeChanged(QTime)</slot>
+  <slot>modeChanged(QString)</slot>
+  <slot>freqChanged(int)</slot>
+  <slot>powerChanged(int)</slot>
+  <slot>callChanged(QString)</slot>
+  <slot>nameChanged()</slot>
+  <slot>locatorChanged()</slot>
+  <slot>commentChanged()</slot>
+  <slot>qslChanged(bool)</slot>
+  <slot>rstRxChanged()</slot>
+  <slot>rstTxChanged()</slot>
+  <slot>myCallChanged()</slot>
+  <slot>myLocChanged()</slot>
+  <slot>myNameChanged()</slot>
+  <slot>eventChanged(QString)</slot>
+  <slot>exchRxChanged()</slot>
+  <slot>exchTxChanged()</slot>
  </slots>
 </ui>
