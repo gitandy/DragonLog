@@ -120,6 +120,25 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         self.clear()
 
+    def refreshOwnData(self):
+        if self.identityGroupBox.isChecked():
+            self.ownNameLineEdit.setText(self.settings.value('station/name', ''))
+
+            if self.bandComboBox.currentText() == '11m':
+                self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
+            else:
+                self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
+
+        if self.stationGroupBox.isChecked():
+            self.ownQTHComboBox.setCurrentText(self.settings.value('station/qth_loc', ''))
+
+            if self.bandComboBox.currentText() == '11m':
+                self.radioComboBox.setCurrentText(self.settings.value('station_cb/radio', ''))
+                self.antennaComboBox.setCurrentText(self.settings.value('station_cb/antenna', ''))
+            else:
+                self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
+                self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
+
     def refreshBands(self):
         self.bandComboBox.clear()
         self.bandComboBox.insertItems(0, self.settings.value('ui/show_bands', self.bands.keys()))

@@ -187,6 +187,12 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.refreshDisplay()
         self.inputLineEdit.setFocus()
 
+    def resetUserData(self):
+        self._evaluate_('-c' + self.__settings__.value('station/callsign', ''))
+        self._evaluate_('-l' + self.__settings__.value('station/qth_loc', ''))
+        self._evaluate_('-n' + self.__settings__.value('station/name', ''))
+        self.refreshDisplay()
+
     def tr(self, text: str, **kwargs) -> str:
         if text.startswith('Last QSO cached:'):
             text, call = text.split(':')
