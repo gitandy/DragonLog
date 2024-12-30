@@ -1,8 +1,9 @@
-import math
+# DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import socket
 import logging
 
-import maidenhead
 from PyQt6 import QtWidgets, QtCore
 
 from . import DragonLog_QSOForm_ui
@@ -13,6 +14,7 @@ from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from . import ColorPalettes
 from .adi2contest import CONTEST_NAMES, CONTEST_IDS
+from .distance import distance
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
@@ -628,23 +630,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         else:
             self.timeOffEdit.setPalette(ColorPalettes.PaletteFaulty)
 
-    def calc_distance(self, mh_pos1: str, mh_pos2: str):
-        # noinspection PyBroadException
-        try:
-            pos1 = maidenhead.to_location(mh_pos1, True)
-            pos2 = maidenhead.to_location(mh_pos2, True)
-
-            mlat = math.radians(pos1[0])
-            mlon = math.radians(pos1[1])
-            plat = math.radians(pos2[0])
-            plon = math.radians(pos2[1])
-
-            return int(6371.01 * math.acos(
-                math.sin(mlat) * math.sin(plat) + math.cos(mlat) * math.cos(plat) * math.cos(mlon - plon)))
-        except Exception:
-            self.log.warning(f'Exception calcing distance between "{mh_pos1}" amd "{mh_pos2}"')
-            return 0
-
     @property
     def values(self) -> tuple:
         """Retreiving all values from the form"""
@@ -686,6 +671,12 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'R'
                 qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'R'
 
+        #noinspection PyBroadException
+        try:
+            dist = distance(self.locatorLineEdit.text(), own_locator)
+        except Exception:
+            dist = 0
+
         return (
             date_time_on,
             date_time_off,
@@ -710,7 +701,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.antennaComboBox.currentText().strip(),
             self.remarksTextEdit.toPlainText().strip(),
             self.commentLineEdit.text().strip(),
-            self.calc_distance(self.locatorLineEdit.text(), own_locator),
+            dist,
             qsl_via,
             qsl_path,
             qsl_msg,

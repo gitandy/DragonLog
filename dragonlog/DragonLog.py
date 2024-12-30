@@ -1,3 +1,6 @@
+# DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import os
 import csv
 import sys
@@ -42,6 +45,8 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
 from .adi2contest import ContestLog, CONTEST_NAMES, CONTEST_IDS, CONTESTS
+from .distance import distance
+
 
 from . import ColorPalettes
 
@@ -1948,6 +1953,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 values[self.__sql_cols__.index('own_qth') - 1] = self.settings.value('station/QTH', '')
             if not values[self.__sql_cols__.index('own_locator') - 1]:
                 values[self.__sql_cols__.index('own_locator') - 1] = self.settings.value('station/own_locator', '')
+
+        if 'DISTANCE' not in r and 'GRIDSQUARE' in r and 'MY_GRIDSQUARE' in r:
+            # noinspection PyBroadException
+            try:
+                r['DISTANCE'] = distance(r['GRIDSQUARE'], r['MY_GRIDSQUARE'])
+            except Exception:
+                pass
 
         values[self.__sql_cols__.index('channel') - 1] = '-'
 
