@@ -657,19 +657,15 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if check_qth(self.ownQTHComboBox.currentText()):
             own_qth, own_locator = check_qth(self.ownQTHComboBox.currentText())
 
-        qsl_via = ''
         qsl_path = ''
-        qsl_msg = ''
         qsl_sent = 'N'
         qsl_rcvd = 'N'
         if self.qslBurDirGroupBox.isChecked():
-            qsl_via = self.qslViaLineEdit.text()
             qsl_path = 'D' if self.qslDirectRadioButton.isChecked() else 'B'
-            qsl_msg = self.qslMessageTextEdit.toPlainText().strip()
 
             if self.qslBurDirGroupBox.isChecked():
-                qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'R'
-                qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'R'
+                qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'N'
+                qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'N'
 
         #noinspection PyBroadException
         try:
@@ -702,9 +698,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.remarksTextEdit.toPlainText().strip(),
             self.commentLineEdit.text().strip(),
             dist,
-            qsl_via,
+            self.qslViaLineEdit.text(),
             qsl_path,
-            qsl_msg,
+            self.qslMessageTextEdit.toPlainText().strip(),
             qsl_sent,
             qsl_rcvd,
             self.__old_values__.get('eqsl_sent', 'N'),
@@ -807,11 +803,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.remarksTextEdit.setText(values['remarks'])
         self.commentLineEdit.setText(values['comments'].replace('\n', ' ').replace('\r', ''))
 
+        self.qslViaLineEdit.setText(values['qsl_via'])
+        self.qslMessageTextEdit.setText(values['qsl_msg'])
         if values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y'):
-            self.qslViaLineEdit.setText(values['qsl_via'])
             self.qslBureauRadioButton.setChecked(values['qsl_path'] == 'B')
             self.qslDirectRadioButton.setChecked(values['qsl_path'] == 'D')
-            self.qslMessageTextEdit.setText(values['qsl_msg'])
 
             if values['qsl_sent'] in ('R', 'Y') or values['qsl_rcvd'] in ('R', 'Y'):
                 self.qslBurDirGroupBox.setChecked(True)
