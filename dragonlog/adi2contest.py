@@ -47,6 +47,8 @@ BAND_MAP_CBR = {
     # '': 'LIGHT',
 }
 
+BAND_FROM_CBR = dict(zip(BAND_MAP_CBR.values(), BAND_MAP_CBR.keys()))
+
 
 @dataclass
 class CBRRecord:
@@ -266,7 +268,7 @@ class ContestLog:
             if self.__header__['CATEGORY-MODE'] != 'MIXED' and adif_rec['MODE'].upper() != self.__header__[
                 'CATEGORY-MODE']:
                 self.warning(f'Mode "{adif_rec["MODE"].upper()}" does not match with '
-                                 f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
+                             f'contest mode "{self.__header__["CATEGORY-MODE"]}"')
                 if self.__skip_warn__:
                     return
 
@@ -462,19 +464,24 @@ class RLPFALZAWLog(ContestLog):
 
         self.__dok__ = specific
 
-        self.__multis__ = []
-        self.__district_calls__ = []
+        self.__multis__: list[str] = []
+        self.__district_calls__: list[str] = []
 
-        self.__points_per_band__ = {}
+        self.__points_per_band__:dict[str, int] = {}
+
+        self.__qsos_band__: list[str] = []  # QSO index: date, call, band
+        self.__qsos_mode__: list[str] = []  # QSO index: date, call, mode
 
     @classmethod
     def is_single_day(cls) -> bool:
         return False
 
     def statistics(self) -> str:
-        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
+        common_stats = (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                 f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
                 f'Claimed points: {self.claimed_points}')
+        band_stats = [f'{b:>5s} {self.__points_per_band__[b]:>5d} points' for b in self.__points_per_band__]
+        return common_stats + '\nStatistics per band:\n' + '\n'.join(band_stats)
 
     def build_record(self, adif_rec) -> CBRRecord:
         adif_rec['STX_STRING'] = self.__dok__.upper()
@@ -506,25 +513,35 @@ class RLPFALZAWLog(ContestLog):
 
             if rec.rcvd_exch == self.__dok__:
                 qso_point = 0
+                self.info(f'QSO with {rec.call} not rated: same DOK "{rec.rcvd_exch.upper()}"')
             else:
-                self.__rated__ += 1
-                if any((rec.rcvd_exch.upper() in RLPMultis.DOKS,
-                        rec.rcvd_exch.upper() in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
-                        rec.rcvd_exch.upper() == 'NM')):
-                    if rec.rcvd_exch not in self.__multis__:
-                        self.__multis__.append(rec.rcvd_exch)
-                    if (rec.call in RLPMultis.DISTRICT_SPECIAL and
-                            rec.call not in self.__district_calls__):
-                        self.__district_calls__.append(rec.call)
+                qso_band = rec.date + rec.call + rec.band
+                qso_mode = rec.date + rec.call + rec.mode
+
+                if qso_band not in self.__qsos_band__ and qso_mode not in self.__qsos_mode__:
+                    self.__qsos_band__.append(qso_band)
+                    self.__qsos_mode__.append(qso_mode)
+                    self.__rated__ += 1
+                    if any((rec.rcvd_exch.upper() in RLPMultis.DOKS,
+                            rec.rcvd_exch.upper() in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
+                            rec.rcvd_exch.upper() == 'NM')):
+                        if rec.rcvd_exch not in self.__multis__:
+                            self.__multis__.append(rec.rcvd_exch)
+                        if (rec.call in RLPMultis.DISTRICT_SPECIAL and
+                                rec.call not in self.__district_calls__):
+                            self.__district_calls__.append(rec.call)
+                    else:
+                        self.warning(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
                 else:
-                    self.info(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
+                    qso_point = 0
+                    self.info(f'QSO with {rec.call} not rated: band or mode twice at same day "{rec.date}"')
 
             self.__points__ += qso_point
 
-            if rec.band in self.__points_per_band__:
-                self.__points_per_band__[rec.band] += qso_point
+            if BAND_FROM_CBR[rec.band] in self.__points_per_band__:
+                self.__points_per_band__[BAND_FROM_CBR[rec.band]] += qso_point
             else:
-                self.__points_per_band__[rec.band] = qso_point
+                self.__points_per_band__[BAND_FROM_CBR[rec.band]] = qso_point
 
             self.__header__['CLAIMED-SCORE'] = self.claimed_points
         except Exception:
@@ -768,7 +785,7 @@ class K32KurzUKWLog(ContestLog):
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if adif_rec['BAND'].lower() not in ('2m', '70cm'):
             self.warning(f'Band "{adif_rec["BAND"].lower()}" does not match with '
-                             f'contest bands 2m / 70cm ')
+                         f'contest bands 2m / 70cm ')
             if self.__skip_warn__:
                 return False
         return True
@@ -854,7 +871,8 @@ class K32KurzUKWLog(ContestLog):
             r_dok = r_dok.strip()
             r_pwr = r_pwr.strip()
         except Exception:
-            self.exception(f'Error on processing received exchange "{rec.rcvd_exch}" for {rec.call} at {rec.date} {rec.time}')
+            self.exception(
+                f'Error on processing received exchange "{rec.rcvd_exch}" for {rec.call} at {rec.date} {rec.time}')
 
         try:
             qso_point = 2

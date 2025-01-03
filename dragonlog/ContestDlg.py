@@ -227,7 +227,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                 for rec in doc['RECORDS']:
                     contest.append(rec)
 
-                self.log.info(f'Contest statistics < {contest.statistics()} >')
+                self.log.info(f'Contest statistics {contest.statistics()}')
                 contest.open_file(self.exportPathLineEdit.text())
                 contest.write_records()
                 contest.close_file()
