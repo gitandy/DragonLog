@@ -1,4 +1,4 @@
-# DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
 import json
@@ -12,7 +12,7 @@ from PyQt6.QtGui import QStandardItem
 
 from . import DxSpots_ui
 from .Logger import Logger
-from . import cty
+from .cty import CountryNotFoundException, CountryCodeNotFoundException
 
 
 class DxCluster(QtCore.QThread):
@@ -22,7 +22,7 @@ class DxCluster(QtCore.QThread):
     dataReceived = QtCore.pyqtSignal(str)
     newMailReceived = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, logger: Logger, address: str, port: int, call: str):
+    def __init__(self, logger: Logger, address: str, port: int, call: str):
         super().__init__()
 
         self.log = logging.getLogger('DxCluster')
@@ -243,9 +243,6 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
 
         self.__refresh__ = False
 
-        self.__cty__ = None
-        self.load_cty(self.__settings__.value('dx_spots/cty_data', ''))
-
         self.dxc = None
 
     def clear(self):
@@ -253,30 +250,12 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.tableModel.setHorizontalHeaderLabels(self.header)
         self.tableView.resizeColumnsToContents()
 
-    def load_cty(self, cty_path: str):
-        # noinspection PyBroadException
-        try:
-            self.__cty__ = cty.CountryData(cty_path)
-            self.log.debug(f'Using country data from "{cty_path}"')
-        except Exception:
-            self.__cty__ = cty.CountryData(self.__dragonlog__.searchFile('data:cty/cty.csv'))
-            self.log.debug(f'Using country data default')
-
-    @property
-    def cty_version(self):
-        return self.__cty__.version
-
-    @property
-    def cty_ver_entity(self):
-        cty_d = self.__cty__.country('VERSION')
-        return f'{cty_d.name}, {cty_d.code}'
-
     def control(self, state: bool):
         if state:
             try:
                 self.__refresh__ = True
                 dx_call = self.__settings__.value('dx_spots/call', '')
-                self.dxc = DxCluster(self, self.logger,
+                self.dxc = DxCluster(self.logger,
                                      self.__settings__.value('dx_spots/address', 'hamqth.com'),
                                      int(self.__settings__.value('dx_spots/port', 7300)),
                                      dx_call if dx_call else self.__settings__.value('station/callSign', ''))
@@ -329,16 +308,15 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             spot[5] = tstamp
             spot[7] = self.band_from_freq(float(freq.strip()))
 
-            if self.__cty__:
-                sp_cty = self.__cty__.country(spotter)
-                if sp_cty:
-                    spot[1] = sp_cty.continent
+            sp_cty = self.__dragonlog__.cty_data(spotter)
+            if sp_cty:
+                spot[1] = sp_cty.continent
 
-                cty_d = self.__cty__.country(call)
-                if cty_d:
-                    spot[6] = cty_d.continent
-                    spot[8] = cty_d.name
-        except (cty.CountryCodeNotFoundException, cty.CountryNotFoundException) as exc:
+            cty_d = self.__dragonlog__.cty_data(call)
+            if cty_d:
+                spot[6] = cty_d.continent
+                spot[8] = cty_d.name
+        except (CountryCodeNotFoundException, CountryNotFoundException) as exc:
             self.log.error(exc)
         except Exception as exc:
             self.log.exception(exc)

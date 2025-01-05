@@ -1,4 +1,4 @@
-# DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
 import socket
@@ -15,6 +15,7 @@ from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
 from . import ColorPalettes
 from .adi2contest import CONTEST_NAMES, CONTEST_IDS
 from .distance import distance
+from .cty import Country
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
@@ -570,6 +571,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def callSignChanged(self, txt):
         self.checkRequired()
         self.setWorkedBefore()
+        self.ctyCtyLabel.clear()
+        self.ctyAreaLabel.clear()
         if not txt:
             self.callSignLineEdit.setPalette(ColorPalettes.PaletteRequired)
         elif check_format(REGEX_CALL, txt):
@@ -582,6 +585,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.callSignLineEdit.setPalette(ColorPalettes.PaletteWorked)
             else:
                 self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
+
+            cdata : Country = self.dragonlog.cty_data(txt)
+            if cdata:
+                self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
+                self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
         elif self.bandComboBox.currentText() == '11m':
             self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:

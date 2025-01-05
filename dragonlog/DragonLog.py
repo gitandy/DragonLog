@@ -1,4 +1,4 @@
-# DragonLog (c) 2023-2024 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
 import os
@@ -46,8 +46,7 @@ from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
 from .adi2contest import ContestLog, CONTEST_NAMES, CONTEST_IDS, CONTESTS
 from .distance import distance
-
-
+from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
 from . import ColorPalettes
 
 __prog_name__ = 'DragonLog'
@@ -419,8 +418,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
 
+        self.__cty__: CountryData | None = None
+        self.cty_load(self.settings.value('dx_spots/cty_data', ''))
+
+        # Settings Form
         self.settings_form = Settings(self, self.settings, self.hamlib_status,
                                       self.bands, self.modes['AFU'], self.__headers__, self.log)
+        self.settings_form.ctyDataChanged.connect(self.cty_load)
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
@@ -469,7 +473,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(dxspots_dock_area,
                                self.dxSpotsDockWidget)
         self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
-        self.settings_form.ctyDataChanged.connect(self.dxspots_widget.load_cty)
         self.dxspots_widget.spotSelected.connect(self.qso_form.setQSO)
         self.dxspots_widget.spotSelected.connect(self.cc_widget.setQSO)
 
@@ -2197,6 +2200,30 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
                                           self.tr('No contest data available for export'))
 
+    def cty_load(self, cty_path: str):
+        # noinspection PyBroadException
+        try:
+            self.__cty__ = CountryData(cty_path)
+            self.log.debug(f'Using country data from "{cty_path}"')
+        except Exception:
+            self.__cty__ = CountryData(self.searchFile('data:cty/cty.csv'))
+            self.log.debug(f'Using country data default')
+
+    @property
+    def cty_version(self) -> str:
+        return self.__cty__.version
+
+    @property
+    def cty_ver_entity(self) -> str:
+        cty_d = self.__cty__.country('VERSION')
+        return f'{cty_d.name}, {cty_d.code}'
+
+    def cty_data(self, call: str) -> Country | None:
+        try:
+            return self.__cty__.country(call)
+        except (CountryNotFoundException, CountryCodeNotFoundException):
+            pass
+
     def createHelpDlg(self, title: str, help_text: str):
         help_dialog = QtWidgets.QDialog(self)
         help_dialog.setWindowTitle(f'{self.programName} - {title}')
@@ -2288,8 +2315,8 @@ The *Internal ID* is the ID which is imported or exported in ADIF format.
 
         op_txt = f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl' if OPTION_OPENPYXL else ''
 
-        cty_ver = self.dxspots_widget.cty_version
-        cty_ent = self.dxspots_widget.cty_ver_entity
+        cty_ver = self.cty_version
+        cty_ent = self.cty_ver_entity
 
         QtWidgets.QMessageBox.about(
             self,

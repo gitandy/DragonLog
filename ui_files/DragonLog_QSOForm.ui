@@ -36,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>290</height>
+        <width>465</width>
+        <height>309</height>
        </rect>
       </property>
       <attribute name="label">
@@ -48,10 +48,13 @@
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="nameLineEdit">
-             <property name="placeholderText">
-              <string>Name</string>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="searchHamQTHPushButton">
+             <property name="text">
+              <string>HamQTH</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Alt+H</string>
              </property>
             </widget>
            </item>
@@ -59,6 +62,23 @@
             <widget class="QLineEdit" name="callSignLineEdit">
              <property name="placeholderText">
               <string>Call sign</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="searchQRZCQPushButton">
+             <property name="text">
+              <string>QRZCQ</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Alt+Z</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="nameLineEdit">
+             <property name="placeholderText">
+              <string>Name</string>
              </property>
             </widget>
            </item>
@@ -76,23 +96,17 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="searchHamQTHPushButton">
+           <item row="2" column="1">
+            <widget class="QLabel" name="ctyAreaLabel">
              <property name="text">
-              <string>HamQTH</string>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+Alt+H</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="searchQRZCQPushButton">
+           <item row="2" column="0">
+            <widget class="QLabel" name="ctyCtyLabel">
              <property name="text">
-              <string>QRZCQ</string>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+Alt+Z</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -1085,7 +1099,6 @@ This is not the QSL manager/bureau address.</string>
  <tabstops>
   <tabstop>callSignLineEdit</tabstop>
   <tabstop>searchHamQTHPushButton</tabstop>
-  <tabstop>searchQRZCQPushButton</tabstop>
   <tabstop>RSTSentLineEdit</tabstop>
   <tabstop>RSTRcvdLineEdit</tabstop>
   <tabstop>bandComboBox</tabstop>
@@ -1093,9 +1106,6 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>freqDoubleSpinBox</tabstop>
   <tabstop>modeComboBox</tabstop>
   <tabstop>submodeComboBox</tabstop>
-  <tabstop>nameLineEdit</tabstop>
-  <tabstop>QTHLineEdit</tabstop>
-  <tabstop>locatorLineEdit</tabstop>
   <tabstop>powerSpinBox</tabstop>
   <tabstop>propComboBox</tabstop>
   <tabstop>timeNowPushButton</tabstop>
