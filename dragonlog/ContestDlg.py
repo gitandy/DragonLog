@@ -1,3 +1,6 @@
+# DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import logging
 
 from PyQt6 import QtWidgets, QtCore
@@ -216,7 +219,9 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            CategoryBand['B_' + self.bandComboBox.currentText()],
                                            CategoryMode[self.modeComboBox.currentText()],
                                            specific=self.specificLineEdit.text(),
-                                           logger=self.logger)
+                                           logger=self.logger,
+                                           from_date=self.fromDateEdit.text(),
+                                           to_date=self.toDateEdit.text())
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
         if self.soapPlainTextEdit.toPlainText().strip():
