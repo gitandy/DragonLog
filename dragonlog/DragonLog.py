@@ -1629,7 +1629,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.lastError().text():
                 self.log.error(query.lastError().text())
             self.__db_con__.commit()
-            self.refreshTableView(sort=False)
 
     def markQSO(self):
         actions = {
@@ -1655,6 +1654,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             field, state = actions[action]
             for i in self.selectedQSOIds():
                 self.updateQSOField(field, i, state)
+            self.refreshTableView(sort=False)
 
     def logImport(self):
         if not self.__db_con__.isOpen():
