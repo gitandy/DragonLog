@@ -1,3 +1,6 @@
+# DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import logging
 
 from PyQt6 import QtWidgets, QtCore
@@ -60,7 +63,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         else:
             self.exchTXLineEdit.setText('')
             self.exchRXLineEdit.setText('')
-            # self.eventComboBox.setCurrentText(self.tr('Event ID'))
+            self.eventComboBox.setCurrentText(self.tr('Event ID'))
 
         self.dateEdit.setDate(QtCore.QDate.fromString(qso['QSO_DATE'], 'yyyyMMdd'))
         self.timeEdit.setTime(QtCore.QTime.fromString(qso['TIME_ON'], 'HHmm'))
@@ -268,7 +271,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def eventChanged(self, event: str):
         if event and event != self.tr('Event ID'):
-            event = CONTEST_IDS.get(self.eventComboBox.currentText().strip(), self.eventComboBox.currentText().strip())
+            event = CONTEST_IDS.get(event, self.eventComboBox.currentText().strip())
             self._evaluate_('$' + event)
         else:
             self._evaluate_('$')
