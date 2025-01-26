@@ -203,6 +203,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
     def accept(self):
         self.log.info(f'Exporting "{self.contestComboBox.currentText()}" from {self.fromDateEdit.text()}...')
 
+        # noinspection PyProtectedMember
         doc = self.dragonlog._build_adif_export_(f"SELECT * FROM qsos WHERE "
                                                  f"contest_id = '{CONTEST_IDS[self.contestComboBox.currentText()]}' AND "
                                                  f"DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND "
@@ -220,8 +221,12 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            CategoryMode[self.modeComboBox.currentText()],
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
+                                           # Extra parameters for edi format
                                            from_date=self.fromDateEdit.text(),
-                                           to_date=self.toDateEdit.text())
+                                           to_date=self.toDateEdit.text(),
+                                           radio=self.__settings__.value('station/radio', ''),
+                                           antenna=self.__settings__.value('station/antenna', ''),
+                                           )
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
         if self.soapPlainTextEdit.toPlainText().strip():

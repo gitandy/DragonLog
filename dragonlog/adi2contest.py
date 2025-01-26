@@ -945,12 +945,10 @@ class L33EinsteigerContest(ContestLog):
 
         self.__qsos__: list[EDIRecord] = []
 
-        self.__from_date__ = '2001-01-01'
-        if 'from_date' in params:
-            self.__from_date__ = params['from_date']
-        self.__to_date__ = '2001-01-01'
-        if 'to_date' in params:
-            self.__to_date__ = params['to_date']
+        self.__from_date__ = params.get('from_date', '2001-01-01')
+        self.__to_date__ = params.get('to_date', '2001-01-01')
+        self.__radio__ = params.get('radio', '<RADIO>')
+        self.__antenna__ = params.get('antenna', '<ANTENNA>')
 
         self.__dok__ = specific
 
@@ -1003,10 +1001,10 @@ class L33EinsteigerContest(ContestLog):
         self.__edi_file__.write('MOpe2=\n')
 
         # Station
-        self.__edi_file__.write('STXEq=<SEND_RADIO>\n')
+        self.__edi_file__.write(f'STXEq={self.__radio__}\n')
         self.__edi_file__.write('SPowe=<POWER_IN_WATTS>\n')
-        self.__edi_file__.write('SRXEq=<RECV_RADIO>\n')
-        self.__edi_file__.write('SAnte=<ANTENNA>\n')
+        self.__edi_file__.write(f'SRXEq={self.__radio__}\n')
+        self.__edi_file__.write(f'SAnte={self.__antenna__}\n')
         self.__edi_file__.write('SAntH=<ABOVE_GROUND>;<ABOVE_SEE>\n')
 
     def statistics(self) -> str:
