@@ -1,14 +1,16 @@
 # DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
+import os
 import logging
 
 from PyQt6 import QtWidgets, QtCore
 
 from . import ContestDlg_ui
 from .Logger import Logger
-from .adi2contest import *
+from .adi2contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, CategoryBand, CategoryMode, ContestLog
 from . import ColorPalettes
+from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
 
 
 class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):

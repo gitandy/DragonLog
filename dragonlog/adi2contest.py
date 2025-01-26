@@ -2,13 +2,14 @@
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
 import os
+import re
 import typing
 from enum import Enum, auto
 import logging
 from dataclasses import dataclass
 from typing import Type
 
-from .RegEx import *
+from .RegEx import check_format, REGEX_CALL, REGEX_LOCATOR, REGEX_RSTFIELD
 from .distance import distance
 
 import openpyxl
@@ -478,7 +479,7 @@ class RLPFALZAWLog(ContestLog):
         self.__multis__: list[str] = []
         self.__district_calls__: list[str] = []
 
-        self.__points_per_band__:dict[str, int] = {}
+        self.__points_per_band__: dict[str, int] = {}
 
         self.__qsos_band__: list[str] = []  # QSO index: date, call, band
         self.__qsos_mode__: list[str] = []  # QSO index: date, call, mode
@@ -489,8 +490,8 @@ class RLPFALZAWLog(ContestLog):
 
     def statistics(self) -> str:
         common_stats = (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
-                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
-                f'Claimed points: {self.claimed_points}')
+                        f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
+                        f'Claimed points: {self.claimed_points}')
         band_stats = [f'{b:>5s} {self.__points_per_band__[b]:>5d} points' for b in self.__points_per_band__]
         return common_stats + '\nStatistics per band:\n' + '\n'.join(band_stats)
 
@@ -1101,7 +1102,7 @@ class L33EinsteigerContest(ContestLog):
                               '',  # New exch
                               'N' if lnew else '',  # New locator
                               '',  # New DXCC
-                              '' if not dup else 'D' # Duplicate QSO
+                              '' if not dup else 'D'  # Duplicate QSO
                               ]
                 self.__edi_file__.write(';'.join(edi_fields) + '\n')
 
