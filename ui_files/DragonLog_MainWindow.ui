@@ -92,8 +92,9 @@
     <addaction name="separator"/>
     <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
-    <addaction name="actionShow_log"/>
+    <addaction name="actionShow_Contest_stats"/>
     <addaction name="actionShow_DX_Spots"/>
+    <addaction name="actionShow_log"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
@@ -147,7 +148,7 @@
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+    <set>Qt::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Application Log</string>
@@ -657,8 +658,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>82</width>
-     <height>40</height>
+     <width>500</width>
+     <height>100</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -690,6 +691,27 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents"/>
+  </widget>
+  <widget class="QDockWidget" name="contestStatDockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>Contest Statistics</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2"/>
   </widget>
   <action name="actionLog_QSO">
    <property name="icon">
@@ -1119,6 +1141,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionShow_Contest_stats">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:contest_stats.png</normaloff>icons:contest_stats.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Contest stats</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
@@ -1969,6 +2003,22 @@
     <hint type="destinationlabel">
      <x>642</x>
      <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_Contest_stats</sender>
+   <signal>triggered()</signal>
+   <receiver>contestStatDockWidget</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1107</x>
+     <y>761</y>
     </hint>
    </hints>
   </connection>

@@ -130,6 +130,19 @@ class CategoryTransmitter(Enum):
     SWL = auto()
 
 
+@dataclass
+class BandStatistics:
+    qsos: int = 0
+    rated: int = 0
+    points: int = 0
+    multis: int = 1
+    summary: int = 0
+
+    def values(self) -> tuple:
+        #return self.qsos, self.rated, self.points, self.multis, self.summary
+        return tuple(self.__dict__.values())
+
+
 class ContestLog:
     contest_name = 'Contest'
     contest_year = '2025'
@@ -184,6 +197,9 @@ class ContestLog:
 
         self.__rated__: int = 0
         self.__points__: int = 0
+        self.__multis__: set[str] = set()
+
+        self.__stats__: dict[str, BandStatistics] = {}
 
         self.__skip_id__ = skip_id
         self.__skip_warn__ = skip_warn
@@ -202,8 +218,8 @@ class ContestLog:
 
         if not check_format(REGEX_CALL, callsign):
             self.log.error(f'Callsign "{callsign}" does not match call format')
-        if not check_format(REGEX_LOCATOR, locator):
-            self.log.error(f'Locator "{locator}" does not match locator format')
+        if locator and not check_format(REGEX_LOCATOR, locator):
+            self.log.warning(f'Locator "{locator}" does not match locator format')
 
         self.__header__['CONTEST'] = self.contest_name
         self.__header__['CREATED-BY'] = 'ContestLog v0.1'
@@ -318,7 +334,7 @@ class ContestLog:
 
                 self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
 
-                self.log.debug(self.statistics())
+                self.log.debug(self.summary())
         except KeyError as exc:
             self.error(f'Could not be processed. Field {exc} is missing')
 
@@ -381,15 +397,38 @@ class ContestLog:
         """Number of QSOs rated with points"""
         return self.__rated__
 
+    @property
+    def multis(self) -> int:
+        return len(self.__multis__) if self.__multis__ else 1
+
     def process_points(self, rec: CBRRecord):
         """Place for calculating points and decision for rating a QSO
         Should be overwritten"""
         self.__points__ += 1
         self.__rated__ += 1
 
-    def statistics(self) -> str:
+        if BAND_FROM_CBR[rec.band] in self.__stats__:
+            self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+            self.__stats__[BAND_FROM_CBR[rec.band]].rated += 1
+            self.__stats__[BAND_FROM_CBR[rec.band]].points += 1
+        else:
+            self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, 1, 1, 1)
+
+    def summary(self) -> str:
         """Returns a statistic over the QSOs"""
-        return f'QSOs: {self.qsos}, Rated: {self.rated}, Claimed points: {self.points}'
+        return (f'QSOs: {self.qsos}, Rated: {self.rated}, '
+                f'Points: {self.points}, Multis: {self.multis}, '
+                f'Claimed points: {self.claimed_points}')
+
+    @property
+    def statistics(self) -> dict[str, BandStatistics]:
+        for b in self.__stats__:
+            self.__stats__[b].multis = self.multis
+            self.__stats__[b].summary = self.__stats__[b].points * self.multis
+
+        self.__stats__['Total'] = BandStatistics(self.qsos, self.rated, self.points, self.multis, self.claimed_points)
+
+        return self.__stats__
 
     def serialize_cbr(self):
         yield 'START-OF-LOG: 3.0'
@@ -443,6 +482,10 @@ class ContestLog:
         return 'Specific'
 
     @classmethod
+    def needs_specific(cls) -> bool:
+        return False
+
+    @classmethod
     def is_single_day(cls) -> bool:
         return True
 
@@ -476,10 +519,7 @@ class RLPFALZAWLog(ContestLog):
 
         self.__dok__ = specific
 
-        self.__multis__: list[str] = []
-        self.__district_calls__: list[str] = []
-
-        self.__points_per_band__: dict[str, int] = {}
+        self.__district_calls__: set[str] = set()
 
         self.__qsos_band__: list[str] = []  # QSO index: date, call, band
         self.__qsos_mode__: list[str] = []  # QSO index: date, call, mode
@@ -488,12 +528,10 @@ class RLPFALZAWLog(ContestLog):
     def is_single_day(cls) -> bool:
         return False
 
-    def statistics(self) -> str:
-        common_stats = (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
+    def summary(self) -> str:
+        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                         f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
                         f'Claimed points: {self.claimed_points}')
-        band_stats = [f'{b:>5s} {self.__points_per_band__[b]:>5d} points' for b in self.__points_per_band__]
-        return common_stats + '\nStatistics per band:\n' + '\n'.join(band_stats)
 
     def build_record(self, adif_rec) -> CBRRecord:
         adif_rec['STX_STRING'] = self.__dok__.upper()
@@ -501,19 +539,20 @@ class RLPFALZAWLog(ContestLog):
         return rec
 
     @property
-    def multis(self) -> int:
-        return len(self.__multis__)
-
-    @property
     def district_calls(self) -> int:
         return len(self.__district_calls__)
 
     @property
+    def multis(self) -> int:
+        return (len(self.__multis__) if self.__multis__ else 1) + self.district_calls
+
+    @property
     def claimed_points(self) -> int:
-        return self.points * (self.multis + self.district_calls)
+        return self.points * self.multis
 
     def process_points(self, rec: CBRRecord):
         try:
+            rated = 1
             qso_point = 1
             if rec.mode == 'CW':
                 qso_point = 3
@@ -525,6 +564,7 @@ class RLPFALZAWLog(ContestLog):
 
             if rec.rcvd_exch == self.__dok__:
                 qso_point = 0
+                rated = 0
                 self.info(f'QSO with {rec.call} not rated: same DOK "{rec.rcvd_exch.upper()}"')
             else:
                 qso_band = rec.date + rec.call + rec.band
@@ -537,11 +577,9 @@ class RLPFALZAWLog(ContestLog):
                     if any((rec.rcvd_exch.upper() in RLPMultis.DOKS,
                             rec.rcvd_exch.upper() in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
                             rec.rcvd_exch.upper() == 'NM')):
-                        if rec.rcvd_exch not in self.__multis__:
-                            self.__multis__.append(rec.rcvd_exch)
-                        if (rec.call in RLPMultis.DISTRICT_SPECIAL and
-                                rec.call not in self.__district_calls__):
-                            self.__district_calls__.append(rec.call)
+                        self.__multis__.add(rec.rcvd_exch)
+                        if rec.call in RLPMultis.DISTRICT_SPECIAL:
+                            self.__district_calls__.add(rec.call)
                     else:
                         self.warning(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
                 else:
@@ -550,10 +588,12 @@ class RLPFALZAWLog(ContestLog):
 
             self.__points__ += qso_point
 
-            if BAND_FROM_CBR[rec.band] in self.__points_per_band__:
-                self.__points_per_band__[BAND_FROM_CBR[rec.band]] += qso_point
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
             else:
-                self.__points_per_band__[BAND_FROM_CBR[rec.band]] = qso_point
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 1)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -578,6 +618,10 @@ class RLPFALZAWLog(ContestLog):
     def descr_specific(cls) -> str:
         return 'DOK'
 
+    @classmethod
+    def needs_specific(cls) -> bool:
+        return True
+
 
 class RLPFALZABUKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend UKW'
@@ -599,10 +643,9 @@ class RLPFALZABUKWLog(ContestLog):
 
         self.__dok__ = specific
 
-        self.__multis__ = []
-        self.__district_calls__ = []
+        self.__district_calls__: set[str] = set()
 
-    def statistics(self) -> str:
+    def summary(self) -> str:
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                 f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
                 f'Claimed points: {self.claimed_points}')
@@ -613,20 +656,21 @@ class RLPFALZABUKWLog(ContestLog):
         return rec
 
     @property
-    def multis(self) -> int:
-        return len(self.__multis__)
-
-    @property
     def district_calls(self) -> int:
         return len(self.__district_calls__)
 
     @property
+    def multis(self) -> int:
+        return (len(self.__multis__) if self.__multis__ else 1) + self.district_calls
+
+    @property
     def claimed_points(self) -> int:
-        return self.points * (self.multis + self.district_calls)
+        return self.points * self.multis
 
     def process_points(self, rec: CBRRecord):
         try:
             qso_point = 1
+            rated = 1
             if rec.mode == 'CW':
                 qso_point = 3
             elif rec.mode == 'PH':
@@ -644,20 +688,27 @@ class RLPFALZABUKWLog(ContestLog):
 
             if rcvd_dok == self.__dok__:
                 qso_point = 0
+                rated = 0
+                self.info(f'QSO with {rec.call} not rated: same DOK "{rec.rcvd_exch.upper()}"')
             else:
                 self.__rated__ += 1
                 if any((rcvd_dok in RLPMultis.DOKS,
                         rcvd_dok in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
                         rcvd_dok == 'NM')):
-                    if rcvd_dok not in self.__multis__:
-                        self.__multis__.append(rcvd_dok)
-                    if (rec.call in RLPMultis.DISTRICT_SPECIAL and
-                            rec.call not in self.__district_calls__):
-                        self.__district_calls__.append(rec.call)
+                    self.__multis__.add(rcvd_dok)
+                    if rec.call in RLPMultis.DISTRICT_SPECIAL:
+                        self.__district_calls__.add(rec.call)
                 else:
                     self.info(f'DOK not counted as multi "{rcvd_dok}"')
 
             self.__points__ += qso_point
+
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
+            else:
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 1)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -678,6 +729,10 @@ class RLPFALZABUKWLog(ContestLog):
     @classmethod
     def descr_specific(cls) -> str:
         return 'DOK'
+
+    @classmethod
+    def needs_specific(cls) -> bool:
+        return True
 
 
 class RLPFALZABKWLog(ContestLog):
@@ -700,10 +755,9 @@ class RLPFALZABKWLog(ContestLog):
 
         self.__dok__ = specific
 
-        self.__multis__ = []
-        self.__district_calls__ = []
+        self.__district_calls__:set[str] = set()
 
-    def statistics(self) -> str:
+    def summary(self) -> str:
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                 f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
                 f'Claimed points: {self.claimed_points}')
@@ -714,20 +768,21 @@ class RLPFALZABKWLog(ContestLog):
         return rec
 
     @property
-    def multis(self) -> int:
-        return len(self.__multis__)
-
-    @property
     def district_calls(self) -> int:
         return len(self.__district_calls__)
 
     @property
+    def multis(self) -> int:
+        return (len(self.__multis__) if self.__multis__ else 1) + self.district_calls
+
+    @property
     def claimed_points(self) -> int:
-        return self.points * (self.multis + self.district_calls)
+        return self.points * self.multis
 
     def process_points(self, rec: CBRRecord):
         try:
             qso_point = 1
+            rated = 1
             if rec.mode == 'CW':
                 qso_point = 3
             elif rec.mode == 'PH':
@@ -735,20 +790,27 @@ class RLPFALZABKWLog(ContestLog):
 
             if rec.rcvd_exch == self.__dok__:
                 qso_point = 0
+                rated = 0
+                self.info(f'QSO with {rec.call} not rated: same DOK "{rec.rcvd_exch.upper()}"')
             else:
                 self.__rated__ += 1
                 if any((rec.rcvd_exch.upper() in RLPMultis.DOKS,
                         rec.rcvd_exch.upper() in RLPMultis.DISTRICT_DOKS + RLPMultis.VFDB_DOKS,
                         rec.rcvd_exch.upper() == 'NM')):
-                    if rec.rcvd_exch not in self.__multis__:
-                        self.__multis__.append(rec.rcvd_exch)
-                    if (rec.call in RLPMultis.DISTRICT_SPECIAL and
-                            rec.call not in self.__district_calls__):
-                        self.__district_calls__.append(rec.call)
+                    self.__multis__.add(rec.rcvd_exch)
+                    if rec.call in RLPMultis.DISTRICT_SPECIAL:
+                        self.__district_calls__.add(rec.call)
                 else:
                     self.info(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
 
             self.__points__ += qso_point
+
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
+            else:
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, qso_point)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -770,6 +832,10 @@ class RLPFALZABKWLog(ContestLog):
     def descr_specific(cls) -> str:
         return 'DOK'
 
+    @classmethod
+    def needs_specific(cls) -> bool:
+        return True
+
 
 class K32KurzUKWLog(ContestLog):
     contest_name = 'K32 FM-Kurzaktivität'
@@ -788,8 +854,6 @@ class K32KurzUKWLog(ContestLog):
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
 
         self.__dok__ = specific
-
-        self.__multis__ = []
 
         self.__xl_wb__: openpyxl.Workbook | None = None
         self.__out_path__ = ''
@@ -828,13 +892,8 @@ class K32KurzUKWLog(ContestLog):
         xl_ws['B7'] = self.__header__['CALLSIGN']
         xl_ws['D7'] = self.__header__['CATEGORY-POWER']
 
-    def statistics(self) -> str:
-        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
-                f'Multis: {self.multis}, '
-                f'Claimed points: {self.claimed_points}')
-
     def build_record(self, adif_rec) -> CBRRecord:
-        if adif_rec['BAND'].upper() == self.__header__['CATEGORY-BAND']:
+        if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
             adif_rec['STX_STRING'] = f'{self.__dok__.upper()},{self.__header__["CATEGORY-POWER"]}'
             rec = super().build_record(adif_rec)
 
@@ -870,10 +929,6 @@ class K32KurzUKWLog(ContestLog):
             self.__xl_wb__.save(os.path.join(self.__out_path__, self.file_name))
 
     @property
-    def multis(self) -> int:
-        return len(self.__multis__)
-
-    @property
     def claimed_points(self) -> int:
         return self.points * self.multis
 
@@ -897,11 +952,15 @@ class K32KurzUKWLog(ContestLog):
                 qso_point = 1
 
             self.__rated__ += 1
-
-            if r_dok not in self.__multis__:
-                self.__multis__.append(r_dok)
-
+            self.__multis__.add(r_dok)
             self.__points__ += qso_point
+
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
+            else:
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, qso_point, 1, 1)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -1008,14 +1067,14 @@ class L33EinsteigerContest(ContestLog):
         self.__edi_file__.write(f'SAnte={self.__antenna__}\n')
         self.__edi_file__.write('SAntH=<ABOVE_GROUND>;<ABOVE_SEE>\n')
 
-    def statistics(self) -> str:
+    def summary(self) -> str:
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                 f'Claimed points: {self.claimed_points}')
 
     def build_record(self, adif_rec) -> EDIRecord:
         self.log.debug(adif_rec)
 
-        if adif_rec['BAND'].upper() == self.__header__['CATEGORY-BAND']:
+        if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
             date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
             if not self.__contest_date__:
                 self.__contest_date__ = date
@@ -1025,7 +1084,8 @@ class L33EinsteigerContest(ContestLog):
 
             dist = 0
             try:
-                dist = distance(self.__header__["GRID-LOCATOR"], rloc)
+                loc = self.__header__['GRID-LOCATOR']
+                dist = distance(loc if loc else adif_rec['MY_GRIDSQUARE'], rloc)
             except Exception as exc:
                 self.exception(str(exc))
 
@@ -1117,14 +1177,23 @@ class L33EinsteigerContest(ContestLog):
     def process_points(self, rec: EDIRecord):
         # noinspection PyBroadException
         try:
+            rated = 1
+            points = rec.dist
             if rec.call in self.__calls__:
                 self.info('Duplicate QSO will not be rated')
-                return
+                rated = 0
+                points = 0
+            else:
+                self.__calls__.append(rec.call)
+                self.__rated__ += 1
+                self.__points__ += rec.dist
 
-            self.__calls__.append(rec.call)
-            self.__rated__ += 1
-
-            self.__points__ += rec.dist
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += points
+            else:
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, points, 1, 1)
         except Exception:
             self.exception()
 

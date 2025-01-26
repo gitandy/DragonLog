@@ -12,6 +12,7 @@ Main actions
 | Watch file           | Ctrl + W         |
 | Show filter          | Ctrl + F         |
 | Reset filter         | Ctrl + R         |
+| Show contest stats   | Ctrl + T         |
 | Show console         | Ctrl + K         |
 | Show DX Spots        | Ctrl + D         |
 | Check eQSL           | Ctrl + Alt + E   |

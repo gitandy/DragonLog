@@ -44,6 +44,7 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
     CommunicationException
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
+from .ContestStatistics import ContestStatistics
 from .adi2contest import ContestLog, CONTEST_NAMES, CONTEST_IDS, CONTESTS
 from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
@@ -185,6 +186,10 @@ def eval_adi_type(prog_id: str) -> ADISourceType:
 
 # noinspection PyPep8Naming
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
+    qsoAdded = QtCore.pyqtSignal()
+    qsoChanged = QtCore.pyqtSignal()
+    qsoDeleted = QtCore.pyqtSignal()
+
     __sql_cols__ = (
         'id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
         'rst_sent', 'rst_rcvd', 'band', 'mode', 'submode', 'freq', 'channel', 'power', 'propagation',
@@ -475,6 +480,28 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
         self.dxspots_widget.spotSelected.connect(self.qso_form.setQSO)
         self.dxspots_widget.spotSelected.connect(self.cc_widget.setQSO)
+
+        # ContestStatistics
+        self.cstats_widget = ContestStatistics(self, self, self.settings, self.log)
+        self.contestStatDockWidget.setWidget(self.cstats_widget)
+        if int(self.settings.value('ui/contest_stats_dock_float', 0)):
+            self.dxSpotsDockWidget.setFloating(True)
+        else:
+            contest_stats_dock_area = self.int2dock_area(
+                int(self.settings.value('ui/contest_stats_dock_area',
+                                        QtCore.Qt.DockWidgetArea.BottomDockWidgetArea.value)))
+            self.addDockWidget(contest_stats_dock_area,
+                               self.contestStatDockWidget)
+        self.contestStatDockWidget.setVisible(bool(int(self.settings.value('ui/show_contest_stats', 0))))
+        self.qsoAdded.connect(self.cstats_widget.fetchQSOs)
+        self.qsoChanged.connect(self.cstats_widget.fetchQSOs)
+        self.qsoDeleted.connect(self.cstats_widget.fetchQSOs)
+        self.cstats_widget.contestSelected.connect(self.fContestComboBox.setCurrentText)
+        self.cstats_widget.contestSelected.connect(self.cc_widget.eventChanged)
+        self.cstats_widget.fromDateSelected.connect(self.fDateFromLineEdit.setText)
+        self.cstats_widget.fromDateSelected.connect(self.fDateFromLineEdit.editingFinished)
+        self.cstats_widget.toDateSelected.connect(self.fDateToLineEdit.setText)
+        self.cstats_widget.toDateSelected.connect(self.fDateToLineEdit.editingFinished)
 
         self.keep_logging = False
 
@@ -871,6 +898,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.refreshTableView(sort=False)
 
         self.hamlib_error.setText('')  # TODO: Why???
+        self.qsoAdded.emit()
 
     def selectedQSOIds(self) -> Iterator[int]:
         yielded_ids: list[int] = []
@@ -916,6 +944,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
                 self.__db_con__.commit()
                 self.refreshTableView(sort=False)
+                self.qsoDeleted.emit()
 
     def changeQSO(self):
         if self.QSOTableView.selectedIndexes():
@@ -954,6 +983,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.__db_con__.commit()
         self.refreshTableView(sort=False)
         self.qso_form.setChangeMode(False)
+        self.qsoChanged.emit()
 
     def clearQSOForm(self):
         self.qso_form.clear()
@@ -1650,6 +1680,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                   self.tr('Do you really want to change all selected QSOs?'),
                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
                                                   QtWidgets.QMessageBox.StandardButton.No)
+
         if question == QtWidgets.QMessageBox.StandardButton.Yes:
             field, state = actions[action]
             for i in self.selectedQSOIds():
@@ -2047,6 +2078,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if added:
             self.refreshTableView()
+            self.qsoAdded.emit()
 
     def watchFile(self):
         with open(self.watchFileName, encoding='ASCII') as adi_f:
@@ -2365,6 +2397,10 @@ The *Internal ID* is the ID which is imported or exported in ADIF format.
         self.settings.setValue('ui/show_dxspots', int(self.dxSpotsDockWidget.isVisible()))
         self.settings.setValue('ui/dxspots_dock_area', self.dockWidgetArea(self.dxSpotsDockWidget).value)
         self.settings.setValue('ui/dxspots_dock_float', int(self.dxSpotsDockWidget.isFloating()))
+
+        self.settings.setValue('ui/show_contest_stats', int(self.contestStatDockWidget.isVisible()))
+        self.settings.setValue('ui/contest_stats_dock_area', self.dockWidgetArea(self.contestStatDockWidget).value)
+        self.settings.setValue('ui/contest_stats_dock_float', int(self.contestStatDockWidget.isFloating()))
 
         self.settings_form.ctrlRigctld(False)
         e.accept()
