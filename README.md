@@ -28,7 +28,9 @@ Features
   * HamQTH.com
   * eQSL upload, check and download
   * LoTW signing, upload and check status
-* log contest and xOTA QSOs data
+* log Contests and xOTA QSOs data (supported Contests see `Help - Available Contests`)
+  * follow Contest statistics
+  * export Contest log as Cabrillo, EDI or special file formats
 * CAT (band, frequency, mode/submode, power via hamlib integration)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * QSO log import/export
@@ -141,6 +143,28 @@ Some programms are preconfigured. Check the user manual of other programs to fin
 
 If you want to use the worked before feature of the other program consider to export your QSOs beforehand.
 DragonLog will only import QSOs which are not already included in the current database.
+
+Contests
+--------
+Only a few little contest are currently supported. 
+The number will increase as I make progress in contests or someone using this Logger places a feature request.
+
+If you want to log a contest, bring up the Contest Statistics with `Ctrl + T` and select the contest and date.
+This will also set the QSO filter of your Logbook to display only this type of contest in the given range of date.
+CassiopeiaConsole also will be set to contest mode.
+
+Then you should start to log QSOs with either CassipeiaConsole (heavily suggested) or via QSO form.
+
+For contests you do not have to track your sent exchange. DragonLog will care about at export.
+So just let the running number increase and care about the received exchange from your QSO partner.
+
+After the contest, use File - Export Contest... to generate a contest file in the special format (e.g. Cabrillo).
+The contest name and dates should be preset in the dialog from the Contest Statistics. These informations maybe important, 
+as DragonLog may build your sent exchange out of them.
+
+**Please check the exported file properly before sending it in!!!**
+
+Especially an EDI file will need some care, due to not all the data is handled via the dialog.
 
 Export
 ------

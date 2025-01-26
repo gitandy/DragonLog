@@ -1,14 +1,16 @@
 # DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
+import os
 import logging
 
 from PyQt6 import QtWidgets, QtCore
 
 from . import ContestDlg_ui
 from .Logger import Logger
-from .adi2contest import *
+from .adi2contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, CategoryBand, CategoryMode, ContestLog
 from . import ColorPalettes
+from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
 
 
 class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
@@ -23,16 +25,20 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.logger = logger
         self.log.debug('Initialising...')
 
+        self.__settings__ = settings
+
         self.contest = None
         self.contestComboBox.insertItems(0, [CONTEST_NAMES[c] for c in contests])
+        if CONTEST_IDS.get(self.__settings__.value('contest/id', ''),'') in contests:
+            self.contestComboBox.setCurrentText(self.__settings__.value('contest/id', ''))
 
         self.__validation__: dict[str, bool] = {}
 
-        dt = QtCore.QDateTime.currentDateTimeUtc()
-        self.fromDateEdit.setDate(dt.date())
-        self.toDateEdit.setDate(dt.date())
-
-        self.__settings__ = settings
+        cur_date = QtCore.QDateTime.currentDateTimeUtc().toString('yyyy-MM-dd')
+        date_from = self.__settings__.value('contest/from_date', cur_date)
+        self.fromDateEdit.setDate(QtCore.QDate.fromString(date_from, 'yyyy-MM-dd'))
+        date_to = self.__settings__.value('contest/to_date', cur_date)
+        self.toDateEdit.setDate(QtCore.QDate.fromString(date_to, 'yyyy-MM-dd'))
 
         locator = ''
         if check_qth(settings.value('station/qth_loc', '')):
@@ -220,8 +226,11 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            CategoryMode[self.modeComboBox.currentText()],
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
+                                           # Extra parameters for edi format
                                            from_date=self.fromDateEdit.text(),
-                                           to_date=self.toDateEdit.text())
+                                           to_date=self.toDateEdit.text(),
+                                           radio=self.__settings__.value('station/radio', ''),
+                                           antenna=self.__settings__.value('station/antenna', ''))
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
         if self.soapPlainTextEdit.toPlainText().strip():
@@ -232,7 +241,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                 for rec in doc['RECORDS']:
                     contest.append(rec)
 
-                self.log.info(f'Contest statistics {contest.statistics()}')
+                self.log.info(f'Contest statistics {contest.summary()}')
                 contest.open_file(self.exportPathLineEdit.text())
                 contest.write_records()
                 contest.close_file()
@@ -260,6 +269,9 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                           self.tr('No contest data found for export') +
                                           f'\n"{self.contestComboBox.currentText()}" from {self.fromDateEdit.text()}')
 
+        self.__settings__.setValue('contest/id', self.contestComboBox.currentText())
+        self.__settings__.setValue('contest/from_date', self.fromDateEdit.text())
+        self.__settings__.setValue('contest/to_date', self.toDateEdit.text())
         self.__settings__.setValue('contest/call', self.callLineEdit.text())
         self.__settings__.setValue('contest/locator', self.locatorLineEdit.text())
         self.__settings__.setValue('contest/name', self.nameLineEdit.text())
