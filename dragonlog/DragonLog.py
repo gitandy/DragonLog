@@ -992,13 +992,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def export(self):
         qso_filters = [
             self.tr('All QSOs'),
-            self.tr('Filtered QSOs'),
+            self.tr('Filtered QSOs'),  # Must be second element for pre selection
             self.tr('Selected QSOs'),
         ]
         qso_filter, ok = QtWidgets.QInputDialog.getItem(self, self.tr('QSO export'),
                                                         self.tr('Select filter'),
                                                         qso_filters,
-                                                        self.settings.value('imp_exp/only_recent', 0))
+                                                        # Pre select second element "Filetered QSOs" if option is set
+                                                        int(self.settings.value('imp_exp/only_recent', 0)))
         if not ok:
             return
 
