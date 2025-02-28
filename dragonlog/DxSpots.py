@@ -235,7 +235,8 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
         self.clear()
 
         bands: list = self.__settings__.value('ui/show_bands', list(dragonlog.bands.keys()))
-        bands.pop(bands.index('11m'))
+        if '11m' in bands:
+            bands.remove('11m')
         self.bandComboBox.insertItem(0, self.tr('- all -'))
         self.bandComboBox.insertItems(1, bands)
 
