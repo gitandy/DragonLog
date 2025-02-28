@@ -13,7 +13,7 @@ EXTRA = {
     'Kingdom of Eswatini': '',
     'Bouvet': 'bv',
     'Peter 1 Island': '',  # Checked
-    'ITU HQ': '',  # No Flag
+    'ITU HQ': 'itu',
     'United Nations HQ': 'un',
     'Vienna Intl Ctr': '',
     'Timor - Leste': '',

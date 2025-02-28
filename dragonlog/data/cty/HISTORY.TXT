@@ -1,26 +1,38 @@
-    Big CTY - 2 January 2025
-    Version entity is Samoa, 5W
+    Big CTY - 13 February 2025
+    Version entity is Crete, SV9
 
     Added/changed Entities/Prefixes/Callsigns:
 
-	* N0FUL is in ITU zone 6, not ITU zone 7
-	* N0FUL is in CQ zone 3, not CQ zone 4
-	* N0VAO, W0GG, W9CTY and WD8DII are all United States, K in CQ zone 3, ITU zone 6
-	* N7ML is United States, K in CQ zone 4, ITU zone 6
-	* AI8L, K1AF, KA4RUR, KB9SCT, KF9MT, KK7TZP, KN4SLP, N2GJ, N2UR and W9BED
-	  are all United States, K in CQ zone 4, ITU zone 7
-	* AE4GW, AE4M, AK4QR, K1SPD, K4CCT, KB2UQS, KD5PCK, KI5ZQZ, KN4JGH,
-	  KO4NOL, KZ4IT, N4AER, N5DF, NT0Y, W4AUB, W4BQK, W4KAM, W4NYZ, WA6CW and WB4KUU
-	  are all United States, K in CQ zone 4, ITU zone 8
-	* K5ADR, K5YDR, K7KHZ, K8VAN, KE5MHV, NC4RA and W7VOA are all United States, K in CQ zone 5, ITU zone 8
-	* W4I is Puerto Rico, KP4
-	* R9JAB/6/P is European Russia, UA
-	* UA9CDC/M is in CQ zone 17, not CQ zone 16
+	* GM0FRT is Shetland Islands, *GM/s
+	* IT9MRM/SUB is Sicily, *IT9
+	* KC4/KB1EHE and KC4/KB1IFZ are both Antarctica, CE9
+	* VK0/FT4YM/P is Antarctica, CE9 in CQ zone 29, ITU zone 70
+	* AM64KZ and EA8AAH are both Spain, EA
+	* TO1P is St. Barthelemy, FJ
+	* FO/F6BCW is Marquesas Islands, FO/m
+	* GB4CDG is Scotland, GM
+	* I2DMK/SUB and IU0TEZ/SUB are both Italy, I
+	* IR0APTT is Sardinia, IS
+	* K1RS, K5XI, KD4STN, KL7JB, N9OHW, NE1LA, W0SX, W1PAA, W3LS, W3NX,
+	  W9NC, WA9BTV, WC2A, WH6GHG and WV0T are all United States, K in CQ zone 3, ITU zone 6
+	* K7KMM is United States, K in CQ zone 3, ITU zone 7
+	* K7KTM is United States, K in CQ zone 4, ITU zone 6
+	* AD7CL, AI7PM, KC3OL, KC9DGP, KC9LBO, KD6AF, KD9OFG, KS9A, N7RI, N9CNF,
+	  WB9PRG and WW8L are all United States, K in CQ zone 4, ITU zone 7
+	* AI5FK, K0BBQ, K2OO, K4BWP, KA5NDH, KC4NX, KM4ECH, KN4DUA, KO5S, N4SB,
+	  N4TLM, NK3V, W3HDH, W3WCT, W4GHD, W4KD, W4SHL, WA4USA, WA4VXW, WD4NYL
+	  and WE5E are all United States, K in CQ zone 4, ITU zone 8
+	* K1YS, KF6HDJ, KL4ZJ, KL7Y, N8VU, W8CMK, W8TMT, WB6BEE, WB9DBD and WV8HAT
+	  are all United States, K in CQ zone 5, ITU zone 8
+	* KJ6FIP is Hawaii, KH6
+	* R9YDX/6 is European Russia, UA
+	* R8AIM/0 is Asiatic Russia, UA9 in CQ zone 19
 
     Removed Entities/Prefixes/Callsigns:
 
-	* KK4MQM/C6A in Bahamas, C6
-	* AA5UZ, AG2TH, AK4I, K0IE, K0NW, K0SB, K4MQM, K7UPJ, K9GS, K9OR, KA9A,
-	  KB8KMH, KC6UCN, KI4BIY, KI4ZZJ, KT4DW, KU4H, N0GAF, N0MU, N7CR, N9SZ, W0ZZ,
-	  W3FU, W4KD, W4PGM, W4YEM, W8DX, W8HOT, W8ZM, W9BS, WA4AA, WA4USA, WB8PAF,
-	  WB9IRF and WB9PRG in United States, K
+	* AA7TJ, AE4M, AG5AT, AI7C, AJ0SE, AJ6TE, K0JJ, K2AK, K3DMG, K3LKS,
+	  K5UF, K6DJ, K9KSU, K9VD, KA4RUR, KB9DAK, KC9CSQ, KD9Z, KE4QCY, KF9MT, KI6HQT,
+	  KN4CNU, KR7Q, KW4OV, KZ4HS, N0VFJ, N1CC, N1NYT, N3AWS, N4JKD, N4ML, N7CMJ,
+	  N7MSI, N7RCS, N9SXF, NN4H, NR5NN, NX7U, W0PE, W8NUD, W8RD, W9BED, WA4CDP,
+	  WB4DKQ, WD9FJL and WI6T in United States, K
+	* KC4/KB1EHE and KC4/KB1IFZ in South Shetland Islands, VP8/h
