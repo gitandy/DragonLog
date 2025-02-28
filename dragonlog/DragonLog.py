@@ -1390,6 +1390,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             res = self.eqslCheckInbox(qso_id)
             if not res:
                 break
+        self.refreshTableView(False)
 
     def eqslCheckInbox(self, qso_id) -> bool:
         adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
@@ -1457,7 +1458,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 if not self.eqslCheckInbox(qso_id):
                     break
 
-            if self.eqsl_urls[qso_uuid]:
+            if self.eqsl_urls.get(qso_uuid):
                 image_type = self.eqsl_urls[qso_uuid].split('/')[-1].split('.')[-1]
                 call_sign = rec['CALL']
                 for c in string.punctuation:
@@ -1476,6 +1477,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.settings.setValue('eqsl/lastExportDir', res)
                 except Exception as exc:
                     self.log.exception(exc)
+        self.refreshTableView(False)
 
     def lotwUpload(self):
         self.log.info('Signing and uploading to LoTW...')
@@ -1596,6 +1598,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             finally:
                 self.updateQSOField('lotw_sent', qso_id, lotw_sent)
                 self.updateQSOField('lotw_rcvd', qso_id, lotw_rcvd)
+        self.refreshTableView(False)
 
     def uploadToHamQTH(self):
         logbook = None
@@ -1642,6 +1645,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 break
             finally:
                 self.updateQSOField('hamqth', qso_id, state)
+        self.refreshTableView(False)
 
     def updateQSOField(self, field: str, qso_id: int, value: str):
         """Update a single QSO field
