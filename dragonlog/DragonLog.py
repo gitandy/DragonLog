@@ -2413,10 +2413,22 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app_path = os.path.dirname(__file__)
 
+    # noinspection PyBroadException
+    try:
+        font_id = QtGui.QFontDatabase.addApplicationFont(app_path + '/data/InterSlashedzero.ttf')
+        font_name = QtGui.QFontDatabase.applicationFontFamilies(font_id)[0]
+        print(f'Using font: "{font_name}"')
+    except Exception:
+        pass
+
     css = '''QToolBox::tab {
         background: #b0c4de;
         border-radius: 2px;
         color: black;
+    }
+    QLineEdit {
+        font-family: Inter Slashedzero;
+        font-size: 8pt;
     }'''
     app.setStyleSheet(css)
 
