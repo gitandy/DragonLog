@@ -171,10 +171,11 @@ class DxSpotsFilterProxy(QtCore.QSortFilterProxyModel):
 class FlagsTableModel(QtGui.QStandardItemModel):
     """Show flags in country column"""
 
-    def __init__(self, parent, dragonlog, country_col: int, ):
+    def __init__(self, parent, dragonlog, country_col: int, call_cols: tuple[int, int]):
         super(FlagsTableModel, self).__init__(parent)
 
         self.country_col = country_col
+        self.call_cols = call_cols
 
         self.countries: dict = {}
         with open(dragonlog.searchFile(f'icons:flags/flags_map.json')) as fm_f:
@@ -192,6 +193,10 @@ class FlagsTableModel(QtGui.QStandardItemModel):
                                    QtCore.Qt.ItemDataRole.DisplayRole).replace('&', 'and').replace('St. ', 'Saint ')
                 if txt in self.countries:
                     return self.countries[txt]
+
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
+            if idx.column() in self.call_cols:
+                return value.replace('0', '\u00d8')
 
         return value
 
@@ -227,7 +232,7 @@ class DxSpots(QtWidgets.QDialog, DxSpots_ui.Ui_DxSpotsForm):
             self.tr('Country'),
         ]
 
-        self.tableModel = FlagsTableModel(self, dragonlog, 8)
+        self.tableModel = FlagsTableModel(self, dragonlog, 8, (0, 3))
         self.filterModel = DxSpotsFilterProxy(self, len(self.header))
         self.filterModel.setSourceModel(self.tableModel)
         self.tableView.setModel(self.filterModel)

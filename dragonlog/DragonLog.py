@@ -54,7 +54,7 @@ __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
 __author_name__ = 'Andreas Schawo, DF1ASC'
 __author_email__ = 'andreas@schawo.de'
-__copyright__ = 'Copyright 2023-2024 by Andreas Schawo,licensed under CC BY-SA 4.0'
+__copyright__ = 'Copyright 2023-2025 by Andreas Schawo,licensed under CC BY-SA 4.0'
 
 from . import __version__ as version
 
@@ -104,8 +104,7 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class TranslatedTableModel(QtSql.QSqlTableModel):
     """Translate propagation values and status to clear text and fancy icon for status"""
 
-    def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict,
-                 freq_col: int, pwr_col: int, dist_col: int, contest_col: int):
+    def __init__(self, parent, db_conn, status_cols: Iterable, cols: tuple, prop_tr: dict):
         super(TranslatedTableModel, self).__init__(parent, db_conn)
 
         self.status_cols = status_cols
@@ -116,14 +115,15 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
             'R': self.tr('R'),
         }
 
-        self.prop_col = prop_col
+        self.prop_col = cols.index('propagation')
         self.prop_translation = prop_tr
 
-        self.freq_col = freq_col
-        self.pwr_col = pwr_col
-        self.dist_col = dist_col
-
-        self.contest_col = contest_col
+        self.freq_col = cols.index('freq')
+        self.pwr_col = cols.index('power')
+        self.dist_col = cols.index('dist')
+        self.contest_col = cols.index('contest_id')
+        self.call_cols = cols.index('own_callsign'), cols.index('call_sign')
+        self.loc_cols = cols.index('own_locator'), cols.index('locator')
 
         # noinspection PyUnresolvedReferences
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
@@ -145,6 +145,8 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
                 return f'{int(value)} km'
             elif idx.column() == self.contest_col and value in CONTEST_NAMES:
                 return CONTEST_NAMES[value]
+            elif idx.column() in self.call_cols + self.loc_cols:
+                return value.replace('0', '\u00d8')
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)
@@ -702,12 +704,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             model = TranslatedTableModel(self, self.__db_con__,
                                          status_cols=tuple(range(self.__sql_cols__.index('qsl_sent'),
                                                                  self.__sql_cols__.index('hamqth') + 1)),
-                                         prop_col=self.__sql_cols__.index('propagation'),
-                                         prop_tr=self.prop,
-                                         freq_col=self.__sql_cols__.index('freq'),
-                                         pwr_col=self.__sql_cols__.index('power'),
-                                         dist_col=self.__sql_cols__.index('dist'),
-                                         contest_col=self.__sql_cols__.index('contest_id'))
+                                         cols=self.__sql_cols__,
+                                         prop_tr=self.prop)
             model.setTable('qsos')
             self.QSOTableView.setModel(model)
 
