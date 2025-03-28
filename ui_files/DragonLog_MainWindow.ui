@@ -162,8 +162,11 @@
       <widget class="QTextEdit" name="logTextEdit">
        <property name="font">
         <font>
-         <family>Courier New</family>
+         <family>Consolas</family>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-family: Consolas</string>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -650,18 +653,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="ccDockWidget">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>500</width>
-     <height>100</height>
-    </size>
-   </property>
    <property name="allowedAreas">
     <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
    </property>
@@ -693,18 +684,6 @@
    <widget class="QWidget" name="dockWidgetContents"/>
   </widget>
   <widget class="QDockWidget" name="contestStatDockWidget">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>300</width>
-     <height>100</height>
-    </size>
-   </property>
    <property name="windowTitle">
     <string>Contest Statistics</string>
    </property>

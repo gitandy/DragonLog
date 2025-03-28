@@ -1,3 +1,6 @@
+# DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import os
 import sys
 import typing
@@ -343,6 +346,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.cbDefaultCheckBox.setChecked(bool(int(self.settings.value('station_cb/cb_by_default', 0))))
         self.expCBQSOsCheckBox.setChecked(bool(int(self.settings.value('station_cb/cb_exp_adif', 0))))
 
+        self.fontComboBox.setCurrentText(self.settings.value('ui/font', 'Inter SlashedZero'))
+        self.fontSizeSpinBox.setValue(int(self.settings.value('ui/font_size', 9)))
+        self.qfFontSizeSpinBox.setValue(int(self.settings.value('ui/form_font_size', 10)))
+        self.ccFontSizeSpinBox.setValue(int(self.settings.value('ui/cc_font_size', 12)))
         self.sortComboBox.setCurrentText(self.settings.value('ui/sort_col', self.tr('Date/Time start')))
         sort_order = self.settings.value('ui/sort_order', 'ASC')
         self.sortAscRadioButton.setChecked(sort_order == 'ASC')
@@ -437,6 +444,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('station_cb/cb_by_default', int(self.cbDefaultCheckBox.isChecked()))
         self.settings.setValue('station_cb/cb_exp_adif', int(self.expCBQSOsCheckBox.isChecked()))
 
+        self.settings.setValue('ui/font', self.fontComboBox.currentText())
+        self.settings.setValue('ui/font_size', self.fontSizeSpinBox.value())
+        self.settings.setValue('ui/form_font_size', self.qfFontSizeSpinBox.value())
+        self.settings.setValue('ui/cc_font_size', self.ccFontSizeSpinBox.value())
         self.settings.setValue('ui/sort_col', self.sortComboBox.currentText())
         self.settings.setValue('ui/sort_order', 'ASC' if self.sortAscRadioButton.isChecked() else 'DSC')
         self.settings.setValue('ui/recent_qsos', self.recentQSOsComboBox.currentText())

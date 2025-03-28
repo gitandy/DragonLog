@@ -194,10 +194,6 @@ class FlagsTableModel(QtGui.QStandardItemModel):
                 if txt in self.countries:
                     return self.countries[txt]
 
-        if role == QtCore.Qt.ItemDataRole.DisplayRole:
-            if idx.column() in self.call_cols:
-                return value.replace('0', '\u00d8')
-
         return value
 
 

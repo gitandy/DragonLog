@@ -42,6 +42,10 @@ Features
 * convert non ASCII characters for ADIF export (for supported languages)
 * integrates [CassiopeiaConsole](https://github.com/gitandy/HamCC#hamcc---cassiopeiaconsole)
 * display DX spots from DX cluster via telnet
+* selectable font and font size
+  * default proportional font with slashed zero (modified Inter font)
+  * 3 independant font sizes for application, QSO form and CassiopeiaConsole 
+
 
 Installation
 ------------

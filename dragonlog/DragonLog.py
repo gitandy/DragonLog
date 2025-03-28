@@ -145,8 +145,6 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
                 return f'{int(value)} km'
             elif idx.column() == self.contest_col and value in CONTEST_NAMES:
                 return CONTEST_NAMES[value]
-            elif idx.column() in self.call_cols + self.loc_cols:
-                return value.replace('0', '\u00d8')
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)
@@ -277,7 +275,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def __init__(self, file=None, app_path='.', ini_file=''):
         super().__init__()
-
         self.setupUi(self)
 
         self.app_path = app_path
@@ -285,6 +282,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_sc_dialog = None
         self.help_cc_dialog = None
         self.help_contest_dialog = None
+        self.qso_form = None
+        self.dxspots_widget = None
+        self.cstats_widget = None
 
         if ini_file:
             self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
@@ -294,6 +294,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {self.programName} {self.programVersion}...')
         self.log.info(f'Using settings {self.settings.format()} from "{self.settings.fileName()}"')
+
+        try:
+            font_inter_id = QtGui.QFontDatabase.addApplicationFont(self.searchFile('data:InterSlashedZero.ttf'))
+            font_name = QtGui.QFontDatabase.applicationFontFamilies(font_inter_id)[0]
+            self.log.debug(f'Registered font: "{font_name}"')
+        except IndexError:
+            self.log.warning('Could not register special font')
 
         if int(self.settings.value('ui/log_dock_float', 0)):
             self.logDockWidget.setFloating(True)
@@ -545,6 +552,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.eqsl = EQSL(self.programName, self.log)
         self.eqsl_urls: dict[str, str] = {}
 
+        self.useFont()
+
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
         dock_area = QtCore.Qt.DockWidgetArea.NoDockWidgetArea
@@ -567,6 +576,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def showSettings(self):
         if self.settings_form.exec():
             self.refreshTableView()
+            self.useFont()
 
     def selectDB(self):
         res = QtWidgets.QFileDialog.getSaveFileName(
@@ -2235,6 +2245,28 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
                                           self.tr('No contest data available for export'))
 
+    def useFont(self):
+        font = self.settings.value('ui/font', 'Inter SlashedZero')
+        fontsize = int(self.settings.value('ui/font_size', 9))
+        form_fontsize = int(self.settings.value('ui/form_font_size', 10))
+        cc_fontsize = int(self.settings.value('ui/cc_font_size', 12))
+        css = f'''
+            *{{font-family: {font}; font-size: {fontsize}pt}}
+            *[cssClass~="QSOFormInput"]{{font-family: {font}; font-size: {form_fontsize}pt}}
+            *[cssClass~="CCInput"]{{font-family: {font}; font-size: {cc_fontsize}pt}}
+        '''
+        self.setStyleSheet(css)
+        self.log.info(f'Set font "{font}" to {fontsize} pt')
+
+        if self.qso_form:
+            self.qso_form.clear()
+        if self.dxspots_widget:
+            self.dxspots_widget.tableView.resizeColumnsToContents()
+        if self.cstats_widget:
+            self.cstats_widget.tableView.resizeColumnsToContents()
+
+        self.QSOTableView.resizeColumnsToContents()
+
     def cty_load(self, cty_path: str):
         # noinspection PyBroadException
         try:
@@ -2365,6 +2397,7 @@ The *Internal ID* is the ID which is imported or exported in ADIF format.
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nFlags: Flagpedia.net, https://flagpedia.net'
+            '\nFont: Inter, Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)'
             '\nDragon icon by Icons8 https://icons8.com'
             f'\n\nCountry Data: by AD1C, Copyright (c) since 1994\nVersion: {cty_ver}, Entity: {cty_ent}'
         )
@@ -2413,22 +2446,10 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app_path = os.path.dirname(__file__)
 
-    # noinspection PyBroadException
-    try:
-        font_id = QtGui.QFontDatabase.addApplicationFont(app_path + '/data/InterSlashedzero.ttf')
-        font_name = QtGui.QFontDatabase.applicationFontFamilies(font_id)[0]
-        print(f'Using font: "{font_name}"')
-    except Exception:
-        pass
-
     css = '''QToolBox::tab {
         background: #b0c4de;
         border-radius: 2px;
         color: black;
-    }
-    QLineEdit {
-        font-family: Inter Slashedzero;
-        font-size: 8pt;
     }'''
     app.setStyleSheet(css)
 
