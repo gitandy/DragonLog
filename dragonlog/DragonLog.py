@@ -54,7 +54,7 @@ __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
 __author_name__ = 'Andreas Schawo, DF1ASC'
 __author_email__ = 'andreas@schawo.de'
-__copyright__ = 'Copyright 2023-2024 by Andreas Schawo,licensed under CC BY-SA 4.0'
+__copyright__ = 'Copyright 2023-2025 by Andreas Schawo,licensed under CC BY-SA 4.0'
 
 from . import __version__ as version
 
@@ -104,8 +104,7 @@ class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
 class TranslatedTableModel(QtSql.QSqlTableModel):
     """Translate propagation values and status to clear text and fancy icon for status"""
 
-    def __init__(self, parent, db_conn, status_cols: Iterable, prop_col: int, prop_tr: dict,
-                 freq_col: int, pwr_col: int, dist_col: int, contest_col: int):
+    def __init__(self, parent, db_conn, status_cols: Iterable, cols: tuple, prop_tr: dict):
         super(TranslatedTableModel, self).__init__(parent, db_conn)
 
         self.status_cols = status_cols
@@ -116,14 +115,15 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
             'R': self.tr('R'),
         }
 
-        self.prop_col = prop_col
+        self.prop_col = cols.index('propagation')
         self.prop_translation = prop_tr
 
-        self.freq_col = freq_col
-        self.pwr_col = pwr_col
-        self.dist_col = dist_col
-
-        self.contest_col = contest_col
+        self.freq_col = cols.index('freq')
+        self.pwr_col = cols.index('power')
+        self.dist_col = cols.index('dist')
+        self.contest_col = cols.index('contest_id')
+        self.call_cols = cols.index('own_callsign'), cols.index('call_sign')
+        self.loc_cols = cols.index('own_locator'), cols.index('locator')
 
         # noinspection PyUnresolvedReferences
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
@@ -275,7 +275,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def __init__(self, file=None, app_path='.', ini_file=''):
         super().__init__()
-
         self.setupUi(self)
 
         self.app_path = app_path
@@ -283,6 +282,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.help_sc_dialog = None
         self.help_cc_dialog = None
         self.help_contest_dialog = None
+        self.qso_form = None
+        self.dxspots_widget = None
+        self.cstats_widget = None
 
         if ini_file:
             self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
@@ -292,6 +294,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {self.programName} {self.programVersion}...')
         self.log.info(f'Using settings {self.settings.format()} from "{self.settings.fileName()}"')
+
+        try:
+            font_inter_id = QtGui.QFontDatabase.addApplicationFont(self.searchFile('data:InterSlashedZero.ttf'))
+            font_name = QtGui.QFontDatabase.applicationFontFamilies(font_inter_id)[0]
+            self.log.debug(f'Registered font: "{font_name}"')
+        except IndexError:
+            self.log.warning('Could not register special font')
 
         if int(self.settings.value('ui/log_dock_float', 0)):
             self.logDockWidget.setFloating(True)
@@ -543,6 +552,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.eqsl = EQSL(self.programName, self.log)
         self.eqsl_urls: dict[str, str] = {}
 
+        self.useFont()
+
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
         dock_area = QtCore.Qt.DockWidgetArea.NoDockWidgetArea
@@ -565,6 +576,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def showSettings(self):
         if self.settings_form.exec():
             self.refreshTableView()
+            self.useFont()
 
     def selectDB(self):
         res = QtWidgets.QFileDialog.getSaveFileName(
@@ -702,12 +714,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             model = TranslatedTableModel(self, self.__db_con__,
                                          status_cols=tuple(range(self.__sql_cols__.index('qsl_sent'),
                                                                  self.__sql_cols__.index('hamqth') + 1)),
-                                         prop_col=self.__sql_cols__.index('propagation'),
-                                         prop_tr=self.prop,
-                                         freq_col=self.__sql_cols__.index('freq'),
-                                         pwr_col=self.__sql_cols__.index('power'),
-                                         dist_col=self.__sql_cols__.index('dist'),
-                                         contest_col=self.__sql_cols__.index('contest_id'))
+                                         cols=self.__sql_cols__,
+                                         prop_tr=self.prop)
             model.setTable('qsos')
             self.QSOTableView.setModel(model)
 
@@ -2237,6 +2245,28 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
                                           self.tr('No contest data available for export'))
 
+    def useFont(self):
+        font = self.settings.value('ui/font', 'Inter SlashedZero')
+        fontsize = int(self.settings.value('ui/font_size', 9))
+        form_fontsize = int(self.settings.value('ui/form_font_size', 10))
+        cc_fontsize = int(self.settings.value('ui/cc_font_size', 12))
+        css = f'''
+            *{{font-family: {font}; font-size: {fontsize}pt}}
+            *[cssClass~="QSOFormInput"]{{font-family: {font}; font-size: {form_fontsize}pt}}
+            *[cssClass~="CCInput"]{{font-family: {font}; font-size: {cc_fontsize}pt}}
+        '''
+        self.setStyleSheet(css)
+        self.log.info(f'Set font "{font}" to {fontsize} pt')
+
+        if self.qso_form:
+            self.qso_form.clear()
+        if self.dxspots_widget:
+            self.dxspots_widget.tableView.resizeColumnsToContents()
+        if self.cstats_widget:
+            self.cstats_widget.tableView.resizeColumnsToContents()
+
+        self.QSOTableView.resizeColumnsToContents()
+
     def cty_load(self, cty_path: str):
         # noinspection PyBroadException
         try:
@@ -2367,6 +2397,7 @@ The *Internal ID* is the ID which is imported or exported in ADIF format.
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nFlags: Flagpedia.net, https://flagpedia.net'
+            '\nFont: Inter, Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)'
             '\nDragon icon by Icons8 https://icons8.com'
             f'\n\nCountry Data: by AD1C, Copyright (c) since 1994\nVersion: {cty_ver}, Entity: {cty_ent}'
         )
