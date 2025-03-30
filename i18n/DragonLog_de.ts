@@ -178,7 +178,7 @@
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>yyyy-MM-dd</source>
-      <translation type="unfinished" />
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
@@ -1000,14 +1000,6 @@
       <location filename="..\ui_files\DragonLog_Settings.ui" line="0" />
       <source>TQSL</source>
       <translation />
-    </message>
-    <message>
-      <source>Size</source>
-      <translation type="vanished">Größe</translation>
-    </message>
-    <message>
-      <source>Show slashed zero</source>
-      <translation type="vanished">Zeige Null durchgestrichen</translation>
     </message>
   </context>
   <context>
@@ -2540,7 +2532,7 @@ Siehe Anwendungslog für Details</translation>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>yyyy-MM-dd</source>
-      <translation type="unfinished" />
+      <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
