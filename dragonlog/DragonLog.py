@@ -1393,6 +1393,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 break
             finally:
                 self.updateQSOField('eqsl_sent', qso_id, eqsl_sent)
+        self.refreshTableView(False)
 
     def eqslCheckInboxSelected(self):
         for qso_id in self.selectedQSOIds():
