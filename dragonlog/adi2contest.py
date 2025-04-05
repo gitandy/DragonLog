@@ -9,12 +9,12 @@ import logging
 from dataclasses import dataclass
 from typing import Type
 
-from .RegEx import check_format, REGEX_CALL, REGEX_LOCATOR, REGEX_RSTFIELD
-from .distance import distance
-
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import Font
+
+from .RegEx import check_format, REGEX_CALL, REGEX_LOCATOR, REGEX_RSTFIELD
+from .distance import distance
 
 # noinspection SpellCheckingInspection
 MODE_MAP_CBR = {
@@ -36,21 +36,21 @@ BAND_MAP_CBR = {
     '6m': '50',
     '4m': '70',
     '2m': '144',
-    # '': '222',
+    '1.25': '222',
     '70cm': '432',
-    # '': '902',
+    '33cm': '902',
     '23cm': '1.2G',
-    # '': '2.3G',
-    # '': '3.4G',
-    # '': '5.7G',
-    # '': '10G',
-    # '': '24G',
-    # '': '47G',
-    # '': '75G',
-    # '': '122G',
-    # '': '134G',
-    # '': '241G',
-    # '': 'LIGHT',
+    '13cm': '2.3G',
+    '9cm': '3.4G',
+    '6cm': '5.7G',
+    '3cm': '10G',
+    '1.25cm': '24G',
+    '6mm': '47G',
+    '4mm': '75G',
+    '2.5mm': '122G',
+    '2mm': '134G',
+    '1mm': '241G',
+    'submm': 'LIGHT',
 }
 
 BAND_FROM_CBR = dict(zip(BAND_MAP_CBR.values(), BAND_MAP_CBR.keys()))
@@ -90,12 +90,24 @@ class CategoryBand(Enum):
     B_432 = auto()
     B_70CM = auto()
     B_23CM = auto()
+    B_13CM = auto()
+    B_9CM = auto()
+    B_6CM = auto()
+    B_3CM = auto()
+    B_1_25CM = auto()
+    B_6MM = auto()
+    B_4MM = auto()
+    B_2_5MM = auto()
+    B_2MM = auto()
+    B_1MM = auto()
+    B_SUBMM = auto()
 
 
 class CategoryOperator(Enum):
-    SINGLE_OP = auto()
-    MULTI_OP = auto()
+    SINGLE = auto()
+    MULTI = auto()
     CHECKLOG = auto()
+    TRAINEE = auto()
 
 
 class CategoryMode(Enum):
@@ -139,7 +151,7 @@ class BandStatistics:
     summary: int = 0
 
     def values(self) -> tuple:
-        #return self.qsos, self.rated, self.points, self.multis, self.summary
+        # return self.qsos, self.rated, self.points, self.multis, self.summary
         return tuple(self.__dict__.values())
 
 
@@ -154,7 +166,7 @@ class ContestLog:
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
@@ -211,7 +223,7 @@ class ContestLog:
     def __init_header__(self, callsign, name, club, address, email, locator,
                         band: CategoryBand, mode: CategoryMode,
                         pwr: CategoryPower = CategoryPower.HIGH,
-                        cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                        cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                         assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                         tx: CategoryTransmitter = CategoryTransmitter.ONE,
                         operators: list[str] = None, specific=''):
@@ -507,7 +519,7 @@ class RLPFALZAWLog(ContestLog):
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
@@ -530,8 +542,8 @@ class RLPFALZAWLog(ContestLog):
 
     def summary(self) -> str:
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
-                        f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
-                        f'Claimed points: {self.claimed_points}')
+                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
+                f'Claimed points: {self.claimed_points}')
 
     def build_record(self, adif_rec) -> CBRRecord:
         adif_rec['STX_STRING'] = self.__dok__.upper()
@@ -631,7 +643,7 @@ class RLPFALZABUKWLog(ContestLog):
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
@@ -743,7 +755,7 @@ class RLPFALZABKWLog(ContestLog):
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
@@ -755,7 +767,7 @@ class RLPFALZABKWLog(ContestLog):
 
         self.__dok__ = specific
 
-        self.__district_calls__:set[str] = set()
+        self.__district_calls__: set[str] = set()
 
     def summary(self) -> str:
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
@@ -845,7 +857,7 @@ class K32KurzUKWLog(ContestLog):
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.B,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
@@ -892,7 +904,7 @@ class K32KurzUKWLog(ContestLog):
         xl_ws['B7'] = self.__header__['CALLSIGN']
         xl_ws['D7'] = self.__header__['CATEGORY-POWER']
 
-    def build_record(self, adif_rec) -> CBRRecord:
+    def build_record(self, adif_rec) -> CBRRecord | None:
         if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
             adif_rec['STX_STRING'] = f'{self.__dok__.upper()},{self.__header__["CATEGORY-POWER"]}'
             rec = super().build_record(adif_rec)
@@ -995,7 +1007,7 @@ class L33EinsteigerContest(ContestLog):
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
                  pwr: CategoryPower = CategoryPower.B,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE_OP,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
                  assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
                  tx: CategoryTransmitter = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
@@ -1071,7 +1083,7 @@ class L33EinsteigerContest(ContestLog):
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                 f'Claimed points: {self.claimed_points}')
 
-    def build_record(self, adif_rec) -> EDIRecord:
+    def build_record(self, adif_rec) -> EDIRecord | None:
         self.log.debug(adif_rec)
 
         if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
@@ -1218,12 +1230,244 @@ class L33EinsteigerContest(ContestLog):
         return 'DOK'
 
 
+class DARCUKWFruehlingsContest(ContestLog):
+    contest_name = 'DARC UKW Frühlingswettbewerb'
+    contest_year = '2025'
+    contest_update = '2025-04-05'
+
+    def __init__(self, callsign, name, club, address, email, locator,
+                 band: CategoryBand, mode: CategoryMode,
+                 pwr: CategoryPower = CategoryPower.B,
+                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
+                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
+                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+        super().__init__(callsign, name, club, address, email, locator,
+                         band, mode, pwr, cat_operator,
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+
+        self.__qsos__: list[EDIRecord] = []
+
+        self.__from_date__ = params.get('from_date', '2001-01-01')
+        self.__to_date__ = params.get('to_date', '2001-01-01')
+        self.__radio__ = params.get('radio', '<RADIO>')
+        self.__antenna__ = params.get('antenna', '<ANTENNA>')
+
+        self.__dok__ = specific
+
+        self.__calls__ = []
+        self.__locators__ = []
+        self.__codxc__ = ['', '', 0]
+
+        self.__edi_file__: typing.TextIO = None
+
+    def check_band(self, adif_rec: dict[str, str]) -> bool:
+        if adif_rec['BAND'].lower() != '2m':
+            self.warning(f'Band "{adif_rec["BAND"].lower()}" does not match with contest band 2m')
+            if self.__skip_warn__:
+                return False
+        return True
+
+    def open_file(self, path: str = os.path.curdir):
+        # EDI-Format from http://www.ok2kkw.com/ediformat.htm
+        self.__edi_file__ = open(os.path.join(path, self.file_name), 'w')
+
+        self.__edi_file__.write('[REG1TEST;1]\n')
+        self.__edi_file__.write(f'TName={self.contest_name}\n')
+        self.__edi_file__.write(f'TDate={self.__from_date__.replace("-", "")};{self.__to_date__.replace("-", "")}\n')
+
+        # Operator
+        self.__edi_file__.write(f'PCall={self.__header__["CALLSIGN"]}\n')
+        self.__edi_file__.write(f'PWWLo={self.__header__["GRID-LOCATOR"].upper()}\n')
+        self.__edi_file__.write(f'PExch={self.__header__["GRID-LOCATOR"].upper()}\n')
+        addr = self.__header__['ADDRESS'].split('\n', 1)
+        addr_2 = addr[1].replace('\n', ' ') if len(addr) > 1 else ''
+        self.__edi_file__.write(f'PAdr1={addr[0]}\n')
+        self.__edi_file__.write(f'PAdr2={addr_2}\n')
+        self.__edi_file__.write(f'PSect={self.__header__["CATEGORY-OPERATOR"]}\n')
+        self.__edi_file__.write(f'PBand={self.__header__["CATEGORY-BAND"]}\n')
+        self.__edi_file__.write(f'PClub={self.__header__["SPECIFIC"]}\n')
+
+        # Responsible
+        self.__edi_file__.write(f'RName={self.__header__["NAME"]}\n')
+        self.__edi_file__.write(f'RCall={self.__header__["CALLSIGN"]}\n')
+        self.__edi_file__.write(f'RAdr1={addr[0]}\n')
+        self.__edi_file__.write(f'RAdr2={addr_2}\n')
+        self.__edi_file__.write('RPoCo=<POSTAL_CODE>\n')
+        self.__edi_file__.write('RCity=<CITY>\n')
+        self.__edi_file__.write('RCoun=<COUNTRY>\n')
+        self.__edi_file__.write('RPhon=<PHONE>\n')
+        self.__edi_file__.write(f'RHBBS={self.__header__["EMAIL"]}\n')
+
+        # Operators
+        self.__edi_file__.write(f'MOpe1={self.__header__["CALLSIGN"]}\n')
+        self.__edi_file__.write('MOpe2=\n')
+
+        # Station
+        self.__edi_file__.write(f'STXEq={self.__radio__}\n')
+        self.__edi_file__.write('SPowe=<POWER_IN_WATTS>\n')
+        self.__edi_file__.write(f'SRXEq={self.__radio__}\n')
+        self.__edi_file__.write(f'SAnte={self.__antenna__}\n')
+        self.__edi_file__.write('SAntH=<ABOVE_GROUND>;<ABOVE_SEE>\n')
+
+    def summary(self) -> str:
+        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
+                f'Claimed points: {self.claimed_points}')
+
+    def build_record(self, adif_rec) -> EDIRecord | None:
+        self.log.debug(adif_rec)
+
+        if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
+            date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
+            if not self.__contest_date__:
+                self.__contest_date__ = date
+
+            srx_string = adif_rec['SRX_STRING'].replace(' ', ',', 1)
+            _, rloc = srx_string.split(',')
+
+            dist = 0
+            try:
+                loc = self.__header__['GRID-LOCATOR']
+                dist = distance(loc if loc else adif_rec['MY_GRIDSQUARE'], rloc)
+            except Exception as exc:
+                self.exception(str(exc))
+
+            if dist > int(self.__codxc__[2]):
+                self.__codxc__ = [adif_rec['CALL'], rloc, str(dist)]
+
+            if rloc.upper() not in self.__locators__:
+                self.__locators__.append(rloc.upper())
+
+            return EDIRecord(BAND_MAP_CBR[adif_rec['BAND'].lower()],
+                             MODE_MAP_CBR[adif_rec['MODE']],
+                             date,
+                             adif_rec['TIME_ON'][:4],
+                             adif_rec['STATION_CALLSIGN'],
+                             adif_rec['RST_SENT'],
+                             f'{adif_rec["STX"]:03d}',
+                             adif_rec['CALL'],
+                             adif_rec['RST_RCVD'],
+                             srx_string,
+                             '0',
+                             dist
+                             )
+
+    def write_records(self):
+        if self.__edi_file__:
+            # Contest info
+            self.__edi_file__.write(f'CQSOs={len(self.__qsos__)};1\n')
+            self.__edi_file__.write(f'CQSOP={self.claimed_points}\n')
+            self.__edi_file__.write(f'CWWLs={len(self.__locators__)};0;1\n')
+            self.__edi_file__.write('CWWLB=0\n')
+            self.__edi_file__.write('CExcs=0;0;1\n')
+            self.__edi_file__.write('CExcB=0\n')
+            self.__edi_file__.write('CDXCs=0;0;1\n')
+            self.__edi_file__.write('CDXCB=0\n')
+            self.__edi_file__.write(f'CToSc={self.claimed_points}\n')
+            self.__edi_file__.write(f'CODXC={";".join(self.__codxc__)}\n')
+
+            # Remarks
+            self.__edi_file__.write('[Remarks]\n')
+            if 'SOAPBOX' in self.__header__ and self.__header__['SOAPBOX'].strip():
+                self.__edi_file__.write(self.__header__['SOAPBOX'].strip() + '\n')
+
+            # Records
+            self.__edi_file__.write(f'[QSORecords;{len(self.__qsos__)}]\n')
+            calls = []
+            locators = []
+
+            for rec in self.__qsos__:
+                rnr, rloc = rec.rcvd_exch.split(',')
+
+                dup = False
+                if rec.call not in calls:
+                    calls.append(rec.call)
+                else:
+                    dup = True
+
+                lnew = True
+                if rloc.upper() not in locators:
+                    locators.append(rloc.upper())
+                else:
+                    lnew = False
+
+                edi_fields = [rec.date[2:].replace('-', ''),  # Date
+                              rec.time[:4],  # Time
+                              rec.call,  # Call
+                              '6',  # FM
+                              rec.sent_rst,  # sent RST
+                              rec.sent_exch,  # sent Exch
+                              rec.rcvd_rst,  # rcvd RST
+                              rnr,  # rcvd QSO nr
+                              '',  # recvd Exch
+                              rloc.upper(),  # Locator
+                              str(rec.dist) if not dup else '0',  # QSO Points
+                              '',  # New exch
+                              'N' if lnew else '',  # New locator
+                              '',  # New DXCC
+                              '' if not dup else 'D'  # Duplicate QSO
+                              ]
+                self.__edi_file__.write(';'.join(edi_fields) + '\n')
+
+    def close_file(self):
+        if self.__edi_file__:
+            self.__edi_file__.close()
+
+    @property
+    def claimed_points(self) -> int:
+        return self.points
+
+    def process_points(self, rec: EDIRecord):
+        # noinspection PyBroadException
+        try:
+            rated = 1
+            points = rec.dist
+            if rec.call in self.__calls__:
+                self.info('Duplicate QSO will not be rated')
+                rated = 0
+                points = 0
+            else:
+                self.__calls__.append(rec.call)
+                self.__rated__ += 1
+                self.__points__ += rec.dist
+
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += points
+            else:
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, points, 1, 1)
+        except Exception:
+            self.exception()
+
+    @property
+    def file_name(self) -> str:
+        return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}_DARC-UKW-Frühlingswettbewerb.edi'
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return CategoryBand.B_2M, CategoryBand.B_70CM, CategoryBand.B_23CM, CategoryBand.B_13CM  # Todo: allowed bands
+
+    @classmethod
+    def valid_power(cls) -> tuple[CategoryPower, ...]:
+        return CategoryPower.NONE,
+
+    @classmethod
+    def descr_specific(cls) -> str:
+        return 'DOK'
+
+
 CONTESTS: dict[str, Type[ContestLog]] = {
     'RL-PFALZ-AW': RLPFALZAWLog,
     'RL-PFALZ-AB.UKW': RLPFALZABUKWLog,
     'RL-PFALZ-AB.KW': RLPFALZABKWLog,
     'K32-KURZ-UKW': K32KurzUKWLog,
     'L33-EINSTEIGER': L33EinsteigerContest,
+    'DARC-UKW-FRUEHLING': DARCUKWFruehlingsContest,
 }
 
 CONTEST_NAMES = dict(zip(CONTESTS.keys(), [c.contest_name for c in CONTESTS.values()]))
