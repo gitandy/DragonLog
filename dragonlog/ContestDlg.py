@@ -209,12 +209,18 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
     def accept(self):
         self.log.info(f'Exporting "{self.contestComboBox.currentText()}" from {self.fromDateEdit.text()}...')
 
+        c_filter = f"""SELECT * FROM qsos WHERE 
+    contest_id = '{CONTEST_IDS[self.contestComboBox.currentText()]}' AND 
+    DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND
+    DATE(date_time) <= DATE('{self.toDateEdit.text()}') """
+
+        if self.bandComboBox.currentText() != 'all':
+            c_filter += f"AND band == '{self.bandComboBox.currentText()}' "
+
+        c_filter += 'ORDER BY date_time'
+
         # noinspection PyProtectedMember
-        doc = self.dragonlog._build_adif_export_(f"SELECT * FROM qsos WHERE "
-                                                 f"contest_id = '{CONTEST_IDS[self.contestComboBox.currentText()]}' AND "
-                                                 f"DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND "
-                                                 f"DATE(date_time) <= DATE('{self.toDateEdit.text()}') "
-                                                 "ORDER BY date_time",
+        doc = self.dragonlog._build_adif_export_(c_filter,
                                                  include_id=True)
 
         contest: ContestLog = self.contest(self.callLineEdit.text(),
@@ -223,7 +229,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            f'{self.streetLineEdit.text()}\n{self.cityLineEdit.text()}',
                                            self.emailLineEdit.text(),
                                            self.locatorLineEdit.text(),
-                                           CategoryBand['B_' + self.bandComboBox.currentText()],
+                                           CategoryBand['B_' + self.bandComboBox.currentText().upper().replace('.', '_')],
                                            CategoryMode[self.modeComboBox.currentText()],
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,

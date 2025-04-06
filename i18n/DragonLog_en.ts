@@ -320,39 +320,39 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="270" />
-      <location filename="..\dragonlog\ContestDlg.py" line="262" />
-      <location filename="..\dragonlog\ContestDlg.py" line="253" />
+      <location filename="..\dragonlog\ContestDlg.py" line="276" />
+      <location filename="..\dragonlog\ContestDlg.py" line="268" />
+      <location filename="..\dragonlog\ContestDlg.py" line="259" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="254" />
+      <location filename="..\dragonlog\ContestDlg.py" line="260" />
       <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="258" />
+      <location filename="..\dragonlog\ContestDlg.py" line="264" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="263" />
+      <location filename="..\dragonlog\ContestDlg.py" line="269" />
       <source>Contest data written to</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="264" />
+      <location filename="..\dragonlog\ContestDlg.py" line="270" />
       <source>Claimed points</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="265" />
+      <location filename="..\dragonlog\ContestDlg.py" line="271" />
       <source>Please check the file patiently before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="271" />
+      <location filename="..\dragonlog\ContestDlg.py" line="277" />
       <source>No contest data found for export</source>
       <translation type="unfinished" />
     </message>
