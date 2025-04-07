@@ -314,45 +314,45 @@
   <context>
     <name>ContestDialog</name>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="92" />
+      <location filename="..\dragonlog\ContestDlg.py" line="96" />
       <source>Select export folder</source>
       <translation>Export-Ordner wählen</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="276" />
-      <location filename="..\dragonlog\ContestDlg.py" line="268" />
-      <location filename="..\dragonlog\ContestDlg.py" line="259" />
+      <location filename="..\dragonlog\ContestDlg.py" line="283" />
+      <location filename="..\dragonlog\ContestDlg.py" line="275" />
+      <location filename="..\dragonlog\ContestDlg.py" line="266" />
       <source>Contest Export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="260" />
+      <location filename="..\dragonlog\ContestDlg.py" line="267" />
       <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
       <translation>Beim Verarbeiten der Contest-Daten traten {} Fehler und {} Warnungen auf</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="264" />
+      <location filename="..\dragonlog\ContestDlg.py" line="271" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation>Der Export wurde trotzdem durchgeführt. Bitte Überprüfen Sie das Anwendungslog vor dem Senden!</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="269" />
+      <location filename="..\dragonlog\ContestDlg.py" line="276" />
       <source>Contest data written to</source>
       <translation>Contest-Export geschrieben nach</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="270" />
+      <location filename="..\dragonlog\ContestDlg.py" line="277" />
       <source>Claimed points</source>
       <translation>Beanspruchte Punkte</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="271" />
+      <location filename="..\dragonlog\ContestDlg.py" line="278" />
       <source>Please check the file patiently before sending!</source>
       <translation>Bitte prüfen Sie die Datei  vor dem Versenden sorgfältig!</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="277" />
+      <location filename="..\dragonlog\ContestDlg.py" line="284" />
       <source>No contest data found for export</source>
       <translation>Keine Contest-Daten verfügbar</translation>
     </message>
@@ -373,14 +373,14 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Date to</source>
-      <translation>Datum bis</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>yyyy-MM-dd</source>
       <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Date to</source>
+      <translation>Datum bis</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
@@ -389,27 +389,7 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Fullname</source>
-      <translation>Vollst. Name</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Street</source>
-      <translation>Straße</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Specific</source>
-      <translation>Contest spez.</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Club</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>eMail</source>
+      <source>DX1XX</source>
       <translation />
     </message>
     <message>
@@ -419,23 +399,13 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Power</source>
-      <translation>Leistung</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Mode</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>DX1XX</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>AA11aa</source>
       <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Fullname</source>
+      <translation>Vollst. Name</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
@@ -444,18 +414,18 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>eMail</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>dx1xx@darc.de</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Contest specific information</source>
-      <translation>Contestspezifische Information</translation>
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>DARC</source>
-      <translation />
+      <source>Street</source>
+      <translation>Straße</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
@@ -470,6 +440,41 @@
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>11111 Berlin</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Specific</source>
+      <translation>Contest spez.</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Contest specific information</source>
+      <translation>Contestspezifische Information</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Club</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>DARC</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Operator</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Power</source>
+      <translation>Leistung</translation>
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Mode</source>
       <translation />
     </message>
     <message>
@@ -501,6 +506,22 @@
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>Cancel</source>
       <translation>Abbrechen</translation>
+    </message>
+    <message>
+      <source>n.a.</source>
+      <translation type="vanished">k.A.</translation>
+    </message>
+    <message>
+      <source>Antenna</source>
+      <translation type="vanished">Antenne</translation>
+    </message>
+    <message>
+      <source>Rig</source>
+      <translation type="vanished">Funkgerät</translation>
+    </message>
+    <message>
+      <source>Class/Power</source>
+      <translation type="vanished">Klasse/Leistung</translation>
     </message>
   </context>
   <context>

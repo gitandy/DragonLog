@@ -8,7 +8,8 @@ from PyQt6 import QtWidgets, QtCore
 
 from . import ContestDlg_ui
 from .Logger import Logger
-from .adi2contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, CategoryBand, CategoryMode, ContestLog
+from .adi2contest import (CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog, CategoryBand, CategoryMode, CategoryPower,
+                          CategoryOperator)
 from . import ColorPalettes
 from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
 
@@ -29,7 +30,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         self.contest = None
         self.contestComboBox.insertItems(0, [CONTEST_NAMES[c] for c in contests])
-        if CONTEST_IDS.get(self.__settings__.value('contest/id', ''),'') in contests:
+        if CONTEST_IDS.get(self.__settings__.value('contest/id', ''), '') in contests:
             self.contestComboBox.setCurrentText(self.__settings__.value('contest/id', ''))
 
         self.__validation__: dict[str, bool] = {}
@@ -78,6 +79,9 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         self.powerComboBox.clear()
         self.powerComboBox.insertItems(0, self.contest.valid_power_list())
+
+        self.opComboBox.clear()
+        self.opComboBox.insertItems(0, self.contest.valid_operator_list())
 
     def fromDateChanged(self, date: QtCore.QDate):
         if self.contest.is_single_day():
@@ -229,8 +233,11 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            f'{self.streetLineEdit.text()}\n{self.cityLineEdit.text()}',
                                            self.emailLineEdit.text(),
                                            self.locatorLineEdit.text(),
-                                           CategoryBand['B_' + self.bandComboBox.currentText().upper().replace('.', '_')],
+                                           CategoryBand[
+                                               'B_' + self.bandComboBox.currentText().upper().replace('.', '_')],
                                            CategoryMode[self.modeComboBox.currentText()],
+                                           CategoryPower[self.powerComboBox.currentText()],
+                                           CategoryOperator[self.opComboBox.currentText()],
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
                                            # Extra parameters for edi format

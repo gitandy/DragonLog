@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>299</width>
-    <height>547</height>
+    <width>300</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,22 +33,15 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="bandComboBox"/>
+     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Date from</string>
        </property>
       </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Date to</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="bandComboBox"/>
      </item>
      <item row="2" column="1">
       <widget class="QDateEdit" name="fromDateEdit">
@@ -67,6 +60,13 @@
        </property>
        <property name="calendarPopup">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Date to</string>
        </property>
       </widget>
      </item>
@@ -94,38 +94,10 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Fullname</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Street</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
-      <widget class="QLabel" name="specificLabel">
-       <property name="text">
-        <string>Specific</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Club</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>eMail</string>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="callLineEdit">
+       <property name="placeholderText">
+        <string>DX1XX</string>
        </property>
       </widget>
      </item>
@@ -136,38 +108,17 @@
        </property>
       </widget>
      </item>
-     <item row="13" column="1">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="14" column="0">
-      <widget class="QLabel" name="label_13">
-       <property name="text">
-        <string>Power</string>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Mode</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QLineEdit" name="callLineEdit">
-       <property name="placeholderText">
-        <string>DX1XX</string>
-       </property>
-      </widget>
-     </item>
      <item row="6" column="1">
       <widget class="QLineEdit" name="locatorLineEdit">
        <property name="placeholderText">
         <string>AA11aa</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Fullname</string>
        </property>
       </widget>
      </item>
@@ -178,6 +129,13 @@
        </property>
       </widget>
      </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>eMail</string>
+       </property>
+      </widget>
+     </item>
      <item row="8" column="1">
       <widget class="QLineEdit" name="emailLineEdit">
        <property name="placeholderText">
@@ -185,25 +143,12 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
-      <widget class="QLineEdit" name="specificLineEdit">
-       <property name="placeholderText">
-        <string>Contest specific information</string>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Street</string>
        </property>
       </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QLineEdit" name="clubLineEdit">
-       <property name="placeholderText">
-        <string>DARC</string>
-       </property>
-      </widget>
-     </item>
-     <item row="14" column="1">
-      <widget class="QComboBox" name="powerComboBox"/>
-     </item>
-     <item row="15" column="1">
-      <widget class="QComboBox" name="modeComboBox"/>
      </item>
      <item row="9" column="1">
       <widget class="QLineEdit" name="streetLineEdit">
@@ -226,21 +171,86 @@
        </property>
       </widget>
      </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="specificLabel">
+       <property name="text">
+        <string>Specific</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <widget class="QLineEdit" name="specificLineEdit">
+       <property name="placeholderText">
+        <string>Contest specific information</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Club</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="QLineEdit" name="clubLineEdit">
+       <property name="placeholderText">
+        <string>DARC</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="1">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>Operator</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QComboBox" name="opComboBox"/>
+     </item>
+     <item row="15" column="0">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Power</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="1">
+      <widget class="QComboBox" name="powerComboBox"/>
+     </item>
+     <item row="16" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Mode</string>
+       </property>
+      </widget>
+     </item>
      <item row="16" column="1">
+      <widget class="QComboBox" name="modeComboBox"/>
+     </item>
+     <item row="17" column="1">
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="17" column="0">
+     <item row="18" column="0">
       <widget class="QLabel" name="label_14">
        <property name="text">
         <string>Soapbox</string>
        </property>
       </widget>
      </item>
-     <item row="17" column="1">
+     <item row="18" column="1">
       <widget class="QPlainTextEdit" name="soapPlainTextEdit">
        <property name="minimumSize">
         <size>

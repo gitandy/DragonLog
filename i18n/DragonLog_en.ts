@@ -314,45 +314,45 @@
   <context>
     <name>ContestDialog</name>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="92" />
+      <location filename="..\dragonlog\ContestDlg.py" line="96" />
       <source>Select export folder</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="276" />
-      <location filename="..\dragonlog\ContestDlg.py" line="268" />
-      <location filename="..\dragonlog\ContestDlg.py" line="259" />
+      <location filename="..\dragonlog\ContestDlg.py" line="283" />
+      <location filename="..\dragonlog\ContestDlg.py" line="275" />
+      <location filename="..\dragonlog\ContestDlg.py" line="266" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="260" />
+      <location filename="..\dragonlog\ContestDlg.py" line="267" />
       <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="264" />
+      <location filename="..\dragonlog\ContestDlg.py" line="271" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="269" />
+      <location filename="..\dragonlog\ContestDlg.py" line="276" />
       <source>Contest data written to</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="270" />
+      <location filename="..\dragonlog\ContestDlg.py" line="277" />
       <source>Claimed points</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="271" />
+      <location filename="..\dragonlog\ContestDlg.py" line="278" />
       <source>Please check the file patiently before sending!</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="277" />
+      <location filename="..\dragonlog\ContestDlg.py" line="284" />
       <source>No contest data found for export</source>
       <translation type="unfinished" />
     </message>
@@ -373,13 +373,13 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Date to</source>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>yyyy-MM-dd</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>yyyy-MM-dd</source>
+      <source>Date to</source>
       <translation type="unfinished" />
     </message>
     <message>
@@ -389,27 +389,7 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Fullname</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Street</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Specific</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Club</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>eMail</source>
+      <source>DX1XX</source>
       <translation type="unfinished" />
     </message>
     <message>
@@ -419,22 +399,12 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Power</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Mode</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>DX1XX</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>AA11aa</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Fullname</source>
       <translation type="unfinished" />
     </message>
     <message>
@@ -444,17 +414,17 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>eMail</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>dx1xx@darc.de</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>Contest specific information</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <source>DARC</source>
+      <source>Street</source>
       <translation type="unfinished" />
     </message>
     <message>
@@ -470,6 +440,41 @@
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
       <source>11111 Berlin</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Specific</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Contest specific information</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Club</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>DARC</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Operator</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Power</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\ContestDlg.ui" line="0" />
+      <source>Mode</source>
       <translation type="unfinished" />
     </message>
     <message>

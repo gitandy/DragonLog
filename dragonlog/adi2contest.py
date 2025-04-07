@@ -275,7 +275,7 @@ class ContestLog:
         self.__header__['EMAIL'] = email
         self.__header__['GRID-LOCATOR'] = locator
         self.__header__['OPERATORS'] = ' '.join(operators) if operators else callsign
-        self.__header__['CATEGORY-OPERATOR'] = cat_operator.name.replace('_', '-')
+        self.__header__['CATEGORY-OPERATOR'] = cat_operator.name
         self.__header__['CATEGORY-BAND'] = band.name[2:].replace('_', '.')
         self.__header__['CATEGORY-MODE'] = mode.name
         self.__header__['CATEGORY-POWER'] = pwr.name
@@ -523,6 +523,14 @@ class ContestLog:
     @classmethod
     def valid_power_list(cls) -> list[str]:
         return [p.name for p in cls.valid_power()]
+
+    @classmethod
+    def valid_operator(cls) -> tuple[CategoryOperator, ...]:
+        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.CHECKLOG
+
+    @classmethod
+    def valid_operator_list(cls) -> list[str]:
+        return [o.name for o in cls.valid_operator()]
 
     @classmethod
     def descr_specific(cls) -> str:
@@ -1114,8 +1122,8 @@ class RLPFALZABKWLog(ContestLog):
 
 class K32KurzUKWLog(ContestLog):
     contest_name = 'K32 FM-Kurzaktivität'
-    contest_year = '2024'
-    contest_update = '2024-10-16'
+    contest_year = '2025'
+    contest_update = '2025-04-07'
 
     def __init__(self, callsign, name, club, address, email, locator,
                  band: CategoryBand, mode: CategoryMode,
@@ -1283,7 +1291,7 @@ class L33EinsteigerContest(ContestLogEDI):
 class DARCUKWFruehlingsContest(ContestLogEDI):
     contest_name = 'DARC UKW Frühlingswettbewerb'
     contest_year = '2025'
-    contest_update = '2025-04-06'
+    contest_update = '2025-04-07'
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
@@ -1299,14 +1307,51 @@ class DARCUKWFruehlingsContest(ContestLogEDI):
     def descr_specific(cls) -> str:
         return 'DOK'
 
+    @classmethod
+    def valid_operator(cls) -> tuple[CategoryOperator, ...]:
+        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
+
+
+class DARCUKWContest(ContestLogEDI):
+    contest_name = 'DARC UKW-Wettbewerb'
+    contest_year = '2025'
+    contest_update = '2025-04-07'
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return (CategoryBand.B_2M, CategoryBand.B_70CM, CategoryBand.B_23CM, CategoryBand.B_13CM,
+                CategoryBand.B_9CM, CategoryBand.B_6CM, CategoryBand.B_3CM, CategoryBand.B_1_25CM,
+                CategoryBand.B_6MM, CategoryBand.B_4MM, CategoryBand.B_2_5MM, CategoryBand.B_2MM, CategoryBand.B_1MM)
+
+    @classmethod
+    def descr_specific(cls) -> str:
+        return 'DOK'
+
+    @classmethod
+    def is_single_day(cls) -> bool:
+        return False
+
+    @classmethod
+    def valid_power(cls) -> tuple[CategoryPower, ...]:
+        return CategoryPower.NONE, CategoryPower.LOW
+
+    @classmethod
+    def valid_operator(cls) -> tuple[CategoryOperator, ...]:
+        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
+
 
 CONTESTS: dict[str, Type[ContestLog]] = {
+    'DARC-UKW': DARCUKWContest,
+    'DARC-UKW-FRUEHLING': DARCUKWFruehlingsContest,
     'RL-PFALZ-AW': RLPFALZAWLog,
     'RL-PFALZ-AB.UKW': RLPFALZABUKWLog,
     'RL-PFALZ-AB.KW': RLPFALZABKWLog,
     'K32-KURZ-UKW': K32KurzUKWLog,
     'L33-EINSTEIGER': L33EinsteigerContest,
-    'DARC-UKW-FRUEHLING': DARCUKWFruehlingsContest,
 }
 
 CONTEST_NAMES = dict(zip(CONTESTS.keys(), [c.contest_name for c in CONTESTS.values()]))
