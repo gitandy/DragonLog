@@ -8,8 +8,8 @@ from PyQt6 import QtWidgets, QtCore
 
 from . import ContestDlg_ui
 from .Logger import Logger
-from .adi2contest import (CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog, CategoryBand, CategoryMode, CategoryPower,
-                          CategoryOperator)
+from .adi2contest import (CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog, ContestLogEDI, Address,
+                          CategoryBand, CategoryMode, CategoryPower, CategoryOperator)
 from . import ColorPalettes
 from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
 
@@ -28,7 +28,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         self.__settings__ = settings
 
-        self.contest = None
+        self.contest: type[ContestLog] = None
         self.contestComboBox.insertItems(0, [CONTEST_NAMES[c] for c in contests])
         if CONTEST_IDS.get(self.__settings__.value('contest/id', ''), '') in contests:
             self.contestComboBox.setCurrentText(self.__settings__.value('contest/id', ''))
@@ -41,12 +41,14 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         date_to = self.__settings__.value('contest/to_date', cur_date)
         self.toDateEdit.setDate(QtCore.QDate.fromString(date_to, 'yyyy-MM-dd'))
 
+        city = ''
         locator = ''
         if check_qth(settings.value('station/qth_loc', '')):
-            _, locator = check_qth(settings.value('station/qth_loc', ''))
+            city, locator = check_qth(settings.value('station/qth_loc', ''))
 
         self.callLineEdit.setText(self.__settings__.value('contest/call', settings.value('station/callSign', '')))
         self.callChanged(self.callLineEdit.text())
+        self.operatorsLineEdit.setText(self.callLineEdit.text())
         self.locatorLineEdit.setText(self.__settings__.value('contest/locator', locator))
         self.locatorChanged(self.locatorLineEdit.text())
         self.nameLineEdit.setText(self.__settings__.value('contest/name', settings.value('station/name', '')))
@@ -55,12 +57,23 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.emailChanged(self.emailLineEdit.text())
         self.streetLineEdit.setText(self.__settings__.value('contest/street', ''))
         self.streetChanged(self.streetLineEdit.text())
+        self.zipLineEdit.setText(self.__settings__.value('contest/zip', ''))
+        self.zipChanged(self.zipLineEdit.text())
         self.cityLineEdit.setText(self.__settings__.value('contest/city', ''))
         self.cityChanged(self.cityLineEdit.text())
+        self.countryLineEdit.setText(self.__settings__.value('contest/country', ''))
+        self.countryChanged(self.countryLineEdit.text())
         self.specificLineEdit.setText(self.__settings__.value('contest/specific', ''))
         self.specificChanged(self.specificLineEdit.text())
         self.clubLineEdit.setText(self.__settings__.value('contest/club', ''))
         self.clubChanged(self.clubLineEdit.text())
+
+        self.qthLineEdit.setText(city)
+        self.rigLineEdit.setText(self.__settings__.value('station/radio', ''))
+        self.powerSpinBox.setValue(int(self.__settings__.value('contest_edi/power', 0)))
+        self.antennaLineEdit.setText(self.__settings__.value('station/antenna', ''))
+        self.antAboveGroundSpinBox.setValue(int(self.__settings__.value('contest_edi/ant_height_ground', -1)))
+        self.antAboveSeaSpinBox.setValue(int(self.__settings__.value('contest_edi/ant_height_sea', -1)))
 
         self.exportPathLineEdit.setText(self.__settings__.value('contest/last_export_dir', os.path.abspath(os.curdir)))
 
@@ -71,6 +84,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.bandComboBox.insertItems(0, self.contest.valid_bands_list())
 
         self.toDateEdit.setEnabled(not self.contest.is_single_day())
+        self.toDateEdit.setMinimumDate(self.fromDateEdit.date())
+        self.toDateEdit.setDate(self.fromDateEdit.date())
 
         self.specificLabel.setText(self.contest.descr_specific())
 
@@ -82,6 +97,9 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         self.opComboBox.clear()
         self.opComboBox.insertItems(0, self.contest.valid_operator_list())
+
+        self.ediGroupBox.setEnabled(issubclass(self.contest, ContestLogEDI))
+
 
     def fromDateChanged(self, date: QtCore.QDate):
         if self.contest.is_single_day():
@@ -159,30 +177,28 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.checkRequired()
 
     def streetChanged(self, txt):
-        if not txt.strip():
-            self.streetLineEdit.setPalette(ColorPalettes.PaletteRequired)
-            self.__validation__['street'] = False
-        elif find_non_ascii(txt):
+        if find_non_ascii(txt):
             self.streetLineEdit.setPalette(ColorPalettes.PaletteFaulty)
-            self.__validation__['street'] = True
         else:
-            self.streetLineEdit.setPalette(ColorPalettes.PaletteOk)
-            self.__validation__['street'] = True
+            self.streetLineEdit.setPalette(ColorPalettes.PaletteDefault)
 
-        self.checkRequired()
+    def zipChanged(self, txt):
+        if find_non_ascii(txt):
+            self.zipLineEdit.setPalette(ColorPalettes.PaletteFaulty)
+        else:
+            self.zipLineEdit.setPalette(ColorPalettes.PaletteDefault)
 
     def cityChanged(self, txt):
-        if not txt.strip():
-            self.cityLineEdit.setPalette(ColorPalettes.PaletteRequired)
-            self.__validation__['city'] = False
-        elif find_non_ascii(txt):
+        if find_non_ascii(txt):
             self.cityLineEdit.setPalette(ColorPalettes.PaletteFaulty)
-            self.__validation__['city'] = True
         else:
-            self.cityLineEdit.setPalette(ColorPalettes.PaletteOk)
-            self.__validation__['city'] = True
+            self.cityLineEdit.setPalette(ColorPalettes.PaletteDefault)
 
-        self.checkRequired()
+    def countryChanged(self, txt):
+        if find_non_ascii(txt):
+            self.countryLineEdit.setPalette(ColorPalettes.PaletteFaulty)
+        else:
+            self.countryLineEdit.setPalette(ColorPalettes.PaletteDefault)
 
     def specificChanged(self, txt):
         if not txt.strip():
@@ -210,6 +226,13 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         self.checkRequired()
 
+    def operatorChanged(self, op_class):
+        if op_class in ('MULTI', 'TRAINEE'):
+            self.operatorsLineEdit.setEnabled(True)
+        else:
+            self.operatorsLineEdit.setEnabled(False)
+        self.operatorsLineEdit.setText(self.callLineEdit.text())
+
     def accept(self):
         self.log.info(f'Exporting "{self.contestComboBox.currentText()}" from {self.fromDateEdit.text()}...')
 
@@ -227,10 +250,17 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         doc = self.dragonlog._build_adif_export_(c_filter,
                                                  include_id=True)
 
+        addr = Address(
+            self.streetLineEdit.text(),
+            self.zipLineEdit.text(),
+            self.cityLineEdit.text(),
+            self.countryLineEdit.text()
+        )
+
         contest: ContestLog = self.contest(self.callLineEdit.text(),
                                            self.nameLineEdit.text(),
                                            self.clubLineEdit.text(),
-                                           f'{self.streetLineEdit.text()}\n{self.cityLineEdit.text()}',
+                                           addr,
                                            self.emailLineEdit.text(),
                                            self.locatorLineEdit.text(),
                                            CategoryBand[
@@ -238,13 +268,18 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            CategoryMode[self.modeComboBox.currentText()],
                                            CategoryPower[self.powerComboBox.currentText()],
                                            CategoryOperator[self.opComboBox.currentText()],
+                                           operators=self.operatorsLineEdit.text().split(' '),
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
                                            # Extra parameters for edi format
                                            from_date=self.fromDateEdit.text(),
                                            to_date=self.toDateEdit.text(),
-                                           radio=self.__settings__.value('station/radio', ''),
-                                           antenna=self.__settings__.value('station/antenna', ''),
+                                           qth=self.qthLineEdit.text(),
+                                           radio=self.rigLineEdit.text(),
+                                           pwr_watts=self.powerSpinBox.value(),
+                                           antenna=self.antennaLineEdit.text(),
+                                           ant_height_ground=self.antAboveGroundSpinBox.value(),
+                                           ant_height_sea=self.antAboveSeaSpinBox.value(),
                                            )
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
@@ -292,8 +327,14 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.__settings__.setValue('contest/name', self.nameLineEdit.text())
         self.__settings__.setValue('contest/email', self.emailLineEdit.text())
         self.__settings__.setValue('contest/street', self.streetLineEdit.text())
+        self.__settings__.setValue('contest/zip', self.zipLineEdit.text())
         self.__settings__.setValue('contest/city', self.cityLineEdit.text())
+        self.__settings__.setValue('contest/country', self.countryLineEdit.text())
         self.__settings__.setValue('contest/specific', self.specificLineEdit.text())
         self.__settings__.setValue('contest/club', self.clubLineEdit.text())
+
+        self.__settings__.setValue('contest_edi/power', self.powerSpinBox.value())
+        self.__settings__.setValue('contest_edi/ant_height_ground', self.antAboveGroundSpinBox.value())
+        self.__settings__.setValue('contest_edi/ant_height_sea', self.antAboveSeaSpinBox.value())
 
         super().accept()

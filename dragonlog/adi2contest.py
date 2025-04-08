@@ -42,6 +42,7 @@ MODE_MAP_EDI = {
 }
 
 BAND_MAP_CBR = {
+    'all': 'ALL',
     '160m': '1800',
     '80m': '3500',
     '40m': '7000',
@@ -176,6 +177,14 @@ class CategoryTransmitter(Enum):
 
 
 @dataclass
+class Address:
+    street: str
+    zip: str
+    city: str
+    country: str
+
+
+@dataclass
 class BandStatistics:
     qsos: int = 0
     rated: int = 0
@@ -196,13 +205,14 @@ class ContestLog:
     REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])?')
     REGEX_DATE = re.compile(r'([1-9][0-9]{3})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-2]))')
 
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **params):
 
         self.log = logging.getLogger(type(self).__name__)
         if logger:
@@ -253,13 +263,13 @@ class ContestLog:
 
         self.__out_file__ = None
 
-    def __init_header__(self, callsign, name, club, address, email, locator,
-                        band: CategoryBand, mode: CategoryMode,
-                        pwr: CategoryPower = CategoryPower.HIGH,
-                        cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                        assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                        tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                        operators: list[str] = None, specific=''):
+    def __init_header__(self, callsign, name, club, address: Address, email, locator,
+                        band: type[CategoryBand], mode: type[CategoryMode],
+                        pwr: type[CategoryPower] = CategoryPower.HIGH,
+                        cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                        assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                        tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                        operators: list[str] = None, specific: str = ''):
 
         if not check_format(REGEX_CALL, callsign):
             self.log.error(f'Callsign "{callsign}" does not match call format')
@@ -271,7 +281,10 @@ class ContestLog:
         self.__header__['CALLSIGN'] = callsign
         self.__header__['NAME'] = name
         self.__header__['CLUB'] = club
-        self.__header__['ADDRESS'] = address
+        self.__header__['ADDRESS'] = address.street
+        self.__header__['ADDRESS-POSTALCODE'] = address.zip
+        self.__header__['ADDRESS-CITY'] = address.city
+        self.__header__['ADDRESS-COUNTRY'] = address.country
         self.__header__['EMAIL'] = email
         self.__header__['GRID-LOCATOR'] = locator
         self.__header__['OPERATORS'] = ' '.join(operators) if operators else callsign
@@ -476,6 +489,8 @@ class ContestLog:
         return self.__stats__
 
     def serialize_cbr(self):
+        # CBR format from http://wwrof.org/cabrillo/
+
         yield 'START-OF-LOG: 3.0'
 
         for k in self.__header__:
@@ -550,13 +565,14 @@ class ContestLogEDI(ContestLog):
     contest_year = '2025'
     contest_update = '2025-04-06'
 
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.B,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **params):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
@@ -565,8 +581,12 @@ class ContestLogEDI(ContestLog):
 
         self.__from_date__ = params.get('from_date', '2001-01-01')
         self.__to_date__ = params.get('to_date', '2001-01-01')
+        self.__qth__ = params.get('qth', '<QTH>')
         self.__radio__ = params.get('radio', '<RADIO>')
+        self.__power__ = params.get('pwr_watts', '<POWER_IN_WATTS>')
         self.__antenna__ = params.get('antenna', '<ANTENNA>')
+        self.__ant_height_ground__ = params.get('ant_height_ground', '<ABOVE_GROUND>')
+        self.__ant_height_sea__ = params.get('ant_height_sea', '<ABOVE_SEA>')
 
         self.__dok__ = specific
 
@@ -596,10 +616,8 @@ class ContestLogEDI(ContestLog):
         self.__edi_file__.write(f'PCall={self.__header__["CALLSIGN"]}\n')
         self.__edi_file__.write(f'PWWLo={self.__header__["GRID-LOCATOR"].upper()}\n')
         self.__edi_file__.write(f'PExch={self.__header__["GRID-LOCATOR"].upper()}\n')
-        addr = self.__header__['ADDRESS'].split('\n', 1)
-        addr_2 = addr[1].replace('\n', ' ') if len(addr) > 1 else ''
-        self.__edi_file__.write(f'PAdr1={addr[0]}\n')
-        self.__edi_file__.write(f'PAdr2={addr_2}\n')
+        self.__edi_file__.write(f'PAdr1={self.__qth__}\n')
+        self.__edi_file__.write('PAdr2=\n')
         self.__edi_file__.write(f'PSect={self.__header__["CATEGORY-OPERATOR"]}\n')
         self.__edi_file__.write(f'PBand={BAND_MAP_EDI[self.__header__["CATEGORY-BAND"].lower()]}\n')
         self.__edi_file__.write(f'PClub={self.__header__["SPECIFIC"]}\n')
@@ -607,24 +625,28 @@ class ContestLogEDI(ContestLog):
         # Responsible
         self.__edi_file__.write(f'RName={self.__header__["NAME"]}\n')
         self.__edi_file__.write(f'RCall={self.__header__["CALLSIGN"]}\n')
+
+        addr = self.__header__['ADDRESS'].split('\n', 1)
+        addr_2 = addr[1].replace('\n', ' ') if len(addr) > 1 else ''
         self.__edi_file__.write(f'RAdr1={addr[0]}\n')
         self.__edi_file__.write(f'RAdr2={addr_2}\n')
-        self.__edi_file__.write('RPoCo=<POSTAL_CODE>\n')
-        self.__edi_file__.write('RCity=<CITY>\n')
-        self.__edi_file__.write('RCoun=<COUNTRY>\n')
-        self.__edi_file__.write('RPhon=<PHONE>\n')
+
+        self.__edi_file__.write(f'RPoCo={self.__header__["ADDRESS-POSTALCODE"]}\n')
+        self.__edi_file__.write(f'RCity={self.__header__["ADDRESS-CITY"]}\n')
+        self.__edi_file__.write(f'RCoun={self.__header__["ADDRESS-COUNTRY"]}\n')
+        self.__edi_file__.write('RPhon=\n')
         self.__edi_file__.write(f'RHBBS={self.__header__["EMAIL"]}\n')
 
         # Operators
-        self.__edi_file__.write(f'MOpe1={self.__header__["CALLSIGN"]}\n')
+        self.__edi_file__.write(f'MOpe1={self.__header__["OPERATORS"]}\n')
         self.__edi_file__.write('MOpe2=\n')
 
         # Station
         self.__edi_file__.write(f'STXEq={self.__radio__}\n')
-        self.__edi_file__.write('SPowe=<POWER_IN_WATTS>\n')
+        self.__edi_file__.write(f'SPowe={self.__power__}\n')
         self.__edi_file__.write(f'SRXEq={self.__radio__}\n')
         self.__edi_file__.write(f'SAnte={self.__antenna__}\n')
-        self.__edi_file__.write('SAntH=<ABOVE_GROUND>;<ABOVE_SEE>\n')
+        self.__edi_file__.write(f'SAntH={self.__ant_height_ground__};{self.__ant_height_sea__}\n')
 
     def summary(self) -> str:
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
@@ -787,13 +809,14 @@ class RLPFALZAWLog(ContestLog):
     contest_year = '2025'
     contest_update = '2025-01-05'
 
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **_):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
@@ -911,13 +934,14 @@ class RLPFALZABUKWLog(ContestLog):
     contest_year = '2025'
     contest_update = '2024-12-16'
 
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **_):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
@@ -1023,13 +1047,14 @@ class RLPFALZABKWLog(ContestLog):
     contest_year = '2025'
     contest_update = '2024-12-16'
 
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.HIGH,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **_):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
@@ -1125,13 +1150,14 @@ class K32KurzUKWLog(ContestLog):
     contest_year = '2025'
     contest_update = '2025-04-07'
 
-    def __init__(self, callsign, name, club, address, email, locator,
-                 band: CategoryBand, mode: CategoryMode,
-                 pwr: CategoryPower = CategoryPower.B,
-                 cat_operator: CategoryOperator = CategoryOperator.SINGLE,
-                 assisted: CategoryAssisted = CategoryAssisted.NON_ASSISTED,
-                 tx: CategoryTransmitter = CategoryTransmitter.ONE,
-                 operators: list[str] = None, specific='', skip_id=False, skip_warn=False, logger=None, **params):
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **_):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
@@ -1165,11 +1191,8 @@ class K32KurzUKWLog(ContestLog):
 
         xl_ws['D1'] = self.__header__['SPECIFIC']
         xl_ws['D2'] = self.__header__['NAME']
-
-        addr = self.__header__['ADDRESS'].split('\n', 1)
-        xl_ws['D3'] = addr[0]
-        xl_ws['D4'] = addr[1].replace('\n', ' ') if len(addr) > 1 else ''
-
+        xl_ws['D3'] = self.__header__['ADDRESS']
+        xl_ws['D4'] = self.__header__['ADDRESS-POSTALCODE'] + ' ' + self.__header__['ADDRESS-CITY']
         xl_ws['D5'] = self.__header__['EMAIL']
 
         xl_ws['B7'] = self.__header__['CALLSIGN']

@@ -6,251 +6,464 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>615</height>
+    <width>554</width>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Contest Export</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Contest</string>
-       </property>
-      </widget>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Contest</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="contestComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Band</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="bandComboBox"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Date from</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDateEdit" name="fromDateEdit">
+         <property name="minimumDate">
+          <date>
+           <year>1900</year>
+           <month>1</month>
+           <day>1</day>
+          </date>
+         </property>
+         <property name="currentSection">
+          <enum>QDateTimeEdit::YearSection</enum>
+         </property>
+         <property name="displayFormat">
+          <string>yyyy-MM-dd</string>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Date to</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDateEdit" name="toDateEdit">
+         <property name="displayFormat">
+          <string>yyyy-MM-dd</string>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Callsign</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="callLineEdit">
+         <property name="placeholderText">
+          <string>DX1XX</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Locator</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="locatorLineEdit">
+         <property name="placeholderText">
+          <string>AA11aa</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Fullname</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="nameLineEdit">
+         <property name="placeholderText">
+          <string>Max Example</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>eMail</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="emailLineEdit">
+         <property name="placeholderText">
+          <string>dx1xx@darc.de</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Street</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QLineEdit" name="streetLineEdit">
+         <property name="placeholderText">
+          <string>Street 1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>City</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QLineEdit" name="cityLineEdit">
+         <property name="placeholderText">
+          <string>Berlin</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QLabel" name="specificLabel">
+         <property name="text">
+          <string>Specific</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="1">
+        <widget class="QLineEdit" name="specificLineEdit">
+         <property name="placeholderText">
+          <string>Contest specific information</string>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Club</string>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="1">
+        <widget class="QLineEdit" name="clubLineEdit">
+         <property name="placeholderText">
+          <string>DARC</string>
+         </property>
+        </widget>
+       </item>
+       <item row="16" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Operator</string>
+         </property>
+        </widget>
+       </item>
+       <item row="18" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Power</string>
+         </property>
+        </widget>
+       </item>
+       <item row="19" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Mode</string>
+         </property>
+        </widget>
+       </item>
+       <item row="16" column="1">
+        <widget class="QComboBox" name="opComboBox"/>
+       </item>
+       <item row="18" column="1">
+        <widget class="QComboBox" name="powerComboBox"/>
+       </item>
+       <item row="19" column="1">
+        <widget class="QComboBox" name="modeComboBox"/>
+       </item>
+       <item row="15" column="1">
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>Zip</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLineEdit" name="zipLineEdit">
+         <property name="placeholderText">
+          <string>11111</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="label_24">
+         <property name="text">
+          <string>Country</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <widget class="QLineEdit" name="countryLineEdit">
+         <property name="placeholderText">
+          <string>Deutschland</string>
+         </property>
+        </widget>
+       </item>
+       <item row="17" column="1">
+        <widget class="QLineEdit" name="operatorsLineEdit">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="placeholderText">
+          <string>DX1XX DY1YY DX2XX DY2YY</string>
+         </property>
+        </widget>
+       </item>
+       <item row="17" column="0">
+        <widget class="QLabel" name="label_25">
+         <property name="text">
+          <string>Operators</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="contestComboBox"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Band</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="bandComboBox"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Date from</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QDateEdit" name="fromDateEdit">
-       <property name="minimumDate">
-        <date>
-         <year>1900</year>
-         <month>1</month>
-         <day>1</day>
-        </date>
-       </property>
-       <property name="currentSection">
-        <enum>QDateTimeEdit::YearSection</enum>
-       </property>
-       <property name="displayFormat">
-        <string>yyyy-MM-dd</string>
-       </property>
-       <property name="calendarPopup">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Date to</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDateEdit" name="toDateEdit">
-       <property name="displayFormat">
-        <string>yyyy-MM-dd</string>
-       </property>
-       <property name="calendarPopup">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="Line" name="line">
+     <item>
+      <spacer name="verticalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_1">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QGroupBox" name="ediGroupBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="title">
+        <string>Additional EDI data</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="antennaLineEdit"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="rigLineEdit"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_19">
+          <property name="text">
+           <string>Antenna</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="powerSpinBox">
+          <property name="specialValueText">
+           <string>n.a.</string>
+          </property>
+          <property name="suffix">
+           <string> W</string>
+          </property>
+          <property name="maximum">
+           <number>999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_18">
+          <property name="text">
+           <string>Power</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>Rig</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="qthLineEdit"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_21">
+          <property name="text">
+           <string>Contest QTH</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_16">
+          <property name="text">
+           <string>Ant. above ground</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QSpinBox" name="antAboveGroundSpinBox">
+          <property name="specialValueText">
+           <string>n.a.</string>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <number>-1</number>
+          </property>
+          <property name="maximum">
+           <number>499</number>
+          </property>
+          <property name="stepType">
+           <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+          </property>
+          <property name="value">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_17">
+          <property name="text">
+           <string>Ant. above sea lvl.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QSpinBox" name="antAboveSeaSpinBox">
+          <property name="specialValueText">
+           <string>n.a.</string>
+          </property>
+          <property name="suffix">
+           <string> m</string>
+          </property>
+          <property name="minimum">
+           <number>-1</number>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="stepType">
+           <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+          </property>
+          <property name="value">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Callsign</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QLineEdit" name="callLineEdit">
-       <property name="placeholderText">
-        <string>DX1XX</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Locator</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLineEdit" name="locatorLineEdit">
-       <property name="placeholderText">
-        <string>AA11aa</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Fullname</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="nameLineEdit">
-       <property name="placeholderText">
-        <string>Max Example</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>eMail</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QLineEdit" name="emailLineEdit">
-       <property name="placeholderText">
-        <string>dx1xx@darc.de</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Street</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QLineEdit" name="streetLineEdit">
-       <property name="placeholderText">
-        <string>Street 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>City</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="1">
-      <widget class="QLineEdit" name="cityLineEdit">
-       <property name="placeholderText">
-        <string>11111 Berlin</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
-      <widget class="QLabel" name="specificLabel">
-       <property name="text">
-        <string>Specific</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="1">
-      <widget class="QLineEdit" name="specificLineEdit">
-       <property name="placeholderText">
-        <string>Contest specific information</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Club</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QLineEdit" name="clubLineEdit">
-       <property name="placeholderText">
-        <string>DARC</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="1">
-      <widget class="Line" name="line_2">
+     <item>
+      <spacer name="verticalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
-      </widget>
-     </item>
-     <item row="14" column="0">
-      <widget class="QLabel" name="label_15">
-       <property name="text">
-        <string>Operator</string>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-      </widget>
+      </spacer>
      </item>
-     <item row="14" column="1">
-      <widget class="QComboBox" name="opComboBox"/>
-     </item>
-     <item row="15" column="0">
-      <widget class="QLabel" name="label_13">
-       <property name="text">
-        <string>Power</string>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="1">
-      <widget class="QComboBox" name="powerComboBox"/>
-     </item>
-     <item row="16" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Mode</string>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="1">
-      <widget class="QComboBox" name="modeComboBox"/>
-     </item>
-     <item row="17" column="1">
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="18" column="0">
+     <item>
       <widget class="QLabel" name="label_14">
        <property name="text">
         <string>Soapbox</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="1">
+     <item>
       <widget class="QPlainTextEdit" name="soapPlainTextEdit">
        <property name="minimumSize">
         <size>
@@ -269,73 +482,99 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
-      <widget class="QLineEdit" name="exportPathLineEdit">
-       <property name="placeholderText">
-        <string>Export path</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="choosePathToolButton">
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="verticalSpacer_3">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>10</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="exportPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+      <widget class="QLabel" name="label_22">
        <property name="text">
-        <string>Export</string>
+        <string>Export path</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelPushButton">
-       <property name="text">
-        <string>Cancel</string>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QLineEdit" name="exportPathLineEdit">
+         <property name="placeholderText">
+          <string>Export path</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="choosePathToolButton">
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>10</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportPushButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Export</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cancelPushButton">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -551,6 +790,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>zipLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>zipChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>opComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>ContestDialog</receiver>
+   <slot>operatorChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>409</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>contestChanged(QString)</slot>
@@ -564,5 +835,8 @@
   <slot>specificChanged(QString)</slot>
   <slot>clubChanged(QString)</slot>
   <slot>cityChanged(QString)</slot>
+  <slot>zipChanged(QString)</slot>
+  <slot>countryChanged(QString)</slot>
+  <slot>operatorChanged(QString)</slot>
  </slots>
 </ui>
