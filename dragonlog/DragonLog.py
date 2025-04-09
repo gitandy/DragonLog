@@ -45,7 +45,8 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
 from .ContestStatistics import ContestStatistics
-from .adi2contest import ContestLog, CONTEST_NAMES, CONTEST_IDS, CONTESTS
+from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES
+from .contest.base import ContestLog
 from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
 from . import ColorPalettes

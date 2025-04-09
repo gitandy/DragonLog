@@ -13,7 +13,7 @@ from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_
 from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from . import ColorPalettes
-from .adi2contest import CONTEST_NAMES, CONTEST_IDS
+from .contest import CONTEST_IDS, CONTEST_NAMES
 from .distance import distance
 from .cty import Country
 

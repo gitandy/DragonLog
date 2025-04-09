@@ -8,7 +8,8 @@ from PyQt6 import QtWidgets, QtCore
 
 from . import ContestDlg_ui
 from .Logger import Logger
-from .adi2contest import (CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog, ContestLogEDI, Address,
+from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES
+from .contest.base import (ContestLog, ContestLogEDI, Address,
                           CategoryBand, CategoryMode, CategoryPower, CategoryOperator)
 from . import ColorPalettes
 from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL

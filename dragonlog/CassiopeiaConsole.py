@@ -9,7 +9,7 @@ from hamcc import hamcc
 from . import CassiopeiaConsole_ui
 from .Logger import Logger
 from .RegEx import check_call
-from .adi2contest import CONTEST_NAMES, CONTEST_IDS
+from .contest import CONTEST_IDS, CONTEST_NAMES
 
 
 class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaConsoleWidget):

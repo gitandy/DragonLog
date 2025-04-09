@@ -8,7 +8,8 @@ from PyQt6.QtGui import QStandardItem
 
 from .Logger import Logger
 from . import ContestStatistics_ui
-from .adi2contest import CONTESTS, CONTEST_IDS, CategoryBand, CategoryMode, ContestLog, BandStatistics
+from .contest import CONTESTS, CONTEST_IDS
+from .contest.base import ContestLog, Address, CategoryBand, CategoryMode, BandStatistics
 
 
 class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatistics):
@@ -45,7 +46,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
 
         self.clear()
 
-        self.contest = None
+        self.contest: type[ContestLog] = None
         self.contestComboBox.insertItem(0, '')
         self.contestComboBox.insertItems(1, CONTEST_IDS.keys())
 
@@ -131,7 +132,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
                                                      include_id=True)
 
         contest: ContestLog = self.contest('XX1XXX',  # Just to fit the checks
-                                           '', '', '', '', '',
+                                           '', '', Address('', '', '', ''), '', '',
                                            CategoryBand.B_ALL, CategoryMode.MIXED,
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
