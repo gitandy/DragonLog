@@ -492,7 +492,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.dxspots_widget.spotSelected.connect(self.cc_widget.setQSO)
 
         # ContestStatistics
-        self.cstats_widget = ContestStatistics(self, self, self.settings, self.log)
+        self.cstats_widget = ContestStatistics(self, self, self.settings, self.log, self.__cty__)
         self.contestStatDockWidget.setWidget(self.cstats_widget)
         if int(self.settings.value('ui/contest_stats_dock_float', 0)):
             self.dxSpotsDockWidget.setFloating(True)
@@ -2241,7 +2241,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 contests.append(query.value(0))
 
         if contests:
-            contest_dlg = ContestDialog(self, self, self.settings, self.log, contests)
+            contest_dlg = ContestDialog(self, self, self.settings, self.log, contests, self.__cty__)
             contest_dlg.exec()
         else:
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),

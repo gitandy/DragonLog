@@ -13,10 +13,12 @@ from .contest.base import (ContestLog, ContestLogEDI, Address,
                           CategoryBand, CategoryMode, CategoryPower, CategoryOperator)
 from . import ColorPalettes
 from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
+from .cty import CountryData
 
 
 class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
-    def __init__(self, parent, dragonlog, settings: QtCore.QSettings, logger: Logger, contests: list):
+    def __init__(self, parent, dragonlog, settings: QtCore.QSettings, logger: Logger, contests: list,
+                 cty: CountryData):
         super().__init__(parent)
         self.dragonlog = dragonlog
         self.setupUi(self)
@@ -26,6 +28,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.log.setLevel(logger.loglevel)
         self.logger = logger
         self.log.debug('Initialising...')
+
+        self.__cty__ = cty
 
         self.__settings__ = settings
 
@@ -281,6 +285,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            antenna=self.antennaLineEdit.text(),
                                            ant_height_ground=self.antAboveGroundSpinBox.value(),
                                            ant_height_sea=self.antAboveSeaSpinBox.value(),
+                                           # Extra parameters for some contests
+                                           cty = self.__cty__,
                                            )
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 

@@ -10,6 +10,7 @@ from .Logger import Logger
 from . import ContestStatistics_ui
 from .contest import CONTESTS, CONTEST_IDS
 from .contest.base import ContestLog, Address, CategoryBand, CategoryMode, BandStatistics
+from .cty import CountryData
 
 
 class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatistics):
@@ -17,7 +18,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
     toDateSelected = QtCore.pyqtSignal(str)
     fromDateSelected = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, dragonlog, settings: QtCore.QSettings, logger: Logger):
+    def __init__(self, parent, dragonlog, settings: QtCore.QSettings, logger: Logger, cty: CountryData):
         super().__init__(parent)
 
         self.setupUi(self)
@@ -30,6 +31,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
 
         self.__dragonlog__ = dragonlog
         self.__settings__ = settings
+        self.__cty__ = cty
 
         self.__header__ = [
             self.tr('QSOs'),
@@ -136,6 +138,8 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
                                            CategoryBand.B_ALL, CategoryMode.MIXED,
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
+                                           # Extra parameters for some contests
+                                           cty = self.__cty__,
                                            )
 
         if doc['RECORDS']:
