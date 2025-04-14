@@ -39,7 +39,10 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.refreshDisplay()
 
     def __initWidgets__(self):
-        self.bandComboBox.insertItems(1, self.__settings__.value('ui/show_bands', []))
+        bands:list =  self.__settings__.value('ui/show_bands', [])
+        if '11m' in bands:
+            bands.remove('11m')
+        self.bandComboBox.insertItems(1, bands)
         self.modeComboBox.insertItems(1, self.__settings__.value('ui/show_modes', []))
         self.eventComboBox.insertItems(3, CONTEST_IDS.keys())
 

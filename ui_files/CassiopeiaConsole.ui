@@ -153,9 +153,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="editable">
-           <bool>true</bool>
-          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -362,9 +359,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="editable">
-           <bool>true</bool>
-          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -395,9 +389,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="editable">
-           <bool>true</bool>
           </property>
           <property name="currentText">
            <string>Mode</string>
