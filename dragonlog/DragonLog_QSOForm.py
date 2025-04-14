@@ -540,9 +540,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def channelChanged(self, ch):
         if ch and ch != '-':
             self.freqDoubleSpinBox.setValue(self.cb_channels[ch]['freq'])
-            self.modeComboBox.clear()
-            self.modeComboBox.insertItems(0, self.cb_channels[ch]['modes'])
-            self.modeComboBox.setCurrentIndex(0)
         else:
             self.freqDoubleSpinBox.setValue(self.bands['11m'][0] - self.bands['11m'][2])
 
@@ -575,6 +572,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.ctyAreaLabel.clear()
         if not txt:
             self.callSignLineEdit.setPalette(ColorPalettes.PaletteRequired)
+        elif self.bandComboBox.currentText() == '11m':
+            self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         elif check_format(REGEX_CALL, txt):
             # worked_dict:dict = self.dragonlog.workedBefore(check_call(txt)[1])
             worked = self.dragonlog.workedBefore(check_call(txt)[1]).keys()
@@ -590,8 +589,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             if cdata:
                 self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
                 self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
-        elif self.bandComboBox.currentText() == '11m':
-            self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
         else:
             self.callSignLineEdit.setPalette(ColorPalettes.PaletteFaulty)
 
@@ -751,6 +748,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.timeOffEdit.setText(time_off)
         self.timeOffChanged(self.timeOffEdit.text())
 
+        band = values['band']
+        self.bandComboBox.setCurrentText(band)
+
         self.ownCallSignLineEdit.setText(values['own_callsign'])
         self.callSignLineEdit.setText(values['call_sign'])
         self.nameLineEdit.setText(values['name'])
@@ -765,9 +765,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.rstSentChanged(self.RSTSentLineEdit.text())
         self.rstRcvdChanged(self.RSTRcvdLineEdit.text())
         self.ownQTHChanged(self.ownQTHComboBox.currentText())
-
-        band = values['band']
-        self.bandComboBox.setCurrentText(band)
 
         self.modeComboBox.setCurrentText(values['mode'])
         if values['submode']:
