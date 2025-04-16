@@ -39,7 +39,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.refreshDisplay()
 
     def __initWidgets__(self):
-        bands:list =  self.__settings__.value('ui/show_bands', [])
+        bands: list = self.__settings__.value('ui/show_bands', [])
         if '11m' in bands:
             bands.remove('11m')
         self.bandComboBox.insertItems(1, bands)
@@ -108,11 +108,14 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
         self.refreshDisplay()
 
-    def setQSO(self, call: str, band: str, freq: float):
+    def setQSO(self, call: str, band: str = '', freq: float = .0):
         self.evaluate(f'{call} ')
-        self.evaluate(f'{band} ')
-        freq_s = f'{freq:0.3f}'.rstrip('0').rstrip('.')
-        self.evaluate(f'{freq_s}f ')
+
+        if band:
+            self.evaluate(f'{band} ')
+        if freq:
+            freq_s = f'{freq:0.3f}'.rstrip('0').rstrip('.')
+            self.evaluate(f'{freq_s}f ')
 
     def setFrequency(self, freq: float):
         freq_s = f'{freq:0.3f}'.rstrip('0').rstrip('.')

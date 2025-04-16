@@ -6,7 +6,6 @@ import sys
 import typing
 import logging
 import platform
-import subprocess
 
 from PyQt6 import QtWidgets, QtCore
 import keyring
@@ -18,6 +17,7 @@ from .CallBook import CallBookType
 from .ListEdit import ListEdit
 from .SelectWidget import SelectWidget
 from . import ColorPalettes
+from .RigControl import RigControl, RigctldExecutionException, NoExecutableFoundException
 
 # Fix problems with importing win32 in frozen executable
 if getattr(sys, 'frozen', False):
@@ -30,13 +30,12 @@ if getattr(sys, 'frozen', False):
 
 class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
     callbookChanged = QtCore.pyqtSignal(str)
-    rigctldStatusChanged = QtCore.pyqtSignal(bool)
     settingsStored = QtCore.pyqtSignal()
     ctyDataChanged = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, settings: QtCore.QSettings, rig_status: QtWidgets.QLabel,
+    def __init__(self, parent, settings: QtCore.QSettings,
                  bands: typing.Iterable, modes: typing.Iterable, cols: typing.Iterable,
-                 logger: Logger):
+                 logger: Logger, rigctl: RigControl):
         super().__init__(parent)
         self.setupUi(self)
 
@@ -68,20 +67,13 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.columnsGroupBox.layout().addWidget(self.columnsSelectWidget)
 
         self.settings = settings
-        self.rig_ids = None
-        self.rigs = None
-        self.rigctld_path = None
-        self.rigctld = None
-        self.rig_caps = []
-        self.rig_status = rig_status
 
-        self.rigctl_startupinfo = None
+        self.rigctl = rigctl
+
         if platform.system() == 'Windows':
-            self.rigctl_startupinfo = subprocess.STARTUPINFO()
-            self.rigctl_startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             if self.settings.value('cat/rigctldPath', None):
-                if self.__is_exe__(self.settings.value('cat/rigctldPath')):
-                    self.init_hamlib(self.settings.value('cat/rigctldPath'))
+                if self.rigctl.__is_exe__(self.settings.value('cat/rigctldPath')):
+                    self.hamlibPathLineEdit.setText(self.settings.value('cat/rigctldPath'))
                 else:
                     self.settings.setValue('cat/rigctldPath', '')
                     self.hamlibPathLineEdit.setText('')
@@ -90,10 +82,13 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.hamlibPathLineEdit.setVisible(False)
             self.hamlibPathToolButton.setVisible(False)
             self.checkHamlibLabel.setVisible(False)
-            self.init_hamlib('rigctld')
 
-        self.checkHamlibTimer = QtCore.QTimer(self)
-        self.checkHamlibTimer.timeout.connect(self.checkRigctld)
+        self.manufacturerComboBox.clear()
+        self.manufacturerComboBox.insertItems(0, sorted(self.rigctl.availableManufacturers))
+        if self.settings.value('cat/rigMfr', None):
+            self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
+        else:
+            self.manufacturerComboBox.setCurrentIndex(0)
 
         self.columns = cols
         self.sortComboBox.insertItems(0, cols)
@@ -116,18 +111,6 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.antennaComboBox.insertItems(0, self.antsListEdit.items())
         self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
 
-    def checkRigctld(self):
-        if self.rigctld and self.rigctld.poll():
-            self.log.error('rigctld died unexpectedly')
-            self.ctrlRigctldPushButton.setText(self.tr('Start'))
-            self.ctrlRigctldPushButton.setChecked(False)
-            self.rig_caps = []
-            self.checkHamlibTimer.stop()
-            self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
-
-    def isRigctldActive(self):
-        return self.rigctld and not self.rigctld.poll()
-
     @staticmethod
     def __is_exe__(path):
         return os.path.isfile(path) and os.access(path, os.X_OK)
@@ -141,155 +124,29 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         )
 
         if self.__is_exe__(rigctld_path[0]):
-            self.init_hamlib(rigctld_path[0])
+            try:
+                self.rigctl.init_hamlib(rigctld_path[0])
+                self.settings.setValue('cat/rigctldPath', rigctld_path[0])
+                self.checkHamlibLabel.setText('')
+                self.hamlibPathLineEdit.setText(rigctld_path[0])
+            except RigctldExecutionException as exc:
+                self.settings.setValue('cat/rigctldPath', '')
+                self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
+                self.hamlibPathLineEdit.setText('')
+            except NoExecutableFoundException as exc:
+                self.settings.setValue('cat/rigctldPath', '')
+                self.checkHamlibLabel.setText(self.tr('rigctld is not available'))
         else:
             self.checkHamlibLabel.setText(self.tr('Selected file is not the executable'))
-
-    def init_hamlib(self, rigctld_path):
-        if rigctld_path:
-            try:
-                res = subprocess.run([rigctld_path, '-l'], capture_output=True)
-                stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
-                if res.returncode != 0 or not stdout:
-                    self.log.error(f'Error executing rigctld: {res.returncode}')
-                    self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
-                    self.settings.setValue('cat/rigctldPath', '')
-                    self.hamlibPathLineEdit.setText('')
-                    return
-                self.log.debug('Executed rigctld to list rigs')
-            except FileNotFoundError:
-                self.log.info('rigctld is not available')
-                self.checkHamlibLabel.setText(self.tr('rigctld is not available'))
-                self.settings.setValue('cat/rigctldPath', '')
-                self.hamlibPathLineEdit.setText('')
-                return
-
-            first = True
-            rig_pos = 0
-            mfr_pos = 0
-            model_pos = 0
-            end_pos = 0
-            self.rigs = {}
-            self.rig_ids = {}
-            for rig in stdout.split('\n'):
-                if first:
-                    first = False
-                    rig_pos = rig.index('Rig #')
-                    mfr_pos = rig.index('Mfg')
-                    model_pos = rig.index('Model')
-                    end_pos = rig.index('Version')
-                    continue
-                elif not rig.strip():  # Empty line
-                    continue
-
-                rig_id = rig[rig_pos:mfr_pos - 1].strip()
-                mfr_name = rig[mfr_pos:model_pos - 1].strip()
-                model_name = rig[model_pos:end_pos - 1].strip()
-
-                self.rig_ids[f'{mfr_name}/{model_name}'] = rig_id
-                if mfr_name in self.rigs:
-                    self.rigs[mfr_name].append(model_name)
-                else:
-                    self.rigs[mfr_name] = [model_name]
-
-            self.manufacturerComboBox.clear()
-            self.manufacturerComboBox.insertItems(0, sorted(self.rigs.keys()))
-            if self.settings.value('cat/rigMfr', None):
-                self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
-            else:
-                self.manufacturerComboBox.setCurrentIndex(0)
-
-            self.settings.setValue('cat/rigctldPath', rigctld_path)
-            self.hamlibPathLineEdit.setText(rigctld_path)
-            self.checkHamlibLabel.setText('')
-            self.rigctld_path = rigctld_path
 
     def mfrChanged(self, mfr):
         self.modelComboBox.clear()
 
-        if mfr in self.rigs:
-            self.modelComboBox.insertItems(0, sorted(self.rigs[mfr]))
+        if mfr in self.rigctl.availableManufacturers:
+            self.modelComboBox.insertItems(0, sorted(self.rigctl.availableRigs(mfr)))
 
         if self.settings.value('cat/rigModel', None):
             self.modelComboBox.setCurrentText(self.settings.value('cat/rigModel'))
-
-    def collectRigCaps(self, rig_id):
-        res = subprocess.run([self.rigctld_path, f'--model={rig_id}', '-u'],
-                             capture_output=True,
-                             startupinfo=self.rigctl_startupinfo)
-        stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
-        self.rig_caps = []
-        for ln in stdout.split('\n'):
-            if ln.startswith('Can '):
-                cap, able = ln.split(':')
-                if able.strip() == 'Y':
-                    self.rig_caps.append(cap[4:].lower())
-        self.log.info(f'Rig capabilities {self.rig_caps}')
-
-    # noinspection PyUnresolvedReferences
-    def ctrlRigctld(self, start):
-        if start:
-            if not self.rigctld_path:
-                self.log.warning('rigctld is not available')
-                self.ctrlRigctldPushButton.setChecked(False)
-                self.parent().actionStart_hamlib_TB.setChecked(False)
-                self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
-                return
-
-            if not self.rigctld:
-                rig_mfr = self.settings.value('cat/rigMfr')
-                rig_model = self.settings.value('cat/rigModel')
-                rig_if = self.settings.value("cat/interface")
-                rig_speed = self.settings.value("cat/baud")
-                if not rig_mfr or not rig_model or not rig_if or not rig_speed:
-                    QtWidgets.QMessageBox.critical(self, self.tr('CAT settings error'),
-                                                   self.tr('CAT configuration was never saved '
-                                                           'or a parameter is missing'))
-                    self.ctrlRigctldPushButton.setChecked(False)
-                    self.parent().actionStart_hamlib_TB.setChecked(False)
-                    self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
-                    return
-
-                rig_id = self.rig_ids[f'{rig_mfr}/{rig_model}']
-
-                self.collectRigCaps(rig_id)
-
-                self.rigctld = subprocess.Popen([self.rigctld_path,
-                                                 f'--model={rig_id}',
-                                                 f'--rig-file={rig_if}',
-                                                 f'--serial-speed={rig_speed}',
-                                                 '--listen-addr=127.0.0.1'],
-                                                startupinfo=self.rigctl_startupinfo)
-
-                if self.rigctld.poll():
-                    self.checkHamlibRunLabel.setText(self.tr('rigctld did not start properly'))
-                    self.ctrlRigctldPushButton.setChecked(False)
-                    self.parent().actionStart_hamlib_TB.setChecked(False)
-                    self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
-                    self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
-                else:
-                    self.checkHamlibRunLabel.setText('')
-                    self.ctrlRigctldPushButton.setChecked(True)
-                    self.ctrlRigctldPushButton.setText(self.tr('Stop'))
-                    self.parent().actionStart_hamlib_TB.setChecked(True)
-                    self.parent().actionStart_hamlib_TB.setText(self.tr('Stop hamlib'))
-                    self.log.info(f'rigctld is running with pid #{self.rigctld.pid} and arguments {self.rigctld.args}')
-                    self.checkHamlibTimer.start(1000)
-                    self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
-                    self.rigctldStatusChanged.emit(True)
-        else:
-            self.checkHamlibTimer.stop()
-            if self.rigctld and not self.rigctld.poll():
-                os.kill(self.rigctld.pid, 9)
-                self.log.info('Killed rigctld')
-            self.rigctld = None
-            self.ctrlRigctldPushButton.setChecked(False)
-            self.ctrlRigctldPushButton.setText(self.tr('Start'))
-            self.parent().actionStart_hamlib_TB.setChecked(False)
-            self.parent().actionStart_hamlib_TB.setText(self.tr('Start hamlib'))
-            self.rig_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
-            self.rig_caps = []
-            self.rigctldStatusChanged.emit(False)
 
     def callSignChanged(self, txt):
         if not txt:
@@ -360,7 +217,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.columnsSelectWidget.indexesDisabled = [int(c) for c in self.settings.value('ui/hidden_cols',
                                                                                             '1').split(',')]
         except ValueError:
-            self.logger.exception(f'Reading "ui/hidden_cols": {self.settings.value("ui/hidden_cols","")}')
+            self.logger.exception(f'Reading "ui/hidden_cols": {self.settings.value("ui/hidden_cols", "")}')
 
         self.bandsSelectWidget.itemsEnabled = self.settings.value('ui/show_bands', self.bandsSelectWidget.items)
         self.modesSelectWidget.itemsEnabled = self.settings.value('ui/show_modes', self.modesSelectWidget.items)

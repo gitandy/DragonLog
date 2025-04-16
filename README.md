@@ -219,7 +219,7 @@ The QSO logging form automatically updates radio information:
 * power
 
 Hamlib can be downloaded at https://github.com/Hamlib/Hamlib/releases.
-DragonLog is tested against version 4.5.5.
+DragonLog is tested against version 4.5.5 and 4.6.2.
 
 After selecting your radio and interface settings you can press the start button to start the communication.
 

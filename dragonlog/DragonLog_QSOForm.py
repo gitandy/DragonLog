@@ -1,7 +1,6 @@
 # DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
-import socket
 import logging
 
 from PyQt6 import QtWidgets, QtCore
@@ -19,14 +18,8 @@ from .cty import Country
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
-    rigFrequencyChanged = QtCore.pyqtSignal(float)
-    rigBandChanged = QtCore.pyqtSignal(str)
-    rigModeChanged = QtCore.pyqtSignal(str)
-    rigSubModeChanged = QtCore.pyqtSignal(str)
-    rigPowerChanged = QtCore.pyqtSignal(int)
-
     def __init__(self, parent, dragonlog, bands: dict, modes: dict, prop: dict, settings: QtCore.QSettings,
-                 settings_form: Settings, cb_channels: dict, hamlib_error: QtWidgets.QLabel, logger: Logger):
+                 settings_form: Settings, cb_channels: dict, logger: Logger):
         super().__init__(parent)
         self.dragonlog = dragonlog
         self.setupUi(self)
@@ -58,37 +51,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.stationChanged(True)
         self.identityChanged(True)
 
-        self.hamlib_error = hamlib_error
-        self.rig_modes = {'USB': ('SSB', 'USB'),
-                          'LSB': ('SSB', 'LSB'),
-                          'CW': ('CW', ''),
-                          'CWR': ('CW', ''),
-                          'RTTY': ('RTTY', ''),
-                          'RTTYR': ('RTTY', ''),
-                          'AM': ('AM', ''),
-                          'FM': ('FM', ''),
-                          'FMN': ('FM', ''),
-                          'WFM': ('FM', ''),
-                          'PKTUSB': ('SSB', 'USB'),
-                          'PKTLSB': ('SSB', 'LSB'),
-                          }
-        self.__last_mode__ = ''
-        self.__last_band__ = ''
-        self.__last_freq__ = 0.0
-        self.__last_pwr__ = ''
-
-        self.settings_form.rigctldStatusChanged.connect(self.rigctldChanged)
-
         self.__change_mode__ = False
-
-        self.rigBandChanged.connect(self.bandComboBox.setCurrentText)
-        self.rigFrequencyChanged.connect(self.freqDoubleSpinBox.setValue)
-        self.rigModeChanged.connect(self.modeComboBox.setCurrentText)
-        self.rigSubModeChanged.connect(self.submodeComboBox.setCurrentText)
-        self.rigPowerChanged.connect(self.powerSpinBox.setValue)
-
-        self.refreshTimer = QtCore.QTimer(self)
-        self.refreshTimer.timeout.connect(self.refreshRigData)
 
         self.timeTimer = QtCore.QTimer(self)
         self.timeTimer.timeout.connect(self.refreshTime)
@@ -142,6 +105,21 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
                 self.antennaComboBox.setCurrentText(self.settings.value('station/antenna', ''))
 
+    def setBand(self, band: str):
+        self.bandComboBox.setCurrentText(band)
+
+    def setFrequency(self, freq: float):
+        self.freqDoubleSpinBox.setValue(freq)
+
+    def setMode(self, mode: str):
+        self.modeComboBox.setCurrentText(mode)
+
+    def setSubmode(self, submode: str):
+        self.submodeComboBox.setCurrentText(submode)
+
+    def setPower(self, power: int):
+        self.powerSpinBox.setValue(power)
+
     def refreshBands(self):
         self.bandComboBox.clear()
         self.bandComboBox.insertItems(0, self.settings.value('ui/show_bands', self.bands.keys()))
@@ -162,18 +140,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if self.settings.value('listings/antennas'):
             self.antennaComboBox.insertItems(0, self.settings.value('listings/antennas'))
 
-    def rigctldChanged(self, state):
-        self.__last_mode__ = ''
-        self.__last_band__ = ''
-        self.__last_freq__ = 0.0
-        self.__last_pwr__ = ''
-
     def startTimers(self, start: bool):
         if start:
-            self.refreshTimer.start(500)
             self.timeTimer.start(1000)
         else:
-            self.refreshTimer.stop()
             self.timeTimer.stop()
 
     def _create_worked_dlg_(self):
@@ -214,124 +184,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         else:
             self.refreshTime()
 
-    def setQSO(self, call: str, band: str, freq: float):
-        if self.settings_form.isRigctldActive():
-            self.setRigFreq(freq)
-        else:
+    def setQSO(self, call: str, band: str = '', freq: float = .0):
+        if band:
             self.bandComboBox.setCurrentText(band)
+        if freq:
             self.freqDoubleSpinBox.setValue(freq)
-
         self.callSignLineEdit.setText(call)
         self.callSignChanged(call)
-
-    def setRigFreq(self, freq):
-        self.sendToRig(f'set_freq {int(freq * 1000)}')
-
-    def sendToRig(self, cmd: str):
-        if not self.settings_form.isRigctldActive():
-            return
-
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect(('127.0.0.1', 4532))
-                s.settimeout(1)
-                try:
-                    s.sendall(f'\\{cmd}\n'.encode())
-                    res = s.recv(1024).decode('utf-8').strip()
-                    if not res.startswith('RPRT 0'):
-                        self.hamlib_error.setText(self.tr('Error') + ':' + res.split()[1])
-                        self.log.error(f'rigctld error "{cmd}": {res.split()[1]}')
-                    else:
-                        self.log.debug(f'rigctld "{cmd}" successful')
-                except socket.timeout:
-                    self.hamlib_error.setText(self.tr('rigctld timeout'))
-                    self.log.error('rigctld error: timeout')
-        except ConnectionRefusedError:
-            self.log.error('Could not connect to rigctld')
-
-    # noinspection PyBroadException
-    def refreshRigData(self):
-        if self.settings_form.isRigctldActive() and not self.__change_mode__:
-            try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.connect(('127.0.0.1', 4532))
-                    s.settimeout(1)
-                    try:
-                        # Get frequency
-                        s.sendall(b'\\get_freq\n')
-                        freq_s = s.recv(1024).decode('utf-8').strip()
-                        if freq_s.startswith('RPRT'):
-                            self.hamlib_error.setText(self.tr('Error') + ':' + freq_s.split()[1])
-                            self.log.error(f'rigctld error get_freq: {freq_s.split()[1]}')
-                            return
-
-                        try:
-                            freq = float(freq_s) / 1000
-                            if freq != self.__last_freq__:
-                                for b in self.bands:
-                                    if freq < self.bands[b][1]:
-                                        if freq > self.bands[b][0]:
-                                            if b != self.__last_band__:
-                                                self.rigBandChanged.emit(b)
-                                                self.log.info(f'CAT changed band to {b}')
-                                                self.__last_band__ = b
-                                                self.__last_mode__ = ''
-                                        break
-                                self.rigFrequencyChanged.emit(freq)
-                                self.__last_freq__ = freq
-                        except Exception:
-                            pass
-
-                        # Get mode
-                        s.sendall(b'\\get_mode\n')
-                        mode_s = s.recv(1024).decode('utf-8').strip()
-                        if mode_s.startswith('RPRT'):
-                            self.hamlib_error.setText(self.tr('Error') + ':' + mode_s.split()[1])
-                            self.log.error(f'rigctld error get_mode: {mode_s.split()[1]}')
-                            return
-
-                        try:
-                            mode, passband = [v.strip() for v in mode_s.split('\n')]
-                            if mode in self.rig_modes and mode != self.__last_mode__:
-                                self.rigModeChanged.emit(self.rig_modes[mode][0])
-                                self.log.info(f'CAT changed mode to {self.rig_modes[mode][0]}')
-                                if self.rig_modes[mode][1]:
-                                    self.rigSubModeChanged.emit(self.rig_modes[mode][1])
-                                self.__last_mode__ = mode
-                        except Exception:
-                            pass
-
-                        # Get power
-                        if 'get level' in self.settings_form.rig_caps and 'get power2mw' in self.settings_form.rig_caps:
-                            # Get power level
-                            s.sendall(b'\\get_level RFPOWER\n')
-                            pwrlvl_s = s.recv(1024).decode('utf-8').strip()
-                            if pwrlvl_s.startswith('RPRT'):
-                                self.hamlib_error.setText(self.tr('Error') + ':' + pwrlvl_s.split()[1])
-                                self.log.error(f'rigctld error get_level: {pwrlvl_s.split()[1]}')
-                                return
-
-                            if pwrlvl_s != self.__last_pwr__:
-                                self.__last_pwr__ = pwrlvl_s
-                                # Convert level to W
-                                s.sendall(f'\\power2mW {pwrlvl_s} {freq_s} {mode}\n'.encode())
-                                pwr_s = s.recv(1024).decode('utf-8').strip()
-                                if pwr_s.startswith('RPRT'):
-                                    self.hamlib_error.setText(self.tr('Error') + ':' + pwr_s.split()[1])
-                                    self.log.error(f'rigctld error power2mW: {pwr_s.split()[1]}')
-                                    return
-
-                                try:
-                                    pwr = int(int(pwr_s) / 1000 + .9)
-                                    self.rigPowerChanged.emit(pwr)
-                                except Exception:
-                                    pass
-                    except socket.timeout:
-                        self.hamlib_error.setText(self.tr('rigctld timeout'))
-                        self.log.error('rigctld error: timeout')
-            except ConnectionRefusedError:
-                self.log.error('Could not connect to rigctld')
-                self.refreshTimer.stop()
 
     def clear(self):
         self.__old_values__ = {}
@@ -434,8 +293,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.timeNowPushButton.setEnabled(True)
 
     def bandChanged(self, band: str):
-        self.__last_band__ = band
-
         if band in self.bands:
             self.bandComboBox.setPalette(ColorPalettes.PaletteOk)
             self.freqDoubleSpinBox.setMinimum(self.bands[band][0] - self.bands[band][2])
@@ -492,8 +349,6 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
 
     def modeChanged(self, mode: str):
-        self.__last_mode__ = mode
-
         self.submodeComboBox.clear()
         self.submodeComboBox.setEnabled(False)
         if self.bandComboBox.currentText() == '11m':
@@ -585,7 +440,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             else:
                 self.callSignLineEdit.setPalette(ColorPalettes.PaletteOk)
 
-            cdata : Country = self.dragonlog.cty_data(txt)
+            cdata: Country = self.dragonlog.cty_data(txt)
             if cdata:
                 self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
                 self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
@@ -672,7 +527,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 qsl_sent = 'Y' if self.qslSentCheckBox.isChecked() else 'N'
                 qsl_rcvd = 'Y' if self.qslRcvdCheckBox.isChecked() else 'N'
 
-        #noinspection PyBroadException
+        # noinspection PyBroadException
         try:
             dist = distance(self.locatorLineEdit.text(), own_locator)
         except Exception:

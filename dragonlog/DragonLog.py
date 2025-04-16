@@ -49,6 +49,7 @@ from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES
 from .contest.base import ContestLog
 from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
+from .RigControl import RigControl
 from . import ColorPalettes
 
 __prog_name__ = 'DragonLog'
@@ -433,17 +434,20 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.__header_map__ = dict(zip(self.__sql_cols__, self.__headers__))
 
+        self.__rigctl__ = RigControl(self, self.settings, self.log, self.bands, self.modes)
+        self.__rigctl__.statusChanged.connect(self.rigStatusChanged)
+
         self.__cty__: CountryData | None = None
         self.cty_load(self.settings.value('dx_spots/cty_data', ''))
 
         # Settings Form
-        self.settings_form = Settings(self, self.settings, self.hamlib_status,
-                                      self.bands, self.modes['AFU'], self.__headers__, self.log)
+        self.settings_form = Settings(self, self.settings, self.bands, self.modes['AFU'],
+                                      self.__headers__, self.log, self.__rigctl__)
         self.settings_form.ctyDataChanged.connect(self.cty_load)
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
-                                self.cb_channels, self.hamlib_error, self.log)
+                                self.cb_channels, self.log)
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.clear)
@@ -457,6 +461,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(qso_dock_area,
                                self.qsoDockWidget)
         self.qsoDockWidget.setVisible(bool(int(self.settings.value('ui/show_qso', 0))))
+        self.__rigctl__.bandChanged.connect(self.qso_form.setBand)
+        self.__rigctl__.frequencyChanged.connect(self.qso_form.setFrequency)
+        self.__rigctl__.modeChanged.connect(self.qso_form.setMode)
+        self.__rigctl__.submodeChanged.connect(self.qso_form.setSubmode)
+        self.__rigctl__.powerChanged.connect(self.qso_form.setPower)
 
         # HamCCForm
         self.cc_widget = CassiopeiaConsole(self, self, self.settings, self.log)
@@ -471,10 +480,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(cc_dock_area,
                                self.ccDockWidget)
         self.ccDockWidget.setVisible(bool(int(self.settings.value('ui/show_cc', 0))))
-        self.qso_form.rigFrequencyChanged.connect(self.cc_widget.setFrequency)
-        self.qso_form.rigBandChanged.connect(self.cc_widget.setBand)
-        self.qso_form.rigModeChanged.connect(self.cc_widget.setMode)
-        self.qso_form.rigPowerChanged.connect(self.cc_widget.setPower)
+        self.__rigctl__.frequencyChanged.connect(self.cc_widget.setFrequency)
+        self.__rigctl__.bandChanged.connect(self.cc_widget.setBand)
+        self.__rigctl__.modeChanged.connect(self.cc_widget.setMode)
+        self.__rigctl__.powerChanged.connect(self.cc_widget.setPower)
 
         # DxSpotsForm
         self.dxspots_widget = DxSpots(self, self, self.settings, self.log)
@@ -488,8 +497,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(dxspots_dock_area,
                                self.dxSpotsDockWidget)
         self.dxSpotsDockWidget.setVisible(bool(int(self.settings.value('ui/show_dxspots', 0))))
-        self.dxspots_widget.spotSelected.connect(self.qso_form.setQSO)
-        self.dxspots_widget.spotSelected.connect(self.cc_widget.setQSO)
+        self.dxspots_widget.spotSelected.connect(self.setQSO)
 
         # ContestStatistics
         self.cstats_widget = ContestStatistics(self, self, self.settings, self.log, self.__cty__)
@@ -569,6 +577,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 dock_area = QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
 
         return dock_area
+
+    def setQSO(self, call: str, band: str, freq: float):
+        if self.__rigctl__.isActive():
+            self.__rigctl__.setRigFreq(freq)
+            self.qso_form.setQSO(call)
+            self.cc_widget.setQSO(call)
+        else:
+            self.qso_form.setQSO(call, band, freq)
+            self.cc_widget.setQSO(call, band, freq)
 
     def filterWidgetResize(self):
         if self.filterDockWidget.isFloating():
@@ -870,7 +887,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.fContestComboBox.setCurrentIndex(0)
 
     def ctrlHamlib(self, start):
-        self.settings_form.ctrlRigctld(start)
+        self.__rigctl__.ctrlRigctld(start)
 
     def logQSO(self):
         if not self.__db_con__.isOpen():
@@ -2212,6 +2229,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.actionWatch_file_for_QSOs.setChecked(False)
         self.actionWatch_file_for_QSOs_TB.setChecked(False)
 
+    def rigStatusChanged(self, state: bool):
+        if state:
+            self.hamlib_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
+        else:
+            self.hamlib_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
+            self.actionStart_hamlib_TB.setChecked(False)
+
     def showCC(self):
         if not self.__db_con__.isOpen():
             self.selectDB()
@@ -2440,7 +2464,7 @@ The *Internal ID* is the ID which is imported or exported in ADIF format.
         self.settings.setValue('ui/contest_stats_dock_area', self.dockWidgetArea(self.contestStatDockWidget).value)
         self.settings.setValue('ui/contest_stats_dock_float', int(self.contestStatDockWidget.isFloating()))
 
-        self.settings_form.ctrlRigctld(False)
+        self.__rigctl__.ctrlRigctld(False)
         e.accept()
 
 
