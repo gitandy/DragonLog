@@ -236,7 +236,8 @@ class RigControl(QtCore.QObject):
                         f'rigctld is running with pid #{self.__rigctld__.pid} and arguments {self.__rigctld__.args}')
                     self.__checkHamlibTimer__.start(1000)
                     self.statusChanged.emit(True)
-                    self.__refreshTimer__.start(100)
+                    # Give rigctld some time on slower machines
+                    self.__refreshTimer__.singleShot(500, self.startRefresh)
         else:
             self.__checkHamlibTimer__.stop()
             if self.isActive():
@@ -270,11 +271,8 @@ class RigControl(QtCore.QObject):
     def power(self) -> int:
         return self.__last_pwr__
 
-    def startTimers(self, start: bool):
-        if start:
-            self.__refreshTimer__.start(500)
-        else:
-            self.__refreshTimer__.stop()
+    def startRefresh(self):
+        self.__refreshTimer__.start(100)
 
     def setRigFreq(self, freq: int | float):
         self.sendToRig(f'set_freq {int(freq * 1000)}')
@@ -295,9 +293,9 @@ class RigControl(QtCore.QObject):
                     else:
                         self.log.debug(f'rigctld "{cmd}" successful')
                 except socket.timeout:
-                    self.log.error('rigctld error: timeout')
+                    self.log.error('rigctld error: timeout in sendToRig')
         except ConnectionRefusedError:
-            self.log.error('Could not connect to rigctld')
+            self.log.error('Could not connect to rigctld in sendToRig')
 
     @staticmethod
     def __get_errcode__(code: str | int) -> str:
@@ -382,8 +380,8 @@ class RigControl(QtCore.QObject):
                                 except Exception:
                                     pass
                     except socket.timeout:
-                        self.log.error('rigctld error: timeout')
+                        self.log.error('rigctld error: timeout in refreshRigData')
                         self.ctrlRigctld(False)
             except ConnectionRefusedError:
-                self.log.error('Could not connect to rigctld')
+                self.log.error('Could not connect to rigctld in refreshRigData')
                 self.ctrlRigctld(False)
