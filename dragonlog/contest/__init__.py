@@ -19,3 +19,28 @@ CONTESTS: dict[str, type[ContestLog]] = {
 
 CONTEST_NAMES = dict(zip(CONTESTS.keys(), [c.contest_name for c in CONTESTS.values()]))
 CONTEST_IDS = dict(zip([c.contest_name for c in CONTESTS.values()], CONTESTS.keys()))
+
+
+def build_contest_list() -> str:
+    """Build a contest list as Markdown"""
+
+    text = '''
+Available Contests
+==================
+
+The table shows all available contests with the last date the contest definition was updated.
+
+The *Year* column shows the year the contest definition is targeted to. 
+If it does not show the current year you should check for a program update.
+
+The *Internal ID* is the ID which is imported or exported in ADIF format. 
+
+| Contest name | Internal ID | Year | Updated |
+|--------------|-------------|------|---------|
+'''
+
+    for c in CONTESTS:
+        cntst: type[ContestLog] = CONTESTS[c]
+        text += f'| {cntst.contest_name} | {c} | ***{cntst.contest_year}*** | {cntst.contest_update} |\n'
+
+    return text

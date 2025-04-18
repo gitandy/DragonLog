@@ -12,8 +12,11 @@ NO_OBSOLETE=
 
 all:  dragonlog/__version__.py ui_files i18n $(MD_FILES)
 
-*.md:
+*.md: contests_md
 	cp $@ dragonlog/data
+
+contests_md:
+	python -m dragonlog.contest AVAILABLE_CONTESTS.md
 
 ui_files:
 	$(MAKE) -C ui_files
