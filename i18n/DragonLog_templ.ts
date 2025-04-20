@@ -2870,37 +2870,37 @@ This is not the QSL manager/bureau address.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="121" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="124" />
       <source>Choose hamlib rigctld executable</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="134" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="138" />
       <source>Error executing rigctld</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="138" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="142" />
       <source>rigctld is not available</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="140" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="144" />
       <source>Selected file is not the executable</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="172" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="176" />
       <source>Choose Country data file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="210" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="214" />
       <source>Date/Time start</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Settings.py" line="214" />
+      <location filename="..\dragonlog\DragonLog_Settings.py" line="218" />
       <source>Show all</source>
       <translation type="unfinished" />
     </message>

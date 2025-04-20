@@ -83,18 +83,21 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
             self.hamlibPathToolButton.setVisible(False)
             self.checkHamlibLabel.setVisible(False)
 
-        self.manufacturerComboBox.clear()
-        self.manufacturerComboBox.insertItems(0, sorted(self.rigctl.availableManufacturers))
-        if self.settings.value('cat/rigMfr', None):
-            self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
-        else:
-            self.manufacturerComboBox.setCurrentIndex(0)
+        self.refreshMfrComboBox()
 
         self.columns = cols
         self.sortComboBox.insertItems(0, cols)
 
         self.callbooks = dict([(cbt.value, cbt.name) for cbt in set(CallBookType)])
         self.callbookComboBox.insertItems(0, self.callbooks.keys())
+
+    def refreshMfrComboBox(self):
+        self.manufacturerComboBox.clear()
+        self.manufacturerComboBox.insertItems(0, sorted(self.rigctl.availableManufacturers))
+        if self.settings.value('cat/rigMfr', None):
+            self.manufacturerComboBox.setCurrentText(self.settings.value('cat/rigMfr'))
+        else:
+            self.manufacturerComboBox.setCurrentIndex(0)
 
     def refreshQTHsComboBox(self):
         self.qthComboBox.clear()
@@ -129,6 +132,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                 self.settings.setValue('cat/rigctldPath', rigctld_path[0])
                 self.checkHamlibLabel.setText('')
                 self.hamlibPathLineEdit.setText(rigctld_path[0])
+                self.refreshMfrComboBox()
             except RigctldExecutionException as exc:
                 self.settings.setValue('cat/rigctldPath', '')
                 self.checkHamlibLabel.setText(self.tr('Error executing rigctld'))
