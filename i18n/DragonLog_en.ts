@@ -4,72 +4,72 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="293" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="288" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="279" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="299" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="294" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="285" />
       <location filename="..\dragonlog\CassiopeiaConsole.py" line="69" />
       <source>Event ID</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="237" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="73" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="243" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="79" />
       <source>Band</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="242" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="74" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="248" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="80" />
       <source>Mode</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="155" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="161" />
       <source>at</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="183" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="189" />
       <source>Error: Callsign missing for QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="214" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="220" />
       <source>Warning: Wrong call format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="215" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="221" />
       <source>Error: Wrong call format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="216" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="222" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="217" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="223" />
       <source>Error: No active event</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="218" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="224" />
       <source>Error: Unknown prefix</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="219" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="225" />
       <source>Error: Wrong RST format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="220" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="226" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="221" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="227" />
       <source>Last QSO cached</source>
       <translation type="unfinished" />
     </message>
@@ -308,6 +308,11 @@
     <message>
       <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
       <source>Push to Log</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\CassiopeiaConsole.ui" line="0" />
+      <source>Online</source>
       <translation type="unfinished" />
     </message>
   </context>

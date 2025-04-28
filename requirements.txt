@@ -6,6 +6,6 @@ PyADIF-File~=1.3
 requests
 xmltodict
 keyring
-HamCC==0.7
+HamCC~=1.0
 pymsilib; sys_platform == 'win32'
 cx-freeze; sys_platform == 'win32'

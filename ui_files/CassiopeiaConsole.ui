@@ -752,6 +752,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="onlineCheckBox">
+           <property name="text">
+            <string>Online</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -917,7 +924,7 @@
   </connection>
   <connection>
    <sender>timeEdit</sender>
-   <signal>userTimeChanged(QTime)</signal>
+   <signal>timeChanged(QTime)</signal>
    <receiver>CassiopeiaConsoleWidget</receiver>
    <slot>timeChanged(QTime)</slot>
    <hints>
@@ -1187,6 +1194,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>onlineCheckBox</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>CassiopeiaConsoleWidget</receiver>
+   <slot>onlineChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>862</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>451</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearInput()</slot>
@@ -1214,5 +1237,6 @@
   <slot>eventChanged(QString)</slot>
   <slot>exchRxChanged()</slot>
   <slot>exchTxChanged()</slot>
+  <slot>onlineChanged(bool)</slot>
  </slots>
 </ui>

@@ -68,8 +68,14 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self.exchRXLineEdit.setText('')
             self.eventComboBox.setCurrentText(self.tr('Event ID'))
 
-        self.dateEdit.setDate(QtCore.QDate.fromString(qso['QSO_DATE'], 'yyyyMMdd'))
-        self.timeEdit.setTime(QtCore.QTime.fromString(qso['TIME_ON'], 'HHmm'))
+        self.onlineCheckBox.setChecked(self.__cc__.is_online())
+        self.dateEdit.setDate(QtCore.QDate.fromString(qso['QSO_DATE'][:8], 'yyyyMMdd'))
+        self.timeEdit.setTime(QtCore.QTime.fromString(qso['TIME_ON'][:4], 'HHmm'))
+        self.dateEdit.setDisabled(self.onlineCheckBox.isChecked())
+        self.timeEdit.setDisabled(self.onlineCheckBox.isChecked())
+        self.dateEdit.blockSignals(self.onlineCheckBox.isChecked())
+        self.timeEdit.blockSignals(self.onlineCheckBox.isChecked())
+
         self.bandComboBox.setCurrentText(qso['BAND'].lower() if qso['BAND'] else self.tr('Band'))
         self.modeComboBox.setCurrentText(qso['MODE'].upper() if qso['MODE'] else self.tr('Mode'))
         self.callLineEdit.setText(qso['CALL'])
@@ -244,10 +250,10 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.refreshDisplay()
 
     def dateChanged(self, date: QtCore.QDate):
-        self._evaluate_(date.toString('yyyyMMdd') + 'd')
+        self.evaluate(date.toString('yyyyMMdd') + 'd ')
 
     def timeChanged(self, time: QtCore.QTime):
-        self._evaluate_(time.toString('HHmm') + 't')
+        self.evaluate(time.toString('HHmm') + 't ')
 
     def freqChanged(self, freq: int):
         self._evaluate_(f'{freq}f')
@@ -292,3 +298,6 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         event = self.eventComboBox.currentText()
         if event and event != self.tr('Event ID'):
             self._evaluate_('-N' + self.exchTXLineEdit.text())
+
+    def onlineChanged(self, _):
+        self.evaluate('-o ')
