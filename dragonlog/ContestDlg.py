@@ -321,6 +321,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                                   )
             except Exception as exc:
                 self.log.exception(exc)
+                QtWidgets.QMessageBox.critical(self, self.tr('Contest Export'),
+                                               self.tr('Error processing contest data.\nPlease check log for further information.'))
         else:
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
                                           self.tr('No contest data found for export') +

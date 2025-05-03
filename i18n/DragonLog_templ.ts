@@ -325,7 +325,8 @@
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="325" />
+      <location filename="..\dragonlog\ContestDlg.py" line="327" />
+      <location filename="..\dragonlog\ContestDlg.py" line="324" />
       <location filename="..\dragonlog\ContestDlg.py" line="317" />
       <location filename="..\dragonlog\ContestDlg.py" line="308" />
       <source>Contest Export</source>
@@ -357,7 +358,13 @@
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="326" />
+      <location filename="..\dragonlog\ContestDlg.py" line="325" />
+      <source>Error processing contest data.
+Please check log for further information.</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\ContestDlg.py" line="328" />
       <source>No contest data found for export</source>
       <translation type="unfinished" />
     </message>

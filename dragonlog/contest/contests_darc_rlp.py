@@ -3,9 +3,23 @@
 
 import os
 
-import openpyxl
-from openpyxl.worksheet.worksheet import Worksheet
-from openpyxl.styles import Font
+OPTION_OPENPYXL = False
+try:
+    # noinspection PyUnresolvedReferences
+    import openpyxl
+    # noinspection PyUnresolvedReferences
+    from openpyxl.worksheet.worksheet import Worksheet
+    # noinspection PyUnresolvedReferences
+    from openpyxl.styles import Font
+
+    OPTION_OPENPYXL = True
+except ImportError:
+    pass
+
+
+class OpenPyXLUnavailableException(Exception):
+    pass
+
 
 from .base import (ContestLog, CBRRecord, Address, BandStatistics, BAND_MAP_CBR, BAND_FROM_CBR,
                    CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
@@ -380,7 +394,7 @@ class K32KurzUKWLog(ContestLog):
 
         self.__dok__ = specific
 
-        self.__xl_wb__: openpyxl.Workbook | None = None
+        self.__xl_wb__ = None
         self.__out_path__ = ''
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
@@ -392,6 +406,9 @@ class K32KurzUKWLog(ContestLog):
         return True
 
     def open_file(self, path: str = os.path.curdir):
+        if not OPTION_OPENPYXL:
+            raise OpenPyXLUnavailableException
+
         self.__out_path__ = path
 
         templ_path = os.path.join(os.path.split(__file__)[0], 'data/Logvorlage_V1_FM_K32.xlsx')
@@ -418,8 +435,9 @@ class K32KurzUKWLog(ContestLog):
         if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
             adif_rec['STX_STRING'] = f'{self.__dok__.upper()},{self.__header__["CATEGORY-POWER"]}'
             rec = super().build_record(adif_rec)
-
             return rec
+        else:
+            return None
 
     def write_records(self):
         if self.__xl_wb__:
@@ -431,9 +449,13 @@ class K32KurzUKWLog(ContestLog):
                 xl_ws[f'A{row}'] = f'{rec.time[:2]}:{rec.time[2:]}'
                 xl_ws[f'B{row}'] = rec.call
 
-                dok, pwr = rec.rcvd_exch.split(',')
-                xl_ws[f'C{row}'] = dok.strip()
-                xl_ws[f'D{row}'] = pwr.strip()
+                dok, pwr = '?', '?'
+                if ',' in rec.rcvd_exch:
+                    dok, pwr = rec.rcvd_exch.split(',', maxsplit=1)
+                elif ' ' in rec.rcvd_exch:
+                    dok, pwr = rec.rcvd_exch.split(' ', maxsplit=1)
+                xl_ws[f'C{row}'] = dok.strip().upper()
+                xl_ws[f'D{row}'] = pwr.strip().upper()
 
                 date = rec.date
                 row += 1
@@ -455,15 +477,15 @@ class K32KurzUKWLog(ContestLog):
         return self.points * self.multis
 
     def process_points(self, rec: CBRRecord):
-        # noinspection PyBroadException
-        try:
-            r_dok, r_pwr = rec.rcvd_exch.split(',')
-            r_dok = r_dok.strip()
-            r_pwr = r_pwr.strip()
-        except Exception:
-            self.exception(
-                f'Error on processing received exchange "{rec.rcvd_exch}" for {rec.call} at {rec.date} {rec.time}')
+        if ',' in rec.rcvd_exch:
+            r_dok, r_pwr = rec.rcvd_exch.split(',', maxsplit=1)
+        elif ' ' in rec.rcvd_exch:
+            r_dok, r_pwr = rec.rcvd_exch.split(' ', maxsplit=1)
+        else:
+            self.warning(f'Received DOK or power class missing "{rec.rcvd_exch.upper()}"')
             return
+        r_dok = r_dok.strip().upper()
+        r_pwr = r_pwr.strip().upper()
 
         # noinspection PyBroadException
         try:
