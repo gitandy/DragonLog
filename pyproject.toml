@@ -31,10 +31,10 @@ extra=["openpyxl"]
 "DragonLog" = "dragonlog.DragonLog:main"
 
 [tool.setuptools]
-packages = ["dragonlog"]
+packages = ["dragonlog", "dragonlog.contest"]
 
 [tool.setuptools.package-data]
-dragonlog = ["data/**", "icons/**"]
+dragonlog = ["data/**", "icons/**", "contest/data/**"]
 
 [tool.setuptools.dynamic]
 version = {attr = "dragonlog.__version__.__version__"}
