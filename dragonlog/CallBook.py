@@ -104,6 +104,9 @@ class AbstractCallBook(ABC):
         """Login and retreive a session key
         :param username: the username used with this service
         :param password: the password used with this service"""
+        if not username or not password:
+            raise LoginException('Username or password missing')
+
         self.__session__ = self.__login__(username, password)
 
     @property
@@ -141,6 +144,9 @@ class AbstractCallBook(ABC):
         :param password: the password used with this service
         :param adif_data: the data to be converted to ADI and uploaded"""
 
+        if not username or not password:
+            raise LoginException('Username or password missing')
+
         for field in self.required_fields:
             if field not in adif_data['RECORDS'][0]:
                 raise MissingADIFFieldException(field)
@@ -168,6 +174,9 @@ class HamQTHCallBook(AbstractCallBook):
         return CallBookType.HamQTH
 
     def __login__(self, username: str, password: str) -> str:
+        if not username or not password:
+            raise LoginException('Username or password missing')
+
         try:
             res = self._get_({'u': username, 'p': password})
         except CommunicationException as exc:
@@ -181,7 +190,7 @@ class HamQTHCallBook(AbstractCallBook):
             case _:
                 raise LoginException(f'HamQTH error: Unknown data format {res}')
 
-    def __get_dataset__(self, callsign: str) -> CallBookData:
+    def __get_dataset__(self, callsign: str) -> CallBookData | None:
         try:
             self.log.debug(f'Searching {callsign}...')
             res = self._get_({'id': self.__session__,
@@ -211,6 +220,8 @@ class HamQTHCallBook(AbstractCallBook):
                         'eqsl' in data and data['eqsl'] == 'Y',
                         'lotw' in data and data['lotw'] == 'Y',
                     )
+                else:
+                    return None
             case _:
                 raise RequestException(f'HamQTH error: Unknown data format {res}')
 
@@ -219,6 +230,9 @@ class HamQTHCallBook(AbstractCallBook):
         return True
 
     def __upload_log__(self, username: str, password: str, adif: str):
+        if not username or not password:
+            raise LoginException('Username or password missing')
+
         data = {
             'u': username,
             'p': password,
@@ -257,6 +271,9 @@ class QRZCQCallBook(AbstractCallBook):
         return CallBookType.QRZCQ
 
     def __login__(self, username: str, password: str) -> str:
+        if not username or not password:
+            raise LoginException('Username or password missing')
+
         try:
             res = self._get_({'username': username,
                               'password': password,
@@ -272,7 +289,7 @@ class QRZCQCallBook(AbstractCallBook):
             case _:
                 raise LoginException(f'QRZCQ error: Unknown data format {res}')
 
-    def __get_dataset__(self, callsign: str) -> CallBookData:
+    def __get_dataset__(self, callsign: str) -> CallBookData | None:
         try:
             self.log.debug(f'Searching {callsign}...')
             res = self._get_({'s': self.__session__,
@@ -302,6 +319,8 @@ class QRZCQCallBook(AbstractCallBook):
                         'eqsl' in data and data['eqsl'] == '1',
                         'lotw' in data and data['lotw'] == '1',
                     )
+                else:
+                    return None
             case _:
                 raise RequestException(f'QRZCQ error: Unknown data format {res}')
 

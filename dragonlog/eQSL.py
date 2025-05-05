@@ -47,6 +47,9 @@ class EQSL:
         self.log.debug('Initialising...')
 
     def upload_log(self, username: str, password: str, record: dict) -> bool:
+        if not username or not password:
+            raise EQSLLoginException('Username or password missing')
+
         self._check_fields_(record)
 
         record = record.copy()
@@ -103,6 +106,9 @@ class EQSL:
                 raise EQSLADIFFieldException(field)
 
     def check_inbox(self, username: str, password: str, record: dict) -> str:
+        if not username or not password:
+            raise EQSLLoginException('Username or password missing')
+
         self._check_fields_(record)
 
         params = {
@@ -119,7 +125,6 @@ class EQSL:
         }
 
         r = requests.get('https://www.eQSL.cc/qslcard/GeteQSL.cfm', params=params)
-
         if r.status_code == 200:
             if r.text.strip().startswith('Error'):
                 if ('No match on Username/Password for that QSO Date/Time' in r.text or
@@ -131,18 +136,26 @@ class EQSL:
                     raise EQSLLoginException(r.text.strip())
                 else:
                     raise EQSLRequestException(r.text.strip())
+            elif 'Variable PASSWORD is undefined.' in r.text:
+                raise EQSLLoginException('Variable PASSWORD is undefined')
             else:
                 url_part = re.findall(self.image_pattern, r.text)
                 if url_part:
                     return 'https://www.eQSL.cc' + url_part[0]
+                else:
+                    return ''
         else:
+            self.log.debug(f'Status code: {r.status_code}')
             raise EQSLCommunicationException(f'eQSL error: HTTP-Error {r.status_code}')
 
     @staticmethod
     def receive_qsl_card(url: str) -> bytes:
-        r = requests.get(url)
+        if url:
+            r = requests.get(url)
 
-        if r.status_code == 200:
-            return r.content
+            if r.status_code == 200:
+                return r.content
+            else:
+                raise EQSLCommunicationException(f'eQSL error: HTTP-Error {r.status_code}')
         else:
-            raise EQSLCommunicationException(f'eQSL error: HTTP-Error {r.status_code}')
+            return b''
