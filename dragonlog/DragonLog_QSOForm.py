@@ -498,7 +498,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         if check_format(REGEX_TIME, self.timeOffEdit.text()):
             date_time_off = self.dateOffEdit.text() + ' ' + self.timeOffEdit.text()
         else:
-            self.log.warning(f'Wrong time format for end time')
+            if self.timeOffEdit.text():
+                self.log.warning(f'Wrong time format for end time')
 
         if check_format(REGEX_TIME, self.timeOnEdit.text()):
             date_time_on = self.dateOnEdit.text() + ' ' + self.timeOnEdit.text()

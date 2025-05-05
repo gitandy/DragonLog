@@ -2434,28 +2434,28 @@ See log for detail</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="745" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="737" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="746" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="738" />
       <source>Callbook search error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="738" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="739" />
       <source>Login failed for user</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="741" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="742" />
       <source>Callbook search result</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="742" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="743" />
       <source>Callsign not found</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="746" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="747" />
       <source>During callbook search an error occured</source>
       <translation type="unfinished" />
     </message>
