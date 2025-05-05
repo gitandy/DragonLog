@@ -378,7 +378,7 @@ class RLPFALZABKWLog(ContestLog):
 class K32KurzUKWLog(ContestLog):
     contest_name = 'K32 FM-Kurzaktivität'
     contest_year = '2025'
-    contest_update = '2025-04-07'
+    contest_update = '2025-05-05'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -419,16 +419,13 @@ class K32KurzUKWLog(ContestLog):
 
         xl_ws: Worksheet = self.__xl_wb__['Log']
 
-        xl_ws['B3'] = self.__header__['CATEGORY-BAND'].lower()
         xl_ws['B4'] = self.__header__['GRID-LOCATOR']
 
-        xl_ws['D1'] = self.__header__['SPECIFIC']
-        xl_ws['D2'] = self.__header__['NAME']
-        xl_ws['D3'] = self.__header__['ADDRESS']
-        xl_ws['D4'] = self.__header__['ADDRESS-POSTALCODE'] + ' ' + self.__header__['ADDRESS-CITY']
+        xl_ws['D2'] = self.__header__['CALLSIGN']
+        xl_ws['D3'] = self.__header__['SPECIFIC']
+        xl_ws['D4'] = self.__header__['NAME']
         xl_ws['D5'] = self.__header__['EMAIL']
 
-        xl_ws['B7'] = self.__header__['CALLSIGN']
         xl_ws['D7'] = self.__header__['CATEGORY-POWER']
 
     def build_record(self, adif_rec) -> CBRRecord | None:
@@ -446,16 +443,17 @@ class K32KurzUKWLog(ContestLog):
             date = ''
             row = 10
             for rec in self.__qsos__:
-                xl_ws[f'A{row}'] = f'{rec.time[:2]}:{rec.time[2:]}'
-                xl_ws[f'B{row}'] = rec.call
+                xl_ws[f'A{row}'] = 2 if rec.band == '144' else 70
+                xl_ws[f'B{row}'] = f'{rec.time[:2]}:{rec.time[2:]}'
+                xl_ws[f'C{row}'] = rec.call
 
                 dok, pwr = '?', '?'
                 if ',' in rec.rcvd_exch:
                     dok, pwr = rec.rcvd_exch.split(',', maxsplit=1)
                 elif ' ' in rec.rcvd_exch:
                     dok, pwr = rec.rcvd_exch.split(' ', maxsplit=1)
-                xl_ws[f'C{row}'] = dok.strip().upper()
-                xl_ws[f'D{row}'] = pwr.strip().upper()
+                xl_ws[f'D{row}'] = dok.strip().upper()
+                xl_ws[f'E{row}'] = pwr.strip().upper()
 
                 date = rec.date
                 row += 1
@@ -492,17 +490,22 @@ class K32KurzUKWLog(ContestLog):
             qso_point = 2
             if r_pwr == self.__header__['CATEGORY-POWER'] and r_pwr == CategoryPower.A.name:
                 qso_point = 3
+            elif r_pwr != self.__header__['CATEGORY-POWER'] and r_pwr in (CategoryPower.A.name, CategoryPower.B.name):
+                qso_point = 3
             elif r_pwr == self.__header__['CATEGORY-POWER'] and r_pwr == CategoryPower.C.name:
                 qso_point = 1
 
             self.__rated__ += 1
             self.__multis__.add(r_dok)
+            if self.__header__['SPECIFIC'] != 'K32' and r_dok == 'K32':
+                self.__multis__.add('K32extra')
             self.__points__ += qso_point
 
             if BAND_FROM_CBR[rec.band] in self.__stats__:
                 self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
                 self.__stats__[BAND_FROM_CBR[rec.band]].rated += 1
                 self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
+                self.__stats__[BAND_FROM_CBR[rec.band]].multis = self.multis
             else:
                 self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, qso_point, 1, 1)
 
@@ -512,7 +515,7 @@ class K32KurzUKWLog(ContestLog):
 
     @property
     def file_name(self) -> str:
-        return f'{self.__contest_date__}_K32_KURZ_UKW_{self.__header__["CALLSIGN"]}_{self.__header__["CATEGORY-BAND"]}.xlsx'
+        return f'{self.__contest_date__}_K32_KURZ_UKW_{self.__header__["CALLSIGN"]}.xlsx'
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
@@ -520,7 +523,7 @@ class K32KurzUKWLog(ContestLog):
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_2M, CategoryBand.B_70CM
+        return CategoryBand.B_ALL, CategoryBand.B_2M, CategoryBand.B_70CM
 
     @classmethod
     def valid_power(cls) -> tuple[CategoryPower, ...]:

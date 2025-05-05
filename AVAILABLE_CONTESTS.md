@@ -17,5 +17,5 @@ The *Internal ID* is the ID which is imported or exported in ADIF format.
 | RLP Aktivitätswoche | RL-PFALZ-AW | ***2025*** | 2025-01-05 |
 | RLP Aktivitätsabend UKW | RL-PFALZ-AB.UKW | ***2025*** | 2024-12-16 |
 | RLP Aktivitätsabend KW | RL-PFALZ-AB.KW | ***2025*** | 2024-12-16 |
-| K32 FM-Kurzaktivität | K32-KURZ-UKW | ***2025*** | 2025-04-07 |
+| K32 FM-Kurzaktivität | K32-KURZ-UKW | ***2025*** | 2025-05-05 |
 | L33 Einsteiger-Contest | L33-EINSTEIGER | ***2025*** | 2025-04-06 |
