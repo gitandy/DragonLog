@@ -38,6 +38,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
             self.tr('Rated'),
             self.tr('Points'),
             self.tr('Multis'),
+            self.tr('Multis2'),
             self.tr('Total'),
         ]
 

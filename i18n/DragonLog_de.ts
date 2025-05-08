@@ -624,14 +624,19 @@ Bitte prüfen Sie das Log für nähere Informationen.</translation>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestStatistics.py" line="157" />
       <location filename="..\dragonlog\ContestStatistics.py" line="41" />
+      <source>Multis2</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\ContestStatistics.py" line="158" />
+      <location filename="..\dragonlog\ContestStatistics.py" line="42" />
       <source>Total</source>
       <translation>Gesamt</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestStatistics.ui" line="0" />
-      <location filename="..\dragonlog\ContestStatistics.py" line="92" />
+      <location filename="..\dragonlog\ContestStatistics.py" line="93" />
       <source>Specific</source>
       <translation>Contest spez.</translation>
     </message>

@@ -185,6 +185,7 @@ class BandStatistics:
     rated: int = 0
     points: int = 0
     multis: int = 1
+    multis2: int = 0
     summary: int = 0
 
     def values(self) -> tuple:
@@ -247,6 +248,7 @@ class ContestLog:
         self.__rated__: int = 0
         self.__points__: int = 0
         self.__multis__: set[str] = set()
+        self.__multis2__: set[str] = set()
 
         self.__stats__: dict[str, BandStatistics] = {}
 
@@ -405,10 +407,11 @@ class ContestLog:
                          adif_rec['TIME_ON'][:4],
                          adif_rec['STATION_CALLSIGN'],
                          adif_rec['RST_SENT'],
-                         adif_rec['STX_STRING'].upper() if 'STX_STRING' in adif_rec else str(adif_rec['STX']),
+                         adif_rec.get('STX_STRING', str(adif_rec['STX'])).upper(),
                          adif_rec['CALL'],
                          adif_rec['RST_RCVD'],
-                         adif_rec['SRX_STRING'].upper() if 'SRX_STRING' in adif_rec else str(adif_rec['SRX']),
+                         adif_rec.get('SRX_STRING',
+                                      str(adif_rec.get('SRX', 0))).upper().strip().replace(',', ' ').replace('_', ' '),
                          '0'
                          )
 
@@ -437,7 +440,7 @@ class ContestLog:
     def claimed_points(self) -> int:
         """Points with some kind of multiplicator
         Should be overwritten"""
-        return self.points
+        return self.points * (self.multis + self.multis2)
 
     @property
     def qsos(self) -> int:
@@ -453,6 +456,10 @@ class ContestLog:
     def multis(self) -> int:
         return len(self.__multis__) if self.__multis__ else 1
 
+    @property
+    def multis2(self) -> int:
+        return len(self.__multis2__)
+
     def process_points(self, rec: CBRRecord):
         """Place for calculating points and decision for rating a QSO
         Should be overwritten"""
@@ -464,21 +471,22 @@ class ContestLog:
             self.__stats__[BAND_FROM_CBR[rec.band]].rated += 1
             self.__stats__[BAND_FROM_CBR[rec.band]].points += 1
         else:
-            self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, 1, 1, 1)
+            self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, 1, 1, 0, 1)
 
     def summary(self) -> str:
         """Returns a statistic over the QSOs"""
-        return (f'QSOs: {self.qsos}, Rated: {self.rated}, '
-                f'Points: {self.points}, Multis: {self.multis}, '
-                f'Claimed points: {self.claimed_points}')
+        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
+                f'Multis: {self.multis}, Multis2: {self.multis2}, Claimed points: {self.claimed_points}')
 
     @property
     def statistics(self) -> dict[str, BandStatistics]:
         for b in self.__stats__:
             self.__stats__[b].multis = self.multis
-            self.__stats__[b].summary = self.__stats__[b].points * self.multis
+            self.__stats__[b].multis2 = self.multis2
+            self.__stats__[b].summary = self.__stats__[b].points * (self.multis + self.multis2)
 
-        self.__stats__['Total'] = BandStatistics(self.qsos, self.rated, self.points, self.multis, self.claimed_points)
+        self.__stats__['Total'] = BandStatistics(self.qsos, self.rated, self.points,
+                                                 self.multis, self.multis2, self.claimed_points)
 
         return self.__stats__
 
@@ -588,7 +596,7 @@ class ContestLogEDI(ContestLog):
         self.__locators__ = []
         self.__codxc__ = ['', '', 0]
 
-        self.__edi_file__: typing.TextIO = None
+        self.__edi_file__: typing.TextIO | None = None
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if adif_rec['BAND'] != self.__header__['CATEGORY-BAND']:
@@ -684,6 +692,8 @@ class ContestLogEDI(ContestLog):
                              dist
                              )
 
+        return None
+
     def write_records(self):
         if self.__edi_file__:
             # Contest info
@@ -768,7 +778,7 @@ class ContestLogEDI(ContestLog):
                 self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
                 self.__stats__[BAND_FROM_CBR[rec.band]].points += points
             else:
-                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, points, 1, 1)
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, points, 1, 0, 1)
         except Exception:
             self.exception()
 

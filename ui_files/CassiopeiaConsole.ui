@@ -195,12 +195,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="exchTXLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>60</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="placeholderText">
            <string>Exchange</string>
           </property>
@@ -237,12 +231,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="exchRXLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>60</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="placeholderText">
            <string>Exchange</string>
           </property>

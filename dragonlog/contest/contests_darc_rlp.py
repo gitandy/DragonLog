@@ -64,11 +64,6 @@ class RLPFALZAWLog(ContestLog):
     def is_single_day(cls) -> bool:
         return False
 
-    def summary(self) -> str:
-        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
-                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
-                f'Claimed points: {self.claimed_points}')
-
     def build_record(self, adif_rec) -> CBRRecord:
         adif_rec['STX_STRING'] = self.__dok__.upper()
         rec = super().build_record(adif_rec)
@@ -129,7 +124,7 @@ class RLPFALZAWLog(ContestLog):
                 self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
                 self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
             else:
-                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 1)
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 0, 1)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -162,7 +157,7 @@ class RLPFALZAWLog(ContestLog):
 class RLPFALZABUKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend UKW'
     contest_year = '2025'
-    contest_update = '2024-12-16'
+    contest_update = '2025-05-08'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -182,11 +177,6 @@ class RLPFALZABUKWLog(ContestLog):
 
         self.__district_calls__: set[str] = set()
 
-    def summary(self) -> str:
-        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
-                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
-                f'Claimed points: {self.claimed_points}')
-
     def build_record(self, adif_rec) -> CBRRecord:
         adif_rec['STX_STRING'] = f'{self.__dok__.upper()} {self.__header__["GRID-LOCATOR"].upper()}'
         rec = super().build_record(adif_rec)
@@ -200,11 +190,8 @@ class RLPFALZABUKWLog(ContestLog):
     def multis(self) -> int:
         return (len(self.__multis__) if self.__multis__ else 1) + self.district_calls
 
-    @property
-    def claimed_points(self) -> int:
-        return self.points * self.multis
-
     def process_points(self, rec: CBRRecord):
+        # noinspection PyBroadException
         try:
             qso_point = 1
             rated = 1
@@ -213,20 +200,22 @@ class RLPFALZABUKWLog(ContestLog):
             elif rec.mode == 'PH':
                 qso_point = 2
 
-            rcvd_exch = rec.rcvd_exch.strip().upper().split(' ', maxsplit=1)
-            if len(rcvd_exch) < 2:
-                self.warning(
-                    f'Received DOK or locator missing "{rec.rcvd_exch.upper()}"')
+            if ' ' in rec.rcvd_exch:
+                rcvd_dok, rcvd_loc = rec.rcvd_exch.split(' ', maxsplit=1)
             else:
-                if len(rcvd_exch[1]) != 6:
-                    self.warning(
-                        f'Received locator does not have 6 characters "{rcvd_exch[1]}"')
-            rcvd_dok = rcvd_exch[0]
+                self.warning(f'Received DOK or locator missing "{rec.rcvd_exch}"')
+                return
+
+            if len(rcvd_loc) != 6:
+                self.warning(
+                    f'Received locator does not have 6 characters "{rcvd_loc}"')
+            if len(rcvd_loc) >= 4:
+                self.__multis2__.add(rcvd_loc[:4])
 
             if rcvd_dok == self.__dok__:
                 qso_point = 0
                 rated = 0
-                self.info(f'QSO with {rec.call} not rated: same DOK "{rec.rcvd_exch.upper()}"')
+                self.info(f'QSO with {rec.call} not rated: same DOK "{rcvd_dok}"')
             else:
                 self.__rated__ += 1
                 if any((rcvd_dok in RLPMultis.DOKS,
@@ -244,8 +233,10 @@ class RLPFALZABUKWLog(ContestLog):
                 self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
                 self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
                 self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
+                self.__stats__[BAND_FROM_CBR[rec.band]].multis = self.multis + self.district_calls
+                self.__stats__[BAND_FROM_CBR[rec.band]].multis2 = self.multis2
             else:
-                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 1)
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 1, 1)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -254,6 +245,10 @@ class RLPFALZABUKWLog(ContestLog):
     @property
     def file_name(self) -> str:
         return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["SPECIFIC"]}-{self.__header__["CATEGORY-BAND"]}.cbr'
+
+    @classmethod
+    def valid_power(cls) -> tuple[CategoryPower, ...]:
+        return CategoryPower.NONE,
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
@@ -275,7 +270,7 @@ class RLPFALZABUKWLog(ContestLog):
 class RLPFALZABKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend KW'
     contest_year = '2025'
-    contest_update = '2024-12-16'
+    contest_update = '2025-05-08'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -295,11 +290,6 @@ class RLPFALZABKWLog(ContestLog):
 
         self.__district_calls__: set[str] = set()
 
-    def summary(self) -> str:
-        return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
-                f'Multis: {self.multis}, Extra Multis: {self.district_calls}, '
-                f'Claimed points: {self.claimed_points}')
-
     def build_record(self, adif_rec) -> CBRRecord:
         adif_rec['STX_STRING'] = self.__dok__.upper()
         rec = super().build_record(adif_rec)
@@ -313,11 +303,8 @@ class RLPFALZABKWLog(ContestLog):
     def multis(self) -> int:
         return (len(self.__multis__) if self.__multis__ else 1) + self.district_calls
 
-    @property
-    def claimed_points(self) -> int:
-        return self.points * self.multis
-
     def process_points(self, rec: CBRRecord):
+        # noinspection PyBroadException
         try:
             qso_point = 1
             rated = 1
@@ -348,7 +335,7 @@ class RLPFALZABKWLog(ContestLog):
                 self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
                 self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
             else:
-                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, qso_point)
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, qso_point, 1, 0, qso_point)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -357,6 +344,10 @@ class RLPFALZABKWLog(ContestLog):
     @property
     def file_name(self) -> str:
         return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["SPECIFIC"]}-{self.__header__["CATEGORY-BAND"]}.cbr'
+
+    @classmethod
+    def valid_power(cls) -> tuple[CategoryPower, ...]:
+        return CategoryPower.NONE,
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
@@ -470,20 +461,14 @@ class K32KurzUKWLog(ContestLog):
         if self.__xl_wb__:
             self.__xl_wb__.save(os.path.join(self.__out_path__, self.file_name))
 
-    @property
-    def claimed_points(self) -> int:
-        return self.points * self.multis
-
     def process_points(self, rec: CBRRecord):
-        if ',' in rec.rcvd_exch:
-            r_dok, r_pwr = rec.rcvd_exch.split(',', maxsplit=1)
-        elif ' ' in rec.rcvd_exch:
+        if ' ' in rec.rcvd_exch:
             r_dok, r_pwr = rec.rcvd_exch.split(' ', maxsplit=1)
+            r_dok = r_dok.strip()
+            r_pwr = r_pwr.strip()
         else:
             self.warning(f'Received DOK or power class missing "{rec.rcvd_exch.upper()}"')
             return
-        r_dok = r_dok.strip().upper()
-        r_pwr = r_pwr.strip().upper()
 
         # noinspection PyBroadException
         try:
@@ -507,7 +492,7 @@ class K32KurzUKWLog(ContestLog):
                 self.__stats__[BAND_FROM_CBR[rec.band]].points += qso_point
                 self.__stats__[BAND_FROM_CBR[rec.band]].multis = self.multis
             else:
-                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, qso_point, 1, 1)
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, qso_point, 1, 0, 1)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:

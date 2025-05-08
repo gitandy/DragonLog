@@ -79,7 +79,7 @@ class DARCOsterContest(ContestLog):
                          band, mode, pwr, cat_operator,
                          assisted, tx, operators, specific, skip_id, skip_warn, logger)
 
-        self.cty: CountryData|None = params.get('cty', None)
+        self.cty: CountryData | None = params.get('cty', None)
         if not self.cty or type(self.cty) is not CountryData:
             self.cty = None
             self.log.error('Error with cty data')
@@ -90,14 +90,6 @@ class DARCOsterContest(ContestLog):
         adif_rec['STX_STRING'] = self.__header__['SPECIFIC'].upper()
         rec = super().build_record(adif_rec)
         return rec
-
-    @property
-    def multis(self) -> int:
-        return (len(self.__multis__) if self.__multis__ else 1)  # Todo: ???
-
-    @property
-    def claimed_points(self) -> int:
-        return self.points * self.multis
 
     def process_points(self, rec: CBRRecord):
         try:
@@ -134,7 +126,7 @@ class DARCOsterContest(ContestLog):
                 self.__stats__[band].points += qso_point
                 self.__stats__[band].multis = len(self.__band_multis__[band])
             else:
-                self.__stats__[band] = BandStatistics(1, 1, 1, len(self.__band_multis__[band]), qso_point)
+                self.__stats__[band] = BandStatistics(1, 1, 1, len(self.__band_multis__[band]), 0, qso_point)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
         except Exception:
@@ -155,7 +147,7 @@ class DARCOsterContest(ContestLog):
             multis += self.__stats__[b].multis
             claimed += self.__stats__[b].summary
 
-        self.__stats__['Total'] = BandStatistics(qsos, rated, points, multis, claimed)
+        self.__stats__['Total'] = BandStatistics(qsos, rated, points, multis, 0, claimed)
 
         return self.__stats__
 
