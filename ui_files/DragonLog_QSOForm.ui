@@ -122,6 +122,13 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="distLabel">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -610,8 +617,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>310</height>
+        <width>184</width>
+        <height>236</height>
        </rect>
       </property>
       <attribute name="label">
@@ -779,8 +786,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>310</height>
+        <width>312</width>
+        <height>220</height>
        </rect>
       </property>
       <attribute name="label">
@@ -970,8 +977,8 @@ This is not the QSL manager/bureau address.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>310</height>
+        <width>192</width>
+        <height>290</height>
        </rect>
       </property>
       <attribute name="label">

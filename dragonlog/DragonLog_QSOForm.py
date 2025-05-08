@@ -450,10 +450,19 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def locatorChanged(self, txt):
         if not txt:
             self.locatorLineEdit.setPalette(ColorPalettes.PaletteEmpty)
+            self.distLabel.clear()
         elif check_format(REGEX_LOCATOR, txt):
             self.locatorLineEdit.setPalette(ColorPalettes.PaletteOk)
+
+            _, own_locator = check_qth(self.ownQTHComboBox.currentText())
+            # noinspection PyBroadException
+            try:
+                self.distLabel.setText(f'{distance(txt, own_locator)} km')
+            except Exception:
+                self.distLabel.clear()
         else:
             self.locatorLineEdit.setPalette(ColorPalettes.PaletteFaulty)
+            self.distLabel.clear()
 
     def ownCallSignChanged(self, txt):
         if not txt:

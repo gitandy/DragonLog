@@ -14,7 +14,7 @@ def distance(pos1: str, pos2: str) -> int:
     :return: distance in km
     """
 
-    if not type(pos1) is str or  not type(pos2) is str:
+    if not type(pos1) is str or not type(pos2) is str or len(pos1)%2 != 0 or len(pos2)%2 != 0:
         raise Exception('Maidenhead locators must be strings of 2-8 chars')
 
     try:

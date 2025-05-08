@@ -10,6 +10,8 @@ from . import CassiopeiaConsole_ui
 from .Logger import Logger
 from .RegEx import check_call
 from .contest import CONTEST_IDS, CONTEST_NAMES
+from .cty import Country
+from .distance import distance
 
 
 class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaConsoleWidget):
@@ -90,6 +92,24 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.powerSpinBox.setValue(int(qso.get('TX_PWR', '0')))
         self.qslCheckBox.setChecked(qso.get('QSL_RCVD', 'N') == 'Y')
         self.commentLineEdit.setText(qso.get('COMMENT', ''))
+
+        if qso.get('CALL', ''):
+            cdata: Country = self.dragonlog.cty_data(qso['CALL'])
+            if cdata:
+                self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
+                self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
+        else:
+            self.ctyCtyLabel.setText(f'? ?, ?')
+            self.ctyAreaLabel.setText(f'DXCC=?, CQ=?, ITU=?')
+
+        if qso.get('GRIDSQUARE', '') and qso.get('MY_GRIDSQUARE', ''):
+            # noinspection PyBroadException
+            try:
+                self.distLabel.setText(f'{distance(qso["GRIDSQUARE"], qso["MY_GRIDSQUARE"])} km')
+            except Exception:
+                self.distLabel.setText('? km')
+        else:
+            self.distLabel.setText('? km')
 
     def evaluate(self, text: str):
         if text.endswith('~'):
@@ -228,10 +248,10 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def callChanged(self, call: str):
         if len(call) > 2:
-            self._evaluate_(call)
+            self.evaluate(call + ' ')
 
     def locatorChanged(self):
-        self._evaluate_('@' + self.locLineEdit.text())
+        self.evaluate(f'@{self.locLineEdit.text()} ')
 
     def nameChanged(self):
         self._evaluate_('\'' + self.nameLineEdit.text())
@@ -276,7 +296,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self._evaluate_('-c' + self.myCallLineEdit.text())
 
     def myLocChanged(self):
-        self._evaluate_('-l' + self.myLocLineEdit.text())
+        self.evaluate(f'-l{self.myLocLineEdit.text()} ')
 
     def myNameChanged(self):
         self._evaluate_('-n' + self.myNameLineEdit.text())
