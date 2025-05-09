@@ -9,7 +9,7 @@ from hamcc import hamcc
 from . import CassiopeiaConsole_ui
 from .Logger import Logger
 from .RegEx import check_call
-from .contest import CONTEST_IDS, CONTEST_NAMES
+from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ExchangeData, ContestLog
 from .cty import Country
 from .distance import distance
 
@@ -35,6 +35,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
         self.__current_call__ = ''
+        self.__current_rxexch__ = ''
 
         self.__initWidgets__()
 
@@ -61,6 +62,17 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self.eventComboBox.setCurrentText(CONTEST_NAMES.get(qso['CONTEST_ID'], qso['CONTEST_ID']))
             self.exchTXLineEdit.setText(qso.get('STX', qso.get('STX_STRING', '')))
             self.exchRXLineEdit.setText(qso.get('SRX', qso.get('SRX_STRING', '')))
+
+            if not qso.get('SRX_STRING', ''):  # Reset exchange cache
+                self.__current_rxexch__ = ''
+            elif qso.get('SRX_STRING', '') != self.__current_rxexch__:  # Only run if exchange changed
+                self.__current_rxexch__ = qso.get('SRX_STRING', '')
+                contest: ContestLog | None = CONTESTS.get(qso['CONTEST_ID'], None)
+                if contest:
+                    exch: ExchangeData = contest.extract_exchange(qso.get('SRX_STRING', ''))
+                    if exch and exch.locator:
+                        self.evaluate(f'@{exch.locator} ')
+
         elif 'MY_SIG' in qso:
             self.eventComboBox.setCurrentText(qso['MY_SIG'])
             self.exchTXLineEdit.setText(qso.get('MY_SIG_INFO', ''))
