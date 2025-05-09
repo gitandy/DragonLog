@@ -1,7 +1,8 @@
 # DragonLog (c) 2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+"""Contains main DARC contests"""
 
-from .base import (ContestLog, ContestLogEDI, CBRRecord, Address, BandStatistics, BAND_FROM_CBR,
+from .base import (ContestLog, ContestLogEDI, CBRRecord, Address, BandStatistics, BAND_FROM_CBR, ExchangeData,
                    CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
 from dragonlog.cty import CountryData
 
@@ -66,6 +67,7 @@ class DARCOsterContest(ContestLog):
     contest_name = 'DARC-Ostercontest'
     contest_year = '2025'
     contest_update = '2025-04-13'
+    contest_exch_fmt = 'DOK'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -178,3 +180,14 @@ class DARCOsterContest(ContestLog):
     @classmethod
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
         return CategoryOperator.SINGLE, CategoryOperator.CHECKLOG
+
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        if exchange:
+            return ExchangeData(darc_dok=exchange.strip())
+        else:
+            return None
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData):
+        return f'{exchange.darc_dok}'

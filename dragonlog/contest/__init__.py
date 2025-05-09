@@ -1,7 +1,7 @@
 # DragonLog (c) 2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
-from .base import ContestLog
+from .base import ContestLog, ExchangeData
 from .contests_darc import DARCUKWContest, DARCUKWFruehlingsContest, DARCOsterContest
 from .contests_darc_rlp import RLPFALZAWLog, RLPFALZABKWLog, RLPFALZABUKWLog, K32KurzUKWLog
 from .contests_darc_others import L33EinsteigerContest
@@ -35,12 +35,16 @@ If it does not show the current year you should check for a program update.
 
 The *Internal ID* is the ID which is imported or exported in ADIF format. 
 
-| Contest name | Internal ID | Year | Updated |
-|--------------|-------------|------|---------|
+The *Exch format* is the format you must use to type in the received exchange. 
+If a separator is you can also use a blank or underscore instead of a comma.
+The sent exchange is handled automatically.
+
+| Contest name | Internal ID | Year | Updated | Exch format |
+|--------------|-------------|------|---------|-------------|
 '''
 
     for c in CONTESTS:
         cntst: type[ContestLog] = CONTESTS[c]
-        text += f'| {cntst.contest_name} | {c} | ***{cntst.contest_year}*** | {cntst.contest_update} |\n'
+        text += f'| {cntst.contest_name} | {c} | ***{cntst.contest_year}*** | {cntst.contest_update} | {cntst.contest_exch_fmt} |\n'
 
     return text

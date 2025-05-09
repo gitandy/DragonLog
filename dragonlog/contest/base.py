@@ -1,11 +1,13 @@
 # DragonLog (c) 2023-2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+"""Base definitions for contest processing"""
 
 import os
 import re
 import typing
 from enum import Enum, auto
 import logging
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from dragonlog.RegEx import check_format, REGEX_CALL, REGEX_LOCATOR, REGEX_RSTFIELD
@@ -87,6 +89,7 @@ BAND_FROM_CBR = dict(zip(BAND_MAP_CBR.values(), BAND_MAP_CBR.keys()))
 
 @dataclass
 class CBRRecord:
+    """Represents data for a QSO record in CBR format"""
     band: str
     mode: str
     date: str
@@ -102,6 +105,7 @@ class CBRRecord:
 
 @dataclass
 class EDIRecord(CBRRecord):
+    """Represents data for a QSO record in EDI format"""
     dist: int
 
 
@@ -192,10 +196,21 @@ class BandStatistics:
         return tuple(self.__dict__.values())
 
 
-class ContestLog:
+@dataclass
+class ExchangeData:
+    """Represents exchange data in a reliable structure"""
+    number: str = ''
+    locator: str = ''
+    power: str = ''
+    darc_dok: str = ''
+
+
+class ContestLog(ABC):
+    """Abstract base class for ham radio contests with an CBR result file (usually shortwave)"""
     contest_name = 'Contest'
     contest_year = '2025'
-    contest_update = '2024-12-16'
+    contest_update = '2025-01-01'
+    contest_exch_fmt = 'None'
 
     REGEX_TIME = re.compile(r'(([0-1][0-9])|(2[0-3]))([0-5][0-9])([0-5][0-9])?')
     REGEX_DATE = re.compile(r'([1-9][0-9]{3})((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-2]))')
@@ -393,8 +408,7 @@ class ContestLog:
             self.error(f'Could not be processed. Field {exc} is missing')
 
     def build_record(self, adif_rec) -> CBRRecord:
-        """Build the QSO info
-        May be overridden"""
+        """Build the QSO info"""
         self.log.debug(adif_rec)
 
         date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
@@ -438,8 +452,7 @@ class ContestLog:
 
     @property
     def claimed_points(self) -> int:
-        """Points with some kind of multiplicator
-        Should be overwritten"""
+        """Points with some kind of multiplicator"""
         return self.points * (self.multis + self.multis2)
 
     @property
@@ -460,18 +473,10 @@ class ContestLog:
     def multis2(self) -> int:
         return len(self.__multis2__)
 
+    @abstractmethod
     def process_points(self, rec: CBRRecord):
-        """Place for calculating points and decision for rating a QSO
-        Should be overwritten"""
-        self.__points__ += 1
-        self.__rated__ += 1
-
-        if BAND_FROM_CBR[rec.band] in self.__stats__:
-            self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
-            self.__stats__[BAND_FROM_CBR[rec.band]].rated += 1
-            self.__stats__[BAND_FROM_CBR[rec.band]].points += 1
-        else:
-            self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, 1, 1, 1, 0, 1)
+        """Place for calculating points and decision for rating a QSO"""
+        pass
 
     def summary(self) -> str:
         """Returns a statistic over the QSOs"""
@@ -561,11 +566,30 @@ class ContestLog:
     def is_single_day(cls) -> bool:
         return True
 
+    @property
+    def exchange_format(self) -> str:
+        """Get a textual descritpion of the exchange format expected by the contest"""
+        return self.contest_exch_fmt
+
+    @staticmethod
+    @abstractmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        """Provides structured exchange data to from an exchange string
+        Useful to extract locator and other info for logbook"""
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def prepare_exchange(exchange: ExchangeData) -> str:
+        """Builds exchange from structured exchange data
+        Useful for preparing the exchange from historical database info"""
+        pass
+
 
 class ContestLogEDI(ContestLog):
+    """Base class for ham radio contests with an EDI result file (usually VHF/UHF and higher)"""
     contest_name = 'ContestEDI'
-    contest_year = '2025'
-    contest_update = '2025-04-06'
+    contest_exch_fmt = 'Number,Locator'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -662,8 +686,11 @@ class ContestLogEDI(ContestLog):
             if not self.__contest_date__:
                 self.__contest_date__ = date
 
-            srx_string = adif_rec['SRX_STRING'].replace(' ', ',', 1)
-            _, rloc = srx_string.split(',')
+            srx_string = adif_rec['SRX_STRING'].upper().strip().replace(',', ' ').replace('_', ' ')
+            if ' ' in srx_string:
+                _, rloc = srx_string.split(' ', maxsplit=1)
+            else:
+                raise Exception(f'Problem with received exchange "{adif_rec["SRX_STRING"]}"')
 
             dist = 0
             try:
@@ -719,7 +746,7 @@ class ContestLogEDI(ContestLog):
             locators = []
 
             for rec in self.__qsos__:
-                rnr, rloc = rec.rcvd_exch.split(',')
+                rnr, rloc = rec.rcvd_exch.split(' ')
 
                 dup = False
                 if rec.call not in calls:
@@ -797,3 +824,16 @@ class ContestLogEDI(ContestLog):
     @classmethod
     def valid_power(cls) -> tuple[CategoryPower, ...]:
         return CategoryPower.NONE,
+
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        exchange = exchange.upper().strip().replace(',', ' ').replace('_', ' ')
+        if ' ' in exchange:
+            r_nr, r_loc = exchange.split(' ', maxsplit=1)
+            return ExchangeData(locator=r_loc.strip(), number=r_nr.strip())
+        else:
+            return None
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData) -> str:
+        return f'{exchange.number},{exchange.locator}'

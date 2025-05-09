@@ -1,5 +1,6 @@
 # DragonLog (c) 2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+"""Contains contests from DARC Distrikt K"""
 
 import os
 
@@ -22,7 +23,8 @@ class OpenPyXLUnavailableException(Exception):
 
 
 from .base import (ContestLog, CBRRecord, Address, BandStatistics, BAND_MAP_CBR, BAND_FROM_CBR,
-                   CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
+                   CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter,
+                   ExchangeData)
 
 
 class RLPMultis:
@@ -38,6 +40,7 @@ class RLPFALZAWLog(ContestLog):
     contest_name = 'RLP Aktivitätswoche'
     contest_year = '2025'
     contest_update = '2025-01-05'
+    contest_exch_fmt = 'DOK'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -153,11 +156,23 @@ class RLPFALZAWLog(ContestLog):
     def needs_specific(cls) -> bool:
         return True
 
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        if exchange:
+            return ExchangeData(darc_dok=exchange.strip())
+        else:
+            return None
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData):
+        return f'{exchange.darc_dok}'
+
 
 class RLPFALZABUKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend UKW'
     contest_year = '2025'
     contest_update = '2025-05-08'
+    contest_exch_fmt = 'DOK,Locator'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -266,11 +281,25 @@ class RLPFALZABUKWLog(ContestLog):
     def needs_specific(cls) -> bool:
         return True
 
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        exchange = exchange.upper().strip().replace(',', ' ').replace('_', ' ')
+        if ' ' in exchange:
+            r_dok, r_loc = exchange.split(' ', maxsplit=1)
+            return ExchangeData(locator=r_loc.strip(), darc_dok=r_dok.strip())
+        else:
+            return None
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData):
+        return f'{exchange.darc_dok},{exchange.locator}'
+
 
 class RLPFALZABKWLog(ContestLog):
     contest_name = 'RLP Aktivitätsabend KW'
     contest_year = '2025'
     contest_update = '2025-05-08'
+    contest_exch_fmt = 'DOK'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -365,11 +394,23 @@ class RLPFALZABKWLog(ContestLog):
     def needs_specific(cls) -> bool:
         return True
 
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        if exchange:
+            return ExchangeData(darc_dok=exchange.strip())
+        else:
+            return None
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData):
+        return f'{exchange.darc_dok}'
+
 
 class K32KurzUKWLog(ContestLog):
     contest_name = 'K32 FM-Kurzaktivität'
     contest_year = '2025'
     contest_update = '2025-05-05'
+    contest_exch_fmt = 'DOK,Class'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -517,3 +558,16 @@ class K32KurzUKWLog(ContestLog):
     @classmethod
     def descr_specific(cls) -> str:
         return 'DOK'
+
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        exchange = exchange.upper().strip().replace(',', ' ').replace('_', ' ')
+        if ' ' in exchange:
+            r_dok, r_pwr = exchange.split(' ', maxsplit=1)
+            return ExchangeData(power=r_pwr.strip(), darc_dok=r_dok.strip())
+        else:
+            return None
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData):
+        return f'{exchange.darc_dok},{exchange.power}'

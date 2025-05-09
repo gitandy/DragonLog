@@ -9,13 +9,17 @@ If it does not show the current year you should check for a program update.
 
 The *Internal ID* is the ID which is imported or exported in ADIF format. 
 
-| Contest name | Internal ID | Year | Updated |
-|--------------|-------------|------|---------|
-| DARC UKW-Wettbewerb | DARC-UKW | ***2025*** | 2025-04-07 |
-| DARC UKW Frühlingswettbewerb | DARC-UKW-FRUEHLING | ***2025*** | 2025-04-07 |
-| DARC-Ostercontest | DARC-KW-OSTERN | ***2025*** | 2025-04-13 |
-| RLP Aktivitätswoche | RL-PFALZ-AW | ***2025*** | 2025-01-05 |
-| RLP Aktivitätsabend UKW | RL-PFALZ-AB.UKW | ***2025*** | 2024-12-16 |
-| RLP Aktivitätsabend KW | RL-PFALZ-AB.KW | ***2025*** | 2024-12-16 |
-| K32 FM-Kurzaktivität | K32-KURZ-UKW | ***2025*** | 2025-05-05 |
-| L33 Einsteiger-Contest | L33-EINSTEIGER | ***2025*** | 2025-04-06 |
+The *Exch format* is the format you must use to type in the received exchange. 
+If a separator is you can also use a blank or underscore instead of a comma.
+The sent exchange is handled automatically.
+
+| Contest name | Internal ID | Year | Updated | Exch format |
+|--------------|-------------|------|---------|-------------|
+| DARC UKW-Wettbewerb | DARC-UKW | ***2025*** | 2025-04-07 | Number,Locator |
+| DARC UKW Frühlingswettbewerb | DARC-UKW-FRUEHLING | ***2025*** | 2025-04-07 | Number,Locator |
+| DARC-Ostercontest | DARC-KW-OSTERN | ***2025*** | 2025-04-13 | DOK |
+| RLP Aktivitätswoche | RL-PFALZ-AW | ***2025*** | 2025-01-05 | DOK |
+| RLP Aktivitätsabend UKW | RL-PFALZ-AB.UKW | ***2025*** | 2025-05-08 | DOK,Locator |
+| RLP Aktivitätsabend KW | RL-PFALZ-AB.KW | ***2025*** | 2025-05-08 | DOK |
+| K32 FM-Kurzaktivität | K32-KURZ-UKW | ***2025*** | 2025-05-05 | DOK,Class |
+| L33 Einsteiger-Contest | L33-EINSTEIGER | ***2025*** | 2025-04-06 | Number,Locator |
