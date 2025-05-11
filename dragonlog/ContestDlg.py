@@ -10,7 +10,7 @@ from . import ContestDlg_ui
 from .Logger import Logger
 from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES
 from .contest.base import (ContestLog, ContestLogEDI, Address,
-                          CategoryBand, CategoryMode, CategoryPower, CategoryOperator)
+                           CategoryBand, CategoryMode, CategoryPower, CategoryOperator)
 from . import ColorPalettes
 from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
 from .cty import CountryData
@@ -33,7 +33,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
 
         self.__settings__ = settings
 
-        self.contest: type[ContestLog] = None
+        self.contest: type[ContestLog] | None = None
         self.contestComboBox.insertItems(0, [CONTEST_NAMES[c] for c in contests])
         if CONTEST_IDS.get(self.__settings__.value('contest/id', ''), '') in contests:
             self.contestComboBox.setCurrentText(self.__settings__.value('contest/id', ''))
@@ -104,7 +104,6 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         self.opComboBox.insertItems(0, self.contest.valid_operator_list())
 
         self.ediGroupBox.setEnabled(issubclass(self.contest, ContestLogEDI))
-
 
     def fromDateChanged(self, date: QtCore.QDate):
         if self.contest.is_single_day():
@@ -249,7 +248,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         if self.bandComboBox.currentText() != 'all':
             c_filter += f"AND band == '{self.bandComboBox.currentText()}' "
 
-        c_filter += 'ORDER BY date_time'
+        c_filter += 'ORDER BY date_time,id'
 
         # noinspection PyProtectedMember
         doc = self.dragonlog._build_adif_export_(c_filter,
@@ -262,6 +261,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
             self.countryLineEdit.text()
         )
 
+        # noinspection PyTypeChecker
         contest: ContestLog = self.contest(self.callLineEdit.text(),
                                            self.nameLineEdit.text(),
                                            self.clubLineEdit.text(),
@@ -286,7 +286,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            ant_height_ground=self.antAboveGroundSpinBox.value(),
                                            ant_height_sea=self.antAboveSeaSpinBox.value(),
                                            # Extra parameters for some contests
-                                           cty = self.__cty__,
+                                           cty=self.__cty__,
                                            )
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
 
@@ -311,7 +311,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                                                                                          contest.warnings) +
                                                       '\n\n' +
                                                       self.tr(
-                                                          'Export will be written anyway. Please check the application log before sending!')
+                                                          'Export will be written anyway. '
+                                                          'Please check the application log before sending!')
                                                       )
 
                 QtWidgets.QMessageBox.information(self, self.tr('Contest Export'),
@@ -322,7 +323,9 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
             except Exception as exc:
                 self.log.exception(exc)
                 QtWidgets.QMessageBox.critical(self, self.tr('Contest Export'),
-                                               self.tr('Error processing contest data.\nPlease check log for further information.'))
+                                               self.tr(
+                                                   'Error processing contest data.\n'
+                                                   'Please check log for further information.'))
         else:
             QtWidgets.QMessageBox.warning(self, self.tr('Contest Export'),
                                           self.tr('No contest data found for export') +

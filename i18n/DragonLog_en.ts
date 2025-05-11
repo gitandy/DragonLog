@@ -325,26 +325,26 @@
   <context>
     <name>ContestDialog</name>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="119" />
+      <location filename="..\dragonlog\ContestDlg.py" line="118" />
       <source>Select export folder</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="327" />
+      <location filename="..\dragonlog\ContestDlg.py" line="329" />
       <location filename="..\dragonlog\ContestDlg.py" line="324" />
       <location filename="..\dragonlog\ContestDlg.py" line="317" />
-      <location filename="..\dragonlog\ContestDlg.py" line="308" />
+      <location filename="..\dragonlog\ContestDlg.py" line="307" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="309" />
+      <location filename="..\dragonlog\ContestDlg.py" line="308" />
       <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="313" />
+      <location filename="..\dragonlog\ContestDlg.py" line="312" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation type="unfinished" />
     </message>
@@ -370,7 +370,7 @@ Please check log for further information.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="328" />
+      <location filename="..\dragonlog\ContestDlg.py" line="330" />
       <source>No contest data found for export</source>
       <translation type="unfinished" />
     </message>

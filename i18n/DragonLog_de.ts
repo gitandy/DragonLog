@@ -325,26 +325,26 @@
   <context>
     <name>ContestDialog</name>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="119" />
+      <location filename="..\dragonlog\ContestDlg.py" line="118" />
       <source>Select export folder</source>
       <translation>Export-Ordner wählen</translation>
     </message>
     <message>
       <location filename="..\ui_files\ContestDlg.ui" line="0" />
-      <location filename="..\dragonlog\ContestDlg.py" line="327" />
+      <location filename="..\dragonlog\ContestDlg.py" line="329" />
       <location filename="..\dragonlog\ContestDlg.py" line="324" />
       <location filename="..\dragonlog\ContestDlg.py" line="317" />
-      <location filename="..\dragonlog\ContestDlg.py" line="308" />
+      <location filename="..\dragonlog\ContestDlg.py" line="307" />
       <source>Contest Export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="309" />
+      <location filename="..\dragonlog\ContestDlg.py" line="308" />
       <source>There were {} error(s) and {} warning(s) when processing the contest data</source>
       <translation>Beim Verarbeiten der Contest-Daten traten {} Fehler und {} Warnungen auf</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="313" />
+      <location filename="..\dragonlog\ContestDlg.py" line="312" />
       <source>Export will be written anyway. Please check the application log before sending!</source>
       <translation>Der Export wurde trotzdem durchgeführt. Bitte Überprüfen Sie das Anwendungslog vor dem Senden!</translation>
     </message>
@@ -371,7 +371,7 @@ Please check log for further information.</source>
 Bitte prüfen Sie das Log für nähere Informationen.</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\ContestDlg.py" line="328" />
+      <location filename="..\dragonlog\ContestDlg.py" line="330" />
       <source>No contest data found for export</source>
       <translation>Keine Contest-Daten verfügbar</translation>
     </message>
@@ -2810,18 +2810,6 @@ Dies ist nicht die Adresse des QSL-Managers/-Büros.</translation>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Clear</source>
       <translation>Zurücksetzen</translation>
-    </message>
-    <message>
-      <source>Exchange</source>
-      <translation type="vanished">Austausch</translation>
-    </message>
-    <message>
-      <source>Data</source>
-      <translation type="vanished">Empf. Daten</translation>
-    </message>
-    <message>
-      <source>Rx Data</source>
-      <translation type="vanished">Empf. Daten</translation>
     </message>
   </context>
   <context>
