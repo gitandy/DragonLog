@@ -22,7 +22,7 @@ class OpenPyXLUnavailableException(Exception):
     pass
 
 
-from .base import (ContestLog, CBRRecord, Address, BandStatistics, BAND_MAP_CBR, BAND_FROM_CBR,
+from .base import (ContestLogCBR, CBRRecord, Address, BandStatistics, BAND_MAP_CBR, BAND_FROM_CBR,
                    CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter,
                    ExchangeData)
 
@@ -36,7 +36,7 @@ class RLPMultis:
     VFDB_DOKS = ('Z11', 'Z22', 'Z74', 'Z77')
 
 
-class RLPFALZAWLog(ContestLog):
+class RLPFALZAWLog(ContestLogCBR):
     contest_name = 'RLP Aktivitätswoche'
     contest_year = '2025'
     contest_update = '2025-01-05'
@@ -168,7 +168,7 @@ class RLPFALZAWLog(ContestLog):
         return f'{exchange.darc_dok}'
 
 
-class RLPFALZABUKWLog(ContestLog):
+class RLPFALZABUKWLog(ContestLogCBR):
     contest_name = 'RLP Aktivitätsabend UKW'
     contest_year = '2025'
     contest_update = '2025-05-08'
@@ -304,7 +304,7 @@ class RLPFALZABUKWLog(ContestLog):
         return f'{exchange.darc_dok},{exchange.locator}'
 
 
-class RLPFALZABKWLog(ContestLog):
+class RLPFALZABKWLog(ContestLogCBR):
     contest_name = 'RLP Aktivitätsabend KW'
     contest_year = '2025'
     contest_update = '2025-05-08'
@@ -415,7 +415,7 @@ class RLPFALZABKWLog(ContestLog):
         return f'{exchange.darc_dok}'
 
 
-class K32KurzUKWLog(ContestLog):
+class K32KurzUKWLog(ContestLogCBR):
     contest_name = 'K32 FM-Kurzaktivität'
     contest_year = '2025'
     contest_update = '2025-05-05'

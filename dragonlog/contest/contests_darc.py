@@ -2,7 +2,7 @@
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 """Contains main DARC contests"""
 
-from .base import (ContestLog, ContestLogEDI, CBRRecord, Address, BandStatistics, BAND_FROM_CBR, ExchangeData,
+from .base import (ContestLogCBR, ContestLogEDI, CBRRecord, Address, BandStatistics, BAND_FROM_CBR, ExchangeData,
                    CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
 from dragonlog.cty import CountryData
 
@@ -63,7 +63,7 @@ class DARCUKWContest(ContestLogEDI):
         return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
 
 
-class DARCOsterContest(ContestLog):
+class DARCOsterContest(ContestLogCBR):
     contest_name = 'DARC-Ostercontest'
     contest_year = '2025'
     contest_update = '2025-04-13'

@@ -88,8 +88,8 @@ BAND_FROM_CBR = dict(zip(BAND_MAP_CBR.values(), BAND_MAP_CBR.keys()))
 
 
 @dataclass
-class CBRRecord:
-    """Represents data for a QSO record in CBR format"""
+class Record:
+    """Represents data for a QSO record"""
     band: str
     mode: str
     date: str
@@ -102,6 +102,10 @@ class CBRRecord:
     rcvd_exch: str
     tx: str
 
+@dataclass
+class CBRRecord(Record):
+    """Represents data for a QSO record in CBR format"""
+    pass
 
 @dataclass
 class EDIRecord(CBRRecord):
@@ -206,7 +210,7 @@ class ExchangeData:
 
 
 class ContestLog(ABC):
-    """Abstract base class for ham radio contests with an CBR result file (usually shortwave)"""
+    """Abstract base class for ham radio contests"""
     contest_name = 'Contest'
     contest_year = '2025'
     contest_update = '2025-01-01'
@@ -258,7 +262,7 @@ class ContestLog(ABC):
         self.__warnings__: int = 0
         self.__infos__: int = 0
 
-        self.__qsos__: list[CBRRecord] = []
+        self.__qsos__: list[Record] = []
 
         self.__rated__: int = 0
         self.__points__: int = 0
@@ -309,36 +313,45 @@ class ContestLog(ABC):
 
     @property
     def infos(self):
+        """Number of informations"""
         return self.__infos__
 
     @property
     def warnings(self):
+        """Number of warnings"""
         return self.__warnings__
 
     @property
     def errors(self):
+        """Number of errors and exceptions"""
         return self.__errors__
 
     def info(self, txt):
+        """Logs an information message"""
         self.__infos__ += 1
         self.log.info(f'QSO #{self.__qso_id__}: {txt}')
 
     def warning(self, txt):
+        """Logs a warning message"""
         self.__warnings__ += 1
         self.log.warning(f'QSO #{self.__qso_id__}: {txt}')
 
     def error(self, txt):
+        """Logs an error message"""
         self.__errors__ += 1
         self.log.error(f'QSO #{self.__qso_id__}: {txt}')
 
     def exception(self, txt='Exception'):
+        """Logs an exception message"""
         self.__errors__ += 1
         self.log.exception(f'QSO #{self.__qso_id__}: {txt}')
 
     def set_created_by(self, program_name: str):
+        """Set the created by header value for the program in use"""
         self.__header__['CREATED-BY'] = program_name
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
+        """Test if the ADIF record uses an valid band"""
         if (adif_rec['BAND'] != self.__header__['CATEGORY-BAND'] and
                 BAND_MAP_CBR[adif_rec['BAND'].lower()] != self.__header__['CATEGORY-BAND'].lower()):
             self.log.warning(f'QSO #{self.__qso_id__} band "{adif_rec["BAND"]}" does not match with '
@@ -348,6 +361,7 @@ class ContestLog(ABC):
         return True
 
     def append(self, adif_rec: dict[str, str]):
+        """Append an ADIF record to the contest"""
         self.__qso_id__ = adif_rec['APP_DRAGONLOG_QSOID']
         try:
             if self.__skip_id__:
@@ -407,41 +421,26 @@ class ContestLog(ABC):
         except KeyError as exc:
             self.error(f'Could not be processed. Field {exc} is missing')
 
-    def build_record(self, adif_rec) -> CBRRecord:
+    @abstractmethod
+    def build_record(self, adif_rec) -> Record:
         """Build the QSO info"""
-        self.log.debug(adif_rec)
-
-        date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
-        if not self.__contest_date__:
-            self.__contest_date__ = date
-
-        return CBRRecord(BAND_MAP_CBR[adif_rec['BAND'].lower()],
-                         MODE_MAP_CBR[adif_rec['MODE']],
-                         date,
-                         adif_rec['TIME_ON'][:4],
-                         adif_rec['STATION_CALLSIGN'],
-                         adif_rec['RST_SENT'],
-                         adif_rec.get('STX_STRING', str(adif_rec['STX'])).upper(),
-                         adif_rec['CALL'],
-                         adif_rec['RST_RCVD'],
-                         adif_rec.get('SRX_STRING',
-                                      str(adif_rec.get('SRX', 0))).upper().strip().replace(',', ' ').replace('_', ' '),
-                         '0'
-                         )
+        pass
 
     def add_soapbox(self, txt: str):
+        """Add soapbox content or remarks"""
         self.__header__['SOAPBOX'] = str(txt)
 
     def open_file(self, path: str = os.path.curdir):
+        """Open the contest export file"""
         self.__out_file__ = open(os.path.join(path, self.file_name), 'w')
 
+    @abstractmethod
     def write_records(self):
-        if self.__out_file__:
-            for row in self.serialize_cbr():
-                self.__out_file__.write(row)
-                self.__out_file__.write('\n')
+        """Writes the exported content to the open file"""
+        pass
 
     def close_file(self):
+        """Close the contest export file"""
         if self.__out_file__:
             self.__out_file__.close()
 
@@ -467,24 +466,27 @@ class ContestLog(ABC):
 
     @property
     def multis(self) -> int:
+        """Number of gained multis"""
         return len(self.__multis__) if self.__multis__ else 1
 
     @property
     def multis2(self) -> int:
+        """Number of gained multis2"""
         return len(self.__multis2__)
 
     @abstractmethod
-    def process_points(self, rec: CBRRecord):
+    def process_points(self, rec: Record):
         """Place for calculating points and decision for rating a QSO"""
         pass
 
     def summary(self) -> str:
-        """Returns a statistic over the QSOs"""
+        """A summary of points for the contest"""
         return (f'QSOs: {self.qsos}, Rated: {self.rated}, Points: {self.points}, '
                 f'Multis: {self.multis}, Multis2: {self.multis2}, Claimed points: {self.claimed_points}')
 
     @property
     def statistics(self) -> dict[str, BandStatistics]:
+        """A detailed statistic for the contest"""
         for b in self.__stats__:
             self.__stats__[b].multis = self.multis
             self.__stats__[b].multis2 = self.multis2
@@ -494,6 +496,118 @@ class ContestLog(ABC):
                                                  self.multis, self.multis2, self.claimed_points)
 
         return self.__stats__
+
+    @property
+    def file_name(self) -> str:
+        """The contest export file name"""
+        return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["CATEGORY-BAND"]}.cbr'
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        """Valid bands for the contest"""
+        return CategoryBand.B_ALL,
+
+    @classmethod
+    def valid_bands_list(cls) -> list[str]:
+        """Valid bands for the contest as list of strings"""
+        return [b.name[2:].lower().replace('_', '.') for b in cls.valid_bands()]
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        """Valid modes for the contest"""
+        return CategoryMode.MIXED,
+
+    @classmethod
+    def valid_modes_list(cls) -> list[str]:
+        """Valid modes for the contest as list of strings"""
+        return [m.name for m in cls.valid_modes()]
+
+    @classmethod
+    def valid_power(cls) -> tuple[CategoryPower, ...]:
+        """Valid power classes for the contest"""
+        return CategoryPower.HIGH, CategoryPower.LOW, CategoryPower.QRP
+
+    @classmethod
+    def valid_power_list(cls) -> list[str]:
+        """Valid power classes for the contest as list of strings"""
+        return [p.name for p in cls.valid_power()]
+
+    @classmethod
+    def valid_operator(cls) -> tuple[CategoryOperator, ...]:
+        """Valid operator classes for the contest"""
+        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.CHECKLOG
+
+    @classmethod
+    def valid_operator_list(cls) -> list[str]:
+        """Valid operator classes for the contest as list of strings"""
+        return [o.name for o in cls.valid_operator()]
+
+    @classmethod
+    def descr_specific(cls) -> str:
+        """A description of the contest specific field"""
+        return 'Specific'
+
+    @classmethod
+    def needs_specific(cls) -> bool:
+        """If the specific field is needed to calculate points"""
+        return False
+
+    @classmethod
+    def is_single_day(cls) -> bool:
+        """If the contest is on a single day"""
+        return True
+
+    @property
+    def exchange_format(self) -> str:
+        """Get a textual descritpion of the exchange format expected by the contest"""
+        return self.contest_exch_fmt
+
+    @staticmethod
+    @abstractmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        """Provides structured exchange data to from an exchange string
+        Useful to extract locator and other info for logbook"""
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def prepare_exchange(exchange: ExchangeData) -> str:
+        """Builds exchange from structured exchange data
+        Useful for preparing the exchange from historical database info"""
+        pass
+
+
+class ContestLogCBR(ContestLog, ABC):
+    """Abstract base class for ham radio contests with an CBR result file (usually shortwave)"""
+    contest_name = 'ContestCBR'
+
+    def build_record(self, adif_rec) -> CBRRecord:
+        """Build the QSO info"""
+        self.log.debug(adif_rec)
+
+        date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
+        if not self.__contest_date__:
+            self.__contest_date__ = date
+
+        return CBRRecord(BAND_MAP_CBR[adif_rec['BAND'].lower()],
+                         MODE_MAP_CBR[adif_rec['MODE']],
+                         date,
+                         adif_rec['TIME_ON'][:4],
+                         adif_rec['STATION_CALLSIGN'],
+                         adif_rec['RST_SENT'],
+                         adif_rec.get('STX_STRING', str(adif_rec['STX'])).upper(),
+                         adif_rec['CALL'],
+                         adif_rec['RST_RCVD'],
+                         adif_rec.get('SRX_STRING',
+                                      str(adif_rec.get('SRX', 0))).upper().strip().replace(',', ' ').replace('_', ' '),
+                         '0'
+                         )
+
+    def write_records(self):
+        if self.__out_file__:
+            for row in self.serialize_cbr():
+                self.__out_file__.write(row)
+                self.__out_file__.write('\n')
 
     def serialize_cbr(self) -> typing.Iterator[str]:
         """Serialize the whole CBR content"""
@@ -520,73 +634,6 @@ class ContestLog(ABC):
             yield (f'QSO: {r.band.rjust(5)} {r.mode} {r.date} {r.time} '
                    f'{r.own_call.ljust(13)} {r.sent_rst.rjust(3)} {r.sent_exch.ljust(6)} '
                    f'{r.call.ljust(13)} {r.rcvd_rst.rjust(3)} {r.rcvd_exch.ljust(6)} {r.tx}')
-
-    @property
-    def file_name(self) -> str:
-        return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["CATEGORY-BAND"]}.cbr'
-
-    @classmethod
-    def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_ALL,
-
-    @classmethod
-    def valid_bands_list(cls) -> list[str]:
-        return [b.name[2:].lower().replace('_', '.') for b in cls.valid_bands()]
-
-    @classmethod
-    def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.MIXED,
-
-    @classmethod
-    def valid_modes_list(cls) -> list[str]:
-        return [m.name for m in cls.valid_modes()]
-
-    @classmethod
-    def valid_power(cls) -> tuple[CategoryPower, ...]:
-        return CategoryPower.HIGH, CategoryPower.LOW, CategoryPower.QRP
-
-    @classmethod
-    def valid_power_list(cls) -> list[str]:
-        return [p.name for p in cls.valid_power()]
-
-    @classmethod
-    def valid_operator(cls) -> tuple[CategoryOperator, ...]:
-        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.CHECKLOG
-
-    @classmethod
-    def valid_operator_list(cls) -> list[str]:
-        return [o.name for o in cls.valid_operator()]
-
-    @classmethod
-    def descr_specific(cls) -> str:
-        return 'Specific'
-
-    @classmethod
-    def needs_specific(cls) -> bool:
-        return False
-
-    @classmethod
-    def is_single_day(cls) -> bool:
-        return True
-
-    @property
-    def exchange_format(self) -> str:
-        """Get a textual descritpion of the exchange format expected by the contest"""
-        return self.contest_exch_fmt
-
-    @staticmethod
-    @abstractmethod
-    def extract_exchange(exchange: str) -> ExchangeData | None:
-        """Provides structured exchange data to from an exchange string
-        Useful to extract locator and other info for logbook"""
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def prepare_exchange(exchange: ExchangeData) -> str:
-        """Builds exchange from structured exchange data
-        Useful for preparing the exchange from historical database info"""
-        pass
 
 
 class ContestLogEDI(ContestLog):
