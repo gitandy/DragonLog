@@ -63,21 +63,24 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self.exchTXLineEdit.setText(qso.get('STX', qso.get('STX_STRING', '')))
             self.exchRXLineEdit.setText(qso.get('SRX', qso.get('SRX_STRING', '')))
 
-            if not qso.get('SRX_STRING', ''):  # Reset exchange cache
-                self.__current_rxexch__ = ''
-            elif qso.get('SRX_STRING', '') != self.__current_rxexch__:  # Only run if exchange changed
-                self.__current_rxexch__ = qso.get('SRX_STRING', '')
-                contest: ContestLog | None = CONTESTS.get(qso['CONTEST_ID'], None)
-                if contest:
+            contest: ContestLog | None = CONTESTS.get(qso['CONTEST_ID'], None)
+            if contest:
+                self.exchRXLineEdit.setPlaceholderText(contest.contest_exch_fmt)
+
+                if not qso.get('SRX_STRING', ''):  # Reset exchange cache
+                    self.__current_rxexch__ = ''
+                elif qso.get('SRX_STRING', '') != self.__current_rxexch__:  # Only run if exchange changed
+                    self.__current_rxexch__ = qso.get('SRX_STRING', '')
                     exch: ExchangeData = contest.extract_exchange(qso.get('SRX_STRING', ''))
                     if exch and exch.locator:
                         self.evaluate(f'@{exch.locator} ')
-
         elif 'MY_SIG' in qso:
+            self.exchRXLineEdit.setPlaceholderText(self.tr('Exchange'))
             self.eventComboBox.setCurrentText(qso['MY_SIG'])
             self.exchTXLineEdit.setText(qso.get('MY_SIG_INFO', ''))
             self.exchRXLineEdit.setText(qso.get('SIG_INFO', ''))
         else:
+            self.exchRXLineEdit.setPlaceholderText(self.tr('Exchange'))
             self.exchTXLineEdit.setText('')
             self.exchRXLineEdit.setText('')
             self.eventComboBox.setCurrentText(self.tr('Event ID'))

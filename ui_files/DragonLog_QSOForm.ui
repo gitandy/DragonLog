@@ -977,8 +977,8 @@ This is not the QSL manager/bureau address.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>192</width>
-        <height>290</height>
+        <width>482</width>
+        <height>310</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1057,14 +1057,14 @@ This is not the QSL manager/bureau address.</string>
           <item row="2" column="0">
            <widget class="QLabel" name="label_9">
             <property name="text">
-             <string>Data</string>
+             <string>Rx Exchange</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QLineEdit" name="rcvdDataLineEdit">
             <property name="placeholderText">
-             <string>Rx Data</string>
+             <string>Rx Exchange</string>
             </property>
             <property name="cssClass" stdset="0">
              <string notr="true">QSOFormInput</string>

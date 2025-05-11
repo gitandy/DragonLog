@@ -4,72 +4,78 @@
   <context>
     <name>CassiopeiaConsole</name>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="331" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="326" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="317" />
       <location filename="..\dragonlog\CassiopeiaConsole.py" line="83" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="78" />
+      <source>Exchange</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="334" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="329" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="320" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="86" />
       <source>Event ID</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="275" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="93" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="278" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="96" />
       <source>Band</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="280" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="94" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="283" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="97" />
       <source>Mode</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="193" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="196" />
       <source>at</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="221" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="224" />
       <source>Error: Callsign missing for QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="252" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="255" />
       <source>Warning: Wrong call format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="253" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="256" />
       <source>Error: Wrong call format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="254" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="257" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="255" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="258" />
       <source>Error: No active event</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="256" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="259" />
       <source>Error: Unknown prefix</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="257" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="260" />
       <source>Error: Wrong RST format</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="258" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="261" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="259" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="262" />
       <source>Last QSO cached</source>
       <translation type="unfinished" />
     </message>
@@ -2466,6 +2472,15 @@ See log for detail</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="773" />
+      <source>Rx Exchange</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>QSO Form</source>
       <translation />
     </message>
@@ -2745,16 +2760,6 @@ This is not the QSL manager/bureau address.</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Data</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Rx Data</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Rcvd QSO ID</source>
       <translation />
     </message>
@@ -2782,12 +2787,6 @@ This is not the QSL manager/bureau address.</source>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Tx Exchange</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Rx Exchange</source>
       <translation type="unfinished" />
     </message>
     <message>

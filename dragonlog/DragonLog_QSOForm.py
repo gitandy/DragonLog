@@ -12,7 +12,7 @@ from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_
 from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from . import ColorPalettes
-from .contest import CONTEST_IDS, CONTEST_NAMES
+from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog
 from .distance import distance
 from .cty import Country
 
@@ -766,6 +766,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
     def contestChanged(self, text: str):
         self.xotaGroupBox.setDisabled(bool(text))
+        contest: ContestLog | None = CONTESTS.get(CONTEST_IDS.get(text, ''), None)
+        if contest:
+            self.rcvdDataLineEdit.setPlaceholderText(contest.contest_exch_fmt)
+        else:
+            self.rcvdDataLineEdit.setPlaceholderText(self.tr('Rx Exchange'))
 
     def eventChanged(self, text: str):
         self.contestGroupBox.setDisabled(bool(text))
