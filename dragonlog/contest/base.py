@@ -495,28 +495,31 @@ class ContestLog(ABC):
 
         return self.__stats__
 
-    def serialize_cbr(self):
-        # CBR format from http://wwrof.org/cabrillo/
+    def serialize_cbr(self) -> typing.Iterator[str]:
+        """Serialize the whole CBR content"""
 
+        # CBR format from http://wwrof.org/cabrillo/
         yield 'START-OF-LOG: 3.0'
 
         for k in self.__header__:
             if k in ('ADDRESS', 'SOAPBOX') and self.__header__[k]:
                 for l in self.__header__[k].split('\n'):
                     yield f'{k}: {l}'
-            elif k == 'CATEGORY-BAND':
-                yield f'CATEGORY-BAND: {BAND_MAP_CBR[self.__header__[k].lower()]}'
             elif self.__header__[k]:
                 yield f'{k}: {self.__header__[k]}'
 
         yield ''  # Divide between header and records
 
+        yield from self._serialize_cbr_rec_()
+
+        yield 'END-OF-LOG:'
+
+    def _serialize_cbr_rec_(self) -> typing.Iterator[str]:
+        """Serialize the single QSOs for CBR"""
         for r in self.__qsos__:
             yield (f'QSO: {r.band.rjust(5)} {r.mode} {r.date} {r.time} '
                    f'{r.own_call.ljust(13)} {r.sent_rst.rjust(3)} {r.sent_exch.ljust(6)} '
                    f'{r.call.ljust(13)} {r.rcvd_rst.rjust(3)} {r.rcvd_exch.ljust(6)} {r.tx}')
-
-        yield 'END-OF-LOG:'
 
     @property
     def file_name(self) -> str:

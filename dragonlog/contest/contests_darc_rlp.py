@@ -257,6 +257,15 @@ class RLPFALZABUKWLog(ContestLog):
         except Exception:
             self.exception()
 
+    def _serialize_cbr_rec_(self):
+        """Serialize the single QSOs for CBR with justified fields for DOK and locator"""
+        for r in self.__qsos__:
+            dok, loc = r.sent_exch.split(' ', maxsplit=1)
+            r_dok, r_loc = r.rcvd_exch.split(' ', maxsplit=1)
+            yield (f'QSO: {r.band.rjust(5)} {r.mode} {r.date} {r.time} '
+                   f'{r.own_call.ljust(13)} {r.sent_rst.rjust(3)} {dok.ljust(6)} {loc.ljust(6)} '
+                   f'{r.call.ljust(13)} {r.rcvd_rst.rjust(3)} {r_dok.ljust(6)} {r_loc.ljust(6)} {r.tx}')
+
     @property
     def file_name(self) -> str:
         return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}-{self.__header__["SPECIFIC"]}-{self.__header__["CATEGORY-BAND"]}.cbr'
