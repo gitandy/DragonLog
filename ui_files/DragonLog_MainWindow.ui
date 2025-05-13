@@ -58,8 +58,6 @@
     <addaction name="actionExport"/>
     <addaction name="actionImport"/>
     <addaction name="separator"/>
-    <addaction name="actionExport_Contest_Log"/>
-    <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -88,11 +86,9 @@
     <addaction name="actionHelp"/>
     <addaction name="actionHelpCassiopeiaConsole"/>
     <addaction name="actionShortcuts"/>
-    <addaction name="actionContests"/>
     <addaction name="separator"/>
     <addaction name="actionShow_CassiopeiaConsole"/>
     <addaction name="actionShow_filter"/>
-    <addaction name="actionShow_Contest_stats"/>
     <addaction name="actionShow_DX_Spots"/>
     <addaction name="actionShow_log"/>
     <addaction name="separator"/>
@@ -112,9 +108,19 @@
     <addaction name="separator"/>
     <addaction name="actionUpload_to_HamQTH"/>
    </widget>
+   <widget class="QMenu" name="menuContest">
+    <property name="title">
+     <string>Contest</string>
+    </property>
+    <addaction name="actionShow_Contest_stats"/>
+    <addaction name="actionExport_Contest_Log"/>
+    <addaction name="separator"/>
+    <addaction name="actionContests"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuUpload"/>
+   <addaction name="menuContest"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
