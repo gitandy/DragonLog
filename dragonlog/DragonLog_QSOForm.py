@@ -453,10 +453,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.distLabel.clear()
         elif check_format(REGEX_LOCATOR, txt):
             self.locatorLineEdit.setPalette(ColorPalettes.PaletteOk)
-
-            _, own_locator = check_qth(self.ownQTHComboBox.currentText())
             # noinspection PyBroadException
             try:
+                _, own_locator = check_qth(self.ownQTHComboBox.currentText())
                 self.distLabel.setText(f'{distance(txt, own_locator)} km')
             except Exception:
                 self.distLabel.clear()
