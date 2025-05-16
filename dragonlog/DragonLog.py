@@ -51,6 +51,7 @@ from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotF
 from .RigControl import RigControl
 from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
+from .local_callbook import LocalCallbook, LocalCallbookData, LocalCallbookDatabaseError
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -213,49 +214,49 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     )
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
-        "id"    INTEGER PRIMARY KEY NOT NULL,
-        "date_time"   NUMERIC,
-        "date_time_off"   NUMERIC,
-        "own_callsign" TEXT,
-        "call_sign"  TEXT,
-        "name"  TEXT,
-        "qth"    TEXT,
-        "locator" TEXT,
-        "rst_sent" TEXT,
-        "rst_rcvd" TEXT,
-        "band"    TEXT,
-        "mode"   TEXT,
-        "submode"  TEXT,
-        "freq"  REAL,
-        "channel"  INTEGER,
-        "power"  REAL,
-        "propagation"  TEXT,
-        "own_name"  TEXT,
-        "own_qth"   TEXT,
-        "own_locator" TEXT,
-        "radio"   TEXT,
-        "antenna"   TEXT,
-        "remarks"   TEXT,
-        "comments"   TEXT,
-        "dist" INTEGER,
-        "qsl_via"   TEXT,
-        "qsl_path"   TEXT,
-        "qsl_msg"   TEXT,
-        "qsl_sent"   TEXT,
-        "qsl_rcvd"   TEXT,
-        "eqsl_sent"   TEXT,
-        "eqsl_rcvd"   TEXT,
-        "lotw_sent"   TEXT,
-        "lotw_rcvd"   TEXT,
-        "hamqth"   TEXT,
-        "contest_id" TEXT,
-        "ctx_qso_id" INTEGER,
-        "crx_qso_id" INTEGER,
-        "crx_data" TEXT,
-        "event" TEXT, 
-        "evt_tx_exch" TEXT, 
-        "evt_rx_exch" TEXT
-        );'''
+                            "id"    INTEGER PRIMARY KEY NOT NULL,
+                            "date_time"   NUMERIC,
+                            "date_time_off"   NUMERIC,
+                            "own_callsign" TEXT,
+                            "call_sign"  TEXT,
+                            "name"  TEXT,
+                            "qth"    TEXT,
+                            "locator" TEXT,
+                            "rst_sent" TEXT,
+                            "rst_rcvd" TEXT,
+                            "band"    TEXT,
+                            "mode"   TEXT,
+                            "submode"  TEXT,
+                            "freq"  REAL,
+                            "channel"  INTEGER,
+                            "power"  REAL,
+                            "propagation"  TEXT,
+                            "own_name"  TEXT,
+                            "own_qth"   TEXT,
+                            "own_locator" TEXT,
+                            "radio"   TEXT,
+                            "antenna"   TEXT,
+                            "remarks"   TEXT,
+                            "comments"   TEXT,
+                            "dist" INTEGER,
+                            "qsl_via"   TEXT,
+                            "qsl_path"   TEXT,
+                            "qsl_msg"   TEXT,
+                            "qsl_sent"   TEXT,
+                            "qsl_rcvd"   TEXT,
+                            "eqsl_sent"   TEXT,
+                            "eqsl_rcvd"   TEXT,
+                            "lotw_sent"   TEXT,
+                            "lotw_rcvd"   TEXT,
+                            "hamqth"   TEXT,
+                            "contest_id" TEXT,
+                            "ctx_qso_id" INTEGER,
+                            "crx_qso_id" INTEGER,
+                            "crx_data" TEXT,
+                            "event" TEXT, 
+                            "evt_tx_exch" TEXT, 
+                            "evt_rx_exch" TEXT
+                        );'''
 
     __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
                                     "date_time",
@@ -353,14 +354,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.filterDockWidget.visibilityChanged.connect(self.resetTableFilter)
         self.filterDockWidget.dockLocationChanged.connect(self.filterWidgetResize)
 
+        self.callbook_status = QtWidgets.QLabel(f'{self.tr("Callbook")}: {self.tr("None")}')
+        self.statusBar().addPermanentWidget(self.callbook_status)
         self.dummy_status = QtWidgets.QLabel()
-        self.statusBar().addPermanentWidget(self.dummy_status)
+        self.statusBar().addPermanentWidget(self.dummy_status, 1)
         self.watch_status = QtWidgets.QLabel(self.tr('Watching file') + ': ' + self.tr('inactiv'))
         self.statusBar().addPermanentWidget(self.watch_status)
         self.hamlib_status = QtWidgets.QLabel(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
         self.statusBar().addPermanentWidget(self.hamlib_status)
         self.hamlib_error = QtWidgets.QLabel('')
         self.statusBar().addPermanentWidget(self.hamlib_error)
+
+        self.__local_cb__ = None
+        if self.settings.value('lastCallbookPath', None):
+            try:
+                self.__local_cb__ = LocalCallbook(self.settings.value('lastCallbookPath'), self.log)
+                self.callbook_status.setText(
+                    f'{self.tr("Callbook")}: {self.__local_cb__.path} ({self.tr("%n entry", "", self.__local_cb__.callbook_entries)})')
+            except LocalCallbookDatabaseError as exc:
+                self.log.exception(exc)
 
         with open(self.searchFile('data:bands.json')) as bj:
             self.bands: dict = json.load(bj)
@@ -473,7 +485,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
-                                self.cb_channels, self.log)
+                                self.cb_channels, self.log, self.__local_cb__)
         self.qsoDockWidget.setWidget(self.qso_form)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.startTimers)
         self.qsoDockWidget.visibilityChanged.connect(self.qso_form.clear)
@@ -494,8 +506,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.__rigctl__.powerChanged.connect(self.qso_form.setPower)
 
         # HamCCForm
-        self.cc_widget = CassiopeiaConsole(self, self, self.settings, self.log)
-        self.cc_widget.qsosChached.connect(self.retrieveCCQSO)
+        self.cc_widget = CassiopeiaConsole(self, self, self.settings, self.log, self.__local_cb__)
+        self.cc_widget.qsosChached.connect(self.fetchCCQSO)
         self.ccDockWidget.setWidget(self.cc_widget)
         if int(self.settings.value('ui/cc_dock_float', 0)):
             self.ccDockWidget.setFloating(True)
@@ -679,9 +691,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
             self.__db_con__.open()
-            self.__db_con__.exec('pragma temp_store = MEMORY;')
-            self.__db_con__.exec('pragma journal_mode = WAL;')
-            self.__db_con__.exec('pragma synchronous = NORMAL;')
+            self.__db_con__.exec('PRAGMA user_version = 0xDF1A5C;')
+            self.__db_con__.exec('PRAGMA application_id = 0x106b004;')
+            self.__db_con__.exec('PRAGMA temp_store = MEMORY;')
+            self.__db_con__.exec('PRAGMA journal_mode = WAL;')
+            self.__db_con__.exec('PRAGMA synchronous = NORMAL;')
 
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
@@ -745,9 +759,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.__db_con__.setDatabaseName(db_file)
             self.__db_con__.open()
-            self.__db_con__.exec('pragma temp_store = MEMORY;')
-            self.__db_con__.exec('pragma journal_mode = WAL;')
-            self.__db_con__.exec('pragma synchronous = NORMAL;')
+            self.__db_con__.exec('PRAGMA user_version = 0xDF1A5C;')
+            self.__db_con__.exec('PRAGMA application_id = 0x106b004;')
+            self.__db_con__.exec('PRAGMA temp_store = MEMORY;')
+            self.__db_con__.exec('PRAGMA journal_mode = WAL;')
+            self.__db_con__.exec('PRAGMA synchronous = NORMAL;')
 
             self.log.debug('Initialise database if necessary...')
             self.__db_con__.exec(self.__db_create_stmnt__)
@@ -940,6 +956,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form.callSignLineEdit.setFocus()
 
     def fetchQSO(self):
+        """Fetch a QSO from QSO form"""
         if not self.__db_con__.isOpen():
             self.selectDB()
             if not self.__db_con__.isOpen():
@@ -950,7 +967,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info('Logging QSO...')
         query = QtSql.QSqlQuery(self.__db_con__)
         query.prepare(self.__db_insert_stmnt__)
-        for i, val in enumerate(self.qso_form.values):
+        values = self.qso_form.values
+        for i, val in enumerate(values):
             query.bindValue(i, val)
         query.exec()
         if query.lastError().text():
@@ -961,6 +979,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.hamlib_error.setText('')  # TODO: Why???
         self.qsoAdded.emit()
+
+        qso = {
+            'CALL': values[self.__sql_cols__.index('call_sign') - 1],
+            'NAME_INTL': values[self.__sql_cols__.index('name') - 1],
+            'QTH_INTL': values[self.__sql_cols__.index('qth') - 1],
+            'GRIDSQUARE': values[self.__sql_cols__.index('locator') - 1],
+        }
+        self.addQSOToCallbook(qso)
 
     def selectedQSOIds(self) -> Iterator[int]:
         yielded_ids: list[int] = []
@@ -1046,6 +1072,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.refreshTableView(sort=False)
         self.qso_form.setChangeMode(False)
         self.qsoChanged.emit()
+
+        qso = {
+            'CALL': values[self.__sql_cols__.index('call_sign') - 1],
+            'NAME_INTL': values[self.__sql_cols__.index('name') - 1],
+            'QTH_INTL': values[self.__sql_cols__.index('qth') - 1],
+            'GRIDSQUARE': values[self.__sql_cols__.index('locator') - 1],
+        }
+        self.addQSOToCallbook(qso)
 
     def clearQSOForm(self):
         self.qso_form.clear()
@@ -1711,6 +1745,63 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.updateQSOField('hamqth', qso_id, state)
         self.refreshTableView(False)
 
+    def selectCallbook(self):
+        """Select a different callbook via dialog"""
+        # Check if a logbook is available
+        if not self.__db_con__.isOpen():
+            QtWidgets.QMessageBox.warning(self, self.tr('Select callbook'),
+                                          self.tr('There is no database opened for QSO logging.\n'
+                                                  'Please open the QSO database first.'))
+            self.selectDB()
+            if not self.__db_con__.isOpen():
+                QtWidgets.QMessageBox.warning(self, self.tr('Select callbook'),
+                                              self.tr('No database opened for QSO logging'))
+                return
+
+        # File dialog
+        res = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            self.tr('Select callbook'),
+            self.settings.value('lastCallbookPath', os.path.expanduser('~/callbook.db')),
+            self.tr('Callbook DB (*.db);;All Files (*.*)'),
+            options=QtWidgets.QFileDialog.Option.DontConfirmOverwrite)
+
+        if res[0]:
+            try:
+                self.__local_cb__ = LocalCallbook(res[0], self.log)
+                self.settings.setValue('lastCallbookPath', res[0])
+
+                # Check if DB needs init
+                if self.__local_cb__.is_new or self.__local_cb__.callbook_entries == 0:
+                    question = QtWidgets.QMessageBox.question(self, 'New or empty callbook',
+                                                              self.tr(
+                                                                  'Should the callbook be initialsed with the existing QSO data?'),
+                                                              QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                                                              QtWidgets.QMessageBox.StandardButton.Yes)
+                    if question == QtWidgets.QMessageBox.StandardButton.Yes:
+                        self.initialiseCallbook()
+
+                self.callbook_status.setText(
+                    f'{self.tr("Callbook")}: {self.__local_cb__.path} ({self.tr("%n entry", "", self.__local_cb__.callbook_entries)})')
+            except LocalCallbookDatabaseError:
+                QtWidgets.QMessageBox.critical(self,
+                                               self.tr('Select callbook'),
+                                               self.tr('Selected callbook could not be opend!'))
+            except Exception as exc:
+                self.log.exception(exc)
+
+    def initialiseCallbook(self):
+        """Initialise an empty or new callbook from existing QSOs"""
+        query = self.__db_con__.exec('SELECT call_sign,name,qth,locator,band FROM qsos '
+                                     'WHERE band != "11m" '
+                                     'ORDER BY date_time')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        while query.next():
+            lcd = LocalCallbookData(name=query.value(1), qth=query.value(2), locator=query.value(3))
+            self.__local_cb__.add_entry(query.value(0), lcd)
+
     def updateQSOField(self, field: str, qso_id: int, value: str):
         """Update a single QSO field
         :param field: the SQLite column name
@@ -2115,7 +2206,19 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         return values
 
-    def retrieveCCQSO(self):
+    def addQSOToCallbook(self, qso: dict):
+        if not self.__local_cb__:
+            return
+
+        call = qso.get('CALL', '')
+        if call:
+            lcd = LocalCallbookData(name=qso.get('NAME_INTL', qso.get('NAME', '')),
+                                    qth=qso.get('QTH_INTL', qso.get('QTH', '')),
+                                    locator=qso.get('GRIDSQUARE', ''))
+            self.__local_cb__.add_entry(call, lcd)
+
+    def fetchCCQSO(self):
+        """Fetch QSOs from HamCC"""
         if not self.__db_con__.isOpen():
             self.selectDB()
             if not self.__db_con__.isOpen():
@@ -2130,7 +2233,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             query = QtSql.QSqlQuery(self.__db_con__)
             query.prepare(self.__db_insert_stmnt__)
 
-            for j, val in enumerate(self._build_adif_import_(self.cc_widget.retrieveQSO(),
+            qso = self.cc_widget.retrieveQSO()
+            for j, val in enumerate(self._build_adif_import_(qso,
                                                              False,
                                                              bool(self.settings.value('imp_exp/use_station_hamcc', 0)),
                                                              )):
@@ -2143,6 +2247,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.__db_con__.commit()
             added = True
+            self.addQSOToCallbook(qso)
 
         if added:
             self.refreshTableView()
@@ -2461,6 +2566,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.exec('PRAGMA optimize;')
             self.log.debug('Closing database...')
             self.__db_con__.close()
+        if self.__local_cb__:
+            self.__local_cb__.close()
 
         self.settings.setValue('ui/show_log', int(self.logDockWidget.isVisible()))
         self.settings.setValue('ui/log_dock_area', self.dockWidgetArea(self.logDockWidget).value)

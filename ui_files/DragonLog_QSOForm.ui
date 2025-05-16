@@ -977,8 +977,8 @@ This is not the QSL manager/bureau address.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>310</height>
+        <width>192</width>
+        <height>290</height>
        </rect>
       </property>
       <attribute name="label">
@@ -1486,7 +1486,7 @@ This is not the QSL manager/bureau address.</string>
    <sender>callSignLineEdit</sender>
    <signal>editingFinished()</signal>
    <receiver>QSOForm</receiver>
-   <slot>setWorkedBefore()</slot>
+   <slot>callEditingFinished()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>150</x>
@@ -1749,7 +1749,7 @@ This is not the QSL manager/bureau address.</string>
   <slot>locatorChanged(QString)</slot>
   <slot>callSignChanged(QString)</slot>
   <slot>ownCallSignChanged(QString)</slot>
-  <slot>setWorkedBefore()</slot>
+  <slot>callEditingFinished()</slot>
   <slot>setStartTimeNow()</slot>
   <slot>searchHamQTH()</slot>
   <slot>saveLog()</slot>

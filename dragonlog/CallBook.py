@@ -1,3 +1,6 @@
+# DragonLog (c) 2023 by Andreas Schawo is licensed under CC BY-SA 4.0.
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -26,6 +29,7 @@ class CallBookData:
     qsl_direct: bool
     qsl_eqsl: bool
     qsl_lotw: bool
+    darc_dok: str
 
 
 class CommunicationException(Exception):
@@ -211,14 +215,15 @@ class HamQTHCallBook(AbstractCallBook):
                 if data:
                     return CallBookData(
                         callsign,
-                        data['nick'] if 'nick' in data else '',
-                        data['grid'] if 'grid' in data else '',
-                        data['qth'] if 'qth' in data else '',
-                        data['qsl_via'] if 'qsl_via' in data else '',
-                        'qsl' in data and data['qsl'] == 'Y',
-                        'qsldirect' in data and data['qsldirect'] == 'Y',
-                        'eqsl' in data and data['eqsl'] == 'Y',
-                        'lotw' in data and data['lotw'] == 'Y',
+                        data.get('nick', ''),
+                        data.get('grid', ''),
+                        data.get('qth', ''),
+                        data.get('qsl_via', ''),
+                        data.get('qsl', '') == 'Y',
+                        data.get('qsldirect', '') == 'Y',
+                        data.get('eqsl', '') == 'Y',
+                        data.get('lotw', '') == 'Y',
+                        data.get('dok', ''),
                     )
                 else:
                     return None
@@ -310,14 +315,15 @@ class QRZCQCallBook(AbstractCallBook):
                 if data:
                     return CallBookData(
                         callsign,
-                        data['name'] if 'name' in data else '',
-                        data['locator'] if 'locator' in data else '',
-                        data['qth'] if 'qth' in data else '',
-                        data['manager'] if 'manager' in data else '',
-                        'bqsl' in data and data['bqsl'] == '1',
-                        'mqsl' in data and data['mqsl'] == '1',
-                        'eqsl' in data and data['eqsl'] == '1',
-                        'lotw' in data and data['lotw'] == '1',
+                        data.get('name', ''),
+                        data.get('locator', ''),
+                        data.get('qth', ''),
+                        data.get('manager', ''),
+                        data.get('bqsl', '') == '1',
+                        data.get('mqsl', '') == '1',
+                        data.get('eqsl', '') == '1',
+                        data.get('lotw', '') == '1',
+                        data.get('dok', ''),
                     )
                 else:
                     return None

@@ -15,11 +15,12 @@ from . import ColorPalettes
 from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog
 from .distance import distance
 from .cty import Country
+from .local_callbook import LocalCallbook
 
 
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def __init__(self, parent, dragonlog, bands: dict, modes: dict, prop: dict, settings: QtCore.QSettings,
-                 settings_form: Settings, cb_channels: dict, logger: Logger):
+                 settings_form: Settings, cb_channels: dict, logger: Logger, local_cb: LocalCallbook):
         super().__init__(parent)
         self.dragonlog = dragonlog
         self.setupUi(self)
@@ -29,6 +30,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.log.setLevel(logger.loglevel)
         self.logger = logger
         self.log.debug('Initialising...')
+
+        self.__local_cb__ = local_cb
 
         self.lastpos = None
         self.bands = bands
@@ -152,6 +155,26 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.worked_dialog.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
         self.worked_dialog.setSortingEnabled(True)
         self.worked_dialog.hide()
+
+    def _callbook_lookup_(self):
+        if not self.__local_cb__:
+            return
+
+        call = self.callSignLineEdit.text().strip()
+        if call:
+            lcd = self.__local_cb__.lookup(call, True)
+            if lcd:
+                if not self.nameLineEdit.text().strip() and lcd[1].name:
+                    self.nameLineEdit.setText(lcd[1].name)
+                if not self.QTHLineEdit.text().strip() and lcd[1].qth:
+                    self.QTHLineEdit.setText(lcd[1].qth)
+                if not self.locatorLineEdit.text().strip() and lcd[1].locator:
+                    self.locatorLineEdit.setText(lcd[1].locator)
+                    self.locatorChanged(lcd[1].locator)
+
+    def callEditingFinished(self):
+        self.setWorkedBefore()
+        self._callbook_lookup_()
 
     def setWorkedBefore(self, worked: list = None):
         self.worked_dialog.clear()

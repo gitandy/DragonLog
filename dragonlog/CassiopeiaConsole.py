@@ -12,12 +12,13 @@ from .RegEx import check_call
 from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ExchangeData, ContestLog
 from .cty import Country
 from .distance import distance
+from .local_callbook import LocalCallbook
 
 
 class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaConsoleWidget):
     qsosChached = QtCore.pyqtSignal()
 
-    def __init__(self, parent, dragonlog, settings: QtCore.QSettings, logger: Logger):
+    def __init__(self, parent, dragonlog, settings: QtCore.QSettings, logger: Logger, local_cb: LocalCallbook):
         super().__init__(parent)
         self.dragonlog = dragonlog
         self.setupUi(self)
@@ -30,6 +31,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.log.debug(f'HamCC version: {hamcc.__version_str__}...')
 
         self.__settings__ = settings
+        self.__local_cb__ = local_cb
 
         self.__cc__ = hamcc.CassiopeiaConsole(self.__settings__.value('station/callsign', ''),
                                               self.__settings__.value('station/qth_loc', ''),
@@ -48,6 +50,48 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.bandComboBox.insertItems(1, bands)
         self.modeComboBox.insertItems(1, self.__settings__.value('ui/show_modes', []))
         self.eventComboBox.insertItems(3, CONTEST_IDS.keys())
+        self.ctyCtyLabel.setText(f'? ?, ?')
+        self.ctyAreaLabel.setText(f'DXCC=?, CQ=?, ITU=?')
+
+    def _check_worked_before_(self, call):
+        if check_call(call):
+            worked_dict = self.dragonlog.workedBefore(call)
+            worked_list = []
+            if worked_dict:
+                for call, data in zip(worked_dict.keys(), worked_dict.values()):
+                    if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
+                        continue
+                    worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
+                    if len(worked_list) == 3:
+                        break
+            if worked_list:
+                self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
+                self.resultLabel.setText('\n'.join(worked_list))
+
+    def _callbook_lookup_(self, call):
+        if not self.__local_cb__:
+            return
+
+        cb_data = self.__local_cb__.lookup(call, True)
+        if cb_data:
+            qso = self.__cc__.current_qso
+            if cb_data[1].qth and cb_data[1].locator and not 'QTH' in qso:
+                self.evaluate(f'@{cb_data[1].qth} ({cb_data[1].locator}) ')
+            elif cb_data[1].locator and not qso.get('GRIDSQUARE', ''):
+                self.evaluate(f'@{cb_data[1].locator} ')
+
+            if cb_data[1].name and not qso.get('NAME', ''):
+                self.evaluate(f'\'{cb_data[1].name} ')
+
+    def _lookup_cty_data_(self, call):
+        if call:
+            cdata: Country = self.dragonlog.cty_data(call)
+            if cdata:
+                self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
+                self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
+        else:
+            self.ctyCtyLabel.setText(f'? ?, ?')
+            self.ctyAreaLabel.setText(f'DXCC=?, CQ=?, ITU=?')
 
     def refreshDisplay(self):
         qso = self.__cc__.current_qso
@@ -108,14 +152,12 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.qslCheckBox.setChecked(qso.get('QSL_RCVD', 'N') == 'Y')
         self.commentLineEdit.setText(qso.get('COMMENT', ''))
 
-        if qso.get('CALL', ''):
-            cdata: Country = self.dragonlog.cty_data(qso['CALL'])
-            if cdata:
-                self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
-                self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
-        else:
-            self.ctyCtyLabel.setText(f'? ?, ?')
-            self.ctyAreaLabel.setText(f'DXCC=?, CQ=?, ITU=?')
+        call = self.__cc__.current_qso.get('CALL', '')
+        if call != self.__current_call__:
+            self.__current_call__ = call
+            self._check_worked_before_(call)
+            self._callbook_lookup_(call)
+            self._lookup_cty_data_(call)
 
         if qso.get('GRIDSQUARE', '') and qso.get('MY_GRIDSQUARE', ''):
             # noinspection PyBroadException
@@ -183,22 +225,34 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
 
-            call = self.__cc__.current_qso.get('CALL', '')
-            if call != self.__current_call__:
-                self.__current_call__ = call
-                if check_call(call):
-                    worked_dict = self.dragonlog.workedBefore(call)
-                    worked_list = []
-                    if worked_dict:
-                        for call, data in zip(worked_dict.keys(), worked_dict.values()):
-                            if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
-                                continue
-                            worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
-                            if len(worked_list) == 3:
-                                break
-                    if worked_list:
-                        self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
-                        self.resultLabel.setText('\n'.join(worked_list))
+            # call = self.__cc__.current_qso.get('CALL', '')
+            # if call != self.__current_call__:
+            #     self.__current_call__ = call
+            #     if check_call(call):
+            #         worked_dict = self.dragonlog.workedBefore(call)
+            #         worked_list = []
+            #         if worked_dict:
+            #             for call, data in zip(worked_dict.keys(), worked_dict.values()):
+            #                 if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
+            #                     continue
+            #                 worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
+            #                 if len(worked_list) == 3:
+            #                     break
+            #         if worked_list:
+            #             self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
+            #             self.resultLabel.setText('\n'.join(worked_list))
+
+            # cb_data = self.__local_cb__.lookup(call)#, True)
+            # print(cb_data)
+            # if cb_data:
+            #     qso = self.__cc__.current_qso
+            #     if cb_data[1].qth and cb_data[1].locator and not 'QTH' in qso:
+            #         self.evaluate(f'@{cb_data[1].qth} ({cb_data[1].locator}) ')
+            #     elif cb_data[1].locator and not qso.get('GRIDSQUARE', ''):
+            #         self.evaluate(f'@{cb_data[1].locator} ')
+            #
+            #     if cb_data[1].name and not qso.get('NAME', ''):
+            #         self.evaluate(f'\'{cb_data[1].name} ')
 
     def finaliseQSO(self):
         text = self.inputLineEdit.text()

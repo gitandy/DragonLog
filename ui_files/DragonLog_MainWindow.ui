@@ -54,9 +54,10 @@
      <string>File</string>
     </property>
     <addaction name="actionSelect_DB"/>
-    <addaction name="separator"/>
     <addaction name="actionExport"/>
     <addaction name="actionImport"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelect_callbook"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
@@ -1167,6 +1168,15 @@
     <string>Show statistics</string>
    </property>
   </action>
+  <action name="actionSelect_callbook">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:contents.png</normaloff>icons:contents.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select callbook...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -2066,6 +2076,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSelect_callbook</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectCallbook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2096,5 +2122,6 @@
   <slot>showContestHelp()</slot>
   <slot>markQSO()</slot>
   <slot>showStatistics()</slot>
+  <slot>selectCallbook()</slot>
  </slots>
 </ui>
