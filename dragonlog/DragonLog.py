@@ -45,13 +45,14 @@ from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedE
 from .DxSpots import DxSpots
 from .ContestDlg import ContestDialog
 from .ContestStatistics import ContestStatistics
-from .contest import CONTEST_IDS, CONTEST_NAMES, build_contest_list
+from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, build_contest_list, ExchangeData
 from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
 from .RigControl import RigControl
 from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
 from .local_callbook import LocalCallbook, LocalCallbookData, LocalCallbookDatabaseError
+from .local_callbook import LocalCallbook, LocalCallbookData, LocalCallbookDatabaseError, CallHistoryData
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -296,11 +297,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __db_view_mode_stat__ = '''CREATE VIEW IF NOT EXISTS mode_stat AS 
         SELECT mode, COUNT(*) as qsos FROM qsos GROUP BY mode;'''
 
+    __db_create_view_stmnt_qso_count__ = '''CREATE VIEW IF NOT EXISTS qso_count AS 
+                                      SELECT COUNT(id) as qsos FROM qsos;'''
+
     @staticmethod
-    def searchFile(name):
+    def searchFile(name) -> str | None:
         file = QtCore.QFile(name)
         if file.exists():
             return file.fileName()
+        else:
+            return None
 
     def __init__(self, file=None, app_path='.', ini_file=''):
         super().__init__()
@@ -314,6 +320,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.qso_form = None
         self.dxspots_widget = None
         self.cstats_widget = None
+
+        # Database
+        self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
         if ini_file:
             self.settings = QtCore.QSettings(ini_file, QtCore.QSettings.Format.IniFormat)
@@ -350,9 +359,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.addDockWidget(filter_dock_area, self.filterDockWidget)
         self.filterDockWidget.setVisible(bool(int(self.settings.value('ui/show_filter', 0))))
 
+        self.__recent_filter__ = ''
         self.__table_filter__ = ''
         self.filterDockWidget.visibilityChanged.connect(self.resetTableFilter)
         self.filterDockWidget.dockLocationChanged.connect(self.filterWidgetResize)
+        self.refreshFilterStatus()
 
         self.callbook_status = QtWidgets.QLabel(f'{self.tr("Callbook")}: {self.tr("None")}')
         self.statusBar().addPermanentWidget(self.callbook_status)
@@ -369,8 +380,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if self.settings.value('lastCallbookPath', None):
             try:
                 self.__local_cb__ = LocalCallbook(self.settings.value('lastCallbookPath'), self.log)
-                self.callbook_status.setText(
-                    f'{self.tr("Callbook")}: {self.__local_cb__.path} ({self.tr("%n entry", "", self.__local_cb__.callbook_entries)})')
+                self.updateCallbookStatus()
             except LocalCallbookDatabaseError as exc:
                 self.log.exception(exc)
 
@@ -560,9 +570,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.cstats_widget.toDateSelected.connect(self.fDateToLineEdit.editingFinished)
 
         self.keep_logging = False
-
-        # Database
-        self.__db_con__ = QtSql.QSqlDatabase.addDatabase('QSQLITE', 'main')
 
         if file:
             self.log.info(f'Opening database from commandline {file}...')
@@ -772,6 +779,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.exec(self.__db_view_qsl_stat__)
             self.__db_con__.exec(self.__db_view_band_stat__)
             self.__db_con__.exec(self.__db_view_mode_stat__)
+            self.__db_con__.exec(self.__db_create_view_stmnt_qso_count__)
 
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
@@ -854,19 +862,39 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             recent_filter = self.settings.value('ui/recent_qsos', self.tr('Show all'))
             if recent_filter == self.tr('Last week'):
-                return "DATE(date_time) > DATE('now', '-7 days')"
+                self.__recent_filter__ = "DATE(date_time) > DATE('now', '-7 days')"
             elif recent_filter == self.tr('Last month'):
-                return "DATE(date_time) > DATE('now', '-31 days')"
+                self.__recent_filter__ = "DATE(date_time) > DATE('now', '-31 days')"
             elif recent_filter == self.tr('Last half year'):
-                return "DATE(date_time) > DATE('now', '-183 days')"
+                self.__recent_filter__ = "DATE(date_time) > DATE('now', '-183 days')"
             elif recent_filter == self.tr('Last year'):
-                return "DATE(date_time) > DATE('now', '-365 days')"
+                self.__recent_filter__ = "DATE(date_time) > DATE('now', '-365 days')"
             else:
-                return ""
+                self.__recent_filter__ = ""
+            return self.__recent_filter__
 
     def setFilter(self):
         if self.QSOTableView.model():
             self.QSOTableView.model().setFilter(self.getFilter())
+            self.refreshFilterStatus()
+
+    def refreshFilterStatus(self):
+        qsos = 0
+        filtered_qsos = 0
+        if self.__db_con__:
+            query = self.__db_con__.exec('SELECT * FROM qso_count')
+            if query.next():
+                qsos = query.value(0)
+
+            if self.__table_filter__ or self.__recent_filter__:
+                filter_str = self.__table_filter__ if self.__table_filter__ else self.__recent_filter__
+                query = self.__db_con__.exec('SELECT COUNT(id) FROM qsos WHERE ' + filter_str)
+                if query.next():
+                    filtered_qsos = query.value(0)
+            else:
+                filtered_qsos = qsos
+
+        self.filterDockWidget.setWindowTitle(f'{self.tr("Filter")}: {filtered_qsos} / {qsos} QSOs')
 
     def setTableFilter(self):
         filter_set = []
@@ -985,6 +1013,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             'NAME_INTL': values[self.__sql_cols__.index('name') - 1],
             'QTH_INTL': values[self.__sql_cols__.index('qth') - 1],
             'GRIDSQUARE': values[self.__sql_cols__.index('locator') - 1],
+            'CONTEST_ID': values[self.__sql_cols__.index('contest_id') - 1],
+            'SRX_STRING': values[self.__sql_cols__.index('crx_data') - 1],
         }
         self.addQSOToCallbook(qso)
 
@@ -1261,8 +1291,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 f'{self.programName} - {self.tr("Error")}',
                 str(exc))
 
-    def _build_adif_export_(self, query_str, is_adx=False, include_id=False):
-        doc = {
+    def _build_adif_export_(self, query_str, is_adx=False, include_id=False) -> dict[
+        str, dict[str, str] | list[dict[str, str]] | None]:
+        doc: dict[
+            str, dict[str, str] | list[dict[str, str]] | None] = {
             'HEADER':
                 {
                     'ADIF_VER': '3.1.4',
@@ -1272,7 +1304,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 },
             'RECORDS': None,
         }
-        records = []
+        records: list[dict[str, str]] = []
 
         query = self.__db_con__.exec(query_str)
         if query.lastError().text():
@@ -1772,17 +1804,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.settings.setValue('lastCallbookPath', res[0])
 
                 # Check if DB needs init
-                if self.__local_cb__.is_new or self.__local_cb__.callbook_entries == 0:
-                    question = QtWidgets.QMessageBox.question(self, 'New or empty callbook',
-                                                              self.tr(
-                                                                  'Should the callbook be initialsed with the existing QSO data?'),
-                                                              QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
-                                                              QtWidgets.QMessageBox.StandardButton.Yes)
-                    if question == QtWidgets.QMessageBox.StandardButton.Yes:
-                        self.initialiseCallbook()
-
-                self.callbook_status.setText(
-                    f'{self.tr("Callbook")}: {self.__local_cb__.path} ({self.tr("%n entry", "", self.__local_cb__.callbook_entries)})')
+                if self.__local_cb__.is_new:
+                    if self.__local_cb__.callbook_entries == 0:
+                        question = QtWidgets.QMessageBox.question(self, self.tr('Empty callbook'),
+                                                                  self.tr(
+                                                                      'Should the callbook be initialsed with the existing QSO data?'),
+                                                                  QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                                                                  QtWidgets.QMessageBox.StandardButton.Yes)
+                        if question == QtWidgets.QMessageBox.StandardButton.Yes:
+                            self.initialiseCallbook(True)
+                    if self.__local_cb__.history_entries[0] == 0:
+                        question = QtWidgets.QMessageBox.question(self, self.tr('Empty call history'),
+                                                                  self.tr(
+                                                                      'Should the call history be initialsed with the existing contest data?'),
+                                                                  QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                                                                  QtWidgets.QMessageBox.StandardButton.Yes)
+                        if question == QtWidgets.QMessageBox.StandardButton.Yes:
+                            self.initialiseCallHistory(True)
+                else:
+                    self.updateCallbookStatus()
             except LocalCallbookDatabaseError:
                 QtWidgets.QMessageBox.critical(self,
                                                self.tr('Select callbook'),
@@ -1790,8 +1830,24 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             except Exception as exc:
                 self.log.exception(exc)
 
-    def initialiseCallbook(self):
+    def updateCallbookStatus(self):
+        info = (f'{self.__local_cb__.path} '
+                f'({self.tr("%n entry", "", self.__local_cb__.callbook_entries)}, '
+                f'{self.tr("%n history entry", "", self.__local_cb__.history_entries[0])})')
+        self.callbook_status.setText(f'{self.tr("Callbook")}: {"..." + info[-97:] if len(info) > 100 else info}')
+
+    def initialiseCallbook(self, no_warning=False):
         """Initialise an empty or new callbook from existing QSOs"""
+        if not no_warning:
+            question = QtWidgets.QMessageBox.question(self, self.tr('Refresh callbook'),
+                                                      self.tr(
+                                                          'Usually the callbook should be initialised and updated automatically with new QSOs.\n'
+                                                          'Should the callbook be refreshed anyway?'),
+                                                      QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                                                      QtWidgets.QMessageBox.StandardButton.No)
+            if question != QtWidgets.QMessageBox.StandardButton.Yes:
+                return
+
         query = self.__db_con__.exec('SELECT call_sign,name,qth,locator,band FROM qsos '
                                      'WHERE band != "11m" '
                                      'ORDER BY date_time')
@@ -1801,6 +1857,36 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         while query.next():
             lcd = LocalCallbookData(name=query.value(1), qth=query.value(2), locator=query.value(3))
             self.__local_cb__.add_entry(query.value(0), lcd)
+
+        self.updateCallbookStatus()
+
+    def initialiseCallHistory(self, no_warning=False):
+        """Initialise an empty call history from existing contests"""
+        if not no_warning:
+            question = QtWidgets.QMessageBox.question(self, self.tr('Refresh call history'),
+                                                      self.tr(
+                                                          'Usually the call history should be initialised and updated automatically with new QSOs.\n'
+                                                          'Should the call history be refreshed anyway?'),
+                                                      QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                                                      QtWidgets.QMessageBox.StandardButton.No)
+            if question != QtWidgets.QMessageBox.StandardButton.Yes:
+                return
+
+        query = self.__db_con__.exec('SELECT contest_id, call_sign, crx_data FROM qsos '
+                                     'WHERE band != "11m" and contest_id != ""'
+                                     'ORDER BY date_time')
+        if query.lastError().text():
+            raise Exception(query.lastError().text())
+
+        while query.next():
+            contest = CONTESTS.get(query.value(0), None)
+            if contest:
+                excd: ExchangeData = contest.extract_exchange(query.value(2))
+                if excd:
+                    chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok)
+                    self.__local_cb__.add_history(query.value(0), query.value(1), chd)
+
+        self.updateCallbookStatus()
 
     def updateQSOField(self, field: str, qso_id: int, value: str):
         """Update a single QSO field
@@ -2216,6 +2302,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                     qth=qso.get('QTH_INTL', qso.get('QTH', '')),
                                     locator=qso.get('GRIDSQUARE', ''))
             self.__local_cb__.add_entry(call, lcd)
+
+            contest_id = qso.get('CONTEST_ID', '')
+            if contest_id and qso.get('SRX_STRING', ''):
+                contest = CONTESTS.get(contest_id, None)
+                if contest:
+                    excd = contest.extract_exchange(qso.get('SRX_STRING', ''))
+                    if excd:
+                        chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok)
+                        self.__local_cb__.add_history(contest_id, call, chd)
 
     def fetchCCQSO(self):
         """Fetch QSOs from HamCC"""

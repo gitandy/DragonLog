@@ -58,6 +58,7 @@
     <addaction name="actionImport"/>
     <addaction name="separator"/>
     <addaction name="actionSelect_callbook"/>
+    <addaction name="actionRefresh_callbook"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
@@ -118,6 +119,8 @@
     <addaction name="actionExport_Contest_Log"/>
     <addaction name="separator"/>
     <addaction name="actionContests"/>
+    <addaction name="separator"/>
+    <addaction name="actionRefresh_call_history"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1177,6 +1180,24 @@
     <string>Select callbook...</string>
    </property>
   </action>
+  <action name="actionRefresh_callbook">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:refresh_callbook.png</normaloff>icons:refresh_callbook.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh callbook</string>
+   </property>
+  </action>
+  <action name="actionRefresh_call_history">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:refresh_history.png</normaloff>icons:refresh_history.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh call history</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -2092,6 +2113,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRefresh_call_history</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>initialiseCallHistory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRefresh_callbook</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>initialiseCallbook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2123,5 +2176,7 @@
   <slot>markQSO()</slot>
   <slot>showStatistics()</slot>
   <slot>selectCallbook()</slot>
+  <slot>initialiseCallbook()</slot>
+  <slot>initialiseCallHistory()</slot>
  </slots>
 </ui>

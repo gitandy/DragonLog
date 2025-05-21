@@ -1,6 +1,6 @@
 # DragonLog (c) 2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
-"""A local callbook for ham radio callsigna and associated data"""
+"""A local callbook for ham radio callsigns and associated data and contest call history"""
 
 import logging
 import sys
@@ -22,6 +22,7 @@ def get_cur_dt() -> str:
     return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
 
 
+# Local Callbook
 @dataclass
 class LocalCallbookData:
     """Callbook entry for a callsign"""
@@ -45,9 +46,30 @@ def convert_callbook_data(data: bytes) -> LocalCallbookData:
     return LocalCallbookData(**data)
 
 
-# Register the adapter and converter
 sqlite3.register_adapter(LocalCallbookData, adapt_callbook_data)
 sqlite3.register_converter('CALLBOOKDATA', convert_callbook_data)
+
+
+# Call history
+@dataclass
+class CallHistoryData:
+    """Represents history data for a callsign"""
+    locator: str = ''
+    power_class: str = ''
+    darc_dok: str = ''
+
+
+def adapt_history_data(chd: CallHistoryData) -> str:
+    return json.dumps(asdict(chd))
+
+
+def convert_history_data(data: bytes) -> CallHistoryData:
+    data = json.loads(data.decode('utf8'))
+    return CallHistoryData(**data)
+
+
+sqlite3.register_adapter(CallHistoryData, adapt_history_data)
+sqlite3.register_converter('CALLHISTORYDATA', convert_history_data)
 
 
 class LocalCallbookExportError(Exception):
@@ -69,12 +91,29 @@ class LocalCallbook:
                                 "data" CALLBOOKDATA NOT NULL
                              );'''
 
-    __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "callsign" ON "callbook" (
-                                    "callsign"
-                                 )'''
-
-    __db_create_view_stmnt__ = '''CREATE VIEW IF NOT EXISTS callbook_entries AS 
+    __db_create_view_stmnt_count__ = '''CREATE VIEW IF NOT EXISTS callbook_entries AS 
                                      SELECT COUNT(callsign) as entries FROM callbook'''
+
+    __db_create_stmnt_hist__ = '''CREATE TABLE IF NOT EXISTS "history" (
+                                "contest"    TEXT NOT NULL,
+                                "callsign"  TEXT NOT NULL,
+                                "recorded"  NUMERIC NOT NULL,
+                                "data" CALLHISTORYDATA
+                                );'''
+
+    __db_create_idx_stmnt_hist__ = '''CREATE INDEX IF NOT EXISTS "call_history" ON "history" (
+                                    "contest",
+                                    "callsign"
+                                );'''
+
+    __db_create_view_stmnt_hist_count__ = '''CREATE VIEW IF NOT EXISTS history_entries AS 
+                                     SELECT COUNT(contest) as entries, COUNT(DISTINCT contest) as contests FROM history;'''
+
+    __db_create_view_stmnt_hist__ = '''CREATE VIEW IF NOT EXISTS history_callbook AS
+                                    SELECT contest, history.callsign, history.recorded, history.data as history_data, 
+                                           callbook.data as callbook_data FROM history 
+                                    LEFT JOIN callbook 
+                                    ON history.callsign == callbook.callsign;'''
 
     def __init__(self, db_filename: str, logger=None):
         self.log = logging.getLogger(type(self).__name__)
@@ -102,17 +141,30 @@ class LocalCallbook:
         cur = self.__db__.execute('SELECT GROUP_CONCAT(NAME,",") as columns FROM PRAGMA_TABLE_INFO("callbook")')
         if not cur.fetchone()[0]:
             self.__new_db__ = True
-            self.log.debug('Initialising database...')
+            self.log.debug('Initialising table "callbook"...')
             self.__db__.execute(self.__db_create_stmnt__)
-            self.__db__.execute(self.__db_create_idx_stmnt__)
+        self.__db__.execute(self.__db_create_view_stmnt_count__)
 
-        self.__db__.execute(self.__db_create_view_stmnt__)
+        cur = self.__db__.execute('SELECT GROUP_CONCAT(NAME,",") as columns FROM PRAGMA_TABLE_INFO("history")')
+        if not cur.fetchone()[0]:
+            self.__new_db__ = True
+            self.log.debug('Initialising table "history"...')
+            self.__db__.execute(self.__db_create_stmnt_hist__)
+        self.__db__.execute(self.__db_create_idx_stmnt_hist__)
+        self.__db__.execute(self.__db_create_view_stmnt_hist_count__)
+        self.__db__.execute(self.__db_create_view_stmnt_hist__)
 
     @property
     def callbook_entries(self) -> int:
-        """The number of entries in th callbook"""
+        """The number of entries in the callbook"""
         cur = self.__db__.execute('SELECT * FROM callbook_entries')
         return cur.fetchone()[0]
+
+    @property
+    def history_entries(self) -> tuple[int, int]:
+        """The number of entries and contests in the history"""
+        cur = self.__db__.execute('SELECT * FROM history_entries')
+        return cur.fetchone()
 
     @property
     def path(self) -> str:
@@ -124,26 +176,30 @@ class LocalCallbook:
         """The database is new and may need some callbook entries"""
         return self.__new_db__
 
-    def import_from_csv(self, filename: str):
-        self.log.info(f'Importing from CSV "{filename}"...')
-
+    def import_callbook(self, filename: str):
+        self.log.info(f'Importing callbook from CSV "{filename}"...')
         try:
             with open(filename, encoding='utf-8') as cf:
                 reader = csv.DictReader(cf)
+                d_fields = [f.name for f in fields(LocalCallbookData)]
+                for hf in reader.fieldnames:
+                    if hf not in ('callsign', 'recorded') and hf not in d_fields:
+                        self.log.warning(f'Unsupported field "{hf}" in callbook import')
                 for row in reader:
-                    data = []
-                    for f in fields(LocalCallbookData):
-                        data.append(row.get(f, ''))
-                    self.add_entry(row['callsign'],
-                                   LocalCallbookData(*data))
+                    callsign = row.pop('callsign')
+                    row.pop('recorded', None)
+                    for f in tuple(row.keys()):
+                        if not f in d_fields:
+                            row.pop(f)
+                    if row:
+                        self.add_entry(callsign, LocalCallbookData(**row))
         except KeyError as exc:
-            raise LocalCallbookImportError(str(exc))
+            raise LocalCallbookImportError(f'Column {exc} is missing in callbook import') from None
         except OSError as exc:
-            raise LocalCallbookImportError(str(exc))
+            raise LocalCallbookImportError(str(exc)) from None
 
-    def export_to_csv(self, filename: str):
+    def export_callbook(self, filename: str):
         self.log.info(f'Exporting to CSV "{filename}"...')
-
         try:
             with open(filename, 'w', newline='', encoding='utf-8') as cf:
                 writer = csv.writer(cf)
@@ -156,12 +212,12 @@ class LocalCallbook:
                 for row in cur.fetchall():
                     writer.writerow(row[:2] + astuple(row[2]))
         except OSError as exc:
-            raise LocalCallbookExportError(str(exc))
+            raise LocalCallbookExportError(str(exc)) from None
 
-    def add_entry(self, callsign: str, data: LocalCallbookData, no_commit=False):
-        """Stores a set of callbook data for a callsign
+    def add_entry(self, callsign: str, data: LocalCallbookData):
+        """Stores or updates a set of callbook data for a callsign
         if an entry allready exists the existing data is used to fill gaps in the newly provided data
-        :param callsign: the callsing to search for
+        :param callsign: the callsign to associate the data to
         :param data: the callbook date to store
         """
         callsign = callsign.upper()
@@ -185,15 +241,76 @@ class LocalCallbook:
             self.__db__.execute('INSERT INTO callbook(callsign, recorded, data) VALUES(?,?,?)',
                                 (callsign, get_cur_dt(), data))
 
-        if no_commit:
-            return
+        self.__db__.commit()
 
+    def import_history(self, filename: str):
+        self.log.info(f'Importing history from CSV "{filename}"...')
+        try:
+            with open(filename, encoding='utf-8') as cf:
+                reader = csv.DictReader(cf)
+                d_fields = [f.name for f in fields(CallHistoryData)]
+                for hf in reader.fieldnames:
+                    if hf not in ('contest', 'callsign', 'recorded') and hf not in d_fields:
+                        self.log.warning(f'Unsupported field "{hf}" in history import')
+                for row in reader:
+                    contest = row.pop('contest')
+                    callsign = row.pop('callsign')
+                    row.pop('recorded', None)
+                    for f in tuple(row.keys()):
+                        if not f in d_fields:
+                            row.pop(f)
+                    if row:
+                        self.add_history(contest, callsign, CallHistoryData(**row))
+        except KeyError as exc:
+            raise LocalCallbookImportError(f'Column {exc} is missing in history import') from None
+        except OSError as exc:
+            raise LocalCallbookImportError(str(exc)) from None
+
+    def export_history(self, filename: str, contest: str = None):
+        self.log.info(f'Exporting history to CSV "{filename}"...')
+        try:
+            with open(filename, 'w', newline='', encoding='utf-8') as cf:
+                writer = csv.writer(cf)
+
+                # Write header
+                writer.writerow(['contest', 'callsign', 'recorded'] + [f.name for f in fields(CallHistoryData)])
+
+                if contest:
+                    cur = self.__db__.execute('SELECT * FROM history '
+                                              'WHERE contest=? '
+                                              'ORDER BY callsign', (contest,))
+                else:
+                    cur = self.__db__.execute('SELECT * FROM history '
+                                              'ORDER BY contest, callsign')
+                row: tuple[str, str, str, CallHistoryData]
+                for row in cur.fetchall():
+                    writer.writerow(row[:3] + astuple(row[3]))
+        except OSError as exc:
+            raise LocalCallbookExportError(str(exc))
+
+    def add_history(self, contest: str, callsign: str, data: CallHistoryData):
+        """Stores or updates a set of contest call history data
+        Existing data sets are updated as whole
+        :param contest: the contest to associate the data to
+        :param callsign: the callsign to associate the data to
+        :param data: the callbook date to store
+        """
+        callsign = callsign.upper()
+        self.log.info(f'Inserting or updating {callsign} for {contest}...')
+        cur = self.__db__.execute('UPDATE history SET recorded=?, data=? '
+                                  'WHERE contest=? and callsign=?',
+                                  (get_cur_dt(), data, contest, callsign))
+        if cur.rowcount < 1:
+            self.__db__.execute('INSERT INTO history(contest, callsign, recorded, data) '
+                                'VALUES(?,?,?,?)',
+                                (contest, callsign, get_cur_dt(), data))
         self.__db__.commit()
 
     def lookup(self, callsign: str, any_fix=False) -> tuple[str, LocalCallbookData] | None:
         """Searches for data for a callsign
         :param callsign: the callsing to search for
         :param any_fix: search for callsign with any prefix/suffix on no result
+        :return: a tuple of callsign and data
         """
         callsign = callsign.upper()
         cur = self.__db__.execute('SELECT callsign, data FROM callbook '
@@ -213,7 +330,44 @@ class LocalCallbook:
 
         return res
 
+    def lookup_history(self, contest: str, callsign: str,
+                       any_fix=False, any_contest=False) -> tuple[
+                                                                str, str, CallHistoryData, LocalCallbookData] | None:
+        """Searches for data for a callsign in a contest
+        If any_suffix and any_contest are used together they are tried in that order
+        :param contest: the contest to search for
+        :param callsign: the callsing to search for
+        :param any_fix: search for callsign with any prefix/suffix on no result
+        :param any_contest: search for callsign in any contest on no result (returns latests result)
+        :return: a tuple of contest, callsign, history data, callbook data (if available)
+        """
+        callsign = callsign.upper()
+        cur = self.__db__.execute('SELECT contest, callsign, history_data, callbook_data FROM history_callbook '
+                                  'WHERE contest=? and callsign=? '
+                                  'ORDER BY recorded DESC',
+                                  (contest, callsign))
+
+        res = cur.fetchone()
+        if not res and any_fix:
+            self.log.debug('Searching history for any suffix...')
+            cur = self.__db__.execute('SELECT contest, callsign, history_data, callbook_data FROM history_callbook '
+                                      'WHERE contest=? and (callsign LIKE ? or callsign LIKE ? or callsign LIKE ?) '
+                                      'ORDER BY recorded DESC',
+                                      (contest, f'{callsign}/%', f'%/{callsign}', f'%/{callsign}/%'))
+            res = cur.fetchone()
+
+        if cur.rowcount < 1 and any_contest:
+            self.log.debug('Searching history in any contest...')
+            cur = self.__db__.execute('SELECT contest, callsign, history_data, callbook_data FROM history_callbook '
+                                      'WHERE callsign=? '
+                                      'ORDER BY recorded DESC',
+                                      (callsign,))
+            res = cur.fetchone()
+
+        return res
+
     def close(self):
+        """Explicitly close the database after running a cleanup and optimisation"""
         self.log.info('Reducing and optimising database...')
         self.__db__.execute('VACUUM;')
         self.__db__.execute('PRAGMA optimize;')
@@ -221,4 +375,5 @@ class LocalCallbook:
         self.__db__.close()
 
 
-__all__ = [LocalCallbook, LocalCallbookData, LocalCallbookExportError, LocalCallbookImportError]
+__all__ = [LocalCallbook, LocalCallbookData, CallHistoryData,
+           LocalCallbookExportError, LocalCallbookImportError, LocalCallbookDatabaseError]

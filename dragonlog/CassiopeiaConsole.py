@@ -68,20 +68,34 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
                 self.resultLabel.setText('\n'.join(worked_list))
 
-    def _callbook_lookup_(self, call):
+    def _callbook_lookup_(self, call: str, contest: str = ''):
         if not self.__local_cb__:
             return
 
-        cb_data = self.__local_cb__.lookup(call, True)
-        if cb_data:
-            qso = self.__cc__.current_qso
-            if cb_data[1].qth and cb_data[1].locator and not 'QTH' in qso:
-                self.evaluate(f'@{cb_data[1].qth} ({cb_data[1].locator}) ')
-            elif cb_data[1].locator and not qso.get('GRIDSQUARE', ''):
-                self.evaluate(f'@{cb_data[1].locator} ')
+        if contest and self.__local_cb__.history_entries[0]:
+            ch_data = self.__local_cb__.lookup_history(contest, call, True)
+            if ch_data:
+                if ch_data[2]:
+                    exc_data = ExchangeData(locator=ch_data[2].locator,
+                                            power=ch_data[2].power_class,
+                                            darc_dok=ch_data[2].darc_dok)
+                    contest = CONTESTS.get(contest, None)
+                    self.evaluate(f'%{contest.prepare_exchange(exc_data)} ')
 
-            if cb_data[1].name and not qso.get('NAME', ''):
-                self.evaluate(f'\'{cb_data[1].name} ')
+                if ch_data[3]:
+                    if ch_data[3].name:
+                        self.evaluate(f'\'{ch_data[3].name} ')
+        else:
+            cb_data = self.__local_cb__.lookup(call, True)
+            if cb_data:
+                qso = self.__cc__.current_qso
+                if cb_data[1].qth and cb_data[1].locator and not 'QTH' in qso:
+                    self.evaluate(f'@{cb_data[1].qth} ({cb_data[1].locator}) ')
+                elif cb_data[1].locator and not qso.get('GRIDSQUARE', ''):
+                    self.evaluate(f'@{cb_data[1].locator} ')
+
+                if cb_data[1].name and not qso.get('NAME', ''):
+                    self.evaluate(f'\'{cb_data[1].name} ')
 
     def _lookup_cty_data_(self, call):
         if call:
@@ -156,7 +170,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         if call != self.__current_call__:
             self.__current_call__ = call
             self._check_worked_before_(call)
-            self._callbook_lookup_(call)
+            self._callbook_lookup_(call, self.__cc__.current_qso.get('CONTEST_ID', ''))
             self._lookup_cty_data_(call)
 
         if qso.get('GRIDSQUARE', '') and qso.get('MY_GRIDSQUARE', ''):

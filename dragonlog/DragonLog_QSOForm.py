@@ -12,7 +12,7 @@ from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_
 from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from . import ColorPalettes
-from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog
+from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog, ExchangeData
 from .distance import distance
 from .cty import Country
 from .local_callbook import LocalCallbook
@@ -157,11 +157,29 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.worked_dialog.hide()
 
     def _callbook_lookup_(self):
-        if not self.__local_cb__:
+        call = self.callSignLineEdit.text().strip()
+        if not self.__local_cb__ or not call:
             return
 
-        call = self.callSignLineEdit.text().strip()
-        if call:
+        contest = CONTEST_IDS.get(self.contestComboBox.currentText(), None)
+        if contest and self.__local_cb__.history_entries[0]:
+            ch_data = self.__local_cb__.lookup_history(contest, call, True)
+            if ch_data:
+                if ch_data[2] and not self.rcvdDataLineEdit.text():
+                    exc_data = ExchangeData(locator=ch_data[2].locator,
+                                            power=ch_data[2].power_class,
+                                            darc_dok=ch_data[2].darc_dok)
+                    contest = CONTESTS.get(contest, None)
+                    self.rcvdDataLineEdit.setText(contest.prepare_exchange(exc_data))
+
+                if ch_data[3]:
+                    if ch_data[3].name and not self.nameLineEdit.text():
+                        self.nameLineEdit.setText(ch_data[3].name)
+                    if ch_data[3].qth and not self.QTHLineEdit.text():
+                        self.QTHLineEdit.setText(ch_data[3].qth)
+                    if ch_data[3].locator and not self.locatorLineEdit.text():
+                        self.locatorLineEdit.setText(ch_data[3].locator)
+        else:
             lcd = self.__local_cb__.lookup(call, True)
             if lcd:
                 if not self.nameLineEdit.text().strip() and lcd[1].name:
