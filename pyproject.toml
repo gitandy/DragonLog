@@ -7,7 +7,7 @@ authors = [
 description = "Log QSO for Ham radio"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["PyQt6", "maidenhead", "PyADIF-File~=1.3", "keyring", "requests", "xmltodict", "HamCC~=1.0"]
+dependencies = ["PyQt6", "maidenhead", "PyADIF-File~=1.3", "keyring", "requests", "xmltodict", "HamCC~=1.0", "numpy"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: End Users/Desktop",
@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-extra=["openpyxl"]
+xlformat=["openpyxl"]
 
 [project.urls]
 "Homepage" = "https://github.com/gitandy/DragonLog?tab=readme-ov-file#dragonlog"

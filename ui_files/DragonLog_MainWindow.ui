@@ -91,6 +91,7 @@
     <addaction name="actionShow_filter"/>
     <addaction name="actionShow_DX_Spots"/>
     <addaction name="actionShow_log"/>
+    <addaction name="actionShow_statistics"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
@@ -142,6 +143,8 @@
    <addaction name="actionStart_hamlib_TB"/>
    <addaction name="actionLog_QSO_TB"/>
    <addaction name="actionWatch_file_for_QSOs_TB"/>
+   <addaction name="separator"/>
+   <addaction name="actionShow_statistics_TB"/>
   </widget>
   <widget class="QDockWidget" name="logDockWidget">
    <property name="sizePolicy">
@@ -1140,6 +1143,30 @@
     <string>Ctrl+T</string>
    </property>
   </action>
+  <action name="actionShow_statistics">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:log.png</normaloff>icons:log.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show statistics</string>
+   </property>
+  </action>
+  <action name="actionShow_statistics_TB">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:log.png</normaloff>icons:log.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show statistics</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -2007,6 +2034,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionShow_statistics</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showStatistics()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_statistics_TB</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showStatistics()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2036,5 +2095,6 @@
   <slot>exportContestLog()</slot>
   <slot>showContestHelp()</slot>
   <slot>markQSO()</slot>
+  <slot>showStatistics()</slot>
  </slots>
 </ui>

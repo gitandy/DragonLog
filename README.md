@@ -24,10 +24,11 @@ Features
 * distance calculation
 * automatic time
 * callbook search (HamQTH.com and QRZCQ.com)
-* Single and multiple QSO log upload 
+* single and multiple QSO log upload 
   * HamQTH.com
   * eQSL upload, check and download
   * LoTW signing, upload and check status
+* basic statistics (soon with graphics)
 * log Contests and xOTA QSOs data (supported Contests see `Help - Available Contests`)
   * follow Contest statistics
   * export Contest log as Cabrillo, EDI or special file formats

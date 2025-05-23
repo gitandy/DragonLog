@@ -50,6 +50,7 @@ from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
 from .RigControl import RigControl
 from . import ColorPalettes
+from .DragonLog_Statistics import StatisticsWidget
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -212,49 +213,49 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     )
 
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "qsos" (
-                            "id"    INTEGER PRIMARY KEY NOT NULL,
-                            "date_time"   NUMERIC,
-                            "date_time_off"   NUMERIC,
-                            "own_callsign" TEXT,
-                            "call_sign"  TEXT,
-                            "name"  TEXT,
-                            "qth"    TEXT,
-                            "locator" TEXT,
-                            "rst_sent" TEXT,
-                            "rst_rcvd" TEXT,
-                            "band"    TEXT,
-                            "mode"   TEXT,
-                            "submode"  TEXT,
-                            "freq"  REAL,
-                            "channel"  INTEGER,
-                            "power"  REAL,
-                            "propagation"  TEXT,
-                            "own_name"  TEXT,
-                            "own_qth"   TEXT,
-                            "own_locator" TEXT,
-                            "radio"   TEXT,
-                            "antenna"   TEXT,
-                            "remarks"   TEXT,
-                            "comments"   TEXT,
-                            "dist" INTEGER,
-                            "qsl_via"   TEXT,
-                            "qsl_path"   TEXT,
-                            "qsl_msg"   TEXT,
-                            "qsl_sent"   TEXT,
-                            "qsl_rcvd"   TEXT,
-                            "eqsl_sent"   TEXT,
-                            "eqsl_rcvd"   TEXT,
-                            "lotw_sent"   TEXT,
-                            "lotw_rcvd"   TEXT,
-                            "hamqth"   TEXT,
-                            "contest_id" TEXT,
-                            "ctx_qso_id" INTEGER,
-                            "crx_qso_id" INTEGER,
-                            "crx_data" TEXT,
-                            "event" TEXT, 
-                            "evt_tx_exch" TEXT, 
-                            "evt_rx_exch" TEXT
-                        );'''
+        "id"    INTEGER PRIMARY KEY NOT NULL,
+        "date_time"   NUMERIC,
+        "date_time_off"   NUMERIC,
+        "own_callsign" TEXT,
+        "call_sign"  TEXT,
+        "name"  TEXT,
+        "qth"    TEXT,
+        "locator" TEXT,
+        "rst_sent" TEXT,
+        "rst_rcvd" TEXT,
+        "band"    TEXT,
+        "mode"   TEXT,
+        "submode"  TEXT,
+        "freq"  REAL,
+        "channel"  INTEGER,
+        "power"  REAL,
+        "propagation"  TEXT,
+        "own_name"  TEXT,
+        "own_qth"   TEXT,
+        "own_locator" TEXT,
+        "radio"   TEXT,
+        "antenna"   TEXT,
+        "remarks"   TEXT,
+        "comments"   TEXT,
+        "dist" INTEGER,
+        "qsl_via"   TEXT,
+        "qsl_path"   TEXT,
+        "qsl_msg"   TEXT,
+        "qsl_sent"   TEXT,
+        "qsl_rcvd"   TEXT,
+        "eqsl_sent"   TEXT,
+        "eqsl_rcvd"   TEXT,
+        "lotw_sent"   TEXT,
+        "lotw_rcvd"   TEXT,
+        "hamqth"   TEXT,
+        "contest_id" TEXT,
+        "ctx_qso_id" INTEGER,
+        "crx_qso_id" INTEGER,
+        "crx_data" TEXT,
+        "event" TEXT, 
+        "evt_tx_exch" TEXT, 
+        "evt_rx_exch" TEXT
+        );'''
 
     __db_create_idx_stmnt__ = '''CREATE INDEX IF NOT EXISTS "find_qso" ON "qsos" (
                                     "date_time",
@@ -267,6 +268,32 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     __db_update_stmnt__ = 'UPDATE qsos SET ' + "=?,".join(__sql_cols__[1:]) + '=? ' \
                                                                               'WHERE id = ?'
     __db_select_stmnt__ = 'SELECT * FROM qsos'
+
+    # Statistic views
+    __db_view_qso_stat__ = '''CREATE VIEW IF NOT EXISTS qso_stat AS
+        SELECT strftime('%Y', date_time) as year, COUNT(id) as qsos, COUNT(DISTINCT mode) as modes, 
+            COUNT(DISTINCT band) as bands, COUNT(DISTINCT upper(substr(locator, 0, 4))) as gridsquares, 
+            COUNT(nullif(contest_id = '', 1)) as contest_qsos
+        FROM qsos GROUP BY year
+        UNION SELECT 'Total', COUNT(id), COUNT(DISTINCT mode), COUNT(DISTINCT band), 
+            COUNT(DISTINCT upper(substr(locator, 0, 4))), COUNT(nullif(contest_id = '', 1)) 
+        FROM qsos;'''
+    __db_view_qsl_stat__ = '''CREATE VIEW IF NOT EXISTS qsl_stat AS 
+        SELECT
+            strftime('%Y', date_time) as year, COUNT(id) as qsos, 
+            COUNT(nullif(qsl_sent != 'Y', 1)) as qsl_sent, COUNT(nullif(qsl_rcvd != 'Y', 1)) as qsl_rcvd,
+            COUNT(nullif(eqsl_sent != 'Y', 1)) as eqsl_sent, COUNT(nullif(eqsl_rcvd != 'Y', 1)) as eqsl_rcvd,
+            COUNT(nullif(lotw_sent != 'Y', 1)) as lotw_sent, COUNT(nullif(lotw_rcvd != 'Y', 1)) as lotw_rcvd
+        FROM qsos GROUP BY year
+        UNION SELECT 'Total', COUNT(id) as qsos, 
+            COUNT(nullif(qsl_sent != 'Y', 1)), COUNT(nullif(qsl_rcvd != 'Y', 1)),
+            COUNT(nullif(eqsl_sent != 'Y', 1)), COUNT(nullif(eqsl_rcvd != 'Y', 1)),
+            COUNT(nullif(lotw_sent != 'Y', 1)), COUNT(nullif(lotw_rcvd != 'Y', 1)) 
+        FROM qsos;'''
+    __db_view_band_stat__ = '''CREATE VIEW IF NOT EXISTS band_stat AS 
+        SELECT band, COUNT(*) as qsos FROM qsos GROUP BY band;'''
+    __db_view_mode_stat__ = '''CREATE VIEW IF NOT EXISTS mode_stat AS 
+        SELECT mode, COUNT(*) as qsos FROM qsos GROUP BY mode;'''
 
     @staticmethod
     def searchFile(name):
@@ -658,6 +685,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
+            self.__db_con__.exec(self.__db_view_qso_stat__)
+            self.__db_con__.exec(self.__db_view_qsl_stat__)
+            self.__db_con__.exec(self.__db_view_band_stat__)
+            self.__db_con__.exec(self.__db_view_mode_stat__)
 
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
@@ -721,6 +752,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.debug('Initialise database if necessary...')
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
+            self.__db_con__.exec(self.__db_view_qso_stat__)
+            self.__db_con__.exec(self.__db_view_qsl_stat__)
+            self.__db_con__.exec(self.__db_view_band_stat__)
+            self.__db_con__.exec(self.__db_view_mode_stat__)
 
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
@@ -757,6 +792,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.actionCheck_eQSL.setEnabled(True)
             self.actionDownload_eQSL.setEnabled(True)
             self.actionUpload_to_HamQTH.setEnabled(True)
+            self.actionShow_statistics.setEnabled(True)
+            self.actionShow_statistics_TB.setEnabled(True)
         except DatabaseOpenException as exc:
             self.log.exception(exc)
             if db_file == self.settings.value('lastDatabase', None):
@@ -2315,6 +2352,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             return self.__cty__.country(call)
         except (CountryNotFoundException, CountryCodeNotFoundException):
             pass
+
+    def showStatistics(self):
+        StatisticsWidget(self, f'{self.programName} - {self.tr("Statistic")}',
+                         self.__db_con__, tuple(self.bands.keys()))
 
     def createHelpDlg(self, title: str, help_text: str):
         help_dialog = QtWidgets.QDialog(self)
