@@ -1856,7 +1856,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         while query.next():
             lcd = LocalCallbookData(name=query.value(1), qth=query.value(2), locator=query.value(3))
-            self.__local_cb__.add_entry(query.value(0), lcd)
+            self.__local_cb__.update_entry(query.value(0), lcd)
 
         self.updateCallbookStatus()
 
@@ -1884,7 +1884,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 excd: ExchangeData = contest.extract_exchange(query.value(2))
                 if excd:
                     chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok)
-                    self.__local_cb__.add_history(query.value(0), query.value(1), chd)
+                    self.__local_cb__.update_history(query.value(0), query.value(1), chd)
 
         self.updateCallbookStatus()
 
@@ -2301,7 +2301,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             lcd = LocalCallbookData(name=qso.get('NAME_INTL', qso.get('NAME', '')),
                                     qth=qso.get('QTH_INTL', qso.get('QTH', '')),
                                     locator=qso.get('GRIDSQUARE', ''))
-            self.__local_cb__.add_entry(call, lcd)
+            self.__local_cb__.update_entry(call, lcd)
 
             contest_id = qso.get('CONTEST_ID', '')
             if contest_id and qso.get('SRX_STRING', ''):
@@ -2310,7 +2310,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     excd = contest.extract_exchange(qso.get('SRX_STRING', ''))
                     if excd:
                         chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok)
-                        self.__local_cb__.add_history(contest_id, call, chd)
+                        self.__local_cb__.update_history(contest_id, call, chd)
 
     def fetchCCQSO(self):
         """Fetch QSOs from HamCC"""

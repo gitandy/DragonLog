@@ -23,7 +23,11 @@ Features
 * show worked before if a callsign is already logged
 * distance calculation
 * automatic time
-* callbook search (HamQTH.com and QRZCQ.com)
+* local callbook with immediate lookup
+  * OM data build of your contacts (per callsign)
+  * contest call history with received exchanges (per contest and callsign)
+  * incorporating prefixes/suffixes
+* user triggered callbook search (HamQTH.com and QRZCQ.com)
 * single and multiple QSO log upload 
   * HamQTH.com
   * eQSL upload, check and download
@@ -123,10 +127,18 @@ If automatic time is selected, the end time gets updated at saving the QSO.
 
 QSOs can be edited by double-clicking on an entry in the database view.
 
-DragonLog can retrieve additional OM data from HamQTH.com or QRZCQ.com callbook and upload the QSO to different services.
-
-In log and change mode there is a second view for QSL and different upload status.
+In log and change mode there is an extra tab for QSL and different upload status.
 Here you can check the status of your paper QSL, eQSL inbox or LoTW QSLs.
+
+### Callbook lookup
+
+The different callbook lookup retreive locator, QTH and name for a callsign.
+If a lookup result is available (internal or external), only empty form fields are filled with this data.
+
+A callsign lookup on the internal callbook happens after typing a callsign. 
+On saving the QSO the data gets added to or updated in the internal callbook.
+
+DragonLog can retrieve additional OM data from HamQTH.com or QRZCQ.com callbook and upload the QSO to different services.
 
 Make sure that you properly set the credentials for each online service in the settings.
 The password is stored in the systems key vault (e.g. Credential Manager on Windows or KWallet on KDE/Linux).
@@ -163,13 +175,17 @@ Then you should start to log QSOs with either CassipeiaConsole (heavily suggeste
 For contests you do not have to track your sent exchange. DragonLog will care about at export.
 So just let the running number increase and care about the received exchange from your QSO partner.
 
-After the contest, use File - Export Contest... to generate a contest file in the special format (e.g. Cabrillo).
+After the contest, use Contest - Export Contest... to generate a contest file in the special format (e.g. Cabrillo).
 The contest name and dates should be preset in the dialog from the Contest Statistics. These informations maybe important, 
 as DragonLog may build your sent exchange out of them.
 
 **Please check the exported file properly before sending it in!!!**
 
-Especially an EDI file will need some care, due to not all the data is handled via the dialog.
+During a contest the call lookup is performed against the call history instead of the internal callbook.
+After typing a callsign the received exchange will be filled with data from the lookup.
+
+After saving a QSO in a running contest, the received exchange data is added to or updated in the call history.
+The callbook will also be updated.
 
 Export
 ------
@@ -242,7 +258,7 @@ If you want to update it manually visit https://www.country-files.com/category/b
 and download a Big CTY Zip file. 
 Unpack the Zip and goto Settings - Dx Spots to select the file.
 You can check if the file is correctly loaded via Help - About. 
-Check if the Version date and Version entity corresponds to the website.
+Check if the version date and version entity corresponds to the website.
 
 The flag display is based on the mapping from [Flagpedia.net](https://flagpedia.net) 
 and matched against the Big CTY data. This is sometimes weak and thus error prone and needed manual fixes. 
@@ -253,4 +269,4 @@ The mapping does not reflect my view on country borders.
 
 Copyright
 ---------
-DragonLog &copy; 2023-2024 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
+DragonLog &copy; 2023 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 

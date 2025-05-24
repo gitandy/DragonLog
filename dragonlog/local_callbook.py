@@ -9,6 +9,7 @@ import json
 import sqlite3
 import datetime
 from dataclasses import dataclass, fields, astuple, asdict
+from enum import Enum, auto
 
 from dragonlog.RegEx import check_call
 
@@ -84,6 +85,12 @@ class LocalCallbookDatabaseError(Exception):
     pass
 
 
+class UpdateMode(Enum):
+    Complement = auto()
+    Overwrite = auto()
+    Substitute = auto()
+
+
 class LocalCallbook:
     __db_create_stmnt__ = '''CREATE TABLE IF NOT EXISTS "callbook" (
                                 "callsign"  TEXT PRIMARY KEY NOT NULL,
@@ -115,13 +122,14 @@ class LocalCallbook:
                                     LEFT JOIN callbook 
                                     ON history.callsign == callbook.callsign;'''
 
-    def __init__(self, db_filename: str, logger=None):
+    def __init__(self, db_filename: str, logger=None, csv_delimiter: str = ','):
         self.log = logging.getLogger(type(self).__name__)
         if logger:
             self.log.setLevel(logger.loglevel)
             self.log.addHandler(logger)
         self.log.debug('Initialising...')
 
+        self.__csv_delimiter__ = csv_delimiter
         self.__new_db__ = False
         try:
             self.__db__ = sqlite3.connect(db_filename, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -180,7 +188,7 @@ class LocalCallbook:
         self.log.info(f'Importing callbook from CSV "{filename}"...')
         try:
             with open(filename, encoding='utf-8') as cf:
-                reader = csv.DictReader(cf)
+                reader = csv.DictReader(cf, delimiter=self.__csv_delimiter__)
                 d_fields = [f.name for f in fields(LocalCallbookData)]
                 for hf in reader.fieldnames:
                     if hf not in ('callsign', 'recorded') and hf not in d_fields:
@@ -192,7 +200,7 @@ class LocalCallbook:
                         if not f in d_fields:
                             row.pop(f)
                     if row:
-                        self.add_entry(callsign, LocalCallbookData(**row))
+                        self.update_entry(callsign, LocalCallbookData(**row), UpdateMode.Substitute)
         except KeyError as exc:
             raise LocalCallbookImportError(f'Column {exc} is missing in callbook import') from None
         except OSError as exc:
@@ -202,7 +210,7 @@ class LocalCallbook:
         self.log.info(f'Exporting to CSV "{filename}"...')
         try:
             with open(filename, 'w', newline='', encoding='utf-8') as cf:
-                writer = csv.writer(cf)
+                writer = csv.writer(cf, delimiter=self.__csv_delimiter__)
                 # Write header
                 writer.writerow(['callsign', 'recorded'] + [f.name for f in fields(LocalCallbookData)])
 
@@ -214,22 +222,31 @@ class LocalCallbook:
         except OSError as exc:
             raise LocalCallbookExportError(str(exc)) from None
 
-    def add_entry(self, callsign: str, data: LocalCallbookData):
+    def update_entry(self, callsign: str, data: LocalCallbookData, mode: UpdateMode = UpdateMode.Overwrite):
         """Stores or updates a set of callbook data for a callsign
-        if an entry allready exists the existing data is used to fill gaps in the newly provided data
+        if an entry allready exists the existing data is used depending on the update mode
         :param callsign: the callsign to associate the data to
-        :param data: the callbook date to store
+        :param data: the callbook date to store (existing data is complemented)
+        :param mode: overwrite with new data, complement existing data, substitute completly with new data
         """
         callsign = callsign.upper()
-        old_data = self.lookup(callsign)
-        if old_data:
-            # Try to fill missing fields with known data
-            old_data = asdict(old_data[1])
-            data_dict = asdict(data)
-            for f in data_dict:
-                if not data_dict[f]:
-                    data_dict[f] = old_data[f]
-            data = LocalCallbookData(**data_dict)
+        if mode != UpdateMode.Substitute:
+            old_data = self.lookup(callsign)
+            if old_data:
+                old_data = asdict(old_data[1])
+                data_dict = asdict(data)
+                if mode == UpdateMode.Complement:
+                    # Try to fill missing fields with new data
+                    for f in old_data:
+                        if not old_data[f]:
+                            old_data[f] = data_dict[f]
+                    data = LocalCallbookData(**old_data)
+                else:
+                    # Try to fill missing new fields with known data
+                    for f in data_dict:
+                        if not data_dict[f]:
+                            data_dict[f] = old_data[f]
+                    data = LocalCallbookData(**data_dict)
 
             # Update data set
             self.log.info(f'Updating {callsign}...')
@@ -247,7 +264,7 @@ class LocalCallbook:
         self.log.info(f'Importing history from CSV "{filename}"...')
         try:
             with open(filename, encoding='utf-8') as cf:
-                reader = csv.DictReader(cf)
+                reader = csv.DictReader(cf, delimiter=self.__csv_delimiter__)
                 d_fields = [f.name for f in fields(CallHistoryData)]
                 for hf in reader.fieldnames:
                     if hf not in ('contest', 'callsign', 'recorded') and hf not in d_fields:
@@ -260,7 +277,7 @@ class LocalCallbook:
                         if not f in d_fields:
                             row.pop(f)
                     if row:
-                        self.add_history(contest, callsign, CallHistoryData(**row))
+                        self.update_history(contest, callsign, CallHistoryData(**row))
         except KeyError as exc:
             raise LocalCallbookImportError(f'Column {exc} is missing in history import') from None
         except OSError as exc:
@@ -270,7 +287,7 @@ class LocalCallbook:
         self.log.info(f'Exporting history to CSV "{filename}"...')
         try:
             with open(filename, 'w', newline='', encoding='utf-8') as cf:
-                writer = csv.writer(cf)
+                writer = csv.writer(cf, delimiter=self.__csv_delimiter__)
 
                 # Write header
                 writer.writerow(['contest', 'callsign', 'recorded'] + [f.name for f in fields(CallHistoryData)])
@@ -288,7 +305,7 @@ class LocalCallbook:
         except OSError as exc:
             raise LocalCallbookExportError(str(exc))
 
-    def add_history(self, contest: str, callsign: str, data: CallHistoryData):
+    def update_history(self, contest: str, callsign: str, data: CallHistoryData):
         """Stores or updates a set of contest call history data
         Existing data sets are updated as whole
         :param contest: the contest to associate the data to
