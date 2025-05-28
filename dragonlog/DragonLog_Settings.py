@@ -239,6 +239,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.expOwnNotesADIFCheckBox.setChecked(bool(int(self.settings.value('imp_exp/own_notes_adif', 0))))
         self.expRecentOnlyCheckBox.setChecked(bool(int(self.settings.value('imp_exp/only_recent', 0))))
+        self.csvDelimiterComboBox.setCurrentText(self.csv_delimiter)
         self.useCfgIDImportCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_id_adif', 0))))
         self.useCfgStationImportCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_station_adif', 0))))
         self.useCfgIDWatchCheckBox.setChecked(bool(int(self.settings.value('imp_exp/use_id_watch', 0))))
@@ -253,6 +254,10 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.lotwCertPwdCheckBox.setChecked(bool(int(self.settings.value('lotw/cert_needs_pwd', 0))))
 
         return super().exec()
+
+    @property
+    def csv_delimiter(self) -> str:
+        return self.settings.value('imp_exp/csv_delimiter', ';' if self.locale().decimalPoint() == ',' else ',')
 
     @property
     def callbook_id(self) -> str:
@@ -326,6 +331,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
 
         self.settings.setValue('imp_exp/own_notes_adif', int(self.expOwnNotesADIFCheckBox.isChecked()))
         self.settings.setValue('imp_exp/only_recent', int(self.expRecentOnlyCheckBox.isChecked()))
+        self.settings.setValue('imp_exp/csv_delimiter', self.csvDelimiterComboBox.currentText())
         self.settings.setValue('imp_exp/use_id_adif', int(self.useCfgIDImportCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_station_adif', int(self.useCfgStationImportCheckBox.isChecked()))
         self.settings.setValue('imp_exp/use_id_watch', int(self.useCfgIDWatchCheckBox.isChecked()))

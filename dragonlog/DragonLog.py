@@ -18,8 +18,6 @@ from adif_file import adi, adx
 import xmltodict
 import hamcc
 
-from local_callbook import LocalCallbookImportError
-
 OPTION_OPENPYXL = False
 try:
     # noinspection PyUnresolvedReferences
@@ -378,20 +376,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.hamlib_error = QtWidgets.QLabel('')
         self.statusBar().addPermanentWidget(self.hamlib_error)
 
-        self.__local_cb__ = None
-        if self.settings.value('lastCallbookPath', None):
-            try:
-                self.__local_cb__ = LocalCallbook(self.settings.value('lastCallbookPath'), self.log)
-                self.updateCallbookStatus()
-                self.actionRefresh_callbook.setEnabled(True)
-                self.actionExport_callbook.setEnabled(True)
-                self.actionImport_callbook.setEnabled(True)
-                self.actionRefresh_call_history.setEnabled(True)
-                self.actionExport_call_history.setEnabled(True)
-                self.actionImport_call_history.setEnabled(True)
-            except LocalCallbookDatabaseError as exc:
-                self.log.exception(exc)
-
         with open(self.searchFile('data:bands.json')) as bj:
             self.bands: dict = json.load(bj)
         with open(self.searchFile('data:modes.json')) as mj:
@@ -500,6 +484,21 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.settings_form = Settings(self, self.settings, self.bands, self.modes['AFU'],
                                       self.__headers__, self.log, self.__rigctl__)
         self.settings_form.ctyDataChanged.connect(self.cty_load)
+
+        self.__local_cb__ = None
+        if self.settings.value('lastCallbookPath', None):
+            try:
+                self.__local_cb__ = LocalCallbook(self.settings.value('lastCallbookPath'), self.log,
+                                                  self.settings_form.csv_delimiter)
+                self.updateCallbookStatus()
+                self.actionRefresh_callbook.setEnabled(True)
+                self.actionExport_callbook.setEnabled(True)
+                self.actionImport_callbook.setEnabled(True)
+                self.actionRefresh_call_history.setEnabled(True)
+                self.actionExport_call_history.setEnabled(True)
+                self.actionImport_call_history.setEnabled(True)
+            except LocalCallbookDatabaseError as exc:
+                self.log.exception(exc)
 
         # QSOForm
         self.qso_form = QSOForm(self, self, self.bands, self.modes, self.prop, self.settings, self.settings_form,
@@ -1175,7 +1174,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         try:
             with open(file, 'w', newline='', encoding='utf-8') as cf:
-                writer = csv.writer(cf)
+                writer = csv.writer(cf, delimiter=self.settings_form.csv_delimiter)
 
                 # Write header
                 writer.writerow(self.__headers__)
@@ -1808,7 +1807,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if res[0]:
             try:
-                self.__local_cb__ = LocalCallbook(res[0], self.log)
+                self.__local_cb__ = LocalCallbook(res[0], self.log, self.settings_form.csv_delimiter)
                 self.settings.setValue('lastCallbookPath', res[0])
 
                 # Check if DB needs init
@@ -2116,7 +2115,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info('Importing from CSV...')
 
         with open(file, newline='', encoding='utf-8') as cf:
-            reader = csv.reader(cf)
+            reader = csv.reader(cf, delimiter=self.settings_form.csv_delimiter)
             lines = 0
 
             for ln, row in enumerate(reader, 1):
