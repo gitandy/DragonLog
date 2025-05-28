@@ -254,8 +254,8 @@ class LocalCallbook:
                                 'WHERE callsign=?',
                                 (get_cur_dt(), data, callsign))
         else:
-            self.log.info(f'Adding {callsign}...')
-            self.__db__.execute('INSERT INTO callbook(callsign, recorded, data) VALUES(?,?,?)',
+            self.log.info(f'Adding or replacing {callsign}...')
+            self.__db__.execute('INSERT OR REPLACE INTO callbook(callsign, recorded, data) VALUES(?,?,?)',
                                 (callsign, get_cur_dt(), data))
 
         self.__db__.commit()

@@ -18,6 +18,8 @@ from adif_file import adi, adx
 import xmltodict
 import hamcc
 
+from local_callbook import LocalCallbookImportError
+
 OPTION_OPENPYXL = False
 try:
     # noinspection PyUnresolvedReferences
@@ -51,8 +53,8 @@ from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotF
 from .RigControl import RigControl
 from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
-from .local_callbook import LocalCallbook, LocalCallbookData, LocalCallbookDatabaseError
-from .local_callbook import LocalCallbook, LocalCallbookData, LocalCallbookDatabaseError, CallHistoryData
+from .local_callbook import (LocalCallbook, LocalCallbookData, CallHistoryData,
+                             LocalCallbookDatabaseError, LocalCallbookImportError, LocalCallbookExportError)
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -381,6 +383,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             try:
                 self.__local_cb__ = LocalCallbook(self.settings.value('lastCallbookPath'), self.log)
                 self.updateCallbookStatus()
+                self.actionRefresh_callbook.setEnabled(True)
+                self.actionExport_callbook.setEnabled(True)
+                self.actionImport_callbook.setEnabled(True)
+                self.actionRefresh_call_history.setEnabled(True)
+                self.actionExport_call_history.setEnabled(True)
+                self.actionImport_call_history.setEnabled(True)
             except LocalCallbookDatabaseError as exc:
                 self.log.exception(exc)
 
@@ -1823,6 +1831,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             self.initialiseCallHistory(True)
                 else:
                     self.updateCallbookStatus()
+
+                self.actionRefresh_callbook.setEnabled(True)
+                self.actionExport_callbook.setEnabled(True)
+                self.actionImport_callbook.setEnabled(True)
+                self.actionRefresh_call_history.setEnabled(True)
+                self.actionExport_call_history.setEnabled(True)
+                self.actionImport_call_history.setEnabled(True)
             except LocalCallbookDatabaseError:
                 QtWidgets.QMessageBox.critical(self,
                                                self.tr('Select callbook'),
@@ -1887,6 +1902,82 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     self.__local_cb__.update_history(query.value(0), query.value(1), chd)
 
         self.updateCallbookStatus()
+
+    def exportCallbook(self):
+        res = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            self.tr('Select callbook export file'),
+            os.path.join(self.settings.value('lastCallbookExpDir',
+                                             self.settings.value('lastExportDir', os.path.abspath(os.curdir))),
+                         datetime.date.today().strftime('%Y-%m-%d Callbook.csv')),
+            self.tr('CSV-File (*.csv)'))
+
+        if res[0]:
+            try:
+                self.__local_cb__.export_callbook(res[0])
+                self.settings.value('lastCallbookExpDir', os.path.dirname(res[0]))
+            except LocalCallbookExportError as exc:
+                self.log.error(str(exc))
+                QtWidgets.QMessageBox.critical(self,
+                                               self.tr('Callbook export'),
+                                               self.tr('Error exporting callbook') + f':\n{str(exc)}')
+
+    def importCallbook(self):
+        res = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr('Select callbook import file'),
+            self.settings.value('lastCallbookImpDir',
+                                self.settings.value('lastCallbookExpDir', os.path.abspath(os.curdir))),
+            self.tr('CSV-File (*.csv *.txt)'))
+
+        if res[0]:
+            try:
+                self.__local_cb__.import_callbook(res[0])
+                self.settings.setValue('lastCallbookImpDir', os.path.dirname(res[0]))
+            except LocalCallbookImportError as exc:
+                self.log.error(str(exc))
+                QtWidgets.QMessageBox.critical(self,
+                                               self.tr('Callbook import'),
+                                               self.tr('Error importing callbook') + f':\n{str(exc)}')
+            self.updateCallbookStatus()
+
+    def exportCallHistory(self):
+        res = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            self.tr('Select history export file'),
+            os.path.join(self.settings.value('lastHistoryExpDir',
+                                             self.settings.value('lastExportDir', os.path.abspath(os.curdir))),
+                         datetime.date.today().strftime('%Y-%m-%d Call-History.csv')),
+            self.tr('CSV-File (*.csv)'))
+
+        if res[0]:
+            try:
+                self.__local_cb__.export_history(res[0])
+                self.settings.value('lastHistoryExpDir', os.path.dirname(res[0]))
+            except LocalCallbookExportError as exc:
+                self.log.error(str(exc))
+                QtWidgets.QMessageBox.critical(self,
+                                               self.tr('Call history export'),
+                                               self.tr('Error exporting call history') + f':\n{str(exc)}')
+
+    def importCallHistory(self):
+        res = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr('Select history import file'),
+            self.settings.value('lastHistoryImpDir',
+                                self.settings.value('lastHistoryExpDir', os.path.abspath(os.curdir))),
+            self.tr('CSV-File (*.csv *.txt)'))
+
+        if res[0]:
+            try:
+                self.__local_cb__.import_history(res[0])
+                self.settings.setValue('lastHistoryImpDir', os.path.dirname(res[0]))
+            except LocalCallbookImportError as exc:
+                self.log.error(str(exc))
+                QtWidgets.QMessageBox.critical(self,
+                                               self.tr('Call history import'),
+                                               self.tr('Error importing call history') + f':\n{str(exc)}')
+            self.updateCallbookStatus()
 
     def updateQSOField(self, field: str, qso_id: int, value: str):
         """Update a single QSO field

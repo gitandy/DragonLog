@@ -59,6 +59,8 @@
     <addaction name="separator"/>
     <addaction name="actionSelect_callbook"/>
     <addaction name="actionRefresh_callbook"/>
+    <addaction name="actionExport_callbook"/>
+    <addaction name="actionImport_callbook"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
@@ -121,6 +123,8 @@
     <addaction name="actionContests"/>
     <addaction name="separator"/>
     <addaction name="actionRefresh_call_history"/>
+    <addaction name="actionExport_call_history"/>
+    <addaction name="actionImport_call_history"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1181,6 +1185,9 @@
    </property>
   </action>
   <action name="actionRefresh_callbook">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:refresh_callbook.png</normaloff>icons:refresh_callbook.png</iconset>
@@ -1190,12 +1197,63 @@
    </property>
   </action>
   <action name="actionRefresh_call_history">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:refresh_history.png</normaloff>icons:refresh_history.png</iconset>
    </property>
    <property name="text">
     <string>Refresh call history</string>
+   </property>
+  </action>
+  <action name="actionExport_callbook">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:callbook_export.png</normaloff>icons:callbook_export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export callbook...</string>
+   </property>
+  </action>
+  <action name="actionImport_callbook">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:callbook_import.png</normaloff>icons:callbook_import.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import callbook...</string>
+   </property>
+  </action>
+  <action name="actionExport_call_history">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:history_export.png</normaloff>icons:history_export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export call history...</string>
+   </property>
+  </action>
+  <action name="actionImport_call_history">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:history_import.png</normaloff>icons:history_import.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import call history...</string>
    </property>
   </action>
  </widget>
@@ -2145,6 +2203,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExport_call_history</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportCallHistory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExport_callbook</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportCallbook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionImport_call_history</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importCallHistory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionImport_callbook</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importCallbook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2178,5 +2300,9 @@
   <slot>selectCallbook()</slot>
   <slot>initialiseCallbook()</slot>
   <slot>initialiseCallHistory()</slot>
+  <slot>exportCallbook()</slot>
+  <slot>importCallbook()</slot>
+  <slot>exportCallHistory()</slot>
+  <slot>importCallHistory()</slot>
  </slots>
 </ui>
