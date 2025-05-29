@@ -262,9 +262,9 @@ Check if the version date and version entity corresponds to the website.
 
 The flag display is based on the mapping from [Flagpedia.net](https://flagpedia.net) 
 and matched against the Big CTY data. This is sometimes weak and thus error prone and needed manual fixes. 
-There are still 25% unmapped (mostly islands).
+There are still 15% unmapped (mostly islands).
 
-If a flag is mapped wrong please stay calm and drop me a mail. 
+If a flag is mapped wrong, please stay calm and drop me a mail. 
 The mapping does not reflect my view on country borders.
 
 Copyright

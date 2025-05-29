@@ -1,26 +1,39 @@
-    Big CTY - 25 March 2025
-    Version entity is Amsterdam & St. Paul Is., FT/z
+    Big CTY - 23 May 2025
+    Version entity is Faroe Islands, OY
 
     Added/changed Entities/Prefixes/Callsigns:
 
-	* A60DWC/0, A60DWC/1, A60DWC/2, A60DWC/3, A60DWC/4, A60DWC/5, A60DWC/7,
-	  A60DWC/8 and A60DWC/9 are all United Arab Emirates, A6
-	* GB5EA and GB5PAT are both Northern Ireland, GI
-	* KH7HY is in ITU zone 8, not ITU zone 7
-	* KL2MU is in CQ zone 4, not CQ zone 5
-	* KH7HY is in CQ zone 5, not CQ zone 4
-	* KK7UFN, KL1WE and KL7CLH are all United States, K in CQ zone 3, ITU zone 6
-	* K5ZYO is United States, K in CQ zone 4, ITU zone 7
-	* AL0K, K0VSH and W0ERJ are all United States, K in CQ zone 4, ITU zone 8
-	* KL5WY is United States, K in CQ zone 5, ITU zone 8
-	* KK4PEQ is Hawaii, KH6
-	* KF7HGP, KF7HGR, KN6NFQ and KT5Z are all Alaska, KL
-	* K4W and KM4DNE are both Puerto Rico, KP4
-	* VK4YQS is Lord Howe Island, VK9L
+	* GB2LC, MM/DJ7TO, MM/DJ9RR, MM/DL1KWK, MM/DL1RTL and MM/DL4SVA are all Shetland Islands, *GM/s
+	* GB0TA and GB2LC are both Scotland, GM
+	* K5ZD is in CQ zone 4, not CQ zone 5
+	* K5AN, KH6GEZ and WC2A are all United States, K in CQ zone 3, ITU zone 6
+	* K7AER is United States, K in CQ zone 3, ITU zone 7
+	* N7MSI is United States, K in CQ zone 4, ITU zone 6
+	* AB1MM, K2ORC, K6ACV, KC7TY, N6GR, N9EAT and NA4M are all United States, K in CQ zone 4, ITU zone 7
+	* AE4GS, AG4P, K0EMT, K4JHN, KD4ONB, KG5AZL, KZ4KG, N4KC, N4LJT and W0EBN
+	  are all United States, K in CQ zone 4, ITU zone 8
+	* KG8AI, KL5DY, KQ6NT, N6MRS, N7DH, NP3JL, NX5DX and NZ6O are all United States, K in CQ zone 5, ITU zone 8
+	* AK6MO is Guam, KH2
+	* K4RPB and N9PK are both Hawaii, KH6
+	* KD9FBI and KM7AAZ are both Alaska, KL
+	* N2VWV is Puerto Rico, KP4
+	* LU1EJK/K and LU7HSJ/H are both Argentina, LU
+	* TC13IOBC, TC1919ATA and TC19MY are all Asiatic Turkey, TA
+	* RK3AW/M and RZ9SZ/M are both in ITU zone 29, not ITU zone 30
+	* R4RD/M is European Russia, UA in CQ zone 17, ITU zone 30
+	* RU5D/M and UB8M/4 are both Asiatic Russia, UA9 in CQ zone 16
+	* VK9DX/2 is Australia, VK
 
     Removed Entities/Prefixes/Callsigns:
 
-	* FO/F4LYI in Marquesas Islands, FO/m
-	* K4W, W9SSS and WB9AUV in United States, K
-	* K5ZYO in Hawaii, KH6
-	* KK7UFN in Alaska, KL
+	* GB4SOS in Northern Ireland, GI
+	* AA4TO, AB9TS, AJ6TE, K0AMY, K0DVH, K1GJQ, K1QS, K4AII, K4KKI, K4TEC,
+	  K4TXL, K5LAD, K6PVZ, K7KHZ, K8JQ, K8WWN, K9ING, K9WM, KA7HBH, KA8JIL, KA9OMY,
+	  KB2UQS, KB9ENS, KC0BRA, KC0NAH, KC4OBX, KC4YDJ, KC8YRK, KD5PCK, KD9OFG,
+	  KE4SVI, KE6FQC, KE7RTB, KE8AE, KE8UOH, KF7HIL, KG4DBM, KG9V, KI4VLI, KI8GM,
+	  KN5Z, KO4CTP, KQ4GUZ, KQ4YC, KT4RSQ, KT4XL, KY4L, KY4MAK, N1KEZ, N4CUC,
+	  N4MTE, N5PA, N6AQ, N6HEW, N6IGA, N8JAX, N8WCR, N9CDX, N9DK, N9DMT, N9JNQ,
+	  N9KIY, N9MXI, N9PQJ, NA4W, NB6O, NK2J, NS9I, W0MOT, W1LQD, W1QC, W2RSS,
+	  W4FXZ, W4GHD, W4KD, W4VFF, W5BLX, W5ZC, W7KAM, W9BED, W9NWY, WA4PSO, WA4VXW,
+	  WB6NVB, WD9GMK, WF8D, WI4G, WI4MPY, WJ0J, WO1S, WR5J, WS9K and WU7Q in United States, K
+	* RU5D/M in European Russia, UA

@@ -2080,18 +2080,6 @@ Should the call history be refreshed anyway?</source>
       <source>About Qt</source>
       <translation type="unfinished" />
     </message>
-    <message numerus="yes">
-      <source>%n entries</source>
-      <translation type="vanished">
-        <numerusform />
-      </translation>
-    </message>
-    <message numerus="yes">
-      <source>%n entrie(s)</source>
-      <translation type="vanished">
-        <numerusform />
-      </translation>
-    </message>
   </context>
   <context>
     <name>DxSpots</name>
