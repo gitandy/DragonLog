@@ -248,11 +248,13 @@ class LocalCallbook:
                             data_dict[f] = old_data[f]
                     data = LocalCallbookData(**data_dict)
 
-            # Update data set
-            self.log.info(f'Updating {callsign}...')
-            self.__db__.execute('UPDATE callbook SET recorded=?, data=? '
+            self.log.info(f'Updating or adding {callsign}...')
+            cur = self.__db__.execute('UPDATE callbook SET recorded=?, data=? '
                                 'WHERE callsign=?',
                                 (get_cur_dt(), data, callsign))
+            if cur.rowcount < 1:
+                self.__db__.execute('INSERT INTO callbook(callsign, recorded, data) VALUES(?,?,?)',
+                                    (callsign, get_cur_dt(), data))
         else:
             self.log.info(f'Adding or replacing {callsign}...')
             self.__db__.execute('INSERT OR REPLACE INTO callbook(callsign, recorded, data) VALUES(?,?,?)',
