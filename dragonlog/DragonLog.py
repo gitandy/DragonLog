@@ -1116,6 +1116,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             'QTH_INTL': values[self.__sql_cols__.index('qth') - 1],
             'GRIDSQUARE': values[self.__sql_cols__.index('locator') - 1],
         }
+
+        qso_date = values[self.__sql_cols__.index('date_time') - 1].split(' ')[0]
+        datetime.date.today().strftime('%Y-%m-%d')
+        if qso_date == datetime.date.today().strftime('%Y-%m-%d'):
+            qso['CONTEST_ID'] = values[self.__sql_cols__.index('contest_id') - 1]
+            qso['SRX_STRING'] = values[self.__sql_cols__.index('crx_data') - 1]
+
         self.addQSOToCallbook(qso)
 
     def clearQSOForm(self):
