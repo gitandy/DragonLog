@@ -271,32 +271,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                                                               'WHERE id = ?'
     __db_select_stmnt__ = 'SELECT * FROM qsos'
 
-    # Statistic views
-    __db_view_qso_stat__ = '''CREATE VIEW IF NOT EXISTS qso_stat AS
-        SELECT strftime('%Y', date_time) as year, COUNT(id) as qsos, COUNT(DISTINCT mode) as modes, 
-            COUNT(DISTINCT band) as bands, COUNT(DISTINCT upper(substr(locator, 0, 4))) as gridsquares, 
-            COUNT(nullif(contest_id = '', 1)) as contest_qsos
-        FROM qsos GROUP BY year
-        UNION SELECT 'Total', COUNT(id), COUNT(DISTINCT mode), COUNT(DISTINCT band), 
-            COUNT(DISTINCT upper(substr(locator, 0, 4))), COUNT(nullif(contest_id = '', 1)) 
-        FROM qsos;'''
-    __db_view_qsl_stat__ = '''CREATE VIEW IF NOT EXISTS qsl_stat AS 
-        SELECT
-            strftime('%Y', date_time) as year, COUNT(id) as qsos, 
-            COUNT(nullif(qsl_sent != 'Y', 1)) as qsl_sent, COUNT(nullif(qsl_rcvd != 'Y', 1)) as qsl_rcvd,
-            COUNT(nullif(eqsl_sent != 'Y', 1)) as eqsl_sent, COUNT(nullif(eqsl_rcvd != 'Y', 1)) as eqsl_rcvd,
-            COUNT(nullif(lotw_sent != 'Y', 1)) as lotw_sent, COUNT(nullif(lotw_rcvd != 'Y', 1)) as lotw_rcvd
-        FROM qsos GROUP BY year
-        UNION SELECT 'Total', COUNT(id) as qsos, 
-            COUNT(nullif(qsl_sent != 'Y', 1)), COUNT(nullif(qsl_rcvd != 'Y', 1)),
-            COUNT(nullif(eqsl_sent != 'Y', 1)), COUNT(nullif(eqsl_rcvd != 'Y', 1)),
-            COUNT(nullif(lotw_sent != 'Y', 1)), COUNT(nullif(lotw_rcvd != 'Y', 1)) 
-        FROM qsos;'''
-    __db_view_band_stat__ = '''CREATE VIEW IF NOT EXISTS band_stat AS 
-        SELECT band, COUNT(*) as qsos FROM qsos GROUP BY band;'''
-    __db_view_mode_stat__ = '''CREATE VIEW IF NOT EXISTS mode_stat AS 
-        SELECT mode, COUNT(*) as qsos FROM qsos GROUP BY mode;'''
-
     __db_create_view_stmnt_qso_count__ = '''CREATE VIEW IF NOT EXISTS qso_count AS 
                                       SELECT COUNT(id) as qsos FROM qsos;'''
 
@@ -713,10 +687,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
-            self.__db_con__.exec(self.__db_view_qso_stat__)
-            self.__db_con__.exec(self.__db_view_qsl_stat__)
-            self.__db_con__.exec(self.__db_view_band_stat__)
-            self.__db_con__.exec(self.__db_view_mode_stat__)
+            self.__db_con__.exec(self.__db_create_view_stmnt_qso_count__)
 
             if self.__db_con__.lastError().text():
                 raise DatabaseOpenException(self.__db_con__.lastError().text())
@@ -782,10 +753,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.debug('Initialise database if necessary...')
             self.__db_con__.exec(self.__db_create_stmnt__)
             self.__db_con__.exec(self.__db_create_idx_stmnt__)
-            self.__db_con__.exec(self.__db_view_qso_stat__)
-            self.__db_con__.exec(self.__db_view_qsl_stat__)
-            self.__db_con__.exec(self.__db_view_band_stat__)
-            self.__db_con__.exec(self.__db_view_mode_stat__)
             self.__db_con__.exec(self.__db_create_view_stmnt_qso_count__)
 
             if self.__db_con__.lastError().text():
