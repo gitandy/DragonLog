@@ -1,7 +1,7 @@
 # DragonLog (c) 2025 by Andreas Schawo is licensed under CC BY-SA 4.0.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
-from PyQt6 import QtWidgets, QtSql
+from PyQt6 import QtWidgets, QtSql, QtGui
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
@@ -20,6 +20,7 @@ class StatisticsWidget(QtWidgets.QDialog):
         self.setWindowTitle(title)
         self.setModal(True)
         self.setMinimumSize(600, 300)
+        self.setWhatsThis(self.tr('Press Ctrl+C to copy the data to the clipboard'))
         verticalLayout = QtWidgets.QVBoxLayout()
         self.setLayout(verticalLayout)
         self.tabWidget = QtWidgets.QTabWidget()
@@ -150,12 +151,12 @@ class StatisticsWidget(QtWidgets.QDialog):
                     stat[query.value(0)].append(query.value(2))
         return stat
 
-    def buildTableStat(self, title: str, header: tuple = (), stat: list[list] = None):
-        stat = self.fetchStat(title.lower()) if not stat else stat
+    def buildTableStat(self, title: str, header: tuple = ()):
+        stat = self.fetchStat(title.lower())
         if not stat:
             return
 
-        tableWidget = QtWidgets.QTableWidget(len(stat) - 1, len(stat[0]) - 1)
+        tableWidget = StatTableWidget(len(stat) - 1, len(stat[0]) - 1, stat_summary=stat.copy())
         tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
         tableWidget.setVerticalHeaderLabels([r[0] for r in stat[1:]])
@@ -184,7 +185,7 @@ class StatisticsWidget(QtWidgets.QDialog):
             return
 
         # Init
-        widget = QtWidgets.QWidget(self)
+        widget = StatWidget(self, stat_summary=stat_sum.copy(), stat_details=stat_detail.copy())
         stat_widget = FigureCanvasQTAgg(Figure())
         ax = stat_widget.figure.subplots(1, 2)
 
@@ -219,7 +220,46 @@ class StatisticsWidget(QtWidgets.QDialog):
         except IndexError:
             pass
 
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if type(event) is QtGui.QKeyEvent:
+            if event.matches(QtGui.QKeySequence.StandardKey.Copy):
+                # noinspection PyTypeChecker
+                widget: StatWidget = self.tabWidget.currentWidget()
+                table = []
+                if widget.stat_details:
+                    for r, d in widget.stat_details.items():
+                        d.insert(0, r)
+                        table.append('\t'.join([str(c) for c in d]))
+                else:
+                    for r in widget.stat_summary:
+                        table.append('\t'.join([str(c) for c in r]))
+
+                clip = QtWidgets.QApplication.clipboard()
+                clip.setText('\r\n'.join(table))
+
 
 class NavigationToolbar(NavigationToolbar2QT):
     toolitems = [t for t in NavigationToolbar2QT.toolitems if
                  t[0] in ('Home', 'Pan', 'Zoom', 'Save')]
+
+
+class StatWidget(QtWidgets.QWidget):
+    def __init__(self, *args, stat_summary: list[list], stat_details: dict[str, list] = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__stat_summary__: list[list] = stat_summary
+        self.__stat_details__: dict[str, list] = stat_details
+
+    @property
+    def stat_summary(self) -> list[list]:
+        return self.__stat_summary__
+
+    @property
+    def stat_details(self) -> dict[str, list]:
+        return self.__stat_details__
+
+
+class StatTableWidget(QtWidgets.QTableWidget, StatWidget):
+    def __init__(self, *args, stat_summary: list[list], stat_details: dict[str, list] = None, **kwargs):
+        super().__init__(*args, stat_summary=stat_summary, stat_details=stat_details, **kwargs)
+        self.__stat_summary__: list[list] = stat_summary
+        self.__stat_details__: dict[str, list] = stat_details
