@@ -1524,7 +1524,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.eqsl_urls[qso_uuid] = res
                 self.log.debug(f'eQSL available at "{res}"')
                 eqsl_rcvd = 'Y'
-                eqsl_sent = 'Y'
         except EQSLLoginException as exc:
             QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
