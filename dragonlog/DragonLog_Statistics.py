@@ -44,7 +44,7 @@ class StatisticsWidget(QtWidgets.QDialog):
                 COUNT(DISTINCT band) as bands, COUNT(DISTINCT upper(substr(locator, 0, 4))) as gridsquares, 
                 COUNT(nullif(contest_id = '', 1)) as contest_qsos
             FROM qsos GROUP BY year
-            UNION SELECT 'Total', COUNT(id), COUNT(DISTINCT mode), COUNT(DISTINCT band), 
+            UNION SELECT 'total', COUNT(id), COUNT(DISTINCT mode), COUNT(DISTINCT band), 
                 COUNT(DISTINCT upper(substr(locator, 0, 4))), COUNT(nullif(contest_id = '', 1)) 
             FROM qsos;''')
         # QSL stat
@@ -55,7 +55,7 @@ class StatisticsWidget(QtWidgets.QDialog):
                 COUNT(nullif(eqsl_sent != 'Y', 1)) as eqsl_sent, COUNT(nullif(eqsl_rcvd != 'Y', 1)) as eqsl_rcvd,
                 COUNT(nullif(lotw_sent != 'Y', 1)) as lotw_sent, COUNT(nullif(lotw_rcvd != 'Y', 1)) as lotw_rcvd
             FROM qsos GROUP BY year
-            UNION SELECT 'Total', COUNT(id) as qsos, 
+            UNION SELECT 'total', COUNT(id) as qsos, 
                 COUNT(nullif(qsl_sent != 'Y', 1)), COUNT(nullif(qsl_rcvd != 'Y', 1)),
                 COUNT(nullif(eqsl_sent != 'Y', 1)), COUNT(nullif(eqsl_rcvd != 'Y', 1)),
                 COUNT(nullif(lotw_sent != 'Y', 1)), COUNT(nullif(lotw_rcvd != 'Y', 1)) 
@@ -159,7 +159,7 @@ class StatisticsWidget(QtWidgets.QDialog):
         tableWidget = StatTableWidget(len(stat) - 1, len(stat[0]) - 1, stat_summary=stat.copy())
         tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
-        tableWidget.setVerticalHeaderLabels([r[0] for r in stat[1:]])
+        tableWidget.setVerticalHeaderLabels([str(r[0]).capitalize() for r in stat[1:]])
 
         if header:
             tableWidget.setHorizontalHeaderLabels(header)
