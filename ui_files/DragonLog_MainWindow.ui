@@ -74,6 +74,7 @@
     <addaction name="separator"/>
     <addaction name="actionDelete_log_entry"/>
     <addaction name="actionChange_log_entry"/>
+    <addaction name="actionCopy"/>
     <addaction name="separator"/>
     <addaction name="actionMark_QSL_sent"/>
     <addaction name="actionUnmark_QSL_sent"/>
@@ -1256,6 +1257,21 @@
     <string>Import call history...</string>
    </property>
   </action>
+  <action name="actionCopy">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:editcopy.png</normaloff>icons:editcopy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -2267,6 +2283,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCopy</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>copyToClipboard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2304,5 +2336,6 @@
   <slot>importCallbook()</slot>
   <slot>exportCallHistory()</slot>
   <slot>importCallHistory()</slot>
+  <slot>copyToClipboard()</slot>
  </slots>
 </ui>

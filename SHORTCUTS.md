@@ -9,6 +9,7 @@ Main actions
 | Log QSO              | Ctrl + L         |
 | Edit QSO(s)          | Ctrl + E         |
 | Delete QSO(s)        | Ctrl + X         |
+| Copy QSO(s) as table | Ctrl + C         |
 | Watch file           | Ctrl + W         |
 | Show filter          | Ctrl + F         |
 | Reset filter         | Ctrl + R         |
@@ -35,3 +36,11 @@ QSO form actions
 | Search HamQTH  | Ctrl + Alt + H   |
 | Search QRZCQ   | Ctrl + Alt + Z   |
 | Start time now | Ctrl + Alt + N   |
+
+
+Statistics actions
+------------------
+
+| Action             | Shortcut |
+|--------------------|----------|
+| Copy data as table | Ctrl + C |

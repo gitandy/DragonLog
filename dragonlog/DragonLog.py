@@ -784,6 +784,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.actionExport_TB.setEnabled(True)
             self.actionChange_log_entry.setEnabled(True)
             self.actionDelete_log_entry.setEnabled(True)
+            self.actionCopy.setEnabled(True)
             self.actionUpload_logs_to_LoTW.setEnabled(True)
             self.actionCheck_LoTW_QSL.setEnabled(True)
             self.actionUpload_to_eQSL.setEnabled(True)
@@ -1004,18 +1005,28 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 yielded_ids.append(qso_id)
                 yield qso_id
 
-    # def selectedQSOs(self) -> Iterator[dict[str, str]]:
-    #     for qso_id in self.selectedQSOIds():
-    #         query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
-    #         if query.lastError().text():
-    #             raise Exception(query.lastError().text())
-    #
-    #         values = []
-    #         while query.next():
-    #             for col in range(len(self.__sql_cols__)):
-    #                 values.append(query.value(col))
-    #             break
-    #         yield dict(zip(self.__sql_cols__, values))
+    def selectedQSOs(self) -> Iterator[dict[str, str]]:
+        for qso_id in self.selectedQSOIds():
+            query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
+            if query.lastError().text():
+                raise Exception(query.lastError().text())
+
+            values = []
+            while query.next():
+                for col in range(len(self.__sql_cols__)):
+                    values.append(query.value(col))
+                break
+            yield dict(zip(self.__sql_cols__, values))
+
+    def copyToClipboard(self):
+        table = []
+        for i, qso in enumerate(self.selectedQSOs()):
+            if i == 0:
+                table.append('\t'.join([str(c) for c in qso.keys()]))
+            table.append('\t'.join([str(c) for c in qso.values()]))
+
+        clip = QtWidgets.QApplication.clipboard()
+        clip.setText('\r\n'.join(table))
 
     def deleteQSO(self):
         if self.QSOTableView.selectedIndexes():
