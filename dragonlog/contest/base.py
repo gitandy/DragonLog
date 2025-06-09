@@ -577,9 +577,24 @@ class ContestLog(ABC):
         pass
 
 
-class ContestLogCBR(ContestLog, ABC):
+class ContestLogCBR(ContestLog):
     """Abstract base class for ham radio contests with an CBR result file (usually shortwave)"""
-    contest_name = 'ContestCBR'
+    contest_name = 'KW-Contest'
+    contest_exch_fmt = 'Number'
+
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, **params):
+        super().__init__(callsign, name, club, address, email, locator,
+                         band, mode, pwr, cat_operator,
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+
+        self.__calls__ = []
 
     def build_record(self, adif_rec) -> CBRRecord:
         """Build the QSO info"""
@@ -635,10 +650,50 @@ class ContestLogCBR(ContestLog, ABC):
                    f'{r.own_call.ljust(13)} {r.sent_rst.rjust(3)} {r.sent_exch.ljust(6)} '
                    f'{r.call.ljust(13)} {r.rcvd_rst.rjust(3)} {r.rcvd_exch.ljust(6)} {r.tx}')
 
+    def process_points(self, rec: CBRRecord):
+        # noinspection PyBroadException
+        try:
+            rated = 1
+            points = rated
+            if rec.call in self.__calls__:
+                self.info('Duplicate QSO will not be rated')
+                rated = 0
+                points = 0
+            else:
+                self.__calls__.append(rec.call)
+                self.__rated__ += 1
+                self.__points__ = self.__rated__
+
+            if BAND_FROM_CBR[rec.band] in self.__stats__:
+                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+                self.__stats__[BAND_FROM_CBR[rec.band]].points += points
+            else:
+                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, points, 1, 0, 1)
+        except Exception:
+            self.exception()
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        """Valid bands for the contest"""
+        return CategoryBand.B_ALL,
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.MIXED, CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+
+    @staticmethod
+    def extract_exchange(exchange: str) -> ExchangeData | None:
+        return ExchangeData(number=str(exchange))
+
+    @staticmethod
+    def prepare_exchange(exchange: ExchangeData) -> str:
+        return exchange.number
+
 
 class ContestLogEDI(ContestLog):
     """Base class for ham radio contests with an EDI result file (usually VHF/UHF and higher)"""
-    contest_name = 'ContestEDI'
+    contest_name = 'UKW-Contest'
     contest_exch_fmt = 'Number,Locator'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
@@ -865,11 +920,13 @@ class ContestLogEDI(ContestLog):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.MIXED,
+        return CategoryMode.MIXED, CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_ALL,
+        return (CategoryBand.B_6M, CategoryBand.B_4M, CategoryBand.B_2M, CategoryBand.B_70CM, CategoryBand.B_23CM,
+                CategoryBand.B_9CM, CategoryBand.B_6CM, CategoryBand.B_3CM, CategoryBand.B_1_25CM, CategoryBand.B_6MM,
+                CategoryBand.B_4MM, CategoryBand.B_2_5MM, CategoryBand.B_2MM, CategoryBand.B_1MM)
 
     @classmethod
     def valid_power(cls) -> tuple[CategoryPower, ...]:
