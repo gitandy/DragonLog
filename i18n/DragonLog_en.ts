@@ -3167,81 +3167,82 @@ This is not the QSL manager/bureau address.</source>
   <context>
     <name>StatisticsWidget</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="23" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="22" />
       <source>Press Ctrl+C to copy the data to the clipboard</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="31" />
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="29" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="30" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="28" />
       <source>QSOs</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="35" />
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="29" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="34" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="28" />
       <source>Modes</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="36" />
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="29" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="35" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="28" />
       <source>Bands</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="30" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="29" />
       <source>Gridsquares</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="30" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="29" />
       <source>Contest QSOs</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="32" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="31" />
       <source>QSL sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="32" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="31" />
       <source>QSL rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="33" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="32" />
       <source>eQSL sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="33" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="32" />
       <source>eQSL rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="34" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="33" />
       <source>LotW sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="34" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="33" />
       <source>LotW rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="219" />
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="169" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="263" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="220" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="168" />
       <source>Statistic</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="205" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="249" />
       <source>per year</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_Statistics.py" line="212" />
+      <location filename="..\dragonlog\DragonLog_Statistics.py" line="256" />
       <source>summary</source>
       <translation type="unfinished" />
     </message>

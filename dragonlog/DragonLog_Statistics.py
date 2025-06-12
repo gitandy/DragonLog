@@ -19,7 +19,6 @@ class StatisticsWidget(QtWidgets.QDialog):
 
         self.setWindowTitle(title)
         self.setModal(True)
-        self.setMinimumSize(600, 300)
         self.setWhatsThis(self.tr('Press Ctrl+C to copy the data to the clipboard'))
         verticalLayout = QtWidgets.QVBoxLayout()
         self.setLayout(verticalLayout)
@@ -28,10 +27,10 @@ class StatisticsWidget(QtWidgets.QDialog):
 
         self.buildTableStat('QSO', (self.tr('QSOs'), self.tr('Modes'), self.tr('Bands'),
                                     self.tr('Gridsquares'), self.tr('Contest QSOs')))
-        self.buildTableStat('QSL', (self.tr('QSOs'),
-                                    self.tr('QSL sent'), self.tr('QSL rcvd'),
-                                    self.tr('eQSL sent'), self.tr('eQSL rcvd'),
-                                    self.tr('LotW sent'), self.tr('LotW rcvd')))
+        self.buildQSLStat('QSL', (self.tr('QSOs'),
+                                  self.tr('QSL sent'), self.tr('QSL rcvd'),
+                                  self.tr('eQSL sent'), self.tr('eQSL rcvd'),
+                                  self.tr('LotW sent'), self.tr('LotW rcvd')))
         self.buildGraphStat(self.tr('Modes'), 'mode')
         self.buildGraphStat(self.tr('Bands'), 'band')
 
@@ -174,6 +173,51 @@ class StatisticsWidget(QtWidgets.QDialog):
                 tableWidget.setItem(r, c, item)
 
         tableWidget.resizeColumnsToContents()
+
+    def buildQSLStat(self, title: str, header: tuple = ()):
+        stat = self.fetchStat(title.lower())
+        if not stat:
+            return
+
+        widget = StatWidget(self, stat_summary=stat)
+
+        # Table
+        tableWidget = StatTableWidget(len(stat) - 1, len(stat[0]) - 1, stat_summary=stat.copy())
+        tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+        tableWidget.setVerticalHeaderLabels([str(r[0]).capitalize() for r in stat[1:]])
+
+        if header:
+            tableWidget.setHorizontalHeaderLabels(header)
+        else:
+            tableWidget.setHorizontalHeaderLabels([hl.capitalize() for hl in stat[0][1:]])
+
+        for r, row in enumerate(stat[1:]):
+            for c, cell in enumerate(row[1:]):
+                item = QtWidgets.QTableWidgetItem(str(cell))
+                tableWidget.setItem(r, c, item)
+        tableWidget.resizeColumnsToContents()
+
+        # Graph
+        stat_widget = FigureCanvasQTAgg(Figure())
+        ax = stat_widget.figure.subplots()
+        ax.tick_params(axis='x', rotation=90)
+        cat = header
+        width = .8
+        bottom = np.zeros(len(header))
+
+        for d in stat[1:-1]:
+            val = [int(v) for v in d[1:]]
+            p = ax.bar(cat, val, width, label=d[0], bottom=bottom)
+            bottom += val
+        stat_widget.figure.tight_layout()
+
+        # Layout
+        layout = QtWidgets.QVBoxLayout(widget)
+        layout.addWidget(tableWidget)
+        layout.addWidget(stat_widget)
+        layout.addWidget(NavigationToolbar(stat_widget, self.parent()))
+        self.tabWidget.addTab(widget, f'{title}-{self.tr("Statistic")}')
 
     def buildGraphStat(self, title: str, stat_name: str):
         stat_sum = self.fetchStat(stat_name)
