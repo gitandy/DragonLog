@@ -2470,10 +2470,17 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.refreshTableView()
 
     def findQSO(self, timestamp, call) -> list:
-        """Find a QSO and return data set"""
+        """Find a QSO and return data set as list
+        The timestamp is searched for +/- 1 min
+        :param timestamp: the timestamp in format "YYYY-MM-DD hh:mm[:ss]"
+        :param call: the callsign of the QSO partner
+        :return: QSO data as list
+        """
 
-        query = self.__db_con__.exec(f'SELECT * from qsos '
-                                     f'where date_time="{timestamp}" and call_sign="{call}"')
+        query = self.__db_con__.exec(f'''SELECT * FROM qsos 
+            WHERE datetime(date_time) > datetime("{timestamp}", "-1 minute") 
+                AND datetime(date_time) < datetime("{timestamp}", "+1 minute") 
+                AND call_sign = "{call}"''')
         if query.lastError().text():
             raise Exception(query.lastError().text())
 

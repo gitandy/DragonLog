@@ -1134,24 +1134,24 @@ Please check log for further information.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2537" />
-      <location filename="..\dragonlog\DragonLog.py" line="2531" />
-      <location filename="..\dragonlog\DragonLog.py" line="2509" />
+      <location filename="..\dragonlog\DragonLog.py" line="2544" />
+      <location filename="..\dragonlog\DragonLog.py" line="2538" />
+      <location filename="..\dragonlog\DragonLog.py" line="2516" />
       <location filename="..\dragonlog\DragonLog.py" line="346" />
       <source>Watching file</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2546" />
-      <location filename="..\dragonlog\DragonLog.py" line="2537" />
+      <location filename="..\dragonlog\DragonLog.py" line="2553" />
+      <location filename="..\dragonlog\DragonLog.py" line="2544" />
       <location filename="..\dragonlog\DragonLog.py" line="348" />
       <location filename="..\dragonlog\DragonLog.py" line="346" />
       <source>inactiv</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2546" />
-      <location filename="..\dragonlog\DragonLog.py" line="2544" />
+      <location filename="..\dragonlog\DragonLog.py" line="2553" />
+      <location filename="..\dragonlog\DragonLog.py" line="2551" />
       <location filename="..\dragonlog\DragonLog.py" line="348" />
       <source>Hamlib</source>
       <translation />
@@ -1576,13 +1576,13 @@ The file already exists.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2553" />
+      <location filename="..\dragonlog\DragonLog.py" line="2560" />
       <location filename="..\dragonlog\DragonLog.py" line="951" />
       <source>Log QSO</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2554" />
+      <location filename="..\dragonlog\DragonLog.py" line="2561" />
       <location filename="..\dragonlog\DragonLog.py" line="952" />
       <source>No database opened for logging</source>
       <translation />
@@ -1635,7 +1635,7 @@ The file already exists.</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2519" />
+      <location filename="..\dragonlog\DragonLog.py" line="2526" />
       <location filename="..\dragonlog\DragonLog.py" line="1132" />
       <source>ADIF 3 (*.adi *.adif)</source>
       <translation />
@@ -2002,83 +2002,83 @@ Should the call history be refreshed anyway?</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2510" />
+      <location filename="..\dragonlog\DragonLog.py" line="2517" />
       <source>No database opened for watching files</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2517" />
+      <location filename="..\dragonlog\DragonLog.py" line="2524" />
       <source>Select file to watch</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2544" />
+      <location filename="..\dragonlog\DragonLog.py" line="2551" />
       <source>activ</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2581" />
-      <location filename="..\dragonlog\DragonLog.py" line="2564" />
+      <location filename="..\dragonlog\DragonLog.py" line="2588" />
+      <location filename="..\dragonlog\DragonLog.py" line="2571" />
       <source>Contest Export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2565" />
+      <location filename="..\dragonlog\DragonLog.py" line="2572" />
       <source>No database opened for contest export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2582" />
+      <location filename="..\dragonlog\DragonLog.py" line="2589" />
       <source>No contest data available for export</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2631" />
+      <location filename="..\dragonlog\DragonLog.py" line="2638" />
       <source>Statistic</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2659" />
+      <location filename="..\dragonlog\DragonLog.py" line="2666" />
       <source>Ok</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2672" />
+      <location filename="..\dragonlog\DragonLog.py" line="2679" />
       <source>Help</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2679" />
+      <location filename="..\dragonlog\DragonLog.py" line="2686" />
       <source>Shortcuts</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2686" />
+      <location filename="..\dragonlog\DragonLog.py" line="2693" />
       <source>CassipeiaConsole</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2691" />
+      <location filename="..\dragonlog\DragonLog.py" line="2698" />
       <source>Available Contests</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2712" />
+      <location filename="..\dragonlog\DragonLog.py" line="2719" />
       <source>About</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2713" />
+      <location filename="..\dragonlog\DragonLog.py" line="2720" />
       <source>Version</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2714" />
+      <location filename="..\dragonlog\DragonLog.py" line="2721" />
       <source>Author</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog.py" line="2728" />
+      <location filename="..\dragonlog\DragonLog.py" line="2735" />
       <source>About Qt</source>
       <translation />
     </message>
