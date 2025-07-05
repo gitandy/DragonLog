@@ -13,3 +13,5 @@ HamCC~=1.0
 pymsilib; sys_platform == 'win32'
 cx-freeze; sys_platform == 'win32'
 PyQt6-sip~=13.5.2
+opencv-python~=4.11
+pyzbar~=0.1

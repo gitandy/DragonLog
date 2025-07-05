@@ -17,6 +17,8 @@ import adif_file
 from adif_file import adi, adx
 import xmltodict
 import hamcc
+from cv2 import __version__ as cv2_version
+from pyzbar import __version__ as pyzbar_version
 
 OPTION_OPENPYXL = False
 try:
@@ -53,6 +55,7 @@ from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
 from .local_callbook import (LocalCallbook, LocalCallbookData, CallHistoryData,
                              LocalCallbookDatabaseError, LocalCallbookImportError, LocalCallbookExportError)
+from .QSLQRReader import QSLQRReaderDialog
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -2471,17 +2474,18 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if added:
             self.refreshTableView()
 
-    def findQSO(self, timestamp, call) -> list:
+    def findQSO(self, timestamp, call, minute_range:int=1) -> list:
         """Find a QSO and return data set as list
         The timestamp is searched for +/- 1 min
         :param timestamp: the timestamp in format "YYYY-MM-DD hh:mm[:ss]"
         :param call: the callsign of the QSO partner
+        :param minute_range: the range of minutes +x/-x to search for (minimum 1)
         :return: QSO data as list
         """
-
+        minute_range = minute_range if type(minute_range) is int and minute_range > 1 else 1
         query = self.__db_con__.exec(f'''SELECT * FROM qsos 
-            WHERE datetime(date_time) > datetime("{timestamp}", "-1 minute") 
-                AND datetime(date_time) < datetime("{timestamp}", "+1 minute") 
+            WHERE datetime(date_time) > datetime("{timestamp}", "-{minute_range} minute") 
+                AND datetime(date_time) < datetime("{timestamp}", "+{minute_range} minute") 
                 AND call_sign = "{call}"''')
         if query.lastError().text():
             raise Exception(query.lastError().text())
@@ -2636,6 +2640,31 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         except (CountryNotFoundException, CountryCodeNotFoundException):
             pass
 
+    def readQRCode(self):
+        qr = QSLQRReaderDialog(self, self, self.settings, self.log)
+        qr.exec()
+
+    def logImportQRCode(self, record: dict[str, str]):
+        """Import single record from QR code"""
+        query = QtSql.QSqlQuery(self.__db_con__)
+        query.prepare(self.__db_insert_stmnt__)
+
+        for j, val in enumerate(self._build_adif_import_(record,
+                                                         bool(self.settings.value('imp_exp/use_id_adif', 0)))):
+            query.bindValue(j, val)
+
+        query.exec()
+        if query.lastError().text():
+            QtWidgets.QMessageBox.warning(
+                self,
+                self.tr('Log import QSL-QR-Code'),
+                f'Record import error ("{query.lastError().text()}").\nSkipped record.'
+            )
+        else:
+            self.__db_con__.commit()
+            self.log.info(f'Imported QSO from QSL-QR-Code')
+        self.refreshTableView()
+
     def showStatistics(self):
         StatisticsWidget(self, f'{self.programName} - {self.tr("Statistic")}',
                          self.__db_con__, tuple(self.bands.keys()))
@@ -2726,10 +2755,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             '\nmaidenhead: Copyright (c) 2018 Michael Hirsch, Ph.D.' +
             f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
+            f'\nopencv-python {cv2_version}: Copyright (c) Olli-Pekka Heinisuo' +
+            f'\npyzbar {pyzbar_version}: Copyright (c) 2016 The Trustees of the Natural History Museum, London' +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nFlags: Flagpedia.net, https://flagpedia.net'
             '\nFont: Inter, Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)'
-            '\nDragon icon by Icons8 https://icons8.com'
+            '\nDragon and QR-Code icon by Icons8 https://icons8.com'
             f'\n\nCountry Data: by AD1C, Copyright (c) since 1994\nVersion: {cty_ver}, Entity: {cty_ent}'
         )
 

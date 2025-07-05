@@ -49,6 +49,7 @@ Features
 * selectable font and font size
   * default proportional font with slashed zero (modified Inter font)
   * 3 independant font sizes for application, QSO form and CassiopeiaConsole 
+* Read QSL-QR-Codes to QSL or import QSOs (based on work of [TobbY, DG1ATN](https://www.dg1atn.de/darc-qsl-qr-code-reader/))
 
 
 Installation
