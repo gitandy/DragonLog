@@ -1277,6 +1277,9 @@
    </property>
   </action>
   <action name="actionRead_DARC_QSL_QR_Code">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:icons8-qrcode-96.png</normaloff>icons:icons8-qrcode-96.png</iconset>
@@ -1286,12 +1289,15 @@
    </property>
   </action>
   <action name="actionRead_DARC_QSL_QR_Code_TB">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons:icons8-qrcode-96.png</normaloff>icons:icons8-qrcode-96.png</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Read DARC QSL-QR-Code</string>
    </property>
   </action>
  </widget>

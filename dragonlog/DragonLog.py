@@ -796,6 +796,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.actionUpload_to_HamQTH.setEnabled(True)
             self.actionShow_statistics.setEnabled(True)
             self.actionShow_statistics_TB.setEnabled(True)
+            self.actionRead_DARC_QSL_QR_Code.setEnabled(True)
+            self.actionRead_DARC_QSL_QR_Code_TB.setEnabled(True)
         except DatabaseOpenException as exc:
             self.log.exception(exc)
             if db_file == self.settings.value('lastDatabase', None):
