@@ -4,7 +4,7 @@
   <context>
     <name>CaptureThread</name>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="196" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="197" />
       <source>Found code type</source>
       <translation type="unfinished" />
     </message>
@@ -2687,37 +2687,37 @@ Should the call history be refreshed anyway?</source>
   <context>
     <name>QSLQRReaderDialog</name>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="30" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="31" />
       <source>QSL-QR-Reader</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="133" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="134" />
       <source>No valid QSL-QR-Code</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="137" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="138" />
       <source>Found valid QSL-QR-Code</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="151" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="152" />
       <source>QSL already marked as received for QSO </source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="155" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="156" />
       <source>Marked QSL as received for QSO </source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="161" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="162" />
       <source>Imported QSO to logbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="164" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="165" />
       <source>QSL-QR-Code import</source>
       <translation type="unfinished" />
     </message>
