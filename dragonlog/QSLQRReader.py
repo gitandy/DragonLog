@@ -5,6 +5,7 @@
 import logging
 
 from PyQt6 import QtWidgets, QtCore, QtGui
+# noinspection PyPackageRequirements
 import cv2
 from pyzbar import pyzbar
 from adif_file import util
@@ -40,7 +41,7 @@ class QSLQRReaderDialog(QtWidgets.QDialog, QSLQRReader_ui.Ui_QSLQRReaderDialog):
         self.videoSrcComboBox.clear()
         devices = []
         for i in range(10):
-            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+            cap = cv2.VideoCapture(i)
             test, frame = cap.read()
             if test:
                 devices.append(i)
@@ -186,7 +187,7 @@ class CaptureThread(QtCore.QThread):
         self.__run__ = True
 
     def run(self):
-        cap = cv2.VideoCapture(self.device_id, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(self.device_id)
         while self.__run__:
             ret, cv_img = cap.read()
             if ret:
@@ -195,8 +196,6 @@ class CaptureThread(QtCore.QThread):
                 if barcode:
                     self.codeTypeFound.emit(self.tr('Found code type') + ': ' + barcode[0].type)
                     if barcode[0].type == 'QRCODE':
-                        data = barcode[0].data.decode()
-
                         self.__run__ = False
                         self.qrReceived.emit(barcode[0].data.decode())
         cap.release()
@@ -205,7 +204,8 @@ class CaptureThread(QtCore.QThread):
         self.__run__ = False
         self.wait()
 
-    def convertImage(self, cv_img):
+    @staticmethod
+    def convertImage(cv_img):
         """Convert from an opencv image to QPixmap"""
         rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
