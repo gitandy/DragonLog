@@ -58,6 +58,7 @@ class CallHistoryData:
     locator: str = ''
     power_class: str = ''
     darc_dok: str = ''
+    itu_zone: str = ''
 
 
 def adapt_history_data(chd: CallHistoryData) -> str:
@@ -250,8 +251,8 @@ class LocalCallbook:
 
             self.log.info(f'Updating or adding {callsign}...')
             cur = self.__db__.execute('UPDATE callbook SET recorded=?, data=? '
-                                'WHERE callsign=?',
-                                (get_cur_dt(), data, callsign))
+                                      'WHERE callsign=?',
+                                      (get_cur_dt(), data, callsign))
             if cur.rowcount < 1:
                 self.__db__.execute('INSERT INTO callbook(callsign, recorded, data) VALUES(?,?,?)',
                                     (callsign, get_cur_dt(), data))

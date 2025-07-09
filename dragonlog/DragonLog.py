@@ -1881,7 +1881,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if contest:
                 excd: ExchangeData = contest.extract_exchange(query.value(2))
                 if excd:
-                    chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok)
+                    chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok,
+                                          itu_zone=excd.itu_zone)
                     self.__local_cb__.update_history(query.value(0), query.value(1), chd)
 
         self.updateCallbookStatus()
@@ -2383,7 +2384,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 if contest:
                     excd = contest.extract_exchange(qso.get('SRX_STRING', ''))
                     if excd:
-                        chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok)
+                        chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok,
+                                              itu_zone=excd.itu_zone)
                         self.__local_cb__.update_history(contest_id, call, chd)
 
     def fetchCCQSO(self):

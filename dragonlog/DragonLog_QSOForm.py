@@ -168,7 +168,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 if ch_data[2] and not self.rcvdDataLineEdit.text():
                     exc_data = ExchangeData(locator=ch_data[2].locator,
                                             power=ch_data[2].power_class,
-                                            darc_dok=ch_data[2].darc_dok)
+                                            darc_dok=ch_data[2].darc_dok,
+                                            itu_zone=ch_data[2].itu_zone)
                     contest = CONTESTS.get(contest, None)
                     self.rcvdDataLineEdit.setText(contest.prepare_exchange(exc_data))
 

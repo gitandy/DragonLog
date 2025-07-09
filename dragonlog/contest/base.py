@@ -102,10 +102,12 @@ class Record:
     rcvd_exch: str
     tx: str
 
+
 @dataclass
 class CBRRecord(Record):
     """Represents data for a QSO record in CBR format"""
     pass
+
 
 @dataclass
 class EDIRecord(CBRRecord):
@@ -207,6 +209,15 @@ class ExchangeData:
     locator: str = ''
     power: str = ''
     darc_dok: str = ''
+    itu_zone: str = ''
+
+
+class InvalidBandException(Exception):
+    pass
+
+
+class InvalidModeException(Exception):
+    pass
 
 
 class ContestLog(ABC):
@@ -269,7 +280,9 @@ class ContestLog(ABC):
         self.__multis__: set[str] = set()
         self.__multis2__: set[str] = set()
 
-        self.__stats__: dict[str, BandStatistics] = {}
+        self.__stats__: dict[str, BandStatistics] = dict(zip(self.valid_bands_list()[1:],
+                                                             [BandStatistics() for _ in
+                                                              range(len(self.valid_bands_list()[1:]))]))
 
         self.__skip_id__ = skip_id
         self.__skip_warn__ = skip_warn
@@ -420,6 +433,10 @@ class ContestLog(ABC):
                 self.log.debug(self.summary())
         except KeyError as exc:
             self.error(f'Could not be processed. Field {exc} is missing')
+        except InvalidBandException as exc:
+            self.error(f'Could not be processed. Invalid band {exc}')
+        except InvalidModeException as exc:
+            self.error(f'Could not be processed. Invalid mode {exc}')
 
     @abstractmethod
     def build_record(self, adif_rec) -> Record:
@@ -604,8 +621,18 @@ class ContestLogCBR(ContestLog):
         if not self.__contest_date__:
             self.__contest_date__ = date
 
-        return CBRRecord(BAND_MAP_CBR[adif_rec['BAND'].lower()],
-                         MODE_MAP_CBR[adif_rec['MODE']],
+        try:
+            band = BAND_MAP_CBR[adif_rec['BAND'].lower()]
+        except KeyError as exc:
+            raise InvalidBandException(str(exc)) from None
+
+        try:
+            mode = MODE_MAP_CBR[adif_rec['MODE']]
+        except KeyError as exc:
+            raise InvalidModeException(str(exc)) from None
+
+        return CBRRecord(band,
+                         mode,
                          date,
                          adif_rec['TIME_ON'][:4],
                          adif_rec['STATION_CALLSIGN'],

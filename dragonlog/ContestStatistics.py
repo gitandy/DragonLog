@@ -134,13 +134,13 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
                                                      "ORDER BY date_time",
                                                      include_id=True)
 
-        contest: ContestLog = self.contest('XX1XXX',  # Just to fit the checks
+        contest: ContestLog = self.contest(self.__settings__.value('station/callSign', 'XX1XXX').upper(),
                                            '', '', Address('', '', '', ''), '', '',
                                            CategoryBand.B_ALL, CategoryMode.MIXED,
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
                                            # Extra parameters for some contests
-                                           cty = self.__cty__,
+                                           cty=self.__cty__,
                                            )
 
         if doc['RECORDS']:
