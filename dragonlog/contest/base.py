@@ -491,6 +491,16 @@ class ContestLog(ABC):
         """Number of gained multis2"""
         return len(self.__multis2__)
 
+    @property
+    def multis_set(self) -> set[str]:
+        """The multis as a set"""
+        return self.__multis__
+
+    @property
+    def multis2_set(self) -> set[str]:
+        """The multis2 as a set"""
+        return self.__multis2__
+
     @abstractmethod
     def process_points(self, rec: Record):
         """Place for calculating points and decision for rating a QSO"""

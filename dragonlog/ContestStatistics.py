@@ -151,6 +151,8 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
                 self.warningsLabel.setText(str(contest.warnings))
                 self.errorsLabel.setText(str(contest.errors))
                 self.showStats(contest.statistics)
+                self.multisPlainTextEdit.setPlainText(', '.join(contest.multis_set))
+                self.multis2PlainTextEdit.setPlainText(', '.join(contest.multis2_set))
             except Exception as exc:
                 self.log.exception(exc)
 
