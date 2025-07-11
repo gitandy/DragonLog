@@ -2665,7 +2665,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         else:
             self.__db_con__.commit()
             self.log.info(f'Imported QSO from QSL-QR-Code')
-        self.refreshTableView()
+        self.refreshTableView(sort=False)
 
     def showStatistics(self):
         StatisticsWidget(self, f'{self.programName} - {self.tr("Statistic")}',
