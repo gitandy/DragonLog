@@ -84,23 +84,23 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             ch_data = self.__local_cb__.lookup_history(contest, call, True)
             if ch_data:
                 # Initialise from callbook
-                if ch_data[3]:
-                    if ch_data[3].name:
-                        self.evaluate(f'\'{ch_data[3].name} ')
-                    if ch_data[3].locator:
-                        exc_data.locator = ch_data[3].locator
-                    if ch_data[3].darc_dok:
-                        exc_data.darc_dok = ch_data[3].darc_dok
+                if ch_data.callbook_data:
+                    if ch_data.callbook_data.name:
+                        self.evaluate(f'\'{ch_data.callbook_data.name} ')
+                    if ch_data.callbook_data.locator:
+                        exc_data.locator = ch_data.callbook_data.locator
+                    if ch_data.callbook_data.darc_dok:
+                        exc_data.darc_dok = ch_data.callbook_data.darc_dok
 
                 # Overwrite from history if available
-                if ch_data[2]:
-                    if ch_data[2].locator:
-                        exc_data.locator=ch_data[2].locator
-                    exc_data.power=ch_data[2].power_class
-                    if ch_data[2].darc_dok:
-                        exc_data.darc_dok=ch_data[2].darc_dok
-                    if ch_data[2].itu_zone:
-                        exc_data.itu_zone=ch_data[2].itu_zone
+                if ch_data.history_data:
+                    if ch_data.history_data.locator:
+                        exc_data.locator=ch_data.history_data.locator
+                    exc_data.power=ch_data.history_data.power_class
+                    if ch_data.history_data.darc_dok:
+                        exc_data.darc_dok=ch_data.history_data.darc_dok
+                    if ch_data.history_data.itu_zone:
+                        exc_data.itu_zone=ch_data.history_data.itu_zone
 
             contest = CONTESTS.get(contest, None)
             self.evaluate(f'%{contest.prepare_exchange(exc_data)} ')
@@ -108,13 +108,13 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             cb_data = self.__local_cb__.lookup(call, True)
             if cb_data:
                 qso = self.__cc__.current_qso
-                if cb_data[1].qth and cb_data[1].locator and not 'QTH' in qso:
-                    self.evaluate(f'@{cb_data[1].qth} ({cb_data[1].locator}) ')
-                elif cb_data[1].locator and not qso.get('GRIDSQUARE', ''):
-                    self.evaluate(f'@{cb_data[1].locator} ')
+                if cb_data.callbook_data.qth and cb_data.callbook_data.locator and not 'QTH' in qso:
+                    self.evaluate(f'@{cb_data.callbook_data.qth} ({cb_data.callbook_data.locator}) ')
+                elif cb_data.callbook_data.locator and not qso.get('GRIDSQUARE', ''):
+                    self.evaluate(f'@{cb_data.callbook_data.locator} ')
 
-                if cb_data[1].name and not qso.get('NAME', ''):
-                    self.evaluate(f'\'{cb_data[1].name} ')
+                if cb_data.callbook_data.name and not qso.get('NAME', ''):
+                    self.evaluate(f'\'{cb_data.callbook_data.name} ')
 
     def _lookup_cty_data_(self, call):
         if call:

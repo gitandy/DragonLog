@@ -8,6 +8,7 @@ import csv
 import json
 import sqlite3
 import datetime
+from collections import namedtuple
 from dataclasses import dataclass, fields, astuple, asdict
 from enum import Enum, auto
 
@@ -90,6 +91,13 @@ class UpdateMode(Enum):
     Complement = auto()
     Overwrite = auto()
     Substitute = auto()
+
+
+LocalCallbookResult = namedtuple('LocalCallbookResult',
+                                 ('callsign', 'callbook_data'))
+
+CallHistoryResult = namedtuple('CallHistoryResult',
+                               ('contest', 'callsign', 'history_data', 'callbook_data'))
 
 
 class LocalCallbook:
@@ -326,7 +334,7 @@ class LocalCallbook:
                                 (contest, callsign, get_cur_dt(), data))
         self.__db__.commit()
 
-    def lookup(self, callsign: str, any_fix=False) -> tuple[str, LocalCallbookData] | None:
+    def lookup(self, callsign: str, any_fix=False) -> LocalCallbookResult | None:
         """Searches for data for a callsign
         :param callsign: the callsing to search for
         :param any_fix: search for callsign with any prefix/suffix on no result
@@ -348,11 +356,10 @@ class LocalCallbook:
                                       (f'{callsign}/%', f'%/{callsign}', f'%/{callsign}/%'))
             res = cur.fetchone()
 
-        return res
+        return LocalCallbookResult(*res) if res else None
 
     def lookup_history(self, contest: str, callsign: str,
-                       any_fix=False, any_contest=False) -> tuple[
-                                                                str, str, CallHistoryData, LocalCallbookData] | None:
+                       any_fix=False, any_contest=False) -> CallHistoryResult | None:
         """Searches for data for a callsign in a contest
         If any_suffix and any_contest are used together they are tried in that order
         :param contest: the contest to search for
@@ -384,7 +391,7 @@ class LocalCallbook:
                                       (callsign,))
             res = cur.fetchone()
 
-        return res
+        return CallHistoryResult(*res) if res else None
 
     def close(self):
         """Explicitly close the database after running a cleanup and optimisation"""
