@@ -4,7 +4,7 @@
   <context>
     <name>CaptureThread</name>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="197" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="200" />
       <source>Found code type</source>
       <translation>Code gefunden mit Typ</translation>
     </message>
@@ -2713,22 +2713,27 @@ Möchten sie trotzdem die Call-Historie komplett aktualisieren?</translation>
       <translation>Gültiger QSL-QR-Code</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="152" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="154" />
+      <source>Marked QSL sent as requested for QSO </source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\dragonlog\QSLQRReader.py" line="159" />
       <source>QSL already marked as received for QSO </source>
       <translation>QSL bereits vorhanden für QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="156" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="162" />
       <source>Marked QSL as received for QSO </source>
       <translation>QSL als empfangen markiert für QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="162" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="165" />
       <source>Imported QSO to logbook</source>
       <translation>QSO in Logbuch importiert</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\QSLQRReader.py" line="165" />
+      <location filename="..\dragonlog\QSLQRReader.py" line="168" />
       <source>QSL-QR-Code import</source>
       <translation>QSL-QR-Code-Import</translation>
     </message>

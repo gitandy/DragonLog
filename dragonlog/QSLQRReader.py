@@ -147,16 +147,19 @@ class QSLQRReaderDialog(QtWidgets.QDialog, QSLQRReader_ui.Ui_QSLQRReaderDialog):
             qso = self.dragonlog.findQSO(timestamp, qsl['CALL'], 5)
 
             if qso:
+                # Update QSL sent anyway
+                cur_qsl_sent = qso[self.dragonlog.__sql_cols__.index('qsl_sent')]
+                if cur_qsl_sent != 'Y' and qsl['QSL_SENT'] == 'R':
+                    self.dragonlog.updateQSOField('qsl_sent', qso[0], 'R')
+                    report.append(f'QSL #{i + 1}: {self.tr("Marked QSL sent as requested for QSO ")} #{qso[0]}')
+
+                # Skip QSLed QSO or mark QSL rcvd
                 cur_qsl_rcvd = qso[self.dragonlog.__sql_cols__.index('qsl_rcvd')]
                 if cur_qsl_rcvd == 'Y':
                     report.append(f'QSL #{i + 1}: {self.tr("QSL already marked as received for QSO ")} #{qso[0]}')
                     continue
-
                 self.dragonlog.updateQSOField('qsl_rcvd', qso[0], 'Y')
                 report.append(f'QSL #{i + 1}: {self.tr("Marked QSL as received for QSO ")} #{qso[0]}')
-                cur_qsl_sent = qso[self.dragonlog.__sql_cols__.index('qsl_sent')]
-                if cur_qsl_sent != 'Y' and qsl['QSL_SENT'] == 'R':
-                    self.dragonlog.updateQSOField('qsl_sent', qso[0], 'R')
             else:
                 self.dragonlog.logImportQRCode(qsl)
                 report.append(f'QSL #{i + 1}: ' + self.tr('Imported QSO to logbook'))
