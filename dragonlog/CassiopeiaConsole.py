@@ -38,6 +38,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                                               self.__settings__.value('station/name', ''))
         self.__current_call__ = ''
         self.__current_rxexch__ = ''
+        self.__cdata__ = None
 
         self.__initWidgets__()
 
@@ -69,23 +70,40 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                 self.resultLabel.setText('\n'.join(worked_list))
 
     def _callbook_lookup_(self, call: str, contest: str = ''):
+        self._lookup_cty_data_(call)
+
         if not self.__local_cb__:
             return
 
         if contest and self.__local_cb__.history_entries[0]:
+            # Initialise
+            exc_data = ExchangeData()
+            if self.__cdata__:
+                exc_data.itu_zone = self.__cdata__.itu
+
             ch_data = self.__local_cb__.lookup_history(contest, call, True)
             if ch_data:
-                if ch_data[2]:
-                    exc_data = ExchangeData(locator=ch_data[2].locator,
-                                            power=ch_data[2].power_class,
-                                            darc_dok=ch_data[2].darc_dok,
-                                            itu_zone=ch_data[2].itu_zone)
-                    contest = CONTESTS.get(contest, None)
-                    self.evaluate(f'%{contest.prepare_exchange(exc_data)} ')
-
+                # Initialise from callbook
                 if ch_data[3]:
                     if ch_data[3].name:
                         self.evaluate(f'\'{ch_data[3].name} ')
+                    if ch_data[3].locator:
+                        exc_data.locator = ch_data[3].locator
+                    if ch_data[3].darc_dok:
+                        exc_data.darc_dok = ch_data[3].darc_dok
+
+                # Overwrite from history if available
+                if ch_data[2]:
+                    if ch_data[2].locator:
+                        exc_data.locator=ch_data[2].locator
+                    exc_data.power=ch_data[2].power_class
+                    if ch_data[2].darc_dok:
+                        exc_data.darc_dok=ch_data[2].darc_dok
+                    if ch_data[2].itu_zone:
+                        exc_data.itu_zone=ch_data[2].itu_zone
+
+            contest = CONTESTS.get(contest, None)
+            self.evaluate(f'%{contest.prepare_exchange(exc_data)} ')
         else:
             cb_data = self.__local_cb__.lookup(call, True)
             if cb_data:
@@ -100,11 +118,13 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
     def _lookup_cty_data_(self, call):
         if call:
-            cdata: Country = self.dragonlog.cty_data(call)
-            if cdata:
-                self.ctyCtyLabel.setText(f'{cdata.code} {cdata.name}, {cdata.continent}')
-                self.ctyAreaLabel.setText(f'DXCC={cdata.dxcc}, CQ={cdata.cq}, ITU={cdata.itu}')
+            self.__cdata__: Country = self.dragonlog.cty_data(call)
+            if self.__cdata__:
+                self.ctyCtyLabel.setText(f'{self.__cdata__.code} {self.__cdata__.name}, {self.__cdata__.continent}')
+                self.ctyAreaLabel.setText(
+                    f'DXCC={self.__cdata__.dxcc}, CQ={self.__cdata__.cq}, ITU={self.__cdata__.itu}')
         else:
+            self.__cdata__ = None
             self.ctyCtyLabel.setText(f'? ?, ?')
             self.ctyAreaLabel.setText(f'DXCC=?, CQ=?, ITU=?')
 
@@ -172,7 +192,6 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             self.__current_call__ = call
             self._check_worked_before_(call)
             self._callbook_lookup_(call, self.__cc__.current_qso.get('CONTEST_ID', ''))
-            self._lookup_cty_data_(call)
 
         if qso.get('GRIDSQUARE', '') and qso.get('MY_GRIDSQUARE', ''):
             # noinspection PyBroadException
