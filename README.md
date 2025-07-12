@@ -17,7 +17,6 @@ Beside logging for ham radio you can also log CB radio QSOs.
 Features
 --------
 * predefined fields for logging
-* log multiple QSOs
 * edit log entries
 * input validation for callsign, RST, locator
 * show worked before if a callsign is already logged
@@ -32,7 +31,7 @@ Features
   * HamQTH.com
   * eQSL upload, check and download
   * LoTW signing, upload and check status
-* basic statistics (soon with graphics)
+* QSO and QSL statistics
 * log Contests and xOTA QSOs data (supported Contests see `Help - Available Contests`)
   * follow Contest statistics
   * export Contest log as Cabrillo, EDI or special file formats

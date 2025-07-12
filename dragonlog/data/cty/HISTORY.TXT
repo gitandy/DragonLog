@@ -1,39 +1,18 @@
-    Big CTY - 23 May 2025
-    Version entity is Faroe Islands, OY
+    Big CTY - 9 July 2025
+    Version entity is Asiatic Russia, UA9
 
     Added/changed Entities/Prefixes/Callsigns:
 
-	* GB2LC, MM/DJ7TO, MM/DJ9RR, MM/DL1KWK, MM/DL1RTL and MM/DL4SVA are all Shetland Islands, *GM/s
-	* GB0TA and GB2LC are both Scotland, GM
-	* K5ZD is in CQ zone 4, not CQ zone 5
-	* K5AN, KH6GEZ and WC2A are all United States, K in CQ zone 3, ITU zone 6
-	* K7AER is United States, K in CQ zone 3, ITU zone 7
-	* N7MSI is United States, K in CQ zone 4, ITU zone 6
-	* AB1MM, K2ORC, K6ACV, KC7TY, N6GR, N9EAT and NA4M are all United States, K in CQ zone 4, ITU zone 7
-	* AE4GS, AG4P, K0EMT, K4JHN, KD4ONB, KG5AZL, KZ4KG, N4KC, N4LJT and W0EBN
-	  are all United States, K in CQ zone 4, ITU zone 8
-	* KG8AI, KL5DY, KQ6NT, N6MRS, N7DH, NP3JL, NX5DX and NZ6O are all United States, K in CQ zone 5, ITU zone 8
-	* AK6MO is Guam, KH2
-	* K4RPB and N9PK are both Hawaii, KH6
-	* KD9FBI and KM7AAZ are both Alaska, KL
-	* N2VWV is Puerto Rico, KP4
-	* LU1EJK/K and LU7HSJ/H are both Argentina, LU
-	* TC13IOBC, TC1919ATA and TC19MY are all Asiatic Turkey, TA
-	* RK3AW/M and RZ9SZ/M are both in ITU zone 29, not ITU zone 30
-	* R4RD/M is European Russia, UA in CQ zone 17, ITU zone 30
-	* RU5D/M and UB8M/4 are both Asiatic Russia, UA9 in CQ zone 16
-	* VK9DX/2 is Australia, VK
+	* GB0WR, GB2WR, GB4KAS, GB5WR, GB8WR and GB9WR are all Scotland, GM
+	* KL4BG and KP2AS are both United States, K in CQ zone 5, ITU zone 8
+	* AD4BL and K0BER are both Alaska, KL
+	* KF4LHX is Puerto Rico, KP4
+	* LU2IKP/I is Argentina, LU
+	* R8AIM/0 is in ITU zone 30, not ITU zone 23
+	* R8AIM/0 is in CQ zone 18, not CQ zone 19
+	* RK0W/P is Asiatic Russia, UA9 in CQ zone 23, ITU zone 32
+	* VE3JLN is Canada, VE
 
     Removed Entities/Prefixes/Callsigns:
 
-	* GB4SOS in Northern Ireland, GI
-	* AA4TO, AB9TS, AJ6TE, K0AMY, K0DVH, K1GJQ, K1QS, K4AII, K4KKI, K4TEC,
-	  K4TXL, K5LAD, K6PVZ, K7KHZ, K8JQ, K8WWN, K9ING, K9WM, KA7HBH, KA8JIL, KA9OMY,
-	  KB2UQS, KB9ENS, KC0BRA, KC0NAH, KC4OBX, KC4YDJ, KC8YRK, KD5PCK, KD9OFG,
-	  KE4SVI, KE6FQC, KE7RTB, KE8AE, KE8UOH, KF7HIL, KG4DBM, KG9V, KI4VLI, KI8GM,
-	  KN5Z, KO4CTP, KQ4GUZ, KQ4YC, KT4RSQ, KT4XL, KY4L, KY4MAK, N1KEZ, N4CUC,
-	  N4MTE, N5PA, N6AQ, N6HEW, N6IGA, N8JAX, N8WCR, N9CDX, N9DK, N9DMT, N9JNQ,
-	  N9KIY, N9MXI, N9PQJ, NA4W, NB6O, NK2J, NS9I, W0MOT, W1LQD, W1QC, W2RSS,
-	  W4FXZ, W4GHD, W4KD, W4VFF, W5BLX, W5ZC, W7KAM, W9BED, W9NWY, WA4PSO, WA4VXW,
-	  WB6NVB, WD9GMK, WF8D, WI4G, WI4MPY, WJ0J, WO1S, WR5J, WS9K and WU7Q in United States, K
-	* RU5D/M in European Russia, UA
+	* AD4BL in United States, K
