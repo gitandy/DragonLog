@@ -84,24 +84,39 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
 
     @property
     def statistics(self) -> dict[str, BandStatistics]:
+        stats = self.__stats__.copy()
         qsos = 0
         rated = 0
         points = 0
         multis = 0
         multis2 = 0
-        for b in self.__stats__:
-            self.__stats__[b].summary = self.__stats__[b].points * (
-                    self.__stats__[b].multis + self.__stats__[b].multis2)
-            qsos += self.__stats__[b].qsos
-            rated += self.__stats__[b].rated
-            points += self.__stats__[b].points
-            multis += self.__stats__[b].multis
-            multis2 += self.__stats__[b].multis2
-
-        self.__stats__['Total'] = BandStatistics(qsos, rated, points, multis, multis2,
+        for b in stats:
+            stats[b].summary = stats[b].points * (
+                    stats[b].multis + stats[b].multis2)
+            qsos += stats[b].qsos
+            rated += stats[b].rated
+            points += stats[b].points
+            multis += stats[b].multis
+            multis2 += stats[b].multis2
+        stats['Total'] = BandStatistics(qsos, rated, points, multis, multis2,
                                                  points * (multis + multis2))
+        return stats
 
-        return self.__stats__
+    @classmethod
+    def statistic_primer(cls) -> BandStatistics:
+        return BandStatistics(multis=0)
+
+    @property
+    def claimed_points(self) -> int:
+        """Points with some kind of multiplicator"""
+        stat = self.statistics['Total']
+        return stat.points * (stat.multis + stat.multis2)
+
+    def summary(self) -> str:
+        """A summary of points for the contest"""
+        stat = self.statistics['Total']
+        return (f"QSOs: {self.qsos}, Rated: {self.rated}, Points: {stat.points}, "
+                f"Multis: {stat.multis}, Multis2: {stat.multis2}, Claimed points: {stat.summary}")
 
     @property
     def file_name(self) -> str:

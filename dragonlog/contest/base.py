@@ -281,7 +281,7 @@ class ContestLog(ABC):
         self.__multis2__: set[str] = set()
 
         self.__stats__: dict[str, BandStatistics] = dict(zip(self.valid_bands_list()[1:],
-                                                             [BandStatistics() for _ in
+                                                             [self.statistic_primer() for _ in
                                                               range(len(self.valid_bands_list()[1:]))]))
 
         self.__skip_id__ = skip_id
@@ -514,15 +514,18 @@ class ContestLog(ABC):
     @property
     def statistics(self) -> dict[str, BandStatistics]:
         """A detailed statistic for the contest"""
-        for b in self.__stats__:
-            self.__stats__[b].multis = self.multis
-            self.__stats__[b].multis2 = self.multis2
-            self.__stats__[b].summary = self.__stats__[b].points * (self.multis + self.multis2)
-
-        self.__stats__['Total'] = BandStatistics(self.qsos, self.rated, self.points,
+        stats = self.__stats__.copy()
+        for b in stats:
+            stats[b].multis = self.multis
+            stats[b].multis2 = self.multis2
+            stats[b].summary = stats[b].points * (self.multis + self.multis2)
+        stats['Total'] = BandStatistics(self.qsos, self.rated, self.points,
                                                  self.multis, self.multis2, self.claimed_points)
+        return stats
 
-        return self.__stats__
+    @classmethod
+    def statistic_primer(cls) -> BandStatistics:
+        return BandStatistics()
 
     @property
     def file_name(self) -> str:
