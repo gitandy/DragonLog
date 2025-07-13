@@ -15,6 +15,7 @@ from .distance import distance
 from .local_callbook import LocalCallbook
 
 
+# noinspection PyPep8Naming
 class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaConsoleWidget):
     qsosChached = QtCore.pyqtSignal()
 
@@ -139,8 +140,8 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
         if 'CONTEST_ID' in qso:
             self.eventComboBox.setCurrentText(CONTEST_NAMES.get(qso['CONTEST_ID'], qso['CONTEST_ID']))
-            self.exchTXLineEdit.setText(qso.get('STX', qso.get('STX_STRING', '')))
-            self.exchRXLineEdit.setText(qso.get('SRX', qso.get('SRX_STRING', '')))
+            self.exchTXLineEdit.setText(qso.get('STX_STRING', qso.get('STX', '')))
+            self.exchRXLineEdit.setText(qso.get('SRX_STRING', qso.get('SRX', '')))
 
             contest: ContestLog | None = CONTESTS.get(qso['CONTEST_ID'], None)
             if contest:
@@ -258,35 +259,6 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
             else:
                 self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 255, 0, 63)}')
             self.inputLineEdit.clear()
-
-            # call = self.__cc__.current_qso.get('CALL', '')
-            # if call != self.__current_call__:
-            #     self.__current_call__ = call
-            #     if check_call(call):
-            #         worked_dict = self.dragonlog.workedBefore(call)
-            #         worked_list = []
-            #         if worked_dict:
-            #             for call, data in zip(worked_dict.keys(), worked_dict.values()):
-            #                 if self.__cc__.__event__ and data['event'] != self.__cc__.__event__:
-            #                     continue
-            #                 worked_list.append(f'{call} {self.tr("at")} {data["date_time"]}')
-            #                 if len(worked_list) == 3:
-            #                     break
-            #         if worked_list:
-            #             self.resultWidget.setStyleSheet('#resultWidget {background-color: rgba(0, 0, 255, 63)}')
-            #             self.resultLabel.setText('\n'.join(worked_list))
-
-            # cb_data = self.__local_cb__.lookup(call)#, True)
-            # print(cb_data)
-            # if cb_data:
-            #     qso = self.__cc__.current_qso
-            #     if cb_data[1].qth and cb_data[1].locator and not 'QTH' in qso:
-            #         self.evaluate(f'@{cb_data[1].qth} ({cb_data[1].locator}) ')
-            #     elif cb_data[1].locator and not qso.get('GRIDSQUARE', ''):
-            #         self.evaluate(f'@{cb_data[1].locator} ')
-            #
-            #     if cb_data[1].name and not qso.get('NAME', ''):
-            #         self.evaluate(f'\'{cb_data[1].name} ')
 
     def finaliseQSO(self):
         text = self.inputLineEdit.text()
