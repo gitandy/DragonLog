@@ -205,7 +205,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
             self.countryLineEdit.setPalette(ColorPalettes.PaletteDefault)
 
     def specificChanged(self, txt):
-        if not txt.strip():
+        if not txt.strip() and self.contest.needs_specific():
             self.specificLineEdit.setPalette(ColorPalettes.PaletteRequired)
             self.__validation__['specific'] = False
         elif find_non_ascii(txt):
@@ -262,7 +262,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         )
 
         # noinspection PyTypeChecker
-        contest: ContestLog = self.contest(self.callLineEdit.text(),
+        contest: ContestLog = self.contest(self.__settings__.value('station/callSign', 'XX1XXX').upper(),
                                            self.nameLineEdit.text(),
                                            self.clubLineEdit.text(),
                                            addr,
