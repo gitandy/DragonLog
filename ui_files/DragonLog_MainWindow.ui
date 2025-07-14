@@ -113,6 +113,8 @@
     <addaction name="actionCheck_LoTW_QSL"/>
     <addaction name="separator"/>
     <addaction name="actionUpload_to_HamQTH"/>
+    <addaction name="separator"/>
+    <addaction name="actionRead_DARC_QSL_QR_Code"/>
    </widget>
    <widget class="QMenu" name="menuContest">
     <property name="title">
@@ -154,6 +156,8 @@
    <addaction name="actionWatch_file_for_QSOs_TB"/>
    <addaction name="separator"/>
    <addaction name="actionShow_statistics_TB"/>
+   <addaction name="separator"/>
+   <addaction name="actionRead_DARC_QSL_QR_Code_TB"/>
   </widget>
   <widget class="QDockWidget" name="logDockWidget">
    <property name="sizePolicy">
@@ -1272,6 +1276,30 @@
     <string>Ctrl+C</string>
    </property>
   </action>
+  <action name="actionRead_DARC_QSL_QR_Code">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:icons8-qrcode-96.png</normaloff>icons:icons8-qrcode-96.png</iconset>
+   </property>
+   <property name="text">
+    <string>Read DARC QSL-QR-Code...</string>
+   </property>
+  </action>
+  <action name="actionRead_DARC_QSL_QR_Code_TB">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:icons8-qrcode-96.png</normaloff>icons:icons8-qrcode-96.png</iconset>
+   </property>
+   <property name="text">
+    <string>Read DARC QSL-QR-Code</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -2299,6 +2327,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRead_DARC_QSL_QR_Code_TB</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>readQRCode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWatch_file_for_QSOs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>readQRCode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2337,5 +2397,6 @@
   <slot>exportCallHistory()</slot>
   <slot>importCallHistory()</slot>
   <slot>copyToClipboard()</slot>
+  <slot>readQRCode()</slot>
  </slots>
 </ui>

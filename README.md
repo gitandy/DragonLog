@@ -49,6 +49,7 @@ Features
 * selectable font and font size
   * default proportional font with slashed zero (modified Inter font)
   * 3 independant font sizes for application, QSO form and CassiopeiaConsole 
+* Read QSL-QR-Codes to QSL or import QSOs (based on work of [TobbY, DG1ATN](https://www.dg1atn.de/darc-qsl-qr-code-reader/))
 
 
 Installation
@@ -60,7 +61,12 @@ On Linux you may have to install libxcb-cursor0.
 
 If you want to be able to export/import to/from Excel files install the extra packages
 
-    # python3 -m pip install DragonLog[extra]
+    # python3 -m pip install DragonLog[xlformat]
+
+For using the QSL-QR-Code reader install extra packages with
+
+    # python3 -m pip install DragonLog[qslqrcode]
+
 
 Run as
 

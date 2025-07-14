@@ -22,6 +22,7 @@ classifiers = [
 
 [project.optional-dependencies]
 xlformat=["openpyxl"]
+qslqrcode=["opencv-python-headless", "pyzbar"]
 
 [project.urls]
 "Homepage" = "https://github.com/gitandy/DragonLog?tab=readme-ov-file#dragonlog"
