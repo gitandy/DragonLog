@@ -61,7 +61,12 @@ On Linux you may have to install libxcb-cursor0.
 
 If you want to be able to export/import to/from Excel files install the extra packages
 
-    # python3 -m pip install DragonLog[extra]
+    # python3 -m pip install DragonLog[xlformat]
+
+For using the QSL-QR-Code reader install extra packages with
+
+    # python3 -m pip install DragonLog[qslqrcode]
+
 
 Run as
 

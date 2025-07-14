@@ -17,10 +17,17 @@ import adif_file
 from adif_file import adi, adx
 import xmltodict
 import hamcc
-from cv2 import __version__ as cv2_version
-from pyzbar import __version__ as pyzbar_version
 
-OPTION_OPENPYXL = False
+try:
+    # noinspection PyPackageRequirements,PyUnresolvedReferences,PyProtectedMember
+    from cv2 import __version__ as cv2_version
+    # noinspection PyUnresolvedReferences
+    from pyzbar import __version__ as pyzbar_version
+
+    OPTION_QRCODEREADER = True
+except ImportError:
+    OPTION_QRCODEREADER = False
+
 try:
     # noinspection PyUnresolvedReferences
     import openpyxl
@@ -29,7 +36,7 @@ try:
 
     OPTION_OPENPYXL = True
 except ImportError:
-    pass
+    OPTION_OPENPYXL = False
 
 from . import DragonLog_MainWindow_ui
 from .Logger import Logger
@@ -55,7 +62,9 @@ from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
 from .local_callbook import (LocalCallbook, LocalCallbookData, CallHistoryData,
                              LocalCallbookDatabaseError, LocalCallbookImportError, LocalCallbookExportError)
-from .QSLQRReader import QSLQRReaderDialog
+
+if OPTION_QRCODEREADER:
+    from .QSLQRReader import QSLQRReaderDialog
 
 __prog_name__ = 'DragonLog'
 __prog_desc__ = 'Log QSO for Ham radio'
@@ -308,6 +317,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {self.programName} {self.programVersion}...')
+        if not OPTION_OPENPYXL:
+            self.log.info(f'Option XL-Format not available')
+        if not OPTION_QRCODEREADER:
+            self.log.info(f'Option QSL-QR-Code not available')
         self.log.info(f'Using settings {self.settings.format()} from "{self.settings.fileName()}"')
 
         try:
@@ -796,8 +809,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.actionUpload_to_HamQTH.setEnabled(True)
             self.actionShow_statistics.setEnabled(True)
             self.actionShow_statistics_TB.setEnabled(True)
-            self.actionRead_DARC_QSL_QR_Code.setEnabled(True)
-            self.actionRead_DARC_QSL_QR_Code_TB.setEnabled(True)
+            if OPTION_QRCODEREADER:
+                self.actionRead_DARC_QSL_QR_Code.setEnabled(True)
+                self.actionRead_DARC_QSL_QR_Code_TB.setEnabled(True)
         except DatabaseOpenException as exc:
             self.log.exception(exc)
             if db_file == self.settings.value('lastDatabase', None):
@@ -2476,7 +2490,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if added:
             self.refreshTableView()
 
-    def findQSO(self, timestamp, call, minute_range:int=1) -> list:
+    def findQSO(self, timestamp, call, minute_range: int = 1) -> list:
         """Find a QSO and return data set as list
         The timestamp is searched for +/- 1 min
         :param timestamp: the timestamp in format "YYYY-MM-DD hh:mm[:ss]"
@@ -2643,8 +2657,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             pass
 
     def readQRCode(self):
-        qr = QSLQRReaderDialog(self, self, self.settings, self.log)
-        qr.exec()
+        if OPTION_QRCODEREADER:
+            qr = QSLQRReaderDialog(self, self, self.settings, self.log)
+            qr.exec()
 
     def logImportQRCode(self, record: dict[str, str]):
         """Import single record from QR code"""
@@ -2742,7 +2757,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def showAbout(self):
         cr = sys.copyright.replace('\n\n', '\n')
 
-        op_txt = f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl' if OPTION_OPENPYXL else ''
+        opt_xl = f'\n\nOpenPyXL {openpyxl.__version__}: Copyright (c) 2010 openpyxl' if OPTION_OPENPYXL else ''
+        opt_qrcode = (f'\nopencv-python {cv2_version}: Copyright (c) Olli-Pekka Heinisuo'
+                      f'\npyzbar {pyzbar_version}: Copyright (c) 2016 The Trustees of the Natural History Museum, London') if OPTION_QRCODEREADER else ''
 
         cty_ver = self.cty_version
         cty_ent = self.cty_ver_entity
@@ -2753,12 +2770,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             f'{self.tr("Version")}: {self.programVersion}\n'
             f'{self.tr("Author")}: {__author_name__} <{__author_email__}>\n{__copyright__}'
             f'\n\nPython {sys.version.split()[0]}: {cr}' +
-            op_txt +
+            opt_xl +
             '\nmaidenhead: Copyright (c) 2018 Michael Hirsch, Ph.D.' +
             f'\nPyADIF-File {adif_file.__version_str__}: {adif_file.__copyright__}' +
             f'\nHamCC {hamcc.__version_str__}: {hamcc.__copyright__}' +
-            f'\nopencv-python {cv2_version}: Copyright (c) Olli-Pekka Heinisuo' +
-            f'\npyzbar {pyzbar_version}: Copyright (c) 2016 The Trustees of the Natural History Museum, London' +
+            opt_qrcode +
             '\n\nIcons: Crystal Project, Copyright (c) 2006-2007 Everaldo Coelho'
             '\nFlags: Flagpedia.net, https://flagpedia.net'
             '\nFont: Inter, Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)'
