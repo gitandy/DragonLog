@@ -141,15 +141,31 @@ class CategoryBand(Enum):
     B_1MM = auto()
     B_SUBMM = auto()
 
+    def __str__(self):
+        return self.name[2:].lower().replace('_', '.')
 
-class CategoryOperator(Enum):
-    SINGLE = auto()
-    MULTI = auto()
+    @classmethod
+    def from_str(cls, name: str):
+        return cls['B_' + str(name).upper().replace('.', '_')]
+
+
+class CategoryEnum(Enum):
+    def __str__(self):
+        return self.name.replace('_', '-')
+
+    @classmethod
+    def from_str(cls, name: str):
+        return cls[str(name).upper().replace('-', '_')]
+
+
+class CategoryOperator(CategoryEnum):
+    SINGLE_OP = auto()
+    MULTI_OP = auto()
     CHECKLOG = auto()
     TRAINEE = auto()
 
 
-class CategoryMode(Enum):
+class CategoryMode(CategoryEnum):
     CW = auto()
     SSB = auto()
     RTTY = auto()
@@ -158,7 +174,7 @@ class CategoryMode(Enum):
     FM = auto()
 
 
-class CategoryPower(Enum):
+class CategoryPower(CategoryEnum):
     LOW = auto()
     HIGH = auto()
     QRP = auto()
@@ -168,12 +184,12 @@ class CategoryPower(Enum):
     NONE = auto()
 
 
-class CategoryAssisted(Enum):
+class CategoryAssisted(CategoryEnum):
     ASSISTED = auto()
     NON_ASSISTED = auto()
 
 
-class CategoryTransmitter(Enum):
+class CategoryTransmitter(CategoryEnum):
     ONE = auto()
     TWO = auto()
     LIMITED = auto()
@@ -233,7 +249,7 @@ class ContestLog(ABC):
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
                  pwr: type[CategoryPower] = CategoryPower.HIGH,
-                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
@@ -294,7 +310,7 @@ class ContestLog(ABC):
     def __init_header__(self, callsign, name, club, address: Address, email, locator,
                         band: type[CategoryBand], mode: type[CategoryMode],
                         pwr: type[CategoryPower] = CategoryPower.HIGH,
-                        cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                        cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
                         assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                         tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                         operators: list[str] = None, specific: str = ''):
@@ -304,7 +320,7 @@ class ContestLog(ABC):
         if locator and not check_format(REGEX_LOCATOR, locator):
             self.log.warning(f'Locator "{locator}" does not match locator format')
 
-        self.__header__['CONTEST'] = self.contest_name
+        self.__header__['CONTEST'] = self.contest_id
         self.__header__['CREATED-BY'] = 'ContestLog v0.1'
         self.__header__['CALLSIGN'] = callsign
         self.__header__['NAME'] = name
@@ -316,13 +332,17 @@ class ContestLog(ABC):
         self.__header__['EMAIL'] = email
         self.__header__['GRID-LOCATOR'] = locator
         self.__header__['OPERATORS'] = ' '.join(operators) if operators else callsign
-        self.__header__['CATEGORY-OPERATOR'] = cat_operator.name
-        self.__header__['CATEGORY-BAND'] = band.name[2:].replace('_', '.')
-        self.__header__['CATEGORY-MODE'] = mode.name
-        self.__header__['CATEGORY-POWER'] = pwr.name
-        self.__header__['CATEGORY-ASSISTED'] = assisted.name.replace('_', '-')
-        self.__header__['CATEGORY-TRANSMITTER'] = tx.name
+        self.__header__['CATEGORY-OPERATOR'] = str(cat_operator)
+        self.__header__['CATEGORY-BAND'] = str(band)
+        self.__header__['CATEGORY-MODE'] = str(mode)
+        self.__header__['CATEGORY-POWER'] = str(pwr)
+        self.__header__['CATEGORY-ASSISTED'] = str(assisted)
+        self.__header__['CATEGORY-TRANSMITTER'] = str(tx)
         self.__header__['SPECIFIC'] = specific
+
+    @property
+    def contest_id(self) -> str:
+        return self.contest_name
 
     @property
     def infos(self):
@@ -365,9 +385,9 @@ class ContestLog(ABC):
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         """Test if the ADIF record uses an valid band"""
-        if (adif_rec['BAND'] != self.__header__['CATEGORY-BAND'] and
+        if (adif_rec['BAND'].lower() != self.__header__['CATEGORY-BAND'] and
                 BAND_MAP_CBR[adif_rec['BAND'].lower()] != self.__header__['CATEGORY-BAND'].lower()):
-            self.log.warning(f'QSO #{self.__qso_id__} band "{adif_rec["BAND"]}" does not match with '
+            self.log.warning(f'QSO #{self.__qso_id__} band "{adif_rec["BAND"].lower()}" does not match with '
                              f'contest band "{self.__header__["CATEGORY-BAND"]}"')
             if self.__skip_warn__:
                 return False
@@ -386,7 +406,7 @@ class ContestLog(ABC):
                                  f'"{self.__header__["CONTEST"]}". Skipping.')
                     return
 
-            if self.__header__['CATEGORY-BAND'] != 'ALL' and not self.check_band(adif_rec):
+            if self.__header__['CATEGORY-BAND'] != 'all' and not self.check_band(adif_rec):
                 return
 
             if self.__header__['CATEGORY-MODE'] != 'MIXED' and adif_rec['MODE'].upper() != self.__header__[
@@ -520,7 +540,7 @@ class ContestLog(ABC):
             stats[b].multis2 = self.multis2
             stats[b].summary = stats[b].points * (self.multis + self.multis2)
         stats['Total'] = BandStatistics(self.qsos, self.rated, self.points,
-                                                 self.multis, self.multis2, self.claimed_points)
+                                        self.multis, self.multis2, self.claimed_points)
         return stats
 
     @classmethod
@@ -540,7 +560,7 @@ class ContestLog(ABC):
     @classmethod
     def valid_bands_list(cls) -> list[str]:
         """Valid bands for the contest as list of strings"""
-        return [b.name[2:].lower().replace('_', '.') for b in cls.valid_bands()]
+        return [str(b) for b in cls.valid_bands()]
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
@@ -565,12 +585,12 @@ class ContestLog(ABC):
     @classmethod
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
         """Valid operator classes for the contest"""
-        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.CHECKLOG
+        return CategoryOperator.SINGLE_OP, CategoryOperator.MULTI_OP, CategoryOperator.CHECKLOG
 
     @classmethod
     def valid_operator_list(cls) -> list[str]:
         """Valid operator classes for the contest as list of strings"""
-        return [o.name for o in cls.valid_operator()]
+        return [str(o) for o in cls.valid_operator()]
 
     @classmethod
     def descr_specific(cls) -> str:
@@ -615,7 +635,7 @@ class ContestLogCBR(ContestLog):
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
                  pwr: type[CategoryPower] = CategoryPower.HIGH,
-                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
@@ -739,7 +759,7 @@ class ContestLogEDI(ContestLog):
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
                  pwr: type[CategoryPower] = CategoryPower.HIGH,
-                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,

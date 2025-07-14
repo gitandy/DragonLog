@@ -28,7 +28,7 @@ class DARCUKWFruehlingsContest(ContestLogEDI):
 
     @classmethod
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
-        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
+        return CategoryOperator.SINGLE_OP, CategoryOperator.MULTI_OP, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
 
 
 class DARCUKWContest(ContestLogEDI):
@@ -60,7 +60,7 @@ class DARCUKWContest(ContestLogEDI):
 
     @classmethod
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
-        return CategoryOperator.SINGLE, CategoryOperator.MULTI, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
+        return CategoryOperator.SINGLE_OP, CategoryOperator.MULTI_OP, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
 
 
 class DARCOsterContest(ContestLogCBR):
@@ -72,7 +72,7 @@ class DARCOsterContest(ContestLogCBR):
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
                  pwr: type[CategoryPower] = CategoryPower.HIGH,
-                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
@@ -179,7 +179,7 @@ class DARCOsterContest(ContestLogCBR):
 
     @classmethod
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
-        return CategoryOperator.SINGLE, CategoryOperator.CHECKLOG
+        return CategoryOperator.SINGLE_OP, CategoryOperator.CHECKLOG
 
     @staticmethod
     def extract_exchange(exchange: str) -> ExchangeData | None:

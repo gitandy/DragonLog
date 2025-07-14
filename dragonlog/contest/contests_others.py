@@ -16,7 +16,7 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
                  pwr: type[CategoryPower] = CategoryPower.HIGH,
-                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
@@ -83,6 +83,10 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
             self.exception()
 
     @property
+    def contest_id(self) -> str:
+        return 'IARU-HF'
+
+    @property
     def statistics(self) -> dict[str, BandStatistics]:
         stats = self.__stats__.copy()
         qsos = 0
@@ -99,7 +103,7 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
             multis += stats[b].multis
             multis2 += stats[b].multis2
         stats['Total'] = BandStatistics(qsos, rated, points, multis, multis2,
-                                                 points * (multis + multis2))
+                                        points * (multis + multis2))
         return stats
 
     @classmethod
@@ -141,7 +145,7 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
 
     @classmethod
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
-        return CategoryOperator.SINGLE, CategoryOperator.CHECKLOG
+        return CategoryOperator.SINGLE_OP, CategoryOperator.CHECKLOG
 
     @staticmethod
     def extract_exchange(exchange: str) -> ExchangeData | None:
