@@ -48,8 +48,8 @@ from .DragonLog_Settings import Settings
 from .DragonLog_AppSelect import AppSelect
 from .LoTW import (LoTW, LoTWADIFFieldException, LoTWRequestException, LoTWCommunicationException,
                    LoTWLoginException, LoTWNoRecordException)
-from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException,
-                   EQSLRequestException, EQSLUserCallMatchException, EQSLQSODuplicateException)
+from .eQSL import (EQSL, EQSLADIFFieldException, EQSLLoginException, EQSLRequestException,
+                   EQSLUserCallMatchException, EQSLQSODuplicateException, EQSLCommunicationException)
 from .CassiopeiaConsole import CassiopeiaConsole
 from .CallBook import HamQTHCallBook, CallBookType, LoginException, QSORejectedException, MissingADIFFieldException, \
     CommunicationException
@@ -1544,6 +1544,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.information(self, self.tr('Upload eQSL error'),
                                                   self.tr('Error on upload') + f':\n"{exc.args[0]}"')
                 break
+            except EQSLCommunicationException as exc:
+                self.log.warning(str(exc))
+                QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
+                                              self.tr('eQSL request error'))
+                break
             finally:
                 self.updateQSOField('eqsl_sent', qso_id, eqsl_sent)
         self.refreshTableView(False)
@@ -1564,9 +1569,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info(f'Checking eQSL for QSO #{qso_id}...')
 
         rec = adif_doc['RECORDS'][0]
-        eqsl_sent = 'Y' if rec.get('EQSL_QSL_SENT', 'N') in ('Y', 'R') else 'N'
-        eqsl_rcvd = 'N'
-
         try:
             res = self.eqsl.check_inbox(self.settings.value('eqsl/username', ''),
                                         self.settings_form.eqslPassword(),
@@ -1575,26 +1577,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 qso_uuid = rec['QSO_DATE'] + rec['TIME_ON'] + rec['CALL']
                 self.eqsl_urls[qso_uuid] = res
                 self.log.debug(f'eQSL available at "{res}"')
-                eqsl_rcvd = 'Y'
+                self.updateQSOField('eqsl_rcvd', qso_id, 'Y')
+                return True
         except EQSLLoginException as exc:
             QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
                                           self.tr('Login failed for user') + ': ' + self.settings.value(
                                               'eqsl/username', '') + f'\n{exc}')
-            return False
         except EQSLUserCallMatchException:
             QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
                                           self.tr('User call does not match') + ': ' + self.settings.value(
                                               'eqsl/username', ''))
-            return False
         except EQSLRequestException:
             self.log.info('No eQSL available')
         except EQSLADIFFieldException as exc:
             self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
-        finally:
-            self.updateQSOField('eqsl_sent', qso_id, eqsl_sent)
-            self.updateQSOField('eqsl_rcvd', qso_id, eqsl_rcvd)
-
-        return True
+        except EQSLCommunicationException as exc:
+            self.log.warning(str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
+                                          self.tr('eQSL request error'))
+        return False
 
     def eqslDownload(self):
         res = QtWidgets.QFileDialog.getExistingDirectory(
