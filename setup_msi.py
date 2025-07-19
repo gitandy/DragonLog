@@ -1,15 +1,18 @@
 from cx_Freeze import setup, Executable
-from dragonlog.DragonLog import __prog_name__, __prog_desc__, __author_name__, __copyright__
 
+from dragonlog.DragonLog import __prog_name__, __prog_desc__, __author_name__, __copyright__
 
 base = 'Win32GUI'
 
 build_exe_options = {
     'packages': ['dragonlog'],
-    'excludes': ['tkinter', 
-                 'unittest',
-                 ],
-    'zip_include_packages': ["encodings", "PyQt6"]
+    'excludes': [
+        'tkinter',
+        'unittest',
+        'cv2',
+        'pyzbar',
+    ],
+    'zip_include_packages': ['encodings']
 }
 
 msi_data = {
@@ -56,7 +59,7 @@ executables = [
 ]
 
 setup(options={
-          'build_exe': build_exe_options,
-          'bdist_msi': bdist_msi_options,
-      },
-      executables=executables)
+    'build_exe': build_exe_options,
+    'bdist_msi': bdist_msi_options,
+},
+    executables=executables)

@@ -31,6 +31,9 @@ qslqrcode=["opencv-python-headless", "pyzbar"]
 [project.scripts]
 "DragonLog" = "dragonlog.DragonLog:main"
 
+[project.gui-scripts]
+"DragonLogW" = "dragonlog.DragonLog:main"
+
 [tool.setuptools]
 packages = ["dragonlog", "dragonlog.contest"]
 

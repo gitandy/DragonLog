@@ -54,8 +54,11 @@ Features
 
 Installation
 ------------
-The installation requires a python installation (>= 3.10). 
+The installation requires a python installation (>= 3.10).
+
 On Linux you may have to install libxcb-cursor0.
+
+These steps assume you are using your system python installation. Though I recommend using virtual envirnoments.
     
     # python3 -m pip install DragonLog
 
@@ -77,7 +80,12 @@ Or if your python scripts folder is on PATH you can start DragonLog with
     # DragonLog
 
 
-For windows there is also an installable MSI and ZIP package available for convenience.
+For detailed Windows installation steps see [README_WININST](https://github.com/gitandy/DragonLog/blob/master/README_WININST.md).
+This is the recommended way to get the full functionality of DragonLog.
+
+For Windows there is also an installable MSI and ZIP package available for convenience.
+Unfortunatley the QSL-QR-Code reader is not available with these Windows prebuild versions.
+Anyway the Python version is currently stuck at 3.12 as the MSI packaging will not be ported to higher versions.
 
 
 Starting and first start
@@ -245,7 +253,7 @@ DragonLog is tested against version 4.5.5 and 4.6.2.
 
 After selecting your radio and interface settings you can press the start button to start the communication.
 
-Currently, DragonLog can only configure radios with serial interface.
+Currently, DragonLog can only configure radios with serial interface (including USB serial).
 
 ### On Windows
 Unpack or install your hamlib release.
