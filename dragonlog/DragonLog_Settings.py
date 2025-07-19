@@ -226,6 +226,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.bandsSelectWidget.itemsEnabled = self.settings.value('ui/show_bands', self.bandsSelectWidget.items)
         self.modesSelectWidget.itemsEnabled = self.settings.value('ui/show_modes', self.modesSelectWidget.items)
 
+        self.checkUpdatesCheckBox.setChecked(bool(int(self.settings.value('ui/check_updates', 1))))
         self.logLevelComboBox.setCurrentText(str(self.settings.value('ui/log_level', 'Info')).capitalize())
         self.logToFileCheckBox.setChecked(bool(int(self.settings.value('ui/log_file', 0))))
 
@@ -321,6 +322,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
                                ','.join([str(c) for c in self.columnsSelectWidget.indexesDisabled]))
         self.settings.setValue('ui/show_bands', self.bandsSelectWidget.itemsEnabled)
         self.settings.setValue('ui/show_modes', self.modesSelectWidget.itemsEnabled)
+        self.settings.setValue('ui/check_updates', int(self.checkUpdatesCheckBox.isChecked()))
+
         self.settings.setValue('ui/log_level', self.logLevelComboBox.currentText().upper())
         self.settings.setValue('ui/log_file', int(self.logToFileCheckBox.isChecked()))
 

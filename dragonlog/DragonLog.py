@@ -12,11 +12,13 @@ from enum import Enum, auto
 import datetime
 from typing import Iterable, Iterator
 
+from packaging.version import parse, Version
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
 from adif_file import adi, adx
 import xmltodict
 import hamcc
+import requests
 
 try:
     # noinspection PyPackageRequirements,PyUnresolvedReferences,PyProtectedMember
@@ -81,6 +83,17 @@ if version.__branch__ != 'master':
     __version_str__ += '-' + version.__branch__
 if version.__unclean__:
     __version_str__ += '-unclean'
+
+
+def update_available(cur_version: str) -> tuple[bool, str]:
+    cur_ver: Version = parse(cur_version)
+    req = requests.get('https://pypi.python.org/pypi/dragonlog/json')
+    if req.status_code == requests.codes.ok:
+        pypi_info = req.json()
+        if pypi_info and 'info' in pypi_info:
+            pypi_ver: Version = parse(pypi_info['info'].get('version', '0'))
+            return (not pypi_ver.is_prerelease and cur_ver < pypi_ver), str(pypi_ver)
+    return False, ''
 
 
 class DatabaseOpenException(Exception):
@@ -604,6 +617,15 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.eqsl_urls: dict[str, str] = {}
 
         self.useFont()
+        
+        if (self.settings.value('ui/check_updates', 1) and
+                not self.settings.value('ui/update_checked', '') == __version__):
+            upd, upd_ver = update_available(__version__)
+            self.log.debug(f'Checked update: {upd}, new version "{upd_ver}"')
+            if upd:
+                QtWidgets.QMessageBox.information(self, self.tr('Update available'),
+                                                  self.tr('A newer version of DragonLog is available') + f': {upd_ver}')
+                self.settings.setValue('ui/update_checked', __version__)
 
     @staticmethod
     def int2dock_area(value: int) -> QtCore.Qt.DockWidgetArea:
