@@ -2775,50 +2775,50 @@ Should the call history be refreshed anyway?</source>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="319" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="322" />
       <source>Station</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="322" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="325" />
       <source>Identity</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="328" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="331" />
       <source>Configured station</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="331" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="334" />
       <source>Configured identity</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="796" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="788" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="805" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="797" />
       <source>Callbook search error</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="789" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="798" />
       <source>Login failed for user</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="792" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="801" />
       <source>Callbook search result</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="793" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="802" />
       <source>Callsign not found</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="797" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="806" />
       <source>During callbook search an error occured</source>
       <translation />
     </message>
@@ -2827,7 +2827,7 @@ Should the call history be refreshed anyway?</source>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="814" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="823" />
       <source>Rx Exchange</source>
       <translation />
     </message>
@@ -2843,12 +2843,12 @@ Should the call history be refreshed anyway?</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>HamQTH</source>
+      <source>Name</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Ctrl+Alt+H</source>
+      <source>Locator</source>
       <translation />
     </message>
     <message>
@@ -2858,28 +2858,53 @@ Should the call history be refreshed anyway?</source>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>QTH</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Lookup at HamQTH.com (Ctrl+Alt+H)</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>HamQTH</source>
+      <translation />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Ctrl+Alt+H</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Lookup at QRZ.com (Ctrl+Shift+Q)</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>QRZ</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Ctrl+Shift+Q</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
+      <source>Lookup at QRZCQ.com (Ctrl+Alt+Z)</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>QRZCQ</source>
       <translation />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <source>Ctrl+Alt+Z</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Name</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>QTH</source>
-      <translation />
-    </message>
-    <message>
-      <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <source>Locator</source>
-      <translation />
+      <translation type="unfinished" />
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />

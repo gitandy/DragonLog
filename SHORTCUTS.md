@@ -34,6 +34,7 @@ QSO form actions
 |----------------|------------------|
 | Save QSO       | Ctrl + S         |
 | Search HamQTH  | Ctrl + Alt + H   |
+| Search QRZ     | Ctrl + Shift + Q |
 | Search QRZCQ   | Ctrl + Alt + Z   |
 | Start time now | Ctrl + Alt + N   |
 

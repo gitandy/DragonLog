@@ -16,6 +16,7 @@ from .Logger import Logger
 class CallBookType(Enum):
     HamQTH = 'HamQTH.com'
     QRZCQ = 'QRZCQ.com'
+    QRZ = 'QRZ.com'
 
 
 @dataclass
@@ -336,3 +337,83 @@ class QRZCQCallBook(AbstractCallBook):
 
     def __upload_log__(self, username: str, password: str, adif: str):
         raise NotImplementedError('QRZCQ.com API for uploading is currently not stable')
+
+
+class QRZCallBook(AbstractCallBook):
+    def __init__(self, logger: Logger, prog_name: str):
+        super().__init__(logger, prog_name)
+
+    @property
+    def required_fields(self) -> tuple:
+        raise NotImplementedError('QRZ.com API for uploading is not available')
+
+    @property
+    def __url__(self):
+        return 'https://xmldata.qrz.com/xml/1.34/'
+
+    @property
+    def callbook_type(self) -> CallBookType:
+        return CallBookType.QRZ
+
+    def __login__(self, username: str, password: str) -> str:
+        if not username or not password:
+            raise LoginException('Username or password missing')
+
+        try:
+            res = self._get_({'username': username,
+                              'password': password,
+                              'agent': self.__program_str__})
+        except CommunicationException as exc:
+            raise LoginException(str(exc))
+
+        match res:
+            case {'QRZDatabase': {'Session': {'Error': error}}}:
+                raise LoginException(f"QRZ error: {error}")
+            case {'QRZDatabase': {'Session': {'Key': session_id}}}:
+                return session_id
+            case _:
+                raise LoginException(f'QRZ error: Unknown data format {res}')
+
+    def __get_dataset__(self, callsign: str) -> CallBookData | None:
+        try:
+            self.log.debug(f'Searching {callsign}...')
+            res = self._get_({'s': self.__session__,
+                              'callsign': callsign,
+                              # 'agent': self.__program_str__
+                              })
+        except CommunicationException as exc:
+            raise RequestException(str(exc))
+
+        match res:
+            case {'QRZDatabase': {'Session': {'Error': error}}}:
+                if error == 'Session does not exist or expired':
+                    raise SessionExpiredException('QRZ')
+                elif error.startswith('Not found') or error.startswith('Callsign Empty'):
+                    raise CallsignNotFoundException(callsign)
+                else:
+                    raise RequestException(f"QRZ error: {error}")
+            case {'QRZDatabase': {'Callsign': data}}:
+                if data:
+                    return CallBookData(
+                        callsign,
+                        data.get('name_fmt', data.get('fname', '')),
+                        data.get('grid', ''),
+                        data.get('addr2', ''),
+                        data.get('qslmgr', ''),
+                        False,  # not available
+                        data.get('mqsl', '') == '1',
+                        data.get('eqsl', '') == '1',
+                        data.get('lotw', '') == '1',
+                        '',  # not available
+                    )
+                else:
+                    return None
+            case _:
+                raise RequestException(f'QRZ error: Unknown data format {res}')
+
+    @property
+    def has_logbook(self) -> bool:
+        return False
+
+    def __upload_log__(self, username: str, password: str, adif: str):
+        raise NotImplementedError('QRZ.com API for uploading is not available')

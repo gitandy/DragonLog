@@ -9,7 +9,7 @@ from . import DragonLog_QSOForm_ui
 from .Logger import Logger
 from .DragonLog_Settings import Settings
 from .RegEx import REGEX_CALL, REGEX_RSTFIELD, REGEX_LOCATOR, REGEX_TIME, check_format, check_call, check_qth
-from .CallBook import (HamQTHCallBook, QRZCQCallBook, CallBookData,
+from .CallBook import (HamQTHCallBook, QRZCQCallBook, QRZCallBook, CallBookData,
                        SessionExpiredException, LoginException, CallsignNotFoundException)
 from . import ColorPalettes
 from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, ContestLog, ExchangeData
@@ -68,6 +68,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.callbook_qrzcq = QRZCQCallBook(self.logger,
                                             f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
                                             )
+        self.callbook_qrz = QRZCallBook(self.logger,
+                                        f'{self.dragonlog.programName}-{self.dragonlog.programVersion}',
+                                        )
 
         view_only_widgets = (
             self.qslAccBureauCheckBox,
@@ -750,7 +753,13 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def searchQRZCQ(self):
         self.searchCallbook(self.callbook_qrzcq)
 
+    def searchQRZ(self):
+        self.searchCallbook(self.callbook_qrz)
+
     def searchCallbook(self, callbook):
+        if not self.callSignLineEdit.text().strip():
+            return
+
         try:
             if not callbook.is_loggedin:
                 callbook.login(self.settings.value(f'callbook/{callbook.callbook_type.name}_user', ''),

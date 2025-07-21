@@ -26,7 +26,7 @@ Features
   * OM data build of your contacts (per callsign)
   * contest call history with received exchanges (per contest and callsign)
   * incorporating prefixes/suffixes
-* user triggered callbook search (HamQTH.com and QRZCQ.com)
+* user triggered callbook search (HamQTH.com, QRZ.com and QRZCQ.com)
 * single and multiple QSO log upload 
   * HamQTH.com
   * eQSL upload, check and download
