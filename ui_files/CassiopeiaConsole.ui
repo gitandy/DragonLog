@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>904</width>
+    <width>800</width>
     <height>227</height>
    </rect>
   </property>
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>CassiopeiaConsole</string>
@@ -67,6 +73,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myCallLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Your callsign</string>
           </property>
@@ -91,6 +103,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myLocLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Your Locator</string>
           </property>
@@ -115,6 +133,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="myNameLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Your Name</string>
           </property>
@@ -161,7 +185,7 @@
          <widget class="QComboBox" name="eventComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
+            <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -207,6 +231,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="exchTXLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Exchange</string>
           </property>
@@ -243,6 +273,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="exchRXLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Exchange</string>
           </property>
@@ -301,7 +337,7 @@
          <widget class="QDateEdit" name="dateEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
+            <horstretch>2</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -334,7 +370,7 @@
          <widget class="QTimeEdit" name="timeEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
+            <horstretch>2</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -361,7 +397,7 @@
          <widget class="QComboBox" name="bandComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
+            <horstretch>1</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -392,7 +428,7 @@
          <widget class="QComboBox" name="modeComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
+            <horstretch>2</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -424,6 +460,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="callLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Call</string>
           </property>
@@ -448,6 +490,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="locLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Locator</string>
           </property>
@@ -472,6 +520,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="rstTXLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximumSize">
            <size>
             <width>50</width>
@@ -514,6 +568,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="rstRXLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximumSize">
            <size>
             <width>50</width>
@@ -563,6 +623,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="nameLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -586,6 +652,12 @@
         </item>
         <item>
          <widget class="QSpinBox" name="freqSpinBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="specialValueText">
            <string>n.a.</string>
           </property>
@@ -622,6 +694,12 @@
         </item>
         <item>
          <widget class="QSpinBox" name="powerSpinBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="specialValueText">
            <string>n.a.</string>
           </property>
@@ -694,6 +772,12 @@
         </item>
         <item>
          <widget class="QLineEdit" name="commentLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="placeholderText">
            <string>Comment</string>
           </property>
