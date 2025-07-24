@@ -348,13 +348,15 @@ class LocalCallbook:
 
         res = cur.fetchone()
         if not res and any_fix:
-            _, callsign, _ = check_call(callsign)
-            self.log.debug(f'Searching for any suffix for {callsign}...')
-            cur = self.__db__.execute('SELECT callsign, data FROM callbook '
-                                      'WHERE callsign LIKE ? or callsign LIKE ? or callsign LIKE ? '
-                                      'ORDER BY recorded DESC',
-                                      (f'{callsign}/%', f'%/{callsign}', f'%/{callsign}/%'))
-            res = cur.fetchone()
+            call_check = check_call(callsign)
+            if call_check:
+                callsign = call_check[1]
+                self.log.debug(f'Searching for any suffix for {callsign}...')
+                cur = self.__db__.execute('SELECT callsign, data FROM callbook '
+                                          'WHERE callsign LIKE ? or callsign LIKE ? or callsign LIKE ? '
+                                          'ORDER BY recorded DESC',
+                                          (f'{callsign}/%', f'%/{callsign}', f'%/{callsign}/%'))
+                res = cur.fetchone()
 
         return LocalCallbookResult(*res) if res else None
 
