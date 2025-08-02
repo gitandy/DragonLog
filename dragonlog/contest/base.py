@@ -296,9 +296,13 @@ class ContestLog(ABC):
         self.__multis__: set[str] = set()
         self.__multis2__: set[str] = set()
 
-        self.__stats__: dict[str, BandStatistics] = dict(zip(self.valid_bands_list()[1:],
+        valid_bands = self.valid_bands_list().copy()
+        if 'all' in valid_bands:
+            valid_bands.remove('all')
+        self.__stats__: dict[str, BandStatistics] = dict(zip(valid_bands,
                                                              [self.statistic_primer() for _ in
-                                                              range(len(self.valid_bands_list()[1:]))]))
+                                                              range(len(valid_bands))]))
+        print(self.__stats__.keys())
 
         self.__skip_id__ = skip_id
         self.__skip_warn__ = skip_warn
@@ -846,7 +850,7 @@ class ContestLogEDI(ContestLog):
     def build_record(self, adif_rec) -> EDIRecord | None:
         self.log.debug(adif_rec)
 
-        if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
+        if self.__header__['CATEGORY-BAND'] in ('all', adif_rec['BAND'].upper()):
             date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
             if not self.__contest_date__:
                 self.__contest_date__ = date
