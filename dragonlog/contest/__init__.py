@@ -2,7 +2,7 @@
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
 
 from .base import ContestLog, ExchangeData, ContestLogCBR, ContestLogEDI
-from .contests_darc import DARCUKWContest, DARCUKWFruehlingsContest, DARCOsterContest
+from .contests_darc import DARCUKWContest, DARCUKWFruehlingsContest, DARCOsterContest, DARCUKWSommerFDContest
 from .contests_darc_rlp import RLPFALZAWLog, RLPFALZABKWLog, RLPFALZABUKWLog, K32KurzUKWLog
 from .contests_darc_others import L33EinsteigerContest
 from .contests_others import IARUHFWorldChampionshipContest
@@ -10,6 +10,7 @@ from .contests_others import IARUHFWorldChampionshipContest
 CONTESTS: dict[str, type[ContestLog]] = {
     'DARC-UKW': DARCUKWContest,
     'DARC-UKW-FRUEHLING': DARCUKWFruehlingsContest,
+    'DARC-UKW-SOMMERFD': DARCUKWSommerFDContest,
     'DARC-KW-OSTERN': DARCOsterContest,
     'RL-PFALZ-AW': RLPFALZAWLog,
     'RL-PFALZ-AB.UKW': RLPFALZABUKWLog,

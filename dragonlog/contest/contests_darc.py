@@ -30,6 +30,24 @@ class DARCUKWFruehlingsContest(ContestLogEDI):
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
         return CategoryOperator.SINGLE_OP, CategoryOperator.MULTI_OP, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
 
+class DARCUKWSommerFDContest(ContestLogEDI):
+    contest_name = 'DARC UKW-Sommer-Fieldday'
+    contest_year = '2025'
+    contest_update = '2025-08-02'
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return (CategoryBand.B_2M, CategoryBand.B_70CM,
+                CategoryBand.B_23CM, CategoryBand.B_13CM, CategoryBand.B_9CM, CategoryBand.B_6CM)
+
+    @classmethod
+    def valid_operator(cls) -> tuple[CategoryOperator, ...]:
+        return CategoryOperator.SINGLE_OP, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
+
 
 class DARCUKWContest(ContestLogEDI):
     contest_name = 'DARC UKW-Wettbewerb'

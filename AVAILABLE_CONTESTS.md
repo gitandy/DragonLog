@@ -17,6 +17,7 @@ The sent exchange is handled automatically.
 |--------------|-------------|------|---------|-------------|
 | DARC UKW-Wettbewerb | DARC-UKW | ***2025*** | 2025-04-07 | Number,Locator |
 | DARC UKW Frühlingswettbewerb | DARC-UKW-FRUEHLING | ***2025*** | 2025-04-07 | Number,Locator |
+| DARC UKW-Sommer-Fieldday | DARC-UKW-SOMMERFD | ***2025*** | 2025-08-02 | Number,Locator |
 | DARC-Ostercontest | DARC-KW-OSTERN | ***2025*** | 2025-04-13 | DOK |
 | RLP Aktivitätswoche | RL-PFALZ-AW | ***2025*** | 2025-01-05 | DOK |
 | RLP Aktivitätsabend UKW | RL-PFALZ-AB.UKW | ***2025*** | 2025-05-08 | DOK,Locator |
