@@ -12,7 +12,7 @@ from enum import Enum, auto
 import datetime
 from typing import Iterable, Iterator
 
-from packaging.version import parse, Version
+from packaging.version import parse, Version, InvalidVersion
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
 from adif_file import adi, adx
@@ -86,13 +86,17 @@ if version.__unclean__:
 
 
 def update_available(cur_version: str) -> tuple[bool, str]:
-    cur_ver: Version = parse(cur_version)
-    req = requests.get('https://pypi.python.org/pypi/dragonlog/json')
-    if req.status_code == requests.codes.ok:
-        pypi_info = req.json()
-        if pypi_info and 'info' in pypi_info:
-            pypi_ver: Version = parse(pypi_info['info'].get('version', '0'))
-            return (not pypi_ver.is_prerelease and cur_ver < pypi_ver), str(pypi_ver)
+    try:
+        cur_ver: Version = parse(cur_version)
+        req = requests.get('https://pypi.python.org/pypi/dragonlog/json')
+        if req.status_code == requests.codes.ok:
+            pypi_info = req.json()
+            if pypi_info and 'info' in pypi_info:
+                pypi_ver: Version = parse(pypi_info['info'].get('version', '0'))
+                return (not pypi_ver.is_prerelease and cur_ver < pypi_ver), str(pypi_ver)
+    except (InvalidVersion, requests.exceptions.ConnectionError):
+        pass
+
     return False, ''
 
 
@@ -617,7 +621,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.eqsl_urls: dict[str, str] = {}
 
         self.useFont()
-        
+
         if (self.settings.value('ui/check_updates', 1) and
                 not self.settings.value('ui/update_checked', '') == __version__):
             upd, upd_ver = update_available(__version__)
