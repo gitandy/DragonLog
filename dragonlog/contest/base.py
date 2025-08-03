@@ -302,8 +302,6 @@ class ContestLog(ABC):
         self.__stats__: dict[str, BandStatistics] = dict(zip(valid_bands,
                                                              [self.statistic_primer() for _ in
                                                               range(len(valid_bands))]))
-        print(self.__stats__.keys())
-
         self.__skip_id__ = skip_id
         self.__skip_warn__ = skip_warn
 
@@ -792,7 +790,7 @@ class ContestLogEDI(ContestLog):
         self.__edi_file__: typing.TextIO | None = None
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
-        if adif_rec['BAND'] != self.__header__['CATEGORY-BAND']:
+        if adif_rec['BAND'].lower() != self.__header__['CATEGORY-BAND']:
             self.warning(
                 f'Band "{adif_rec["BAND"]}" does not match with contest band {self.__header__["CATEGORY-BAND"]}')
             if self.__skip_warn__:
@@ -850,7 +848,7 @@ class ContestLogEDI(ContestLog):
     def build_record(self, adif_rec) -> EDIRecord | None:
         self.log.debug(adif_rec)
 
-        if self.__header__['CATEGORY-BAND'] in ('all', adif_rec['BAND'].upper()):
+        if self.__header__['CATEGORY-BAND'] in ('all', adif_rec['BAND'].lower()):
             date = f'{adif_rec["QSO_DATE"][:4]}-{adif_rec["QSO_DATE"][4:6]}-{adif_rec["QSO_DATE"][6:8]}'
             if not self.__contest_date__:
                 self.__contest_date__ = date
@@ -868,8 +866,8 @@ class ContestLogEDI(ContestLog):
             except Exception as exc:
                 self.exception(str(exc))
 
-            if dist > int(self.__codxc__[2]):
-                self.__codxc__ = [adif_rec['CALL'], rloc, str(dist)]
+            if dist > self.__codxc__[2]:
+                self.__codxc__ = [adif_rec['CALL'], rloc, dist]
 
             if rloc.upper() not in self.__locators__:
                 self.__locators__.append(rloc.upper())
@@ -902,7 +900,7 @@ class ContestLogEDI(ContestLog):
             self.__edi_file__.write('CDXCs=0;0;1\n')
             self.__edi_file__.write('CDXCB=0\n')
             self.__edi_file__.write(f'CToSc={self.claimed_points}\n')
-            self.__edi_file__.write(f'CODXC={";".join(self.__codxc__)}\n')
+            self.__edi_file__.write(f'CODXC={self.__codxc__[0]};{self.__codxc__[1]};{self.__codxc__[2]}\n')
 
             # Remarks
             self.__edi_file__.write('[Remarks]\n')
@@ -980,7 +978,8 @@ class ContestLogEDI(ContestLog):
 
     @property
     def file_name(self) -> str:
-        return f'{self.__contest_date__}_{self.__header__["CALLSIGN"]}_{self.contest_name.replace(" ", "-")}.edi'
+        return (f'{self.__contest_date__}_{self.__header__["CALLSIGN"].replace("/", "-")}_'
+                f'{self.contest_name.replace(" ", "-")}_{self.__header__["CATEGORY-BAND"]}.edi')
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
