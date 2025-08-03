@@ -14,7 +14,7 @@ class DARCUKWFruehlingsContest(ContestLogEDI):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+        return CategoryMode.SSB, CategoryMode.CW, CategoryMode.FM
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
@@ -30,6 +30,7 @@ class DARCUKWFruehlingsContest(ContestLogEDI):
     def valid_operator(cls) -> tuple[CategoryOperator, ...]:
         return CategoryOperator.SINGLE_OP, CategoryOperator.MULTI_OP, CategoryOperator.TRAINEE, CategoryOperator.CHECKLOG
 
+
 class DARCUKWSommerFDContest(ContestLogEDI):
     contest_name = 'DARC UKW-Sommer-Fieldday'
     contest_year = '2025'
@@ -37,7 +38,7 @@ class DARCUKWSommerFDContest(ContestLogEDI):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+        return CategoryMode.SSB, CategoryMode.CW, CategoryMode.FM
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
@@ -56,7 +57,7 @@ class DARCUKWContest(ContestLogEDI):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.FM, CategoryMode.SSB, CategoryMode.CW
+        return CategoryMode.SSB, CategoryMode.CW, CategoryMode.FM
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
@@ -177,11 +178,11 @@ class DARCOsterContest(ContestLogCBR):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB
+        return CategoryMode.SSB, CategoryMode.MIXED, CategoryMode.CW
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_ALL, CategoryBand.B_40M, CategoryBand.B_80M
+        return CategoryBand.B_ALL, CategoryBand.B_80M, CategoryBand.B_40M
 
     @classmethod
     def descr_specific(cls) -> str:

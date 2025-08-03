@@ -139,14 +139,14 @@ class RLPFALZAWLog(ContestLogCBR):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB, CategoryMode.FM
+        return CategoryMode.SSB, CategoryMode.MIXED, CategoryMode.CW, CategoryMode.FM
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return (CategoryBand.B_ALL, CategoryBand.B_23CM, CategoryBand.B_70CM,
-                CategoryBand.B_2M, CategoryBand.B_4M, CategoryBand.B_6M,
-                CategoryBand.B_10M, CategoryBand.B_15M, CategoryBand.B_20M,
-                CategoryBand.B_40M, CategoryBand.B_80M, CategoryBand.B_160M)
+        return (CategoryBand.B_ALL, CategoryBand.B_160M, CategoryBand.B_80M,
+                CategoryBand.B_40M, CategoryBand.B_20M, CategoryBand.B_15M,
+                CategoryBand.B_10M, CategoryBand.B_6M, CategoryBand.B_4M,
+                CategoryBand.B_2M, CategoryBand.B_70CM, CategoryBand.B_23CM)
 
     @classmethod
     def descr_specific(cls) -> str:
@@ -276,11 +276,11 @@ class RLPFALZABUKWLog(ContestLogCBR):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB
+        return CategoryMode.SSB, CategoryMode.MIXED, CategoryMode.CW
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_70CM, CategoryBand.B_2M
+        return CategoryBand.B_2M, CategoryBand.B_70CM
 
     @classmethod
     def descr_specific(cls) -> str:
@@ -389,11 +389,11 @@ class RLPFALZABKWLog(ContestLogCBR):
 
     @classmethod
     def valid_modes(cls) -> tuple[CategoryMode, ...]:
-        return CategoryMode.MIXED, CategoryMode.CW, CategoryMode.SSB
+        return CategoryMode.SSB, CategoryMode.MIXED, CategoryMode.CW
 
     @classmethod
     def valid_bands(cls) -> tuple[CategoryBand, ...]:
-        return CategoryBand.B_10M, CategoryBand.B_80M
+        return CategoryBand.B_80M, CategoryBand.B_10M
 
     @classmethod
     def descr_specific(cls) -> str:
