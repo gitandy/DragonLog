@@ -82,6 +82,8 @@
     <addaction name="actionUnmark_QSL_received"/>
     <addaction name="actionMark_HamQTH_uploaded"/>
     <addaction name="separator"/>
+    <addaction name="actionChange_contest"/>
+    <addaction name="separator"/>
     <addaction name="actionWatch_file_for_QSOs"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -1300,6 +1302,18 @@
     <string>Read DARC QSL-QR-Code</string>
    </property>
   </action>
+  <action name="actionChange_contest">
+   <property name="icon">
+    <iconset>
+     <normaloff>icons:contest_edit.png</normaloff>icons:contest_edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Change contest...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+C</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -2359,6 +2373,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionChange_contest</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeContestID()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -2398,5 +2428,6 @@
   <slot>importCallHistory()</slot>
   <slot>copyToClipboard()</slot>
   <slot>readQRCode()</slot>
+  <slot>changeContestID()</slot>
  </slots>
 </ui>

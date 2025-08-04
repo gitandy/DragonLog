@@ -25,6 +25,7 @@ Main actions
 | Mark QSL rcvd        | Ctrl + Alt + R   |
 | Unmark QSL rcvd      | Ctrl + Shift + R |
 | Mark HamQTH uploaded | Ctrl + Alt + U   |
+| Change contest       | Ctrl + Alt + C   |
 
 
 QSO form actions

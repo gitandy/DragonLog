@@ -1039,6 +1039,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.addQSOToCallbook(qso)
 
     def selectedQSOIds(self) -> Iterator[int]:
+        """Fetch the QSO ID for selected"""
         yielded_ids: list[int] = []
 
         for i in self.QSOTableView.selectedIndexes():
@@ -1050,7 +1051,22 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 yielded_ids.append(qso_id)
                 yield qso_id
 
+    def changeContestID(self):
+        """Change the contest ID for selected QSOs"""
+        contest, ok = QtWidgets.QInputDialog.getItem(self, self.tr('Change contest'),
+                                                     self.tr('Select new contest'),
+                                                     list(CONTEST_NAMES.values()),
+                                                     editable=False)
+        if not ok:
+            return
+
+        for q in self.selectedQSOIds():
+            self.updateQSOField('contest_id', q, CONTEST_IDS[contest])
+
+        self.refreshTableView()
+
     def selectedQSOs(self) -> Iterator[dict[str, str]]:
+        """Fetch the QSO data for selected QSOs"""
         for qso_id in self.selectedQSOIds():
             query = self.__db_con__.exec(f'SELECT * FROM qsos WHERE id = {qso_id}')
             if query.lastError().text():
