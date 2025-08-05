@@ -1685,22 +1685,29 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
             stations = {}
             for st in station_def['StationDataFile']['StationData']:
-                stations[f"{st['CALL']} - {st['@name']}"] = {'name': st['@name'],
-                                                             'locator': st['GRIDSQUARE']}
+                if st['CALL'] == '[None]':
+                    continue
+                stations[f"{st['CALL']} - {st['@name']}"] = {
+                    'name': st['@name'],
+                    'locator': st['GRIDSQUARE'],
+                    'call': st['CALL'],
+                }
         except Exception as exc:
             self.log.exception(exc)
             return
 
         station, ok = QtWidgets.QInputDialog.getItem(self, self.tr('LoTW ADIF upload'),
                                                      self.tr('Select station'),
-                                                     stations)
+                                                     sorted(stations))
         if not ok:
             return
 
         self.log.info(f'Selected station "{station}"')
         locator = stations[station]['locator'].upper()
+        call = stations[station]['call'].upper()
         doc = self._build_adif_export_(f"SELECT * FROM qsos "
                                        f"WHERE band != '11m' AND upper(own_locator) LIKE '{locator}%'"
+                                       f"AND own_callsign = '{call}'"
                                        f"AND (lotw_sent != 'Y' OR lotw_sent is NULL)",
                                        include_id=True)
         if len(doc['RECORDS']) < 1:
