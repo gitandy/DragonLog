@@ -1586,11 +1586,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.log.info(f'Skipped CB QSO #{qso_id}')
             return False
 
-        self.log.info(f'Checking eQSL for QSO #{qso_id}...')
-
         rec = adif_doc['RECORDS'][0]
         try:
-            res = self.eqsl.check_inbox(self.settings.value('eqsl/username', ''),
+            if int(self.settings.value('eqsl/use_qso_call', 0)) and rec.get('STATION_CALLSIGN', ''):
+                username = rec['STATION_CALLSIGN']
+            else:
+                username = self.settings.value('eqsl/username', '')
+            self.log.info(f'Checking eQSL QSO #{qso_id} for call {username}...')
+            res = self.eqsl.check_inbox(username,
                                         self.settings_form.eqslPassword(),
                                         rec)
             if res:

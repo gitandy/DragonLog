@@ -251,6 +251,8 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.callbookUserLineEdit.setText(self.settings.value(f'callbook/{self.callbook_id}_user', ''))
 
         self.eqslUserLineEdit.setText(self.settings.value('eqsl/username', ''))
+        self.useQSOCallCheckBox.setChecked(bool(int(self.settings.value('eqsl/use_qso_call', 0))))
+
         self.lotwUserLineEdit.setText(self.settings.value('lotw/username', ''))
         self.lotwCertPwdCheckBox.setChecked(bool(int(self.settings.value('lotw/cert_needs_pwd', 0))))
 
@@ -351,6 +353,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.callbookChanged.emit(self.callbooks[self.callbookComboBox.currentText()])
 
         self.settings.setValue('eqsl/username', self.eqslUserLineEdit.text())
+        self.settings.setValue('eqsl/use_qso_call', int(self.useQSOCallCheckBox.isChecked()))
         if self.eqslUserLineEdit.text() and self.eqslPasswdLineEdit.text():
             keyring.set_password('eqsl.cc',
                                  self.eqslUserLineEdit.text(),

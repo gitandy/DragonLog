@@ -1060,22 +1060,36 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="eqslUserLineEdit"/>
-          </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_19">
             <property name="text">
              <string>Password</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QLineEdit" name="eqslPasswdLineEdit">
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <item>
+             <widget class="QLineEdit" name="eqslUserLineEdit"/>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="useQSOCallCheckBox">
+              <property name="toolTip">
+               <string>Use this if you have a secondary callsign registered</string>
+              </property>
+              <property name="text">
+               <string>Use QSO callsign</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -1329,6 +1343,22 @@
     <hint type="destinationlabel">
      <x>257</x>
      <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useQSOCallCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>eqslUserLineEdit</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>200</y>
     </hint>
    </hints>
   </connection>
