@@ -56,6 +56,7 @@ RIGCTL_ECODE = {
 }
 
 
+# noinspection PyPep8Naming
 class RigControl(QtCore.QObject):
     frequencyChanged = QtCore.pyqtSignal(float)
     bandChanged = QtCore.pyqtSignal(str)
@@ -109,13 +110,15 @@ class RigControl(QtCore.QObject):
         if platform.system() == 'Windows':
             self.__rigctl_startupinfo__ = subprocess.STARTUPINFO()
             self.__rigctl_startupinfo__.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            if self.settings.value('cat/rigctldPath', None):
-                if self.__is_exe__(self.settings.value('cat/rigctldPath', '')):
-                    self.init_hamlib(self.settings.value('cat/rigctldPath'))
-                else:
-                    raise NoExecutableFoundException(self.settings.value('cat/rigctldPath', ''))
+            try:
+                self.init_hamlib(self.settings.value('cat/rigctldPath'))
+            except (NoExecutableFoundException, RigctldExecutionException):
+                pass
         else:
-            self.init_hamlib('rigctld')
+            try:
+                self.init_hamlib('rigctld')
+            except (NoExecutableFoundException, RigctldExecutionException):
+                pass
 
         self.__refreshTimer__ = QtCore.QTimer(self)
         self.__refreshTimer__.timeout.connect(self.__refreshRigData__)
@@ -145,9 +148,8 @@ class RigControl(QtCore.QObject):
                     self.log.error(f'Error executing rigctld: {self.__get_errcode__(res.returncode)}')
                     raise RigctldExecutionException(rigctld_path)
                 self.log.debug('Executed rigctld to list rigs')
-            except FileNotFoundError:
-                self.log.warning('rigctld is not available')
-                raise NoExecutableFoundException(rigctld_path)
+            except (FileNotFoundError, OSError):
+                raise NoExecutableFoundException(rigctld_path) from None
 
             first = True
             rig_pos = 0
@@ -181,16 +183,20 @@ class RigControl(QtCore.QObject):
 
     # From Settings
     def __collectRigCaps__(self, rig_id: str):
-        res = subprocess.run([self.__rigctld_path__, f'--model={rig_id}', '-u'],
-                             capture_output=True,
-                             startupinfo=self.__rigctl_startupinfo__)
-        stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
-        self.__rig_caps__ = []
-        for ln in stdout.split('\n'):
-            if ln.startswith('Can '):
-                cap, able = ln.split(':')
-                if able.strip() == 'Y':
-                    self.__rig_caps__.append(cap[4:].lower())
+        try:
+            res = subprocess.run([self.__rigctld_path__, f'--model={rig_id}', '-u'],
+                                 capture_output=True,
+                                 startupinfo=self.__rigctl_startupinfo__)
+            stdout = str(res.stdout, sys.getdefaultencoding()).replace('\r', '')
+            self.__rig_caps__ = []
+            for ln in stdout.split('\n'):
+                if ln.startswith('Can '):
+                    cap, able = ln.split(':')
+                    if able.strip() == 'Y':
+                        self.__rig_caps__.append(cap[4:].lower())
+        except (FileNotFoundError, OSError):
+            self.log.warning(f'rigctld is not available or not executable: {self.__rigctld_path__}')
+            raise NoExecutableFoundException(self.__rigctld_path__) from None
 
     @property
     def availableManufacturers(self) -> list:
@@ -207,6 +213,7 @@ class RigControl(QtCore.QObject):
     def ctrlRigctld(self, start: bool):
         if start:
             if not self.__rigctld_path__:
+                self.statusChanged.emit(False)
                 self.log.warning('rigctld is not available')
                 raise RigctldNotConfiguredException()
 
@@ -216,6 +223,7 @@ class RigControl(QtCore.QObject):
                 rig_if = self.settings.value('cat/interface', '')
                 rig_speed = self.settings.value('cat/baud', '')
                 if not rig_mfr or not rig_model or not rig_if or not rig_speed:
+                    self.statusChanged.emit(False)
                     raise CATSettingsMissingException()
 
                 rig_id = self.__rig_ids__[f'{rig_mfr}/{rig_model}']

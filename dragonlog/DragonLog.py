@@ -59,7 +59,8 @@ from .ContestStatistics import ContestStatistics
 from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, build_contest_list, ExchangeData
 from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
-from .RigControl import RigControl
+from .RigControl import RigControl, RigctldNotConfiguredException, RigctldExecutionException, \
+    NoExecutableFoundException, CATSettingsMissingException
 from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
 from .local_callbook import (LocalCallbook, LocalCallbookData, CallHistoryData,
@@ -334,6 +335,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         self.log = Logger(self.logTextEdit, self.settings)
         self.log.info(f'Starting {self.programName} {self.programVersion}...')
+        self.log.debug(f'Platform: {platform.platform()}')
+        self.log.debug(f'Python: {sys.version}')
         if not OPTION_OPENPYXL:
             self.log.info(f'Option XL-Format not available')
         if not OPTION_QRCODEREADER:
@@ -987,7 +990,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.fContestComboBox.setCurrentIndex(0)
 
     def ctrlHamlib(self, start):
-        self.__rigctl__.ctrlRigctld(start)
+        try:
+            self.__rigctl__.ctrlRigctld(start)
+        except (RigctldNotConfiguredException, CATSettingsMissingException, RigctldExecutionException):
+            self.log.error(f'rigctld is not properly configured')
+        except Exception as exc:
+            self.log.exception(exc)
 
     def logQSO(self):
         if not self.__db_con__.isOpen():
