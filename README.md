@@ -16,8 +16,8 @@ Beside logging for ham radio you can also log CB radio QSOs.
 
 Features
 --------
+* Runs on Windows, Linux and MacOS
 * predefined fields for logging
-* edit log entries
 * input validation for callsign, RST, locator
 * show worked before if a callsign is already logged
 * distance calculation
@@ -69,6 +69,8 @@ If you want to be able to export/import to/from Excel files install the extra pa
 For using the QSL-QR-Code reader install extra packages with
 
     # python3 -m pip install DragonLog[qslqrcode]
+
+On MacOS zsh you have to enclose `"DragonLog[...]"` in paranthesis so the brackets are not interpreted.
 
 
 Run as
