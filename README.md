@@ -32,13 +32,13 @@ Features
   * eQSL upload, check and download
   * LoTW signing, upload and check status
 * QSO and QSL statistics
-* log Contests and xOTA QSOs data (supported Contests see `Help - Available Contests`)
+* log Contest and xOTA QSOs data (supported Contests see `Help - Available Contests`)
   * follow Contest statistics
   * export Contest log as Cabrillo, EDI or special file formats
 * CAT (band, frequency, mode/submode, power via hamlib integration)
 * watch log files for automatic log import of WSJT-X, JS8Call, fldigi and others
 * QSO log import/export
-  * ADIF adi/adx/adi(zipped)
+  * ADIF adi/adx/adi zipped
   * Excel/CSV
 * log 11m band QSOs
 * filter preset for recent QSOs (last week, month, half year, year)
@@ -70,7 +70,7 @@ For using the QSL-QR-Code reader install extra packages with
 
     # python3 -m pip install DragonLog[qslqrcode]
 
-On MacOS zsh you have to enclose `"DragonLog[...]"` in paranthesis so the brackets are not interpreted.
+On MacOS zsh you have to enclose `"DragonLog[...]"` in quotes so the brackets are not interpreted.
 
 
 Run as
@@ -212,7 +212,6 @@ Following formats are supported for export
 If you backup your log regularly at HamQTH use zipped ADI format for your whole logbook.
 
 ADIF ADX is the best choice for creating a backup for your own storage. The data can completly be restored from this format.
-Also 
 
 ### ADIF format export
 ADX should be preferred over ADI as UTF-8 is supported. Unfortunatly most services do not support ADX.
