@@ -102,6 +102,8 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                         exc_data.darc_dok=ch_data.history_data.darc_dok
                     if ch_data.history_data.itu_zone:
                         exc_data.itu_zone=ch_data.history_data.itu_zone
+                    if ch_data.history_data.rda_number:
+                        exc_data.rda_number = ch_data.history_data.rda_number
 
             contest = CONTESTS.get(contest, None)
             self.evaluate(f'%{contest.prepare_exchange(exc_data)} ')

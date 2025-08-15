@@ -60,6 +60,7 @@ class CallHistoryData:
     power_class: str = ''
     darc_dok: str = ''
     itu_zone: str = ''
+    rda_number: str = ''
 
 
 def adapt_history_data(chd: CallHistoryData) -> str:

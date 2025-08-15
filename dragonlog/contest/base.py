@@ -226,6 +226,7 @@ class ExchangeData:
     power: str = ''
     darc_dok: str = ''
     itu_zone: str = ''
+    rda_number: str = ''
 
 
 class InvalidBandException(Exception):

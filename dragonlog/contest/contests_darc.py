@@ -132,7 +132,7 @@ class DARCOsterContest(ContestLogCBR):
             if self.cty:
                 pfx = self.cty.prefix(rec.call)
                 if pfx:
-                    multi = 'PFX_' + rec.mode + pfx
+                    multi = 'PFX_' + rec.mode + pfx  # Todo: store as multi2
                     if multi not in self.__band_multis__[band]:
                         self.__multis__.add(multi)
                     self.__band_multis__[band].add(multi)
@@ -146,7 +146,7 @@ class DARCOsterContest(ContestLogCBR):
                 self.__stats__[band].rated += 1
                 self.__stats__[band].points += qso_point
                 self.__stats__[band].multis = len(self.__band_multis__[band])
-            else:
+            else:  # Todo: should already be initialised
                 self.__stats__[band] = BandStatistics(1, 1, 1, len(self.__band_multis__[band]), 0, qso_point)
 
             self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)

@@ -5,7 +5,7 @@ from .base import ContestLog, ExchangeData, ContestLogCBR, ContestLogEDI
 from .contests_darc import DARCUKWContest, DARCUKWFruehlingsContest, DARCOsterContest, DARCUKWSommerFDContest
 from .contests_darc_rlp import RLPFALZAWLog, RLPFALZABKWLog, RLPFALZABUKWLog, K32KurzUKWLog
 from .contests_darc_others import L33EinsteigerContest
-from .contests_others import IARUHFWorldChampionshipContest
+from .contests_others import IARUHFWorldChampionshipContest, RussianDistrictAwardContest
 
 CONTESTS: dict[str, type[ContestLog]] = {
     'DARC-UKW': DARCUKWContest,
@@ -18,6 +18,7 @@ CONTESTS: dict[str, type[ContestLog]] = {
     'K32-KURZ-UKW': K32KurzUKWLog,
     'L33-EINSTEIGER': L33EinsteigerContest,
     'IARU-HF': IARUHFWorldChampionshipContest,
+    'RDAC': RussianDistrictAwardContest,
     # Insert other contests above
     'KW-UNIVERSAL': ContestLogCBR,
     'UKW-UNIVERSAL': ContestLogEDI,

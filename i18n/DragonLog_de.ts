@@ -17,73 +17,73 @@
       <translation>am</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="163" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="158" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="165" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="160" />
       <source>Exchange</source>
       <translation>Austausch</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="394" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="389" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="380" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="166" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="396" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="391" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="382" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="168" />
       <source>Event ID</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="338" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="176" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="340" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="178" />
       <source>Band</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="343" />
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="177" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="345" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="179" />
       <source>Mode</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="284" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="286" />
       <source>Error: Callsign missing for QSO</source>
       <translation>Warnung: Call fehlt für QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="315" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="317" />
       <source>Warning: Wrong call format</source>
       <translation>Warnung: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="316" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="318" />
       <source>Error: Wrong call format</source>
       <translation>Fehler: Kein gültiges Call-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="317" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="319" />
       <source>Error: Wrong QTH/maidenhead format</source>
       <translation>Fehler: Kein gültiges QTH/Maidenhead-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="318" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="320" />
       <source>Error: No active event</source>
       <translation>Fehler: Kein aktives Event</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="319" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="321" />
       <source>Error: Unknown prefix</source>
       <translation>Fehler: Unbekanntes Präfix</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="320" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="322" />
       <source>Error: Wrong RST format</source>
       <translation>Fehler: Kein gültiges RST-Format</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="321" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="323" />
       <source>Warning: Callsign missing for last QSO</source>
       <translation>Warnung: Call fehlt für letztes QSO</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\CassiopeiaConsole.py" line="322" />
+      <location filename="..\dragonlog\CassiopeiaConsole.py" line="324" />
       <source>Last QSO cached</source>
       <translation>Letztes QSO</translation>
     </message>
@@ -2814,50 +2814,50 @@ Möchten sie trotzdem die Call-Historie komplett aktualisieren?</translation>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="322" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="323" />
       <source>Station</source>
       <translation />
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="325" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="326" />
       <source>Identity</source>
       <translation>ID</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="331" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="332" />
       <source>Configured station</source>
       <translation>Konfigurierte Station</translation>
     </message>
     <message>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="334" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="335" />
       <source>Configured identity</source>
       <translation>Konfigurierte ID</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="805" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="797" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="806" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="798" />
       <source>Callbook search error</source>
       <translation>Fehler bei der Rufzeichensuche</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="798" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="799" />
       <source>Login failed for user</source>
       <translation>Login fehlgeschlagen für Benutzer</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="801" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="802" />
       <source>Callbook search result</source>
       <translation>Callbook-Suchergebnis</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="802" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="803" />
       <source>Callsign not found</source>
       <translation>Rufzeichen nicht gefunden</translation>
     </message>
     <message>
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="806" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="807" />
       <source>During callbook search an error occured</source>
       <translation>Während der Rufzeichensuche ist ein Fehler aufgetreten</translation>
     </message>
@@ -2866,7 +2866,7 @@ Möchten sie trotzdem die Call-Historie komplett aktualisieren?</translation>
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
       <location filename="..\ui_files\DragonLog_QSOForm.ui" line="0" />
-      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="823" />
+      <location filename="..\dragonlog\DragonLog_QSOForm.py" line="824" />
       <source>Rx Exchange</source>
       <translation>Empf. Austausch</translation>
     </message>

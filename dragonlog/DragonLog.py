@@ -60,7 +60,7 @@ from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES, build_contest_list, E
 from .distance import distance
 from .cty import CountryData, Country, CountryNotFoundException, CountryCodeNotFoundException
 from .RigControl import RigControl, RigctldNotConfiguredException, RigctldExecutionException, \
-    NoExecutableFoundException, CATSettingsMissingException
+    CATSettingsMissingException
 from . import ColorPalettes
 from .DragonLog_Statistics import StatisticsWidget
 from .local_callbook import (LocalCallbook, LocalCallbookData, CallHistoryData,
@@ -2465,7 +2465,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     excd = contest.extract_exchange(qso.get('SRX_STRING', ''))
                     if excd:
                         chd = CallHistoryData(locator=excd.locator, power_class=excd.power, darc_dok=excd.darc_dok,
-                                              itu_zone=excd.itu_zone)
+                                              itu_zone=excd.itu_zone, rda_number=excd.rda_number)
                         self.__local_cb__.update_history(contest_id, call, chd)
 
     def fetchCCQSO(self):
