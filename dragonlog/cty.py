@@ -59,7 +59,9 @@ class CountryData:
                         if row[0] == 'VE' and pfx.startswith('=VER'):
                             self.__data_ver__ = pfx[1:]
                             continue
-                        self.__calls__[pfx[1:]] = data
+                        if not pfx[1:] in self.__calls__:
+                            # Callsign can be doubled, only the first is correct
+                            self.__calls__[pfx[1:]] = data
                     else:
                         self.__prefixes__[pfx] = data
 
@@ -79,19 +81,13 @@ class CountryData:
         part = ''
         i = 0
         pfx = ''
-        found = False
         for d in call.upper():
             part += d
             try:
                 i = self.__pfx_list__.index(part, i)
                 pfx = self.__pfx_list__[i]
             except ValueError:
-                if found:
-                    break
-                if pfx:
-                    found = True
                 continue
-
         return pfx
 
     def cty_code(self, call) -> dict:
