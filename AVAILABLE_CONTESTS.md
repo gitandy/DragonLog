@@ -25,5 +25,6 @@ The sent exchange is handled automatically.
 | K32 FM-Kurzaktivität | K32-KURZ-UKW | ***2025*** | 2025-05-05 | DOK,Class |
 | L33 Einsteiger-Contest | L33-EINSTEIGER | ***2025*** | 2025-04-06 | Number,Locator |
 | IARU HF World Championship | IARU-HF | ***2025*** | 2025-07-08 | ITU-Zone |
+| Russian District Award Contest | RDAC | ***2025*** | 2025-08-15 | Number |
 | KW-Contest | KW-UNIVERSAL | ***2025*** | 2025-01-01 | Number |
 | UKW-Contest | UKW-UNIVERSAL | ***2025*** | 2025-01-01 | Number,Locator |

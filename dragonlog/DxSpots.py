@@ -125,10 +125,12 @@ class DxCluster(QtCore.QThread):
                     self.__lock__.unlock()
             except TimeoutError:
                 pass
-            except ConnectionAbortedError:
+            except (ConnectionAbortedError, OSError):
                 self.__receive__ = False
             except UnicodeDecodeError:
                 pass
+            except Exception as exc:
+                self.log.exception(exc)
 
     def logData(self, data: str):
         self.log.debug(data.replace('\a', ''))
