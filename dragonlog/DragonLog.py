@@ -1479,7 +1479,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 record['COMMENT'] = self.replaceNonASCII(comment)
                 record['COMMENT_INTL'] = comment
             if query.value(self.__sql_cols__.index('qsl_via')):
-                record['QSL_VIA'] = query.value(self.__sql_cols__.index('qsl_via'))
+                record['QSL_VIA'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('qsl_via')))
             if query.value(self.__sql_cols__.index('qsl_path')):
                 record['QSL_SENT_VIA'] = query.value(self.__sql_cols__.index('qsl_path'))
             if query.value(self.__sql_cols__.index('qsl_msg')):
