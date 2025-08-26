@@ -131,6 +131,11 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.bandComboBox.insertItems(0, self.settings.value('ui/show_bands', self.bands.keys()))
         self.bandComboBox.setCurrentIndex(0)
 
+    def refreshModes(self):
+        self.modeComboBox.clear()
+        self.modeComboBox.insertItems(0, self.settings.value('ui/show_modes', self.modes.keys()))
+        self.modeComboBox.setCurrentIndex(0)
+
     def refreshQTHList(self):
         self.ownQTHComboBox.clear()
         if self.settings.value('listings/qths'):

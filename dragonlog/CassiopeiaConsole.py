@@ -45,12 +45,17 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
 
         self.refreshDisplay()
 
-    def __initWidgets__(self):
+    def refreshListings(self):
+        self.bandComboBox.clear()
         bands: list = self.__settings__.value('ui/show_bands', [])
         if '11m' in bands:
             bands.remove('11m')
-        self.bandComboBox.insertItems(1, bands)
-        self.modeComboBox.insertItems(1, self.__settings__.value('ui/show_modes', []))
+        self.bandComboBox.insertItems(0, [self.tr('Band')] + bands)
+        self.modeComboBox.clear()
+        self.modeComboBox.insertItems(0, [self.tr('Mode')] + self.__settings__.value('ui/show_modes', []))
+
+    def __initWidgets__(self):
+        self.refreshListings()
         self.eventComboBox.insertItems(3, CONTEST_IDS.keys())
         self.ctyCtyLabel.setText(f'? ?, ?')
         self.ctyAreaLabel.setText(f'DXCC=?, CQ=?, ITU=?')
@@ -96,12 +101,12 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
                 # Overwrite from history if available
                 if ch_data.history_data:
                     if ch_data.history_data.locator:
-                        exc_data.locator=ch_data.history_data.locator
-                    exc_data.power=ch_data.history_data.power_class
+                        exc_data.locator = ch_data.history_data.locator
+                    exc_data.power = ch_data.history_data.power_class
                     if ch_data.history_data.darc_dok:
-                        exc_data.darc_dok=ch_data.history_data.darc_dok
+                        exc_data.darc_dok = ch_data.history_data.darc_dok
                     if ch_data.history_data.itu_zone:
-                        exc_data.itu_zone=ch_data.history_data.itu_zone
+                        exc_data.itu_zone = ch_data.history_data.itu_zone
                     if ch_data.history_data.rda_number:
                         exc_data.rda_number = ch_data.history_data.rda_number
 
