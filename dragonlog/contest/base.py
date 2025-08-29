@@ -12,6 +12,7 @@ from dataclasses import dataclass
 
 from dragonlog.RegEx import check_format, REGEX_CALL, REGEX_LOCATOR, REGEX_RSTFIELD
 from dragonlog.distance import distance
+from dragonlog.cty import CountryData, Country, CountryCodeNotFoundException
 
 # noinspection SpellCheckingInspection
 MODE_MAP_CBR = {
@@ -254,13 +255,24 @@ class ContestLog(ABC):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **params):
+                 skip_warn: bool = False, logger=None, cty=None):
 
         self.log = logging.getLogger(type(self).__name__)
         if logger:
             self.log.setLevel(logger.loglevel)
             self.log.addHandler(logger)
         self.log.debug('Initialising...')
+
+        self.cty: CountryData | None = cty
+        if not cty or type(cty) is not CountryData:
+            self.cty = None
+            self.log.warning('No CTY data available')
+
+        try:
+            self.own_cty_data: Country = self.cty.country(callsign)
+        except CountryCodeNotFoundException:
+            self.log.error(f'Country data could not be found for your callsign "{callsign}"')
+            self.own_cty_data: Country = Country(*([''] * 9))
 
         self.__header__: dict[str, str] = {
             'CONTEST': '',  # Class
@@ -642,10 +654,10 @@ class ContestLogCBR(ContestLog):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **params):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__calls__ = []
 
@@ -727,12 +739,9 @@ class ContestLogCBR(ContestLog):
                 self.__rated__ += 1
                 self.__points__ = self.__rated__
 
-            if BAND_FROM_CBR[rec.band] in self.__stats__:
-                self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
-                self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
-                self.__stats__[BAND_FROM_CBR[rec.band]].points += points
-            else:
-                self.__stats__[BAND_FROM_CBR[rec.band]] = BandStatistics(1, rated, points, 1, 0, 1)
+            self.__stats__[BAND_FROM_CBR[rec.band]].qsos += 1
+            self.__stats__[BAND_FROM_CBR[rec.band]].rated += rated
+            self.__stats__[BAND_FROM_CBR[rec.band]].points += points
         except Exception:
             self.exception()
 
@@ -766,10 +775,10 @@ class ContestLogEDI(ContestLog):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **params):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__qsos__: list[EDIRecord] = []
 
@@ -790,9 +799,10 @@ class ContestLogEDI(ContestLog):
 
         self.__edi_file__: typing.TextIO | None = None
 
-    def set_edi_data(self, from_date:str, to_date:str,
-                 qth:str='<QTH>', radio:str='<RADIO>', pwr_watts:str='<POWER_IN_WATTS>',
-                 antenna:str='<ANTENNA>', ant_height_ground:str='<ABOVE_GROUND>', ant_height_sea:str='<ABOVE_SEA>'):
+    def set_edi_data(self, from_date: str, to_date: str,
+                     qth: str = '<QTH>', radio: str = '<RADIO>', pwr_watts: str = '<POWER_IN_WATTS>',
+                     antenna: str = '<ANTENNA>', ant_height_ground: str = '<ABOVE_GROUND>',
+                     ant_height_sea: str = '<ABOVE_SEA>'):
         """Set additional EDI data"""
         self.__from_date__ = from_date
         self.__to_date__ = to_date

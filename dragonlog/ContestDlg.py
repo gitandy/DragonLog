@@ -274,7 +274,6 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            operators=self.operatorsLineEdit.text().split(' '),
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
-                                           # Extra parameters for some contests
                                            cty=self.__cty__)
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
         if isinstance(contest, ContestLogEDI):

@@ -49,10 +49,10 @@ class RLPFALZAWLog(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **_):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__header__['CONTEST'] = 'RLP Aktivitaetswoche'
 
@@ -181,10 +181,10 @@ class RLPFALZABUKWLog(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **_):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__header__['CONTEST'] = 'RLP Aktivitaetsabend UKW'
 
@@ -317,10 +317,10 @@ class RLPFALZABKWLog(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **_):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__header__['CONTEST'] = 'RLP Aktivitaetsabend KW'
 
@@ -428,10 +428,10 @@ class K32KurzUKWLog(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **_):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__dok__ = specific
 

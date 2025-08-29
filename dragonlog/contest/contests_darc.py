@@ -4,7 +4,6 @@
 
 from .base import (ContestLogCBR, ContestLogEDI, CBRRecord, Address, BandStatistics, BAND_FROM_CBR, ExchangeData,
                    CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
-from dragonlog.cty import CountryData
 
 
 class DARCUKWFruehlingsContest(ContestLogEDI):
@@ -95,15 +94,10 @@ class DARCOsterContest(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **params):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
-
-        self.cty: CountryData | None = params.get('cty', None)
-        if not self.cty or type(self.cty) is not CountryData:
-            self.cty = None
-            self.log.error('Error with cty data')
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__band_multis__: dict[str, set[str]] = {}
 

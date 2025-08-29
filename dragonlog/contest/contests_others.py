@@ -4,7 +4,6 @@
 
 from .base import (ContestLogCBR, CBRRecord, Address, BandStatistics, BAND_FROM_CBR, ExchangeData,
                    CategoryMode, CategoryBand, CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
-from dragonlog.cty import CountryData, Country, CountryCodeNotFoundException
 
 
 class IARUHFWorldChampionshipContest(ContestLogCBR):
@@ -20,21 +19,10 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **params):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
-
-        self.cty: CountryData | None = params.get('cty', None)
-        if not self.cty or type(self.cty) is not CountryData:
-            self.cty = None
-            self.log.error('Error with cty data')
-
-        try:
-            self.own_cty_data: Country = self.cty.country(callsign)
-        except CountryCodeNotFoundException:
-            self.log.error(f'Country data could not be found for your callsign "{callsign}"')
-            self.own_cty_data: Country = Country(*([''] * 9))
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__multis_band__: dict[str, set] = dict(zip(self.valid_bands_list()[1:],
                                                         [set() for _ in range(len(self.valid_bands_list()[1:]))]))
@@ -171,21 +159,10 @@ class RussianDistrictAwardContest(ContestLogCBR):
                  assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
                  tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
                  operators: list[str] = None, specific: str = '', skip_id: bool = False,
-                 skip_warn: bool = False, logger=None, **params):
+                 skip_warn: bool = False, logger=None, cty=None):
         super().__init__(callsign, name, club, address, email, locator,
                          band, mode, pwr, cat_operator,
-                         assisted, tx, operators, specific, skip_id, skip_warn, logger)
-
-        self.cty: CountryData | None = params.get('cty', None)
-        if not self.cty or type(self.cty) is not CountryData:
-            self.cty = None
-            self.log.error('Error with cty data')
-
-        try:
-            self.own_cty_data: Country = self.cty.country(callsign)
-        except CountryCodeNotFoundException:
-            self.log.error(f'Country data could not be found for your callsign "{callsign}"')
-            self.own_cty_data: Country = Country(*([''] * 9))
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
 
         self.__multis_band__: dict[str, set] = dict(zip(self.valid_bands_list()[1:],
                                                         [set() for _ in range(len(self.valid_bands_list()[1:]))]))
