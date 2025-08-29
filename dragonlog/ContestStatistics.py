@@ -141,8 +141,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
                                            # Extra parameters for some contests
-                                           cty=self.__cty__,
-                                           )
+                                           cty=self.__cty__)
 
         if doc['RECORDS']:
             try:

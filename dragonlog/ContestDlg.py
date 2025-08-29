@@ -274,19 +274,18 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            operators=self.operatorsLineEdit.text().split(' '),
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,
-                                           # Extra parameters for edi format
-                                           from_date=self.fromDateEdit.text(),
-                                           to_date=self.toDateEdit.text(),
-                                           qth=self.qthLineEdit.text(),
-                                           radio=self.rigLineEdit.text(),
-                                           pwr_watts=self.powerSpinBox.value(),
-                                           antenna=self.antennaLineEdit.text(),
-                                           ant_height_ground=self.antAboveGroundSpinBox.value(),
-                                           ant_height_sea=self.antAboveSeaSpinBox.value(),
                                            # Extra parameters for some contests
-                                           cty=self.__cty__,
-                                           )
+                                           cty=self.__cty__)
         contest.set_created_by(f'{self.dragonlog.programName} {self.dragonlog.programVersion}')
+        if isinstance(contest, ContestLogEDI):
+            contest.set_edi_data(from_date=self.fromDateEdit.text(),
+                                 to_date=self.toDateEdit.text(),
+                                 qth=self.qthLineEdit.text(),
+                                 radio=self.rigLineEdit.text(),
+                                 pwr_watts=self.powerSpinBox.value(),
+                                 antenna=self.antennaLineEdit.text(),
+                                 ant_height_ground=self.antAboveGroundSpinBox.value(),
+                                 ant_height_sea=self.antAboveSeaSpinBox.value())
 
         if self.soapPlainTextEdit.toPlainText().strip():
             contest.add_soapbox(self.soapPlainTextEdit.toPlainText().strip())

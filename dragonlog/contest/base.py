@@ -773,14 +773,14 @@ class ContestLogEDI(ContestLog):
 
         self.__qsos__: list[EDIRecord] = []
 
-        self.__from_date__ = params.get('from_date', '2001-01-01')
-        self.__to_date__ = params.get('to_date', '2001-01-01')
-        self.__qth__ = params.get('qth', '<QTH>')
-        self.__radio__ = params.get('radio', '<RADIO>')
-        self.__power__ = params.get('pwr_watts', '<POWER_IN_WATTS>')
-        self.__antenna__ = params.get('antenna', '<ANTENNA>')
-        self.__ant_height_ground__ = params.get('ant_height_ground', '<ABOVE_GROUND>')
-        self.__ant_height_sea__ = params.get('ant_height_sea', '<ABOVE_SEA>')
+        self.__from_date__ = '2001-01-01'
+        self.__to_date__ = '2001-01-01'
+        self.__qth__ = '<QTH>'
+        self.__radio__ = '<RADIO>'
+        self.__power__ = '<POWER_IN_WATTS>'
+        self.__antenna__ = '<ANTENNA>'
+        self.__ant_height_ground__ = '<ABOVE_GROUND>'
+        self.__ant_height_sea__ = '<ABOVE_SEA>'
 
         self.__dok__ = specific
 
@@ -789,6 +789,19 @@ class ContestLogEDI(ContestLog):
         self.__codxc__ = ['', '', 0]
 
         self.__edi_file__: typing.TextIO | None = None
+
+    def set_edi_data(self, from_date:str, to_date:str,
+                 qth:str='<QTH>', radio:str='<RADIO>', pwr_watts:str='<POWER_IN_WATTS>',
+                 antenna:str='<ANTENNA>', ant_height_ground:str='<ABOVE_GROUND>', ant_height_sea:str='<ABOVE_SEA>'):
+        """Set additional EDI data"""
+        self.__from_date__ = from_date
+        self.__to_date__ = to_date
+        self.__qth__ = qth
+        self.__radio__ = radio
+        self.__power__ = pwr_watts
+        self.__antenna__ = antenna
+        self.__ant_height_ground__ = ant_height_ground
+        self.__ant_height_sea__ = ant_height_sea
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
         if adif_rec['BAND'].lower() != self.__header__['CATEGORY-BAND']:
