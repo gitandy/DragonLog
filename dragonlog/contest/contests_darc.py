@@ -204,3 +204,86 @@ class DARCOsterContest(ContestLogCBR):
     @staticmethod
     def prepare_exchange(exchange: ExchangeData):
         return f'{exchange.darc_dok}'
+
+
+class DARCXMASContest(ContestLogCBR):
+    contest_name = 'DARC Weihnachtscontest'
+    contest_year = '2025'
+    contest_update = '2025-08-29'
+    contest_exch_fmt = 'DOK'
+
+    def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
+                 band: type[CategoryBand], mode: type[CategoryMode],
+                 pwr: type[CategoryPower] = CategoryPower.HIGH,
+                 cat_operator: type[CategoryOperator] = CategoryOperator.SINGLE_OP,
+                 assisted: type[CategoryAssisted] = CategoryAssisted.NON_ASSISTED,
+                 tx: type[CategoryTransmitter] = CategoryTransmitter.ONE,
+                 operators: list[str] = None, specific: str = '', skip_id: bool = False,
+                 skip_warn: bool = False, logger=None, cty=None):
+        super().__init__(callsign, name, club, address, email, locator,
+                         band, mode, pwr, cat_operator,
+                         assisted, tx, operators, specific, skip_id, skip_warn, logger, cty)
+
+        self.__band_multis__: dict[str, set[str]] = {'80m': set(), '40m': set()}
+        self.__band_multis2__: dict[str, set[str]] = {'80m': set(), '40m': set()}
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.MIXED, CategoryMode.SSB, CategoryMode.CW
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return CategoryBand.B_ALL, CategoryBand.B_80M, CategoryBand.B_40M
+
+    @classmethod
+    def descr_specific(cls) -> str:
+        return 'DOK'
+
+    def process_points(self, rec: CBRRecord):
+        # noinspection PyBroadException
+        try:
+            qso_point = 1
+
+            self.__rated__ += 1
+            band = BAND_FROM_CBR[rec.band]
+
+            if rec.rcvd_exch.upper() != 'NM':
+                self.__multis__.add(rec.rcvd_exch.upper())
+                self.__band_multis__[band].add(rec.rcvd_exch.upper())
+            else:
+                self.info(f'DOK not counted as multi "{rec.rcvd_exch.upper()}"')
+
+            if self.cty:
+                pfx = self.cty.prefix(rec.call)
+                if pfx:
+                    self.__multis2__.add(pfx)
+                    self.__band_multis2__[band].add(pfx)
+            else:
+                self.log.warning('Could not process prefix due to missing cty data')
+
+            self.__points__ += qso_point
+
+            self.__stats__[band].qsos += 1
+            self.__stats__[band].rated += 1
+            self.__stats__[band].points += qso_point
+            self.__stats__[band].multis = len(self.__band_multis__[band])
+            self.__stats__[band].multis2 = len(self.__band_multis2__[band])
+
+            self.__header__['CLAIMED-SCORE'] = str(self.claimed_points)
+        except Exception:
+            self.exception()
+
+
+class DARCCWAContest(DARCXMASContest):
+    contest_name = 'DARC CW Ausbildungscontest'
+    contest_year = '2025'
+    contest_update = '2025-08-29'
+    contest_exch_fmt = 'DOK'
+
+    @classmethod
+    def valid_modes(cls) -> tuple[CategoryMode, ...]:
+        return CategoryMode.CW,
+
+    @classmethod
+    def valid_bands(cls) -> tuple[CategoryBand, ...]:
+        return CategoryBand.B_80M,
