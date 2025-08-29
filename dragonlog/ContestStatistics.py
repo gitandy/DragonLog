@@ -49,7 +49,7 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
 
         self.clear()
 
-        self.contest: type[ContestLog] = None
+        self.contest: type[ContestLog] | None = None
         self.contestComboBox.insertItem(0, '')
         self.contestComboBox.insertItems(1, CONTEST_IDS.keys())
 
@@ -127,13 +127,14 @@ class ContestStatistics(QtWidgets.QDialog, ContestStatistics_ui.Ui_ContestStatis
         if not self.contest:
             return
 
-        doc = self.__dragonlog__._build_adif_export_(f"SELECT * FROM qsos WHERE "
-                                                     f"contest_id = '{CONTEST_IDS.get(self.contestComboBox.currentText(), '')}' AND "
-                                                     f"DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND "
-                                                     f"DATE(date_time) <= DATE('{self.toDateEdit.text()}') "
-                                                     "ORDER BY date_time",
-                                                     include_id=True)
+        doc = self.__dragonlog__.build_adif_export(f"SELECT * FROM qsos WHERE "
+                                                   f"contest_id = '{CONTEST_IDS.get(self.contestComboBox.currentText(), '')}' AND "
+                                                   f"DATE(date_time) >= DATE('{self.fromDateEdit.text()}') AND "
+                                                   f"DATE(date_time) <= DATE('{self.toDateEdit.text()}') "
+                                                   "ORDER BY date_time",
+                                                   include_id=True)
 
+        # noinspection PyTypeChecker
         contest: ContestLog = self.contest(self.__settings__.value('station/callSign', 'XX1XXX').upper(),
                                            '', '', Address('', '', '', ''), '', '',
                                            CategoryBand.B_ALL, CategoryMode.MIXED,

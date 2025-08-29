@@ -251,8 +251,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
         c_filter += 'ORDER BY date_time,id'
 
         # noinspection PyProtectedMember
-        doc = self.dragonlog._build_adif_export_(c_filter,
-                                                 include_id=True)
+        doc = self.dragonlog.build_adif_export(c_filter, include_id=True)
 
         addr = Address(
             self.streetLineEdit.text(),
@@ -261,7 +260,7 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
             self.countryLineEdit.text()
         )
 
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyCallingNonCallable
         contest: ContestLog = self.contest(self.__settings__.value('station/callSign', 'XX1XXX').upper(),
                                            self.nameLineEdit.text(),
                                            self.clubLineEdit.text(),

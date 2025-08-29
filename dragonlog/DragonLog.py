@@ -1324,7 +1324,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info('Exporting to ADIF...')
 
         is_adx: bool = os.path.splitext(file)[-1] == '.adx'
-        doc = self._build_adif_export_(query_str, is_adx)
+        doc = self.build_adif_export(query_str, is_adx)
         try:
             if is_adx:
                 errors = adx.dump(file, doc, False)
@@ -1353,8 +1353,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 f'{self.programName} - {self.tr("Error")}',
                 str(exc))
 
-    def _build_adif_export_(self, query_str, is_adx=False, include_id=False) -> dict[
+    def build_adif_export(self, query_str, is_adx=False, include_id=False) -> dict[
         str, dict[str, str] | list[dict[str, str]] | None]:
+        """Build a dict for ADIF export from database query"""
+
         doc: dict[
             str, dict[str, str] | list[dict[str, str]] | None] = {
             'HEADER':
@@ -1536,7 +1538,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
     def eqslUpload(self):
         for qso_id in self.selectedQSOIds():
-            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            adif_doc = self.build_adif_export(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
             if not adif_doc['RECORDS']:
                 self.log.info(f'Skipped CB QSO #{qso_id}')
                 continue
@@ -1590,7 +1592,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.refreshTableView(False)
 
     def eqslCheckInbox(self, qso_id) -> bool:
-        adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+        adif_doc = self.build_adif_export(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
         if not adif_doc['RECORDS']:
             self.log.info(f'Skipped CB QSO #{qso_id}')
             return False
@@ -1639,7 +1641,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             return
 
         for qso_id in self.selectedQSOIds():
-            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            adif_doc = self.build_adif_export(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
             if not adif_doc['RECORDS']:
                 self.log.info(f'Skipped CB QSO #{qso_id}')
                 continue
@@ -1717,11 +1719,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.log.info(f'Selected station "{station}"')
         locator = stations[station]['locator'].upper()
         call = stations[station]['call'].upper()
-        doc = self._build_adif_export_(f"SELECT * FROM qsos "
-                                       f"WHERE band != '11m' AND upper(own_locator) LIKE '{locator}%'"
-                                       f"AND own_callsign = '{call}'"
-                                       f"AND (lotw_sent != 'Y' OR lotw_sent is NULL)",
-                                       include_id=True)
+        doc = self.build_adif_export(f"SELECT * FROM qsos "
+                                     f"WHERE band != '11m' AND upper(own_locator) LIKE '{locator}%'"
+                                     f"AND own_callsign = '{call}'"
+                                     f"AND (lotw_sent != 'Y' OR lotw_sent is NULL)",
+                                     include_id=True)
         if len(doc['RECORDS']) < 1:
             QtWidgets.QMessageBox.warning(self, self.tr('LoTW ADIF upload'),
                                           self.tr('No records for location') + f': "{locator}"')
@@ -1764,7 +1766,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         lotw = LoTW(self.log)
 
         for qso_id in self.selectedQSOIds():
-            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            adif_doc = self.build_adif_export(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
             if not adif_doc['RECORDS']:
                 self.log.info(f'Skipped CB QSO #{qso_id}')
                 continue
@@ -1811,7 +1813,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                          f'{self.programName}-{self.programVersion}',
                                          )
 
-            adif_doc = self._build_adif_export_(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
+            adif_doc = self.build_adif_export(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
             if not adif_doc['RECORDS']:
                 self.log.info(f'Skipped CB QSO #{qso_id}')
                 continue
