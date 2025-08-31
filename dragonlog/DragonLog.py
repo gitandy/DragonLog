@@ -1592,6 +1592,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.refreshTableView(False)
 
     def eqslCheckInbox(self, qso_id) -> bool:
+        """Checks eQSL Inbox
+        :param qso_id: the QSO Id to check the eQSL for
+        :return: True if request was a success, False if request failed"""
         adif_doc = self.build_adif_export(f"SELECT * FROM qsos WHERE id = {qso_id} AND band != '11m'")
         if not adif_doc['RECORDS']:
             self.log.info(f'Skipped CB QSO #{qso_id}')
@@ -1623,6 +1626,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                               'eqsl/username', ''))
         except EQSLRequestException:
             self.log.info('No eQSL available')
+            return True
         except EQSLADIFFieldException as exc:
             self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
         except EQSLCommunicationException as exc:
