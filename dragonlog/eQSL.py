@@ -70,7 +70,10 @@ class EQSL:
             'EQSL_PSWD': password,
         }
 
-        r = requests.get('https://www.eQSL.cc/qslcard/importADIF.cfm', params=params)
+        try:
+            r = requests.get('https://www.eQSL.cc/qslcard/importADIF.cfm', params=params)
+        except requests.exceptions.ConnectionError:
+            raise EQSLCommunicationException(f'eQSL is not reachable')
 
         if r.status_code == 200:
             for res in re.findall(self.upl_res_pattern, r.text):
@@ -124,7 +127,11 @@ class EQSL:
             'QSOMode': record['MODE'],
         }
 
-        r = requests.get('https://www.eQSL.cc/qslcard/GeteQSL.cfm', params=params)
+        try:
+            r = requests.get('https://www.eQSL.cc/qslcard/GeteQSL.cfm', params=params)
+        except requests.exceptions.ConnectionError:
+            raise EQSLCommunicationException(f'eQSL is not reachable')
+
         if r.status_code == 200:
             if r.text.strip().startswith('Error'):
                 if ('No match on Username/Password for that QSO Date/Time' in r.text or
