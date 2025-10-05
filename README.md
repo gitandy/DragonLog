@@ -56,7 +56,7 @@ Installation
 ------------
 The installation requires a python installation (>= 3.10).
 
-On Linux you may have to install libxcb-cursor0.
+On Linux you may have to install libxcb-cursor0 and libzbar0.
 
 These steps assume you are using your system python installation. Though I recommend using virtual envirnoments.
     
