@@ -34,7 +34,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.__settings__ = settings
         self.__local_cb__ = local_cb
 
-        self.__cc__ = hamcc.CassiopeiaConsole(self.__settings__.value('station/callsign', ''),
+        self.__cc__ = hamcc.CassiopeiaConsole(self.__settings__.value('station/callSign', ''),
                                               self.__settings__.value('station/qth_loc', ''),
                                               self.__settings__.value('station/name', ''))
         self.__current_call__ = ''
@@ -305,7 +305,7 @@ class CassiopeiaConsole(QtWidgets.QDialog, CassiopeiaConsole_ui.Ui_CassiopeiaCon
         self.inputLineEdit.setFocus()
 
     def resetUserData(self):
-        self._evaluate_('-c' + self.__settings__.value('station/callsign', ''))
+        self._evaluate_('-c' + self.__settings__.value('station/callSign', ''))
         self._evaluate_('-l' + self.__settings__.value('station/qth_loc', ''))
         self._evaluate_('-n' + self.__settings__.value('station/name', ''))
         self.refreshDisplay()
