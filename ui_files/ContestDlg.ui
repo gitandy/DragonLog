@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>516</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -477,6 +477,9 @@
          <height>60</height>
         </size>
        </property>
+       <property name="tabChangesFocus">
+        <bool>true</bool>
+       </property>
        <property name="placeholderText">
         <string>Extra information</string>
        </property>
@@ -580,6 +583,37 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>contestComboBox</tabstop>
+  <tabstop>bandComboBox</tabstop>
+  <tabstop>fromDateEdit</tabstop>
+  <tabstop>toDateEdit</tabstop>
+  <tabstop>callLineEdit</tabstop>
+  <tabstop>locatorLineEdit</tabstop>
+  <tabstop>nameLineEdit</tabstop>
+  <tabstop>emailLineEdit</tabstop>
+  <tabstop>streetLineEdit</tabstop>
+  <tabstop>zipLineEdit</tabstop>
+  <tabstop>cityLineEdit</tabstop>
+  <tabstop>countryLineEdit</tabstop>
+  <tabstop>specificLineEdit</tabstop>
+  <tabstop>clubLineEdit</tabstop>
+  <tabstop>opComboBox</tabstop>
+  <tabstop>operatorsLineEdit</tabstop>
+  <tabstop>powerComboBox</tabstop>
+  <tabstop>modeComboBox</tabstop>
+  <tabstop>qthLineEdit</tabstop>
+  <tabstop>rigLineEdit</tabstop>
+  <tabstop>powerSpinBox</tabstop>
+  <tabstop>antennaLineEdit</tabstop>
+  <tabstop>antAboveGroundSpinBox</tabstop>
+  <tabstop>antAboveSeaSpinBox</tabstop>
+  <tabstop>soapPlainTextEdit</tabstop>
+  <tabstop>exportPathLineEdit</tabstop>
+  <tabstop>choosePathToolButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
+  <tabstop>exportPushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
