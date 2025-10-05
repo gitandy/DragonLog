@@ -1,3 +1,4 @@
+VENV_BIN = ../.venv/bin
 NO_OBSOLETE?=
 
 TRANSLATIONS = de en templ
@@ -8,8 +9,8 @@ all: $(QM_FILES)
 	cp *.json ../dragonlog/data/i18n;
 
 %.qm: %.ts
-	pylupdate6 $(NO_OBSOLETE) ../dragonlog ../ui_files -ts $< ;
-	lrelease $< -qm $@;
+	$(VENV_BIN)/pylupdate6 $(NO_OBSOLETE) ../dragonlog ../ui_files -ts $< ;
+	$(VENV_BIN)/qt6-tools lrelease $< -qm $@;
 	cp $@ ../dragonlog/data/i18n;
 
 clean:
