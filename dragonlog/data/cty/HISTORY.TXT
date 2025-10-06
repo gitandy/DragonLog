@@ -1,18 +1,58 @@
-    Big CTY - 9 July 2025
-    Version entity is Asiatic Russia, UA9
+    Big CTY - 30 September 2025
+    Version entity is Mali, TZ
 
     Added/changed Entities/Prefixes/Callsigns:
 
-	* GB0WR, GB2WR, GB4KAS, GB5WR, GB8WR and GB9WR are all Scotland, GM
-	* KL4BG and KP2AS are both United States, K in CQ zone 5, ITU zone 8
-	* AD4BL and K0BER are both Alaska, KL
-	* KF4LHX is Puerto Rico, KP4
-	* LU2IKP/I is Argentina, LU
-	* R8AIM/0 is in ITU zone 30, not ITU zone 23
-	* R8AIM/0 is in CQ zone 18, not CQ zone 19
-	* RK0W/P is Asiatic Russia, UA9 in CQ zone 23, ITU zone 32
-	* VE3JLN is Canada, VE
+	* 3G6S, CB6F, CE6RCO, XQ4CW/6, XQ6BQ and XQ6CF are all Chile, CE in ITU zone 16
+	* TX9XG is French Polynesia, FO
+	* GB0RRS and GB1TR are both Wales, GW
+	* II0D and II0IARU are both Sardinia, IS
+	* AH6X is in ITU zone 7, not ITU zone 6
+	* WH7TT is in ITU zone 8, not ITU zone 6
+	* AH6X is in CQ zone 4, not CQ zone 3
+	* KL2MU is in CQ zone 5, not CQ zone 4
+	* WH7TT is in CQ zone 5, not CQ zone 3
+	* KB7WDC, KL7R, NR5NN, W7DDG, WH6FAN and WH6FAT are all United States, K in CQ zone 3, ITU zone 6
+	* KA7Y, KD0OXY, KK8C and KL7DAN are all United States, K in CQ zone 4, ITU zone 7
+	* K0RJW, K2LLC, K2OO, K6ZZ, KC5AAV, KG4Q, KY4L, N4IAM and WH6GAL are all United States, K in CQ zone 4, ITU zone 8
+	* AH0AX, KB3CYB, KP4LLA, N8DWB, N8TP, NA9Z, W9ARO, WD0FYV, WH6EYL
+	  and WV8O are all United States, K in CQ zone 5, ITU zone 8
+	* K7RXD is Hawaii, KH6
+	* AK6PU, K7HFU, KC9GMO, KG7TLW, KR4GLN, W1TJW and WA6TUX are all Alaska, KL
+	* LU1EAF/D and LW5ECI/D are both Argentina, LU
+	* R3HW/P is in ITU zone 29, not ITU zone 30
+	* UB5O/M is in ITU zone 30, not ITU zone 29
+	* R3HW/P is in CQ zone 16, not CQ zone 17
+	* RW8T/1 is European Russia, UA
+	* R500M and R500O are both European Russia, UA in ITU zone 19
+	* UA4HAZ/P is European Russia, UA in ITU zone 30
+	* R500X is European Russia, UA in CQ zone 17, ITU zone 20
+	* UB5O/9 is European Russia, UA in CQ zone 17, ITU zone 30
+	* RX3AMI/2 is Kaliningrad, UA2
+	* R4IY/9 and R9CS/P are both in ITU zone 20, not ITU zone 30
+	* RY0AAN/P is in ITU zone 31, not ITU zone 32
+	* RD0L/9 is in ITU zone 32, not ITU zone 31
+	* RA8CP/M is in CQ zone 16, not CQ zone 17
+	* R4IY/9 is in CQ zone 17, not CQ zone 18
+	* RX0TX/P and RY0AAN/P are both in CQ zone 18, not CQ zone 23
+	* R1VAA/8 is Asiatic Russia, UA9
+	* R500K is Asiatic Russia, UA9 in ITU zone 20
+	* RA9WU/M is Asiatic Russia, UA9 in CQ zone 16
+	* UA9JKM/M is Asiatic Russia, UA9 in CQ zone 18, ITU zone 31
+	* UB9MCW/0 is Asiatic Russia, UA9 in CQ zone 19
+	* R500F and R500L are both Asiatic Russia, UA9 in CQ zone 19, ITU zone 34
+	* R500Z is Asiatic Russia, UA9 in CQ zone 19, ITU zone 35
+	* VJ4K and VK70VHF are both Australia, VK in CQ zone 29, ITU zone 58
 
     Removed Entities/Prefixes/Callsigns:
 
-	* AD4BL in United States, K
+	* GB0WRH in Scotland, GM
+	* GB0BHR and MV1CFA in Wales, GW
+	* AC4CH, K3USC, K4NO, K4ROJ, K6BWC, K6HRU, K9WZB, KE4QCY, KF7CG, KL2WX,
+	  KO5S, N0VAO, N3KA, NA4D, W0YKS, W4KD, W4YTO, W8BAR, W9GNW, WD9FJL, WI4T
+	  and WO0M in United States, K
+	* AH0AX and KC9GMO in Guam, KH2
+	* KB7WDC in Hawaii, KH6
+	* KB3CYB, KD0OXY, NA9Z and W7DDG in Alaska, KL
+	* RA9WU/M and UA9JKM/M in European Russia, UA
+	* UA4HAZ/P and UB5O/9 in Asiatic Russia, UA9
