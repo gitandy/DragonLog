@@ -16,7 +16,7 @@ Beside logging for ham radio you can also log CB radio QSOs.
 
 Features
 --------
-* Runs on Windows, Linux and MacOS
+* Runs on Windows, Linux and macOS
 * predefined fields for logging
 * input validation for callsign, RST, locator
 * show worked before if a callsign is already logged
@@ -48,7 +48,7 @@ Features
 * display DX spots from DX cluster via telnet
 * selectable font and font size
   * default proportional font with slashed zero (modified Inter font)
-  * 3 independant font sizes for application, QSO form and CassiopeiaConsole 
+  * 3 independent font sizes for application, QSO form and CassiopeiaConsole 
 * Read QSL-QR-Codes to QSL or import QSOs (based on work of [TobbY, DG1ATN](https://www.dg1atn.de/darc-qsl-qr-code-reader/))
 
 
@@ -58,7 +58,7 @@ The installation requires a python installation (>= 3.10).
 
 On Linux you may have to install libxcb-cursor0 and libzbar0.
 
-These steps assume you are using your system python installation. Though I recommend using virtual envirnoments.
+These steps assume you are using your system python installation. Though I recommend using virtual environments.
     
     # python3 -m pip install DragonLog
 
@@ -86,7 +86,7 @@ For detailed Windows installation steps see [README_WININST](https://github.com/
 This is the recommended way to get the full functionality of DragonLog.
 
 For Windows there is also an installable MSI and ZIP package available for convenience.
-Unfortunatley the QSL-QR-Code reader is not available with these Windows prebuild versions.
+Unfortunately the QSL-QR-Code reader is not available with these Windows prebuild versions.
 Anyway the Python version is currently stuck at 3.12 as the MSI packaging will not be ported to higher versions.
 
 
@@ -147,7 +147,7 @@ Here you can check the status of your paper QSL, eQSL inbox or LoTW QSLs.
 
 ### Callbook lookup
 
-The different callbook lookup retreive locator, QTH and name for a callsign.
+The different callbook lookup retrieve locator, QTH and name for a callsign.
 If a lookup result is available (internal or external), only empty form fields are filled with this data.
 
 A callsign lookup on the internal callbook happens after typing a callsign. 
@@ -171,7 +171,7 @@ If you want to automatically log QSOs from other programs e.g. WSJT-X or JS8Call
 DragonLog can watch their ADIF file for changes and import new logs as they are created.
 
 Starting file watching opens a file dialog where you have to point to the log in question.
-Some programms are preconfigured. Check the user manual of other programs to find the correct path.
+Some programs are preconfigured. Check the user manual of other programs to find the correct path.
 
 If you want to use the worked before feature of the other program consider to export your QSOs beforehand.
 DragonLog will only import QSOs which are not already included in the current database.
@@ -185,13 +185,13 @@ If you want to log a contest, bring up the Contest Statistics with `Ctrl + T` an
 This will also set the QSO filter of your Logbook to display only this type of contest in the given range of date.
 CassiopeiaConsole also will be set to contest mode.
 
-Then you should start to log QSOs with either CassipeiaConsole (heavily suggested) or via QSO form.
+Then you should start to log QSOs with either CassiopeiaConsole (heavily suggested) or via QSO form.
 
-For contests you do not have to track your sent exchange. DragonLog will care about at export.
+For contests, you do not have to track your sent exchange. DragonLog will care about at export.
 So just let the running number increase and care about the received exchange from your QSO partner.
 
 After the contest, use Contest - Export Contest... to generate a contest file in the special format (e.g. Cabrillo).
-The contest name and dates should be preset in the dialog from the Contest Statistics. These informations maybe important, 
+The contest name and dates should be preset in the dialog from the Contest Statistics. These information maybe important, 
 as DragonLog may build your sent exchange out of them.
 
 **Please check the exported file properly before sending it in!!!**
@@ -209,12 +209,12 @@ Following formats are supported for export
 * Excel file
 * CSV format (UTF-8 encoding)
 
-If you backup your log regularly at HamQTH use zipped ADI format for your whole logbook.
+If you back up your log regularly at HamQTH use zipped ADI format for your whole logbook.
 
-ADIF ADX is the best choice for creating a backup for your own storage. The data can completly be restored from this format.
+ADIF ADX is the best choice for creating a backup for your own storage. The data can completely be restored from this format.
 
 ### ADIF format export
-ADX should be preferred over ADI as UTF-8 is supported. Unfortunatly most services do not support ADX.
+ADX should be preferred over ADI as UTF-8 is supported. Unfortunately most services do not support ADX.
 For ADX fields where UTF-8 is supported (*_INTL fields) additionally the ASCII counterpart is exported.
 
 For ADX ASCII only fields (all ADI fields) all german umlauts and ligatures are converted 
@@ -275,7 +275,7 @@ You can check if the file is correctly loaded via Help - About.
 Check if the version date and version entity corresponds to the website.
 
 The flag display is based on the mapping from [Flagpedia.net](https://flagpedia.net) 
-and matched against the Big CTY data. This is sometimes weak and thus error prone and needed manual fixes. 
+and matched against the Big CTY data. This is sometimes weak and thus error-prone and needed manual fixes. 
 There are still 15% unmapped (mostly islands).
 
 If a flag is mapped wrong, please stay calm and drop me a mail. 
