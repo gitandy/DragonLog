@@ -7,6 +7,7 @@ import logging
 import platform
 import subprocess
 import sys
+import time
 
 from PyQt6 import QtCore
 
@@ -137,7 +138,7 @@ class RigControl(QtCore.QObject):
             self.statusChanged.emit(False)
 
     def isActive(self) -> bool:
-        return self.__rigctld__ and not self.__rigctld__.poll()
+        return bool(self.__rigctld__ and not self.__rigctld__.poll())
 
     def init_hamlib(self, rigctld_path: str):
         if rigctld_path:
@@ -248,8 +249,13 @@ class RigControl(QtCore.QObject):
                     self.__refreshTimer__.singleShot(500, self.startRefresh)
         else:
             self.__checkHamlibTimer__.stop()
+            self.__refreshTimer__.stop()
             if self.isActive():
                 os.kill(self.__rigctld__.pid, 9)
+                for _ in range(100):  # Wait for max 1 s for process to be killed
+                    if self.__rigctld__.poll():
+                        break
+                    time.sleep(.001)
                 self.log.info('Killed rigctld')
             self.__rigctld__ = None
             self.__rig_caps__ = []
