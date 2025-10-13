@@ -470,7 +470,7 @@ class K32KurzUKWLog(ContestLogCBR):
         xl_ws['D7'] = self.__header__['CATEGORY-POWER']
 
     def build_record(self, adif_rec) -> CBRRecord | None:
-        if self.__header__['CATEGORY-BAND'] in ('ALL', adif_rec['BAND'].upper()):
+        if self.__header__['CATEGORY-BAND'] in ('all', adif_rec['BAND'].lower()):
             adif_rec['STX_STRING'] = f'{self.__dok__.upper()},{self.__header__["CATEGORY-POWER"]}'
             rec = super().build_record(adif_rec)
             return rec
@@ -567,6 +567,10 @@ class K32KurzUKWLog(ContestLogCBR):
     @classmethod
     def descr_specific(cls) -> str:
         return 'DOK'
+
+    @classmethod
+    def needs_specific(cls) -> bool:
+        return True
 
     @staticmethod
     def extract_exchange(exchange: str) -> ExchangeData | None:
