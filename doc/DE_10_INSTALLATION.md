@@ -28,7 +28,7 @@ Ich empfehle Python 3.12 und die Verwendung des Python-Install-Managers (pymanag
 
 ### Erstellen einer virtuellen Umgebung
 
-Du solltest in den Ordner auswählen in dem Du DragonLog installieren möchtest. Ich nutze den persönlichen Ordner.
+Du solltest den Ordner auswählen, in dem Du DragonLog installieren möchtest. Ich nutze den persönlichen Ordner.
 
 Öffne ein Terminal und wechsle in diesen Ordner. Dann erstellst Du die virtuelle Umgebung
 
@@ -41,7 +41,7 @@ Man kann DragonLog auch ohne virtuelle Umgebung installieren, wenn man evtl. Pak
 
 ### DragonLog installieren
 
-Wenn die virtuelle Umgebung initialisiert ist nutze
+Wenn die virtuelle Umgebung initialisiert ist, nutze
 
     DragonLog\Scripts\pip.exe install DragonLog[xlformat,qslqrcode]
 
@@ -79,7 +79,7 @@ Die Anleitung deckt folgende Schritte ab
 
 ### Installation von venv und Bibliotheken
 
-Um DragonLog zu nutzen benötigst Du noch einige System-Pakete. `libzbar0` wird nur benötigt, wenn Du DragonLog mit der Erweiterung `qslqrcode` installierst.
+Um DragonLog zu nutzen, benötigst Du noch einige System-Pakete. `libzbar0` wird nur benötigt, wenn Du DragonLog mit der Erweiterung `qslqrcode` installierst.
 
 Hier für Debian/Ubuntu/Linux Mint/...
 
@@ -88,7 +88,7 @@ Hier für Debian/Ubuntu/Linux Mint/...
 
 ### Erstellen einer virtuellen Umgebung
 
-Du solltest in den Ordner auswählen in dem Du DragonLog installieren möchtest. Ich nutze den persönlichen Ordner.
+Du solltest den Ordner auswählen, in dem Du DragonLog installieren möchtest. Ich nutze den persönlichen Ordner.
 
 Öffne ein Terminal und wechsle in diesen Ordner. Dann erstellst Du die virtuelle Umgebung
 
@@ -101,11 +101,14 @@ Man kann DragonLog auch ohne virtuelle Umgebung installieren, wenn man evtl. Pak
 
 ### DragonLog installieren
 
-Wenn die virtuelle Umgebung initialisiert ist nutze
+Wenn die virtuelle Umgebung initialisiert ist, nutze
 
     dragonlog/bin/pip install DragonLog[xlformat,qslqrcode]
 
 Dies installiert DragonLog und alle Abhängigkeiten inklusive der Extras.
+
+Unter macOS zsh muss der Teil `"DragonLog[...]"` in Anführungszeichen gesetzt werden, 
+so dass die eckigen Klammern nicht interpretiert werden.
 
 
 ### DragonLog starten

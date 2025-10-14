@@ -107,6 +107,8 @@ If your virtual environment is initialised run
 
 This will install DragonLog and all of its dependencies including the extras.
 
+On macOS zsh you have to enclose `"DragonLog[...]"` in quotes so the brackets are not interpreted.
+
 
 ### Run DragonLog
 

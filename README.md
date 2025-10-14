@@ -14,11 +14,11 @@ Beside logging for ham radio you can also log CB radio QSOs.
 
 *Screenshot in german translation*
 
-New documentation in preparation
---------------------------------
+This README will provide only brief instructions. 
 
-* [Manual](https://github.com/gitandy/DragonLog/blob/Doc/doc/EN_00_MANUAL.md)
-* [Handbuch](https://github.com/gitandy/DragonLog/blob/Doc/doc/DE_00_HANDBUCH.md)
+For detailed instructions see
+- [Manual](doc/EN_00_MANUAL.md)  
+- [Handbuch](doc/DE_00_HANDBUCH.md)  
 
 
 Features
@@ -59,38 +59,8 @@ Features
 * Read QSL-QR-Codes to QSL or import QSOs (based on work of [TobbY, DG1ATN](https://www.dg1atn.de/darc-qsl-qr-code-reader/))
 
 
-Installation
-------------
-The installation requires a python installation (>= 3.10).
-
-On Linux you may have to install libxcb-cursor0 and libzbar0.
-
-These steps assume you are using your system python installation. Though I recommend using virtual environments.
-    
-    # python3 -m pip install DragonLog
-
-If you want to be able to export/import to/from Excel files install the extra packages
-
-    # python3 -m pip install DragonLog[xlformat]
-
-For using the QSL-QR-Code reader install extra packages with
-
-    # python3 -m pip install DragonLog[qslqrcode]
-
-On MacOS zsh you have to enclose `"DragonLog[...]"` in quotes so the brackets are not interpreted.
-
-
-Run as
-
-    # python3 -m dragonlog
-
-Or if your python scripts folder is on PATH you can start DragonLog with 
-
-    # DragonLog
-
-
-For detailed Windows installation steps see [README_WININST](https://github.com/gitandy/DragonLog/blob/master/README_WININST.md).
-This is the recommended way to get the full functionality of DragonLog.
+Note about the Windows Installer
+--------------------------------
 
 For Windows there is also an installable MSI and ZIP package available for convenience.
 Unfortunately the QSL-QR-Code reader is not available with these Windows prebuild versions.
