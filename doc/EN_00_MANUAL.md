@@ -6,9 +6,10 @@ Content
 
 1. [Installation](EN_10_INSTALL.md)
 2. [First Start and Startup](EN_20_FIRST_START.md)
-3. Add a QSO
-4. Use CassiopeiaConsole (HamCC)
-5. Export/import QSOs
-6. Configuration
-7. Shortcut Keys
-8. Setup Hamlib
+3. [Add and Edit QSOs](EN_30_ADD_EDIT_QSOS.md)
+4. Configuration
+5. [Export/import QSOs](EN_50_EXPORT_IMPORT.md)
+6. Use CassiopeiaConsole (HamCC)
+7. Contest Logs and Statistics
+8. Shortcut Keys
+9. Setup Hamlib
