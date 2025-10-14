@@ -1,6 +1,10 @@
 DragonLog - Handbuch
 ====================
 
+Es ist möglich, dass hier noch einige Inhalte fehlen. 
+Diese sind dann möglicherweise schon in der englischen Version verfügbar.
+
+
 Inhalt
 ------
 

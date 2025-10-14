@@ -4,7 +4,7 @@ First start and Startup
 At first start DragonLog opens the settings dialog for you. You should configure
 at least your callsign, name and locator for a sufficient experience.
 
-To select a default QTH/locator go to the `QTH & Rig` tab and 
+To select a default QTH/locator go to the `Listings` tab and 
 add your first QTH and locator e.g. `Koblenz (JO30si)`.  
 
 Before you can start to log QSOs a database has to be selected.
