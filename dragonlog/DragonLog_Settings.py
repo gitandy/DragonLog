@@ -44,6 +44,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.log.setLevel(logger.loglevel)
         self.logger = logger
         self.log.debug('Initialising...')
+        self.log.info(f'Using system key vault: {keyring.get_keyring().name}')
 
         self.qthsListEdit = ListEdit(self.listingsWidget, self.tr('QTHs & locators'))
         self.qthsListEdit.setToolTip(self.tr('Type in as: "City (Locator)", i.e. "Koblenz (JO30ti)"'))

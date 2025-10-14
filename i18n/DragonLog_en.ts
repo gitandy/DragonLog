@@ -3245,87 +3245,87 @@ This is not the QSL manager/bureau address.</source>
   <context>
     <name>Settings</name>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="48" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="49" />
       <source>QTHs &amp; locators</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="49" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="50" />
       <source>Type in as: "City (Locator)", i.e. "Koblenz (JO30ti)"</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="52" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="53" />
       <source>Radios</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="55" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="56" />
       <source>Antennas</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="60" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="61" />
       <source>Show bands</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="60" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="61" />
       <source>Hide bands</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="63" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="64" />
       <source>Show modes</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="63" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="64" />
       <source>Hide modes</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="66" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="67" />
       <source>Show columns</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="66" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="67" />
       <source>Hide columns</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="124" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="125" />
       <source>Choose hamlib rigctld executable</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="138" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="139" />
       <source>Error executing rigctld</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="142" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="143" />
       <source>rigctld is not available</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="144" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="145" />
       <source>Selected file is not the executable</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="176" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="177" />
       <source>Choose Country data file</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="214" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="215" />
       <source>Date/Time start</source>
       <translation />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_Settings.py" line="218" />
+      <location filename="../dragonlog/DragonLog_Settings.py" line="219" />
       <source>Show all</source>
       <translation />
     </message>
