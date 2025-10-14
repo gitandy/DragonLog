@@ -59,6 +59,17 @@ Features
 * Read QSL-QR-Codes to QSL or import QSOs (based on work of [TobbY, DG1ATN](https://www.dg1atn.de/darc-qsl-qr-code-reader/))
 
 
+Security Notes
+--------------
+
+The passwords for callbook lookup, QSO upload and DX spots are securely stored 
+in your systems key vault (e.g. Credential Manager on Windows, KWallet on KDE/Linux, Keychain on macOS).
+
+At startup, DragonLog will inform about which service is actually in use.
+
+DragonLog relies on the [keyring](https://github.com/jaraco/keyring) module.
+
+
 Note about the Windows Installer
 --------------------------------
 
@@ -67,45 +78,9 @@ Unfortunately the QSL-QR-Code reader is not available with these Windows prebuil
 Anyway the Python version is currently stuck at 3.12 as the MSI packaging will not be ported to higher versions.
 
 
-QSOs
-----
-You can log single QSOs by using the shortcut Ctrl+L.
+LoTW sign and upload
+--------------------
 
-The displayed form can be handled the easiest if you use TAB key to jump from field to field.
-
-The form requires a callsign from your QSO partner and a start date to save/upload the data.
-It gives a colourful feedback for the quality of your supplied data.
-The colour feedback highlights required and recommended data only.
-
-| Colour                                               | Meaning         |
-|------------------------------------------------------|-----------------|
-| <span style="background-color:#ff0000">red</span>    | required        |
-| <span style="background-color:#ff7f00">orange</span> | wrong format    |
-| <span style="background-color:#ffff00">yellow</span> | empty           |
-| <span style="background-color:#00ff00">green</span>  | ok              |
-| <span style="background-color:#0000ff">blue</span>   | worked before   |
-
-If automatic time is selected, the end time gets updated at saving the QSO.
-
-QSOs can be edited by double-clicking on an entry in the database view.
-
-In log and change mode there is an extra tab for QSL and different upload status.
-Here you can check the status of your paper QSL, eQSL inbox or LoTW QSLs.
-
-### Callbook lookup
-
-The different callbook lookup retrieve locator, QTH and name for a callsign.
-If a lookup result is available (internal or external), only empty form fields are filled with this data.
-
-A callsign lookup on the internal callbook happens after typing a callsign. 
-On saving the QSO the data gets added to or updated in the internal callbook.
-
-DragonLog can retrieve additional OM data from HamQTH.com or QRZCQ.com callbook and upload the QSO to different services.
-
-Make sure that you properly set the credentials for each online service in the settings.
-The password is stored in the systems key vault (e.g. Credential Manager on Windows or KWallet on KDE/Linux).
-
-### LoTW sign and upload
 Only QSOs with a matching locator in the TQSL application (installation required) can be signed and uploaded.
 DragonLog provides a selection for the stations configured in TQSL. 
 Then it searches for all QSOs with the matching locator which were not already sent to LoTW.
@@ -113,15 +88,6 @@ Then it searches for all QSOs with the matching locator which were not already s
 If you secured your TQSL (which is not recommended) set DragonLog correspondingly. 
 DragonLog will then request your password on each upload action.
 
-### Automatic log import
-If you want to automatically log QSOs from other programs e.g. WSJT-X or JS8Call 
-DragonLog can watch their ADIF file for changes and import new logs as they are created.
-
-Starting file watching opens a file dialog where you have to point to the log in question.
-Some programs are preconfigured. Check the user manual of other programs to find the correct path.
-
-If you want to use the worked before feature of the other program consider to export your QSOs beforehand.
-DragonLog will only import QSOs which are not already included in the current database.
 
 Contests
 --------
@@ -149,43 +115,6 @@ After typing a callsign the received exchange will be filled with data from the 
 After saving a QSO in a running contest, the received exchange data is added to or updated in the call history.
 The callbook will also be updated.
 
-Export
-------
-Following formats are supported for export
-* [ADIF 3](https://adif.org/) format (ADI/ADX/ADI zipped)
-* Excel file
-* CSV format (UTF-8 encoding)
-
-If you back up your log regularly at HamQTH use zipped ADI format for your whole logbook.
-
-ADIF ADX is the best choice for creating a backup for your own storage. The data can completely be restored from this format.
-
-### ADIF format export
-ADX should be preferred over ADI as UTF-8 is supported. Unfortunately most services do not support ADX.
-For ADX fields where UTF-8 is supported (*_INTL fields) additionally the ASCII counterpart is exported.
-
-For ADX ASCII only fields (all ADI fields) all german umlauts and ligatures are converted 
-automatically to suiting ASCII counterparts.
-
-Import 
-------
-Following formats are supported for import
-* [ADIF 3](https://adif.org/) format (ADI/ADX/ADI zipped)
-* Excel file
-* CSV format (UTF-8 encoding)
-
-### Excel/CSV import
-The import file is expected to have the same structure and column order as exported by DragonLog.
-So best practice is to export an example QSOs with the current program version and 
-adjust the import file accordingly.
-
-Empty rows are skipped. A row is considered empty if the date/time is missing.
-
-### ADIF format import
-UTF-8 content (*_INTL fields) are preferred over ASCII counterparts when importing ADX files.
-
-For ADI files DragonLog fixes different problems 
-depending on the source of the file (see [ADIF Compatibility](https://github.com/gitandy/DragonLog/blob/master/ADIF_COMPATIBILITY.md))
 
 Hamlib integration
 ------------------
