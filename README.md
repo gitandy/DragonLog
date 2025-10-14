@@ -67,36 +67,6 @@ Unfortunately the QSL-QR-Code reader is not available with these Windows prebuil
 Anyway the Python version is currently stuck at 3.12 as the MSI packaging will not be ported to higher versions.
 
 
-Starting and first start
-------------------------
-At first start DragonLog opens the settings dialog for you. You should configure
-at least your callsign, name and locator for a sufficient experience.
-
-To select a default QTH/locator go to the `QTH & Rig` tab and 
-add your first QTH and locator e.g. `Koblenz (JO30si)`.  
-
-Before you can start to log QSOs a database has to be selected.
-It can be placed on a path where you wish to.
-The database will be created and initialised.
-
-At the next start of the program the last database gets opened automatically.
-
-You can switch between different databases as you like.
-
-### Commandline Arguments
-If you want to manage different QSO databases you can select them via commandline argument e.g.
-
-    # DragonLog QSOs-2024.qlog
-
-If you also want to provide a separate configuration you can use e.g.
-
-    # DragonLog -ini DF1ASC.ini
-
-The arguments must follow the format in this order
-
-    DragonLog [-ini INI_FILE] [QSODB_FILE]
-
-
 QSOs
 ----
 You can log single QSOs by using the shortcut Ctrl+L.
