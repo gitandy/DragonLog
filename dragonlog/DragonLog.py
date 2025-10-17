@@ -218,6 +218,16 @@ def eval_adi_type(prog_id: str) -> ADISourceType:
         return ADISourceType.Other
 
 
+# Translate ADIF contests IDs to internal and vv
+CONTEST_ADIF_DL = {
+    'DARC-UKW-SPRING': 'DARC-UKW-FRUEHLING',
+    'DARC-UKW-FIELD-DAY': 'DARC-UKW-SOMMERFD',
+    'DARC-MICROWAVE': 'DARC-UKW',
+    'EASTER': 'DARC-KW-OSTERN',
+}
+CONTEST_DL_ADIF = dict([(v, k) for k, v in CONTEST_ADIF_DL.items()])
+
+
 # noinspection PyPep8Naming
 class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     qsoAdded = QtCore.pyqtSignal()
@@ -1506,7 +1516,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             if query.value(self.__sql_cols__.index('hamqth')):
                 record['HAMQTH_QSO_UPLOAD_STATUS'] = query.value(self.__sql_cols__.index('hamqth'))
             if query.value(self.__sql_cols__.index('contest_id')):
-                record['CONTEST_ID'] = query.value(self.__sql_cols__.index('contest_id'))
+                c_id = query.value(self.__sql_cols__.index('contest_id'))
+                # Try to get different ADIF ID or use internal
+                record['CONTEST_ID'] = CONTEST_DL_ADIF.get(c_id, c_id)
             if query.value(self.__sql_cols__.index('ctx_qso_id')):
                 record['STX'] = query.value(self.__sql_cols__.index('ctx_qso_id'))
             if query.value(self.__sql_cols__.index('crx_qso_id')):
@@ -2446,6 +2458,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     if (not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']) and \
                             (not 'OPERATOR' in r or not r['OPERATOR']):
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
+                case 'CONTEST_ID':
+                    # Try to map ADIF ID to internal
+                    values[self.__sql_cols__.index('contest_id') - 1] = CONTEST_ADIF_DL.get(r[p], r[p])
                 case p if p in self.__adx_cols__:
                     values[self.__adx_cols__.index(p)] = r[p]
                 case p if p + '_INTL' not in r:  # Take non *_INTL only if no suiting *_INTL are in import
