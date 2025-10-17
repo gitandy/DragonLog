@@ -685,11 +685,11 @@ class ContestLogCBR(ContestLog):
                          adif_rec['TIME_ON'][:4],
                          adif_rec['STATION_CALLSIGN'],
                          adif_rec['RST_SENT'],
-                         adif_rec.get('STX_STRING', str(adif_rec['STX'])).upper(),
+                         adif_rec.get('STX_STRING', f'{adif_rec["STX"]:03d}').upper(),
                          adif_rec['CALL'],
                          adif_rec['RST_RCVD'],
                          adif_rec.get('SRX_STRING',
-                                      str(adif_rec.get('SRX', 0))).upper().strip().replace(',', ' ').replace('_', ' '),
+                                      f'{adif_rec.get("SRX",0):03d}').upper().strip().replace(',', ' ').replace('_', ' '),
                          '0'
                          )
 

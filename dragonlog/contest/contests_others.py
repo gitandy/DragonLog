@@ -150,7 +150,7 @@ class IARUHFWorldChampionshipContest(ContestLogCBR):
 class RussianDistrictAwardContest(ContestLogCBR):
     contest_name = 'Russian District Award Contest'
     contest_year = '2025'
-    contest_update = '2025-08-15'
+    contest_update = '2025-10-16'
 
     def __init__(self, callsign: str, name: str, club: str, address: Address, email: str, locator: str,
                  band: type[CategoryBand], mode: type[CategoryMode],
@@ -193,7 +193,7 @@ class RussianDistrictAwardContest(ContestLogCBR):
 
     @staticmethod
     def extract_exchange(exchange: str) -> ExchangeData | None:
-        if type(exchange) is str and exchange.strip()[0:2].isalpha():
+        if type(exchange) is str and exchange.strip() and exchange.strip()[0:2].isalpha():
             return ExchangeData(rda_number=exchange.strip())
         else:
             return None
@@ -201,6 +201,12 @@ class RussianDistrictAwardContest(ContestLogCBR):
     @staticmethod
     def prepare_exchange(exchange: ExchangeData):
         return f'{exchange.rda_number}'
+
+    def build_record(self, adif_rec) -> CBRRecord:
+        if self.own_cty_data.code.startswith('UA'):  # Use RDA number as sent exchange
+            adif_rec['STX_STRING'] = self.__header__['SPECIFIC'].upper()
+        rec = super().build_record(adif_rec)
+        return rec
 
     def process_points(self, rec: CBRRecord):
         try:

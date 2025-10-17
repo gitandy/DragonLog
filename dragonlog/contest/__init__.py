@@ -3,12 +3,13 @@
 
 from .base import ContestLog, ExchangeData, ContestLogCBR, ContestLogEDI
 from .contests_darc import (DARCUKWContest, DARCUKWFruehlingsContest, DARCOsterContest, DARCUKWSommerFDContest,
-                            DARCXMASContest, DARCCWAContest)
+                            DARCXMASContest, DARCCWAContest, DARCWAGContest)
 from .contests_darc_rlp import RLPFALZAWLog, RLPFALZABKWLog, RLPFALZABUKWLog, K32KurzUKWLog
 from .contests_darc_others import L33EinsteigerContest
 from .contests_others import IARUHFWorldChampionshipContest, RussianDistrictAwardContest
 
 CONTESTS: dict[str, type[ContestLog]] = {
+    'DARC-WAG': DARCWAGContest,
     'DARC-UKW': DARCUKWContest,
     'DARC-UKW-FRUEHLING': DARCUKWFruehlingsContest,
     'DARC-UKW-SOMMERFD': DARCUKWSommerFDContest,
