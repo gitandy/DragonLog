@@ -391,3 +391,8 @@ class DARCWAGContest(ContestLogCBR):
     @staticmethod
     def prepare_exchange(exchange: ExchangeData):
         return f'{exchange.darc_dok}'
+
+    @classmethod
+    def is_single_day(cls) -> bool:
+        """If the contest is on a single day"""
+        return False
