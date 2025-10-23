@@ -10,6 +10,18 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>600</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Contest Export</string>
   </property>
@@ -281,6 +293,69 @@
          <property name="text">
           <string>Operators</string>
          </property>
+        </widget>
+       </item>
+       <item row="20" column="0">
+        <widget class="QLabel" name="label_26">
+         <property name="text">
+          <string>Assisted</string>
+         </property>
+        </widget>
+       </item>
+       <item row="21" column="0">
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>Transmitter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="20" column="1">
+        <widget class="QComboBox" name="assistedComboBox">
+         <property name="currentText">
+          <string notr="true">Assisted</string>
+         </property>
+         <item>
+          <property name="text">
+           <string notr="true">Assisted</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string notr="true">Non-Assisted</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="21" column="1">
+        <widget class="QComboBox" name="txComboBox">
+         <property name="currentText">
+          <string notr="true">One</string>
+         </property>
+         <item>
+          <property name="text">
+           <string notr="true">One</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string notr="true">Two</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string notr="true">Limited</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string notr="true">Unlimited</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string notr="true">SWL</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -602,6 +677,8 @@
   <tabstop>operatorsLineEdit</tabstop>
   <tabstop>powerComboBox</tabstop>
   <tabstop>modeComboBox</tabstop>
+  <tabstop>assistedComboBox</tabstop>
+  <tabstop>txComboBox</tabstop>
   <tabstop>qthLineEdit</tabstop>
   <tabstop>rigLineEdit</tabstop>
   <tabstop>powerSpinBox</tabstop>

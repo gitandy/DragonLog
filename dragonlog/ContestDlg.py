@@ -9,8 +9,8 @@ from PyQt6 import QtWidgets, QtCore
 from . import ContestDlg_ui
 from .Logger import Logger
 from .contest import CONTESTS, CONTEST_IDS, CONTEST_NAMES
-from .contest.base import (ContestLog, ContestLogEDI, Address,
-                           CategoryBand, CategoryMode, CategoryPower, CategoryOperator)
+from .contest.base import (ContestLog, ContestLogEDI, Address, CategoryBand, CategoryMode,
+                           CategoryPower, CategoryOperator, CategoryAssisted, CategoryTransmitter)
 from . import ColorPalettes
 from .RegEx import check_qth, check_format, find_non_ascii, REGEX_CALL, REGEX_LOCATOR, REGEX_EMAIL
 from .cty import CountryData
@@ -271,6 +271,8 @@ class ContestDialog(QtWidgets.QDialog, ContestDlg_ui.Ui_ContestDialog):
                                            CategoryMode.from_str(self.modeComboBox.currentText()),
                                            CategoryPower.from_str(self.powerComboBox.currentText()),
                                            CategoryOperator.from_str(self.opComboBox.currentText()),
+                                           CategoryAssisted.from_str(self.assistedComboBox.currentText()),
+                                           CategoryTransmitter.from_str(self.txComboBox.currentText()),
                                            operators=self.operatorsLineEdit.text().split(' '),
                                            specific=self.specificLineEdit.text(),
                                            logger=self.logger,

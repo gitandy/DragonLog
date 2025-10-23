@@ -361,7 +361,7 @@ class ContestLog(ABC):
 
     @property
     def infos(self):
-        """Number of informations"""
+        """Number of information entries"""
         return self.__infos__
 
     @property
@@ -399,7 +399,7 @@ class ContestLog(ABC):
         self.__header__['CREATED-BY'] = program_name
 
     def check_band(self, adif_rec: dict[str, str]) -> bool:
-        """Test if the ADIF record uses an valid band"""
+        """Test if the ADIF record uses a valid band"""
         if (adif_rec['BAND'].lower() != self.__header__['CATEGORY-BAND'] and
                 BAND_MAP_CBR[adif_rec['BAND'].lower()] != self.__header__['CATEGORY-BAND'].lower()):
             self.log.warning(f'QSO #{self.__qso_id__} band "{adif_rec["BAND"].lower()}" does not match with '
@@ -438,7 +438,7 @@ class ContestLog(ABC):
 
             if not check_format(REGEX_RSTFIELD, adif_rec['RST_RCVD']):
                 self.warning(
-                    f'Rreceived RST "{adif_rec["RST_RCVD"]}" does not match RST format')
+                    f'Received RST "{adif_rec["RST_RCVD"]}" does not match RST format')
                 if self.__skip_warn__:
                     return
 
@@ -624,7 +624,7 @@ class ContestLog(ABC):
 
     @property
     def exchange_format(self) -> str:
-        """Get a textual descritpion of the exchange format expected by the contest"""
+        """Get a textual description of the exchange format expected by the contest"""
         return self.contest_exch_fmt
 
     @staticmethod
@@ -689,7 +689,8 @@ class ContestLogCBR(ContestLog):
                          adif_rec['CALL'],
                          adif_rec['RST_RCVD'],
                          adif_rec.get('SRX_STRING',
-                                      f'{adif_rec.get("SRX",0):03d}').upper().strip().replace(',', ' ').replace('_', ' '),
+                                      f'{adif_rec.get("SRX", 0):03d}').upper().strip().replace(',', ' ').replace('_',
+                                                                                                                 ' '),
                          '0'
                          )
 
@@ -959,7 +960,7 @@ class ContestLogEDI(ContestLog):
                               rec.sent_exch,  # sent Exch
                               rec.rcvd_rst,  # rcvd RST
                               rnr,  # rcvd QSO nr
-                              '',  # recvd Exch
+                              '',  # rcvd Exch
                               rloc.upper(),  # Locator
                               str(rec.dist) if not dup else '0',  # QSO Points
                               '',  # New exch
