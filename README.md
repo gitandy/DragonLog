@@ -14,6 +14,13 @@ Beside logging for ham radio you can also log CB radio QSOs.
 
 *Screenshot in german translation*
 
+New documentation in preparation
+--------------------------------
+
+* [Manual](https://github.com/gitandy/DragonLog/blob/Doc/doc/EN_00_MANUAL.md)
+* [Handbuch](https://github.com/gitandy/DragonLog/blob/Doc/doc/DE_00_HANDBUCH.md)
+
+
 Features
 --------
 * Runs on Windows, Linux and macOS
