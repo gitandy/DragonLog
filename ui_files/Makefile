@@ -1,4 +1,4 @@
-VENV_BIN = ../.venv/bin
+VENV_BIN = ../venv/bin
 UI_FILES = $(wildcard *.ui)
 PYUI_FILES = $(UI_FILES:.ui=_ui.py)
 

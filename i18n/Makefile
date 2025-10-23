@@ -1,4 +1,4 @@
-VENV_BIN = ../.venv/bin
+VENV_BIN = ../venv/bin
 NO_OBSOLETE?=
 
 TRANSLATIONS = de en templ
