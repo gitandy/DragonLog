@@ -2247,15 +2247,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
-                        f'Row {ln} has too few columns.\nSkipped row.'  # Todo: translate
+                        self.tr('Row {} has too few columns.\nSkipped row.').format(ln)
                     )
+                    continue
 
                 if not row[1] or not row[4]:
                     self.log.warning(f'CSV import, QSO date/time or callsign missing in row {ln}.\nSkipped row.')
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
-                        f'QSO date/time or callsign missing in row {ln}.\nSkipped row.'  # Todo: translate
+                        self.tr('QSO date/time or callsign missing in row {}.\nSkipped row.').format(ln)
                     )
                     continue
 
@@ -2277,7 +2278,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
-                        f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'  # Todo: translate
+                        self.tr('Row {} import error ("{}").\nSkipped row.').format(ln, query.lastError().text())
                     )
                 else:
                     lines += 1
@@ -2353,7 +2354,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
-                    f'QSO date/time missing in record {i}.\nSkipped record.'  # Todo: translate
+                    self.tr('QSO date/time missing in record {}.\nSkipped record.').format(i)
                 )
                 continue
 
@@ -2362,7 +2363,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
-                    f'Callsign missing in record {i}.\nSkipped record.'  # Todo: translate
+                    self.tr('Callsign missing in record {}.\nSkipped record.').format(i)
                 )
                 continue
 
@@ -2394,7 +2395,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
-                    f'Record {i} import error ("{query.lastError().text()}").\nSkipped record.'  # Todo: translate
+                    self.tr('Record {} import error ("{}").\nSkipped record.').format(i, query.lastError().text())
                 )
             else:
                 imported += 1
@@ -2799,7 +2800,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             QtWidgets.QMessageBox.warning(
                 self,
                 self.tr('Log import QSL-QR-Code'),
-                f'Record import error ("{query.lastError().text()}").\nSkipped record.'
+                self.tr('Record import error ("{}").\nSkipped record.'.format(query.lastError().text()))
             )
         else:
             self.__db_con__.commit()
