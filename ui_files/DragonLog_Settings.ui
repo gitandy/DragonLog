@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
+    <width>489</width>
     <height>550</height>
    </rect>
   </property>
@@ -42,34 +42,34 @@
        <string>Station</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Call sign</string>
+          <string>Station Callsign</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="1" column="1">
         <widget class="QLineEdit" name="callsignLineEdit"/>
        </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Name</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <widget class="QLineEdit" name="nameLineEdit"/>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>QTH (Locator)</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="5" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -85,27 +85,27 @@
          </property>
         </spacer>
        </item>
-       <item row="4" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Radio</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="6" column="1">
         <widget class="QComboBox" name="radioComboBox"/>
        </item>
-       <item row="5" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Antenna</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="7" column="1">
         <widget class="QComboBox" name="antennaComboBox"/>
        </item>
-       <item row="6" column="1">
+       <item row="8" column="1">
         <spacer name="verticalSpacer_11">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -118,8 +118,18 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="1">
+       <item row="4" column="1">
         <widget class="QComboBox" name="qthComboBox"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>Operator</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="operatorLineEdit"/>
        </item>
       </layout>
      </widget>
@@ -1359,6 +1369,22 @@
     <hint type="destinationlabel">
      <x>194</x>
      <y>200</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>operatorLineEdit</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>96</y>
     </hint>
    </hints>
   </connection>

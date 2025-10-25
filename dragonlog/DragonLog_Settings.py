@@ -197,6 +197,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.antsListEdit.setItems(self.settings.value('listings/antennas'))
 
         self.callsignLineEdit.setText(self.settings.value('station/callSign', '').upper())
+        self.operatorLineEdit.setText(self.settings.value('station/operator', self.callsignLineEdit.text()).upper())
         self.nameLineEdit.setText(self.settings.value('station/name', ''))
         self.qthComboBox.setCurrentText(self.settings.value('station/qth_loc', ''))
         self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
@@ -299,6 +300,7 @@ class Settings(QtWidgets.QDialog, DragonLog_Settings_ui.Ui_Dialog):
         self.settings.setValue('cat/rigModel', self.modelComboBox.currentText())
 
         self.settings.setValue('station/callSign', self.callsignLineEdit.text().upper())
+        self.settings.setValue('station/operator', self.operatorLineEdit.text().upper())
         self.settings.setValue('station/name', self.nameLineEdit.text())
         self.settings.setValue('station/qth_loc', self.qthComboBox.currentText())
         self.settings.setValue('station/radio', self.radioComboBox.currentText())

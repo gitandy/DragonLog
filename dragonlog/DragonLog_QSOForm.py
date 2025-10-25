@@ -100,6 +100,8 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
             else:
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
+                self.ownOpLineEdit.setText(
+                    self.settings.value('station/operator', self.ownCallSignLineEdit.text()).upper())
 
         if self.stationGroupBox.isChecked():
             self.ownQTHComboBox.setCurrentText(self.settings.value('station/qth_loc', ''))
@@ -251,6 +253,7 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.setChangeMode(False)
 
         self.callSignLineEdit.clear()
+        self.operatorLineEdit.clear()
         self.nameLineEdit.clear()
         self.QTHLineEdit.clear()
         self.locatorLineEdit.clear()
@@ -373,6 +376,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.contestPage.setEnabled(False)
             self.channelComboBox.setCurrentIndex(-1)
             self.channelComboBox.setCurrentIndex(0)
+            self.ownOpLineEdit.clear()
+            self.ownOpLineEdit.setEnabled(False)
+            self.operatorLineEdit.clear()
+            self.operatorLineEdit.setEnabled(False)
 
             if self.stationGroupBox.isChecked():
                 self.radioComboBox.setCurrentText(self.settings.value('station_cb/radio', ''))
@@ -391,6 +398,10 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             self.searchQRZCQPushButton.setEnabled(True)
             self.qslPage.setEnabled(True)
             self.contestPage.setEnabled(True)
+            self.ownOpLineEdit.setEnabled(self.ownCallSignLineEdit.isEnabled())
+            self.ownOpLineEdit.setText(
+                self.settings.value('station/operator', self.ownCallSignLineEdit.text()).upper())
+            self.operatorLineEdit.setEnabled(True)
 
             if self.stationGroupBox.isChecked():
                 self.radioComboBox.setCurrentText(self.settings.value('station/radio', ''))
@@ -597,7 +608,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             date_time_on,
             date_time_off,
             self.ownCallSignLineEdit.text().strip().upper() if band != '11m' else self.ownCallSignLineEdit.text().strip(),
+            self.ownOpLineEdit.text().strip().upper(),
             self.callSignLineEdit.text().strip().upper() if band != '11m' else self.callSignLineEdit.text().strip(),
+            self.operatorLineEdit.text().strip().upper(),
             self.nameLineEdit.text().strip(),
             self.QTHLineEdit.text().strip(),
             self.locatorLineEdit.text().strip(),
@@ -667,7 +680,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
         self.bandComboBox.setCurrentText(band)
 
         self.ownCallSignLineEdit.setText(values['own_callsign'])
+        self.ownOpLineEdit.setText(values['own_operator'])
         self.callSignLineEdit.setText(values['call_sign'])
+        self.operatorLineEdit.setText(values['operator'])
         self.nameLineEdit.setText(values['name'])
         self.QTHLineEdit.setText(values['qth'])
         self.locatorLineEdit.setText(values['locator'])

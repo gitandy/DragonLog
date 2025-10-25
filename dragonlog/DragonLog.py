@@ -12,6 +12,7 @@ from enum import Enum, auto
 import datetime
 from typing import Iterable, Iterator
 
+from PyQt6.QtGui import QPalette
 from packaging.version import parse, Version, InvalidVersion
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
@@ -158,6 +159,10 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
         self.contest_col = cols.index('contest_id')
         self.call_cols = cols.index('own_callsign'), cols.index('call_sign')
         self.loc_cols = cols.index('own_locator'), cols.index('locator')
+        self.own_call_col = cols.index('own_callsign')
+        self.own_op_col = cols.index('own_operator')
+        self.call_col = cols.index('call_sign')
+        self.op_col = cols.index('operator')
 
         # noinspection PyUnresolvedReferences
         self.ok_icon = QtGui.QIcon(self.parent().searchFile('icons:ok.png'))
@@ -179,6 +184,10 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
                 return f'{int(value)} km'
             elif idx.column() == self.contest_col and value in CONTEST_NAMES:
                 return CONTEST_NAMES[value]
+            elif idx.column() == self.own_op_col and not value:
+                value = idx.siblingAtColumn(self.own_call_col).data()
+            elif idx.column() == self.op_col and not value:
+                value = idx.siblingAtColumn(self.call_col).data()
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)
@@ -235,9 +244,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     qsoDeleted = QtCore.pyqtSignal()
 
     __sql_cols__ = (
-        'id', 'date_time', 'date_time_off', 'own_callsign', 'call_sign', 'name', 'qth', 'locator',
-        'rst_sent', 'rst_rcvd', 'band', 'mode', 'submode', 'freq', 'channel', 'power', 'propagation',
-        'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
+        'id', 'date_time', 'date_time_off', 'own_callsign', 'own_operator', 'call_sign', 'operator', 'name',
+        'qth', 'locator', 'rst_sent', 'rst_rcvd', 'band', 'mode', 'submode', 'freq', 'channel',
+        'power', 'propagation', 'own_name', 'own_qth', 'own_locator', 'radio', 'antenna',
         'remarks', 'comments', 'dist',
         'qsl_via', 'qsl_path', 'qsl_msg', 'qsl_sent', 'qsl_rcvd',
         'eqsl_sent', 'eqsl_rcvd', 'lotw_sent', 'lotw_rcvd', 'hamqth',
@@ -245,9 +254,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     )
 
     __adx_cols__ = (
-        'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'CALL', 'NAME_INTL', 'QTH_INTL', 'GRIDSQUARE',
-        'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'SUBMODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL', 'TX_PWR', 'PROP_MODE',
-        'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
+        'QSO_DATE/TIME_ON', 'QSO_DATE/TIME_OFF', 'STATION_CALLSIGN', 'OPERATOR', 'CALL', 'CONTACTED_OP', 'NAME_INTL',
+        'QTH_INTL', 'GRIDSQUARE', 'RST_SENT', 'RST_RCVD', 'BAND', 'MODE', 'SUBMODE', 'FREQ', 'APP_DRAGONLOG_CBCHANNEL',
+        'TX_PWR', 'PROP_MODE', 'MY_NAME_INTL', 'MY_CITY_INTL', 'MY_GRIDSQUARE', 'MY_RIG_INTL', 'MY_ANTENNA_INTL',
         'NOTES_INTL', 'COMMENT_INTL', 'DISTANCE',
         'QSL_VIA', 'QSL_SENT_VIA', 'QSLMSG_INTL', 'QSL_SENT', 'QSL_RCVD',
         'EQSL_QSL_SENT', 'EQSL_QSL_RCVD', 'LOTW_QSL_SENT', 'LOTW_QSL_RCVD', 'HAMQTH_QSO_UPLOAD_STATUS',
@@ -259,7 +268,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             "date_time"   NUMERIC,
                             "date_time_off"   NUMERIC,
                             "own_callsign" TEXT,
+                            "own_operator" TEXT,
                             "call_sign"  TEXT,
+                            "operator"  TEXT,
                             "name"  TEXT,
                             "qth"    TEXT,
                             "locator" TEXT,
@@ -451,8 +462,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.tr('QSO'),
             self.tr('Date/Time start'),
             self.tr('Date/Time end'),
-            self.tr('Own call sign'),
-            self.tr('Call sign'),
+            self.tr('Own Station'),
+            self.tr('Own Operator'),
+            self.tr('Callsign'),
+            self.tr('Operator'),
             self.tr('Name'),
             self.tr('QTH'),
             self.tr('Locator'),
@@ -1418,6 +1431,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                                           '$': query.value(self.__sql_cols__.index('call_sign'))})
                 else:
                     record['CALL'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('call_sign')))
+            if query.value(self.__sql_cols__.index('operator')):
+                record['CONTACTED_OP'] = self.replaceNonASCII(
+                    query.value(self.__sql_cols__.index('operator')))
             if query.value(self.__sql_cols__.index('name')):
                 record['NAME'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('name')))
                 record['NAME_INTL'] = query.value(self.__sql_cols__.index('name'))
@@ -1466,6 +1482,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 else:
                     record['STATION_CALLSIGN'] = self.replaceNonASCII(
                         query.value(self.__sql_cols__.index('own_callsign')))
+            if query.value(self.__sql_cols__.index('own_operator')):
+                record['OPERATOR'] = self.replaceNonASCII(
+                    query.value(self.__sql_cols__.index('own_operator')))
             if query.value(self.__sql_cols__.index('own_name')):
                 record['MY_NAME'] = self.replaceNonASCII(query.value(self.__sql_cols__.index('own_name')))
                 record['MY_NAME_INTL'] = query.value(self.__sql_cols__.index('own_name'))
@@ -2215,7 +2234,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
-                        f'Row {ln} has too few columns.\nSkipped row.'
+                        f'Row {ln} has too few columns.\nSkipped row.'  # Todo: translate
                     )
 
                 if not row[1] or not row[4]:
@@ -2223,7 +2242,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
-                        f'QSO date/time or callsign missing in row {ln}.\nSkipped row.'
+                        f'QSO date/time or callsign missing in row {ln}.\nSkipped row.'  # Todo: translate
                     )
                     continue
 
@@ -2245,7 +2264,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     QtWidgets.QMessageBox.warning(
                         self,
                         self.tr('Log import CSV'),
-                        f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'
+                        f'Row {ln} import error ("{query.lastError().text()}").\nSkipped row.'  # Todo: translate
                     )
                 else:
                     lines += 1
@@ -2321,16 +2340,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
-                    f'QSO date/time missing in record {i}.\nSkipped record.'
+                    f'QSO date/time missing in record {i}.\nSkipped record.'  # Todo: translate
                 )
                 continue
 
-            if 'CALL' not in r:
+            if 'CALL' not in r and 'CONTACTED_OP' not in r:
                 self.log.warning(f'ADIF import, callsign missing in record {i}.\nSkipped record.')
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
-                    f'Callsign missing in record {i}.\nSkipped record.'
+                    f'Callsign missing in record {i}.\nSkipped record.'  # Todo: translate
                 )
                 continue
 
@@ -2362,7 +2381,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr('Log import ADIF'),
-                    f'Record {i} import error ("{query.lastError().text()}").\nSkipped record.'
+                    f'Record {i} import error ("{query.lastError().text()}").\nSkipped record.'  # Todo: translate
                 )
             else:
                 imported += 1
@@ -2455,7 +2474,12 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                             values[self.__adx_cols__.index('STATION_CALLSIGN')] = af['$']
                         elif af_param == 'APP_DRAGONLOG_CBQSO' and af['$'] == 'Y':
                             values[self.__adx_cols__.index('BAND')] = '11m'
+                case 'CONTACTED_OP':
+                    values[self.__adx_cols__.index('CONTACTED_OP')] = r[p]
+                    if not 'CALL' in r or not r['CALL']:
+                        values[self.__adx_cols__.index('CALL')] = r[p]
                 case 'OPERATOR':
+                    values[self.__adx_cols__.index('OPERATOR')] = r[p]
                     if not 'STATION_CALLSIGN' in r or not r['STATION_CALLSIGN']:
                         values[self.__adx_cols__.index('STATION_CALLSIGN')] = r[p]
                 case 'GUEST_OP':
