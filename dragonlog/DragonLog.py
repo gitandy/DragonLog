@@ -710,7 +710,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         db_cols = res.value('columns')
         if not db_cols:
             QtWidgets.QMessageBox.critical(self, self.tr('Database error'),
-                                           self.tr('Checking database failed. Content is not accessable.'))
+                                           self.tr('Checking database failed. Content is not accessible.'))
             self.close()
             return False
 
@@ -1598,7 +1598,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
             except EQSLQSODuplicateException:
                 eqsl_sent = 'Y'
-                self.log.info(f'QSO #{qso_id} is a dublicate, already uploaded to eQSL')
+                self.log.info(f'QSO #{qso_id} is a duplicate, already uploaded to eQSL')
             except EQSLUserCallMatchException:
                 QtWidgets.QMessageBox.warning(self, self.tr('Upload eQSL error'),
                                               self.tr('User call does not match') + ': ' + self.settings.value(
@@ -1640,9 +1640,25 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             else:
                 username = self.settings.value('eqsl/username', '')
             self.log.info(f'Checking eQSL QSO #{qso_id} for call {username}...')
-            res = self.eqsl.check_inbox(username,
-                                        self.settings_form.eqslPassword(),
-                                        rec)
+            try:
+                res = self.eqsl.check_inbox(username,
+                                            self.settings_form.eqslPassword(),
+                                            rec)
+            except EQSLRequestException:
+                if rec['CALL'].endswith('/P'):  # Try without /P
+                    self.log.info('Checking again without /P...')
+                    rec['CALL'] = rec['CALL'].removesuffix('/P')
+                    try:
+                        res = self.eqsl.check_inbox(username,
+                                                    self.settings_form.eqslPassword(),
+                                                    rec)
+                    except EQSLRequestException:
+                        self.log.info('No eQSL available')
+                        return True
+                else:
+                    self.log.info('No eQSL available')
+                    return True
+
             if res:
                 qso_uuid = rec['QSO_DATE'] + rec['TIME_ON'] + rec['CALL']
                 self.eqsl_urls[qso_uuid] = res
@@ -1657,9 +1673,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, self.tr('Check eQSL Inbox error'),
                                           self.tr('User call does not match') + ': ' + self.settings.value(
                                               'eqsl/username', ''))
-        except EQSLRequestException:
-            self.log.info('No eQSL available')
-            return True
         except EQSLADIFFieldException as exc:
             self.log.warning(f'A field is missing in QSO #{qso_id} for eQSL check: "{exc.args[0]}"')
         except EQSLCommunicationException as exc:
@@ -2115,7 +2128,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         action: QtGui.QAction = self.sender()
 
         if action not in actions:
-            self.log.debug(f'Could not determin action "{action.objectName()}"')
+            self.log.debug(f'Could not determine action "{action.objectName()}"')
             return
 
         question = QtWidgets.QMessageBox.question(self, action.text(),
@@ -2674,16 +2687,16 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                     return
         else:
             self.watchTimer.stop()
-            self.watch_status.setText(self.tr('Watching file') + ': ' + self.tr('inactiv'))
+            self.watch_status.setText(self.tr('Watching file') + ': ' + self.tr('inactive'))
 
         self.actionWatch_file_for_QSOs.setChecked(False)
         self.actionWatch_file_for_QSOs_TB.setChecked(False)
 
     def rigStatusChanged(self, state: bool):
         if state:
-            self.hamlib_status.setText(self.tr('Hamlib') + ': ' + self.tr('activ'))
+            self.hamlib_status.setText(self.tr('Hamlib') + ': ' + self.tr('active'))
         else:
-            self.hamlib_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactiv'))
+            self.hamlib_status.setText(self.tr('Hamlib') + ': ' + self.tr('inactive'))
             self.actionStart_hamlib_TB.setChecked(False)
 
     def showCC(self):
@@ -2849,7 +2862,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         if not self.help_cc_dialog:
             with open(self.searchFile('help:README_HAMCC.md')) as hf:
                 help_text = hf.read()
-            self.help_cc_dialog = self.createHelpDlg(self.tr("CassipeiaConsole"), help_text)
+            self.help_cc_dialog = self.createHelpDlg(self.tr("CassiopeiaConsole"), help_text)
         self.help_cc_dialog.show()
 
     def showContestHelp(self):
