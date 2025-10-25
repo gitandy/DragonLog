@@ -1190,13 +1190,13 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     def export(self):
         qso_filters = [
             self.tr('All QSOs'),
-            self.tr('Filtered QSOs'),  # Must be second element for pre selection
+            self.tr('Filtered QSOs'),  # Must be second element for pre-selection
             self.tr('Selected QSOs'),
         ]
         qso_filter, ok = QtWidgets.QInputDialog.getItem(self, self.tr('QSO export'),
                                                         self.tr('Select filter'),
                                                         qso_filters,
-                                                        # Pre select second element "Filetered QSOs" if option is set
+                                                        # Pre-select second element "Filtered QSOs" if option is set
                                                         int(self.settings.value('imp_exp/only_recent', 0)))
         if not ok:
             return
@@ -1209,14 +1209,14 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             query_str = f"SELECT * FROM qsos WHERE id IN ({','.join(sel_qsos)})"
 
         exp_formats = {
-            self.tr('ADIF 3 (*.adi *.adif)'): self.exportADIF,
-            self.tr('ADIF 3 zipped (*.zip)'): self.exportADIF,
-            self.tr('ADIF 3 XML (*.adx)'): self.exportADIF,
-            self.tr('CSV-File (*.csv)'): self.exportCSV,
+            self.tr('ADIF 3 (*.adi)'): (self.exportADIF, '.adi'),
+            self.tr('ADIF 3 zipped (*.zip)'): (self.exportADIF, '.zip'),
+            self.tr('ADIF 3 XML (*.adx)'): (self.exportADIF, '.adx'),
+            self.tr('CSV-File (*.csv)'): (self.exportCSV, '.csv'),
         }
 
         if OPTION_OPENPYXL:
-            exp_formats[self.tr('Excel-File (*.xlsx)')] = self.exportExcel
+            exp_formats[self.tr('Excel-File (*.xlsx)')] = (self.exportExcel, '.xlsx')
 
         res = QtWidgets.QFileDialog.getSaveFileName(
             self,
@@ -1227,8 +1227,10 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if res[0]:
             try:
+                formatter, ext = exp_formats[res[1]]
+                fname = res[0] + ext if not res[0].endswith(ext) else res[0]
                 # noinspection PyArgumentList
-                exp_formats[res[1]](res[0], query_str)
+                formatter(fname, query_str)
             except Exception as exc:
                 self.log.exception(exc)
 
@@ -1997,8 +1999,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if res[0]:
             try:
-                self.__local_cb__.export_callbook(res[0])
-                self.settings.value('lastCallbookExpDir', os.path.dirname(res[0]))
+                fname = res[0] + '.csv' if not res[0].endswith('.csv') else res[0]
+                self.__local_cb__.export_callbook(fname)
+                self.settings.value('lastCallbookExpDir', os.path.dirname(fname))
             except LocalCallbookExportError as exc:
                 self.log.error(str(exc))
                 QtWidgets.QMessageBox.critical(self,
@@ -2035,8 +2038,9 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
 
         if res[0]:
             try:
-                self.__local_cb__.export_history(res[0])
-                self.settings.value('lastHistoryExpDir', os.path.dirname(res[0]))
+                fname = res[0] + '.csv' if not res[0].endswith('.csv') else res[0]
+                self.__local_cb__.export_history(fname)
+                self.settings.value('lastHistoryExpDir', os.path.dirname(fname))
             except LocalCallbookExportError as exc:
                 self.log.error(str(exc))
                 QtWidgets.QMessageBox.critical(self,
