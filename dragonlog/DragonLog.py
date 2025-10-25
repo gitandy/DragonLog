@@ -2847,7 +2847,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
     # noinspection PyPep8Naming
     def showHelp(self):
         if not self.help_dialog:
-            with open(self.searchFile('help:README.md')) as hf:
+            with open(self.searchFile('help:HELP.md')) as hf:
                 help_text = hf.read()
             self.help_dialog = self.createHelpDlg(self.tr("Help"), help_text)
         self.help_dialog.show()

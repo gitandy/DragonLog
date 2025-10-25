@@ -23,13 +23,16 @@ PYTHON = $(VENV_BIN)/python
 endif
 endif
 
-all:  dragonlog/__version__.py ui_files i18n $(MD_FILES)
+all:  dragonlog/__version__.py ui_files i18n $(MD_FILES) help_md
 
 *.md: contests_md
 	cp $@ dragonlog/data
 
 contests_md:
 	$(PYTHON) -m dragonlog.contest AVAILABLE_CONTESTS.md
+
+help_md:
+	cp doc/HELP.md dragonlog/data
 
 ui_files:
 	$(MAKE) -C ui_files VENV_BIN=../$(VENV_BIN)
