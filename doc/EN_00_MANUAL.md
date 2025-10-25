@@ -10,6 +10,6 @@ Content
 4. Configuration
 5. [Export/import QSOs](EN_50_EXPORT_IMPORT.md)
 6. Use CassiopeiaConsole (HamCC)
-7. Contest Logs and Statistics
+7. [Contest, Contest Logs and History](EN_70_CONTESTS.md)
 8. Shortcut Keys
 9. Setup Hamlib
