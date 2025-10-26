@@ -14,3 +14,5 @@ Content
 8. [Shortcut Keys](EN_80_SHORTCUTS.md)
 9. [Setup Hamlib](EN_90_SETUP_HAMLIB.md)
 10. [DxSpots & Country Data](EN_100_DXSPOTS_CTY.md)
+11. [Electronic QSLs](EN_110_ELECTRONIC_QSL.md)
+

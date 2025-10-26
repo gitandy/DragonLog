@@ -78,17 +78,6 @@ Unfortunately the QSL-QR-Code reader is not available with these Windows prebuil
 Anyway the Python version is currently stuck at 3.12 as the MSI packaging will not be ported to higher versions.
 
 
-LoTW sign and upload
---------------------
-
-Only QSOs with a matching locator in the TQSL application (installation required) can be signed and uploaded.
-DragonLog provides a selection for the stations configured in TQSL. 
-Then it searches for all QSOs with the matching locator which were not already sent to LoTW.
-
-If you secured your TQSL (which is not recommended) set DragonLog correspondingly. 
-DragonLog will then request your password on each upload action.
-
-
 Copyright
 ---------
 DragonLog &copy; 2023 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
