@@ -62,7 +62,7 @@ Features
 Security Notes
 --------------
 
-The passwords for callbook lookup, QSO upload and DX spots are securely stored 
+The passwords for callbook lookup and QSO upload are securely stored 
 in your systems key vault (e.g. Credential Manager on Windows, KWallet on KDE/Linux, Keychain on macOS).
 
 At startup, DragonLog will inform about which service is actually in use.
@@ -88,22 +88,6 @@ Then it searches for all QSOs with the matching locator which were not already s
 If you secured your TQSL (which is not recommended) set DragonLog correspondingly. 
 DragonLog will then request your password on each upload action.
 
-
-Country Data
-------------
-Each release of DragonLog provides a very recent country data file. 
-If you want to update it manually visit https://www.country-files.com/category/big-cty/ by Jim, AD1C 
-and download a Big CTY Zip file. 
-Unpack the Zip and goto Settings - Dx Spots to select the file.
-You can check if the file is correctly loaded via Help - About. 
-Check if the version date and version entity corresponds to the website.
-
-The flag display is based on the mapping from [Flagpedia.net](https://flagpedia.net) 
-and matched against the Big CTY data. This is sometimes weak and thus error-prone and needed manual fixes. 
-There are still 15% unmapped (mostly islands).
-
-If a flag is mapped wrong, please stay calm and drop me a mail. 
-The mapping does not reflect my view on country borders.
 
 Copyright
 ---------
