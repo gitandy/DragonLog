@@ -9,7 +9,7 @@ Inhalt
 ------
 
 1. [Installation](DE_10_INSTALLATION.md)
-2. Erster Start
+2. [Erster Start & Programmstart](DE_20_ERSTER_START.md)
 3. QSO hinzufügen
 4. CassiopeiaConsole (HamCC) anwenden
 5. QSOs exportieren/importieren
