@@ -12,4 +12,4 @@ Content
 6. [Working with CassiopeiaConsole (HamCC)](EN_60_CASSIOPEIACONSOLE.md)
 7. [Contest, Contest Logs and History](EN_70_CONTESTS.md)
 8. [Shortcut Keys](EN_80_SHORTCUTS.md)
-9. Setup Hamlib
+9. [Setup Hamlib](EN_90_SETUP_HAMLIB.md)
