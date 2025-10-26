@@ -14,5 +14,6 @@ Inhalt
 4. CassiopeiaConsole (HamCC) anwenden
 5. QSOs exportieren/importieren
 6. Konfiguration
-7. Tastaturkürzel
-8. Hamlib einrichten
+7. Conteste, Contest-Logs und Historie
+8. [Tastaturkürzel](DE_80_TASTENKUERZEL.md)
+9. Hamlib einrichten
