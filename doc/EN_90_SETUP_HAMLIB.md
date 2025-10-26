@@ -9,9 +9,10 @@ The QSO logging form and CassiopeiaConsole automatically updates radio informati
 * power
 
 Hamlib can be downloaded at https://github.com/Hamlib/Hamlib/releases.
-DragonLog is tested against version 4.5.5 and 4.6.2.
+DragonLog is tested against version 4.5.5, 4.6.2 and 4.6.5.
 
 After selecting your radio and interface settings you can press the start button to start the communication.
+
 ![Starting Rigctld in german translation](images/DE_Toolbar-Hamlib.png "Starting Rigctld")
 
 Currently, DragonLog can only configure radios with serial interface (including USB serial).
