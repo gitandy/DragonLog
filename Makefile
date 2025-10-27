@@ -8,7 +8,6 @@ UNCLEAN = "True"
 endif
 
 BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
-MD_FILES = $(wildcard *.md)
 NO_OBSOLETE=
 
 ifeq ($(OS),Windows_NT)
@@ -23,16 +22,18 @@ PYTHON = $(VENV_BIN)/python
 endif
 endif
 
-all:  dragonlog/__version__.py ui_files i18n $(MD_FILES) help_md
-
-*.md: contests_md
-	cp $@ dragonlog/data
+all:  dragonlog/__version__.py ui_files i18n help_md contests_md
 
 contests_md:
 	$(PYTHON) -m dragonlog.contest AVAILABLE_CONTESTS.md
+	cp AVAILABLE_CONTESTS.md dragonlog/data
 
 help_md:
-	cp doc/HELP.md dragonlog/data
+	cp doc/HELP_*.md dragonlog/data
+	cp doc/EN_80_SHORTCUTS.md dragonlog/data/SHORTCUTS_EN.md
+	cp doc/DE_80_TASTENKUERZEL.md dragonlog/data/SHORTCUTS_DE.md
+	cp doc/EN_60_CASSIOPEIACONSOLE.md dragonlog/data/HAMCC_EN.md
+	cp doc/DE_60_CASSIOPEIACONSOLE.md dragonlog/data/HAMCC_DE.md
 
 ui_files:
 	$(MAKE) -C ui_files VENV_BIN=../$(VENV_BIN)
@@ -60,7 +61,7 @@ release:
 	$(PYTHON) -m pip install --upgrade twine;
 	$(PYTHON) -m twine upload dist/*;
 
-.PHONY: dragonlog/__version__.py ui_files i18n $(MD_FILES)
+.PHONY: dragonlog/__version__.py ui_files i18n help_md contests_md
 
 clean:
 	rm -rf build

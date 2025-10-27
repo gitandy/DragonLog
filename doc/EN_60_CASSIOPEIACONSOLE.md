@@ -1,10 +1,10 @@
 Working with CassiopeiaConsole (HamCC)
 ======================================
 
-If you want to use CassiopeiaConsole to add QSOs more quickly, bring up the console with `Ctrl + K` 
+If you want to use CassiopeiaConsole to add QSOs more quickly, bring up the console with `Ctrl+K` 
 and start typing in the input field right hand of `QSO>`.
 The input field will automatically get the focus. If the input field lost focus (e.g. you clicked on something else)
-just press `Ctrl + K` again.
+just press `Ctrl+K` again.
 
 The single words you type must conform to a special format (s. below) to be evaluated as valid QSO information.
 
@@ -18,7 +18,7 @@ If not, edit your station settings (recommended) or type it in manually (via QSO
 Example session
 ---------------
 
-Press `CTRL+K` to open CassiopeiaConsole. The cursor should jump to the `QSO>` line. 
+Press `Ctrl+K` to open CassiopeiaConsole. The cursor should jump to the `QSO>` line. 
 
 Now:
 
@@ -30,8 +30,10 @@ Now:
 5. You want to leave some comments? Type in `"#Ant Dipol, Rig FT-991A"`
 6. To end adding information to this QSO hit `ENTER`
 
-After hitting ENTER the QSO will be added to the database. You can also use the button with the `+` sign.
+After hitting `ENTER` the QSO will be added to the database. You can also use the button with the `+` sign.
 Typing `~` or pushing the button with the `x` sign will clear all input (except that of type memory and auto).
+
+![Example QSO in CassiopeiaConsole german](images/DE_HamCC.png "Console with input data")
 
 You may recon that for the next QSO some information is already set. See the table below for the fields of type `memory`.
 
@@ -39,26 +41,26 @@ You may recon that for the next QSO some information is already set. See the tab
 Input format
 ------------
 
-The table shows all available pre- and postfixes. The following will work for API and if run as program.
+The table shows all available pre- and postfixes.
 
-Placeholder x for characters and 9 for numbers.
-Types marked with auto are prefilled but can be overwritten. Types marked with memory are retained for the session.
+Placeholder `x` for characters and `9` for numbers.
+Types marked with `auto` are prefilled but can be overwritten. Types marked with `memory` are retained for the session.
 
 | Info          | Format                   | Type    | Comments                                                        |
 |---------------|--------------------------|---------|-----------------------------------------------------------------|
-| Callsign      | xx9xx                    |         | format checked                                                  |
-| Locator/QTH   | @xx99xx or @QTH(xx99xx)  |         | format checked (max. 8 digit locator)                           |
-| Name          | 'xxxx                    |         |                                                                 |
+| Callsign      | xx9xx                    | -       | format checked                                                  |
+| Locator/QTH   | @xx99xx or @QTH(xx99xx)  | -       | format checked (max. 8 digit locator)                           |
+| Name          | 'xxxx                    | -       |                                                                 |
 | Comment       | #xxxx                    | memory  |                                                                 |
 | Band          | valid ADIF band          | memory  |                                                                 |
 | Mode          | valid ADIF mode          | memory  |                                                                 | 
 | RST rcvd      | .599                     | auto    | default CW 599, phone 59                                        |
 | RST sent      | ,599                     | auto    | default CW 599, phone 59                                        |
-| QSL rcvd      | *                        |         | toggles the information                                         |
+| QSL rcvd      | *                        | -       | toggles the information                                         |
 | Event ID      | $xxxxxx                  | memory  | Contest ID or one of POTA, SOTA                                 |
-| Rcvd Exch     | %xxxxx                   |         | Contest exchange or xOTA reference                              |
-| Time          | HHMMt                    | memory  | partly time will be filled (see comments below)                 |
-| Date          | YYYYMMDDd                | memory  | partly date will be filled (see comments below)                 |
+| Rcvd Exch     | %xxxxx                   | -       | Contest exchange or xOTA reference                              |
+| Time          | HHMMt                    | memory  | partly time will be filled (see notes below)                    |
+| Date          | YYYYMMDDd                | memory  | partly date will be filled (see notes below)                    |
 | Date/Time     | =                        | auto    | sync date/time to now                                           |
 | Frequency     | 99999f                   | memory  | in kHz                                                          |
 | TX Power      | 99p                      | memory  | in W                                                            | 
@@ -66,7 +68,7 @@ Types marked with auto are prefilled but can be overwritten. Types marked with m
 | Your Locator  | -lxx99xx                 | memory  | Preset with your default from station settings                  | 
 | Your Name     | -nxxxx                   | memory  | Preset with your default from station settings                  |
 | Finish QSO    | ENTER-Key                | command |                                                                 |
-| Clear QSO     | ~                        | command | clears input not cached QSO                                     |
+| Clear QSO     | ~                        | command | clears current QSO                                              |
 | Show QSO      | ?                        | command |                                                                 |
 | Sent Exch     | -N9 or -Nxx              | auto    | set start value (if number) for contest QSO No. or own xOTA ref |
 | Toggle online | -o                       | command | toggles online (automatic date/time at saving) and offline      |
@@ -156,15 +158,13 @@ Event mode for contests and xOTA
 If you typed in a contest id HamCC starts to increase a QSO contest exchange (see `-N`)
 which you may want to communicate to your QSO partners (see [Contests](EN_70_CONTESTS.md)).
 
-If the received exchange is not a number it is simply carried as text.
-The exchange is stored in `STX` and `STX_STRING` if it is a number. Else it is only stored in `STX_STRING`.
-
 Changing the contest id resets the QSO counter.
 
-The received contest data will simply be stored without further handling.
-If it is a number it is stored as SRX and SRX_STRING. Else it is stored as SRX_STRING only.
+If the received exchange is not a number it is simply carried as text.
 
-To leave the event mode for the following QSOs type a single `$` followed by a SPACE.
+The received contest data will simply be stored without further handling.
+
+To leave the event mode for the following QSOs type a single `$` followed by a `SPACE`.
 
 ### xOTA
 
@@ -172,12 +172,10 @@ For xOTA just enter one of SOTA, POTA e.g. `$pota` instead of the contest ID.
 Then set your own xOTA reference with `-Nxx-999` and track the QSO partners reference with `%xx-999`.
 
 
-Source Code of HamCC
---------------------
-The source code is available at [GitHub](https://github.com/gitandy/HamCC)
+Copyright of HamCC
+------------------
 
+The source code and the standalone release of HamCC are available at [GitHub](https://github.com/gitandy/HamCC)
 
-Copyright
----------
 HamCC - CassiopeiaConsole &copy; 2024 by Andreas Schawo is licensed
 under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 

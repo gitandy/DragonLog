@@ -11,7 +11,7 @@ Inhalt
 1. [Installation](DE_10_INSTALLATION.md)
 2. [Erster Start & Programmstart](DE_20_ERSTER_START.md)
 3. QSO hinzufügen
-4. CassiopeiaConsole (HamCC) anwenden
+4. [Arbeiten mit der CassiopeiaConsole (HamCC)](DE_60_CASSIOPEIACONSOLE.md)
 5. QSOs exportieren/importieren
 6. Konfiguration
 7. Conteste, Contest-Logs und Historie
