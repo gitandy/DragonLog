@@ -5,7 +5,7 @@ The target is to support you installing DragonLog via Python PyPI package and th
 
 An installation via MSI or Zip package should be self explaining.
 
-First I show the steps on Windows and finally on Linux. The installation on macOS should not be that diffrent from Linux.
+First I show the steps on Windows and finally on Linux. The installation on macOS should not be that different from Linux.
 
 
 Installation on Windows
@@ -23,15 +23,15 @@ The installation will cover following steps
 ### Install Python
 
 The installation requires a python installation >= 3.10. 
-I recommend Python 3.12 and usage of the python install managere (pymanager) from [python.org](https://www.python.org/downloads/). 
+I recommend Python 3.12 and usage of the python install manager (pymanager) from [python.org](https://www.python.org/downloads/). 
 
 
-### Create vitual environment
+### Create virtual environment
 
 Choose a folder where your DragonLog should go to (e.g. your user home folder).
 Open up a terminal window and change to your user home folder
 
-    C:\Users\username> py -m venv DragonLog
+    py -m venv DragonLog
 
 You should end up with a `DragonLog` folder inside your user home folder
 
@@ -41,9 +41,9 @@ But virtual environments will prevent collisions between other installations you
 
 ### Install DragonLog
 
-If your virtual envirnoment is initialised run
+If your virtual environment is initialised run
 
-    C:\Users\username> DragonLog\Scripts\pip.exe install DragonLog[xlformat,qslqrcode]
+    DragonLog\Scripts\pip.exe install DragonLog[xlformat,qslqrcode]
 
 This will install DragonLog and all of its dependencies including the extras.
 
@@ -52,9 +52,9 @@ This will install DragonLog and all of its dependencies including the extras.
 
 Now you can either run DragonLog via terminal
 
-    C:\Users\username> DragonLog\Scripts\DragonLog.exe
+    DragonLog\Scripts\DragonLog.exe
 
-or you just doubleclick the executable. In this case you may not want a terminal window and 
+or you just double click the executable. In this case you may not want a terminal window and 
 use `C:\Users\username\DragonLog\Scripts\DragonLogW.exe` instead.
 
 
@@ -62,7 +62,7 @@ use `C:\Users\username\DragonLog\Scripts\DragonLogW.exe` instead.
 
 To update DragonLog open a terminal and change to your folder
 
-    C:\Users\username> DragonLog\Scripts\pip.exe install DragonLog -U
+    DragonLog\Scripts\pip.exe install DragonLog -U
 
 
 Installation on Linux
@@ -74,22 +74,24 @@ The installation will cover following steps
 2. Create a dedicated virtual environment for DragonLog
 3. Install DragonLog package
 4. Run DragonLog
-5. Update DragonLogDie Anleitung deckt folgende Schritte ab
+5. Update DragonLog
 
 
 ### Installation of venv and libraries
 
 To use DragonLog some system packages are required. `libzbar0` is only required, if you use DragonLog with `qslqrcode` extension.
 
-    # sudo apt install python3.12-venv libxcb-cursor0 libzbar0
+    sudo apt install python3.12-venv libxcb-cursor0 libzbar0
 
 
-### Create vitual environment
+### Create virtual environment
 
 Choose a folder where your DragonLog should go to (e.g. your user home folder).
-Open up a terminal window and change to your user home folder
+Open up a terminal window and change to your user home folder.
 
-    # python3 -m venv dragonlog
+For Debian/Ubuntu/Linux Mint/... type
+
+    python3 -m venv dragonlog
 
 You should end up with a `dragonlog` folder inside your user home folder
 
@@ -99,23 +101,25 @@ But virtual environments will prevent collisions between other installations you
 
 ### Install DragonLog
 
-If your virtual envirnoment is initialised run
+If your virtual environment is initialised run
 
-    # dragonlog/bin/pip install DragonLog[xlformat,qslqrcode]
+    dragonlog/bin/pip install DragonLog[xlformat,qslqrcode]
 
 This will install DragonLog and all of its dependencies including the extras.
+
+On macOS zsh you have to enclose `"DragonLog[...]"` in quotes so the brackets are not interpreted.
 
 
 ### Run DragonLog
 
 Now you can run DragonLog
 
-    # dragonlog/bin/DragonLog
+    dragonlog/bin/DragonLog
 
 
 ### Updating DragonLog
 
 To update DragonLog open a terminal and change to your folder
 
-    # dragonlog/bin/pip install DragonLog -U
+    dragonlog/bin/pip install DragonLog -U
 

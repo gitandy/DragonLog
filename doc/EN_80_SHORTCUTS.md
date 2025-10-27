@@ -1,4 +1,4 @@
-DragonLog - Keyboard Shortcuts
+Keyboard Shortcuts
 ==============================
 
 Main actions

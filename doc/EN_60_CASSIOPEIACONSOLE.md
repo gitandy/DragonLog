@@ -1,11 +1,15 @@
-Working with CassiopeiaConsole
-==============================
+Working with CassiopeiaConsole (HamCC)
+======================================
 
-If you want to use CassiopeiaConsole to add QSOs more quickly, start typing in the input field right hand of `QSO>`.
-The single words must conform to a special format (s. below) to be evaluated as valid QSO information.
+If you want to use CassiopeiaConsole to add QSOs more quickly, bring up the console with `Ctrl+K` 
+and start typing in the input field right hand of `QSO>`.
+The input field will automatically get the focus. If the input field lost focus (e.g. you clicked on something else)
+just press `Ctrl+K` again.
+
+The single words you type must conform to a special format (s. below) to be evaluated as valid QSO information.
 
 You also can edit the fields directly.
-This is not encouraged as it slows down massivly but may help to get the contest ID right.
+This is not encouraged as it slows down massively but may help if you are not already used to the console.
 
 Your own data (call, locator, name) should already be filled with your default settings.
 If not, edit your station settings (recommended) or type it in manually (via QSO line or directly in to the fields).
@@ -14,41 +18,49 @@ If not, edit your station settings (recommended) or type it in manually (via QSO
 Example session
 ---------------
 
-Press `CTRL+K` to open CassiopeiaConsole. The cursor should jump to the `QSO>` line. Now:
+Press `Ctrl+K` to open CassiopeiaConsole. The cursor should jump to the `QSO>` line. 
 
-1. Type in `8` or `80m` followed by SPACE and CassiopeiaConsole recons you are using the 80m band
-2. Now type `s` or `ssb` and CassiopeiaConsole saves the mode SSB after you hit SPACE
-3. We are ready for the first QSO? Ah, `DF1ASC` is calling so type it in and hit SPACE (I won't repeat it from now on)
+Now:
+
+1. Type in `8` or `80m` followed by `SPACE` and CassiopeiaConsole recons you are using the 80m band
+2. Now type `s` or `ssb` and CassiopeiaConsole saves the mode SSB after you hit `SPACE`
+3. We are ready for the first QSO? Ah, `DF1ASC` is calling so type it in and hit `SPACE` 
+   (You get it: Hit `SPACE` after each information. I won't repeat it from now on)
 4. He told you his name Andreas and we prefix it like `'Andreas`
 5. You want to leave some comments? Type in `"#Ant Dipol, Rig FT-991A"`
+6. To end adding information to this QSO hit `ENTER`
 
-After hitting ENTER the QSO will be added to the database. You can also use the button with the `+` sign.
+After hitting `ENTER` the QSO will be added to the database. You can also use the button with the `+` sign.
 Typing `~` or pushing the button with the `x` sign will clear all input (except that of type memory and auto).
+
+![Example QSO in CassiopeiaConsole german](images/DE_HamCC.png "Console with input data")
+
+You may recon that for the next QSO some information is already set. See the table below for the fields of type `memory`.
 
 
 Input format
 ------------
 
-The table shows all available pre- and postfixes. The following will work for API and if run as program.
+The table shows all available pre- and postfixes.
 
-Placeholder x for characters and 9 for numbers.
-Types marked with auto are prefilled but can be overwritten. Types marked with memory are retained for the session.
+Placeholder `x` for characters and `9` for numbers.
+Types marked with `auto` are prefilled but can be overwritten. Types marked with `memory` are retained for the session.
 
 | Info          | Format                   | Type    | Comments                                                        |
 |---------------|--------------------------|---------|-----------------------------------------------------------------|
-| Callsign      | xx9xx                    |         | format checked                                                  |
-| Locator/QTH   | @xx99xx or @QTH(Locator) |         | format checked (max. 8 digit locator)                           |
-| Name          | 'xxxx                    |         |                                                                 |
+| Callsign      | xx9xx                    | -       | format checked                                                  |
+| Locator/QTH   | @xx99xx or @QTH(xx99xx)  | -       | format checked (max. 8 digit locator)                           |
+| Name          | 'xxxx                    | -       |                                                                 |
 | Comment       | #xxxx                    | memory  |                                                                 |
 | Band          | valid ADIF band          | memory  |                                                                 |
 | Mode          | valid ADIF mode          | memory  |                                                                 | 
 | RST rcvd      | .599                     | auto    | default CW 599, phone 59                                        |
 | RST sent      | ,599                     | auto    | default CW 599, phone 59                                        |
-| QSL rcvd      | *                        |         | toggles the information                                         |
+| QSL rcvd      | *                        | -       | toggles the information                                         |
 | Event ID      | $xxxxxx                  | memory  | Contest ID or one of POTA, SOTA                                 |
-| Rcvd Exch     | %xxxxx                   |         | Contest exchange or xOTA reference                              |
-| Time          | HHMMt                    | memory  | partly time will be filled (see comments below)                 |
-| Date          | YYYYMMDDd                | memory  | partly date will be filled (see comments below)                 |
+| Rcvd Exch     | %xxxxx                   | -       | Contest exchange or xOTA reference                              |
+| Time          | HHMMt                    | memory  | partly time will be filled (see notes below)                    |
+| Date          | YYYYMMDDd                | memory  | partly date will be filled (see notes below)                    |
 | Date/Time     | =                        | auto    | sync date/time to now                                           |
 | Frequency     | 99999f                   | memory  | in kHz                                                          |
 | TX Power      | 99p                      | memory  | in W                                                            | 
@@ -56,13 +68,13 @@ Types marked with auto are prefilled but can be overwritten. Types marked with m
 | Your Locator  | -lxx99xx                 | memory  | Preset with your default from station settings                  | 
 | Your Name     | -nxxxx                   | memory  | Preset with your default from station settings                  |
 | Finish QSO    | ENTER-Key                | command |                                                                 |
-| Clear QSO     | ~                        | command | clears input not cached QSO                                     |
+| Clear QSO     | ~                        | command | clears current QSO                                              |
 | Show QSO      | ?                        | command |                                                                 |
 | Sent Exch     | -N9 or -Nxx              | auto    | set start value (if number) for contest QSO No. or own xOTA ref |
 | Toggle online | -o                       | command | toggles online (automatic date/time at saving) and offline      |
 | Show version  | -V                       | command |                                                                 |
 
-For callsigns, mode, locators, RST and contest id lowercase will be converted to uppecase.
+For callsigns, mode, locators, RST and contest id lowercase will be converted to uppercase.
 
 Some info allows to use `_` which will be converted to spaces.
 
@@ -72,11 +84,14 @@ It is also possible to enclose the sequence in quotes to type spaces instead.
 
     QSO> "#Long comment" "'Long name"
 
+
 ### RST
 
 RST fields supports the whole range like `59` for phone, `599` for CW or `-06` for digimodes.
+
 For CW the last digit can also be an `a` for aurora, `s` for scatter or alike
 (see [R-S-T System](https://en.wikipedia.org/wiki/R-S-T_system) on Wikipedia).
+
 
 ### Date and Time
 
@@ -85,11 +100,16 @@ If you only give minutes to time e.g. `23t` the time will be filled with the las
 For partial dates it will be filled in the same manner for each 2 digits missing from left to right.
 So the date `240327d`, `0327d` or `27d` will be filled as if `20240327d` was given.
 
+
 hostilog shortcuts for bands and modes
 --------------------------------------
+
+CassiopeiaConsole (HamCC) is heavily inspired by [hostilog](https://df1lx.darc.de/hosti-logger/) from Peter, DF1LX.
+
 HamCC also supports the [hostilog](https://df1lx.darc.de/hosti-logger/) shortcuts
 for modes and bands (bands limited to hostilog shortwave mode).
-Only the mode shortcut `d` will result in MFSK for ADIF compatibility.
+Only the mode shortcut `d` will result in `MFSK` for ADIF compatibility.
+
 
 ### For Bands
 
@@ -113,6 +133,7 @@ Only the shortcuts from shortwave mode are supported
 | -6    | 60m     |
 | -7    | 70cm    |
 
+
 ### For Modes
 
 | Short | Meaning      | Comment                             |
@@ -130,30 +151,31 @@ Only the shortcuts from shortwave mode are supported
 | M     | MFSK         | Extension                           |
 | DV    | DIGITALVOICE | Extension                           |
 
+
 Event mode for contests and xOTA
 --------------------------------
 
 If you typed in a contest id HamCC starts to increase a QSO contest exchange (see `-N`)
-which you may want to communicate to your QSO partners. If the exchange is not a number it is simply carried as text.
-The exchange is stored in STX and STX_STRING if it is a number. Else it is only stored in STX_STRING.
+which you may want to communicate to your QSO partners (see [Contests](EN_70_CONTESTS.md)).
 
 Changing the contest id resets the QSO counter.
 
-The received contest data will simply be stored without further handling.
-If it is a number it is stored as SRX and SRX_STRING. Else it is stored as SRX_STRING only.
+If the received exchange is not a number it is simply carried as text.
 
-To leave the event mode for the following QSOs type a single `$` followed by a SPACE.
+The received contest data will simply be stored without further handling.
+
+To leave the event mode for the following QSOs type a single `$` followed by a `SPACE`.
 
 ### xOTA
 
 For xOTA just enter one of SOTA, POTA e.g. `$pota` instead of the contest ID.
 Then set your own xOTA reference with `-Nxx-999` and track the QSO partners reference with `%xx-999`.
 
-Source Code of HamCC
---------------------
-The source code is available at [GitHub](https://github.com/gitandy/HamCC)
 
-Copyright
----------
+Copyright of HamCC
+------------------
+
+The source code and the standalone release of HamCC are available at [GitHub](https://github.com/gitandy/HamCC)
+
 HamCC - CassiopeiaConsole &copy; 2024 by Andreas Schawo is licensed
 under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 

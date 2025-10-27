@@ -110,6 +110,7 @@ class DatabaseWriteException(Exception):
     pass
 
 
+# noinspection PyPep8Naming
 class BackgroundBrushDelegate(QtWidgets.QStyledItemDelegate):
     """A delegate to change background color depending on a columns content and translation of different columns"""
 
@@ -235,6 +236,11 @@ CONTEST_ADIF_DL = {
     'EASTER': 'DARC-KW-OSTERN',
 }
 CONTEST_DL_ADIF = dict([(v, k) for k, v in CONTEST_ADIF_DL.items()])
+
+
+def locale_name():
+    """Get the uppercase language part of the current locale"""
+    return QtCore.QLocale.system().name().split('_')[0].upper()
 
 
 # noinspection PyPep8Naming
@@ -2844,24 +2850,26 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         helpLabel.setText(help_text)
         return help_dialog
 
-    # noinspection PyPep8Naming
     def showHelp(self):
         if not self.help_dialog:
-            with open(self.searchFile('help:README.md')) as hf:
+            hf_name = self.searchFile(f'help:HELP_{locale_name()}.md')
+            with open(hf_name if hf_name else self.searchFile(f'help:HELP_EN.md')) as hf:
                 help_text = hf.read()
             self.help_dialog = self.createHelpDlg(self.tr("Help"), help_text)
         self.help_dialog.show()
 
     def showShortcuts(self):
         if not self.help_sc_dialog:
-            with open(self.searchFile('help:SHORTCUTS.md')) as hf:
+            hf_name = self.searchFile(f'help:SHORTCUTS_{locale_name()}.md')
+            with open(hf_name if hf_name else self.searchFile(f'help:SHORTCUTS_EN.md')) as hf:
                 help_text = hf.read()
             self.help_sc_dialog = self.createHelpDlg(self.tr("Shortcuts"), help_text)
         self.help_sc_dialog.show()
 
     def showCCHelp(self):
         if not self.help_cc_dialog:
-            with open(self.searchFile('help:README_HAMCC.md')) as hf:
+            hf_name = self.searchFile(f'help:HAMCC_{locale_name()}.md')
+            with open(hf_name if hf_name else self.searchFile(f'help:HAMCC_EN.md')) as hf:
                 help_text = hf.read()
             self.help_cc_dialog = self.createHelpDlg(self.tr("CassiopeiaConsole"), help_text)
         self.help_cc_dialog.show()
