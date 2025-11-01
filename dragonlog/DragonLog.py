@@ -406,7 +406,6 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
         self.__table_filter__ = ''
         self.filterDockWidget.visibilityChanged.connect(self.resetTableFilter)
         self.filterDockWidget.dockLocationChanged.connect(self.filterWidgetResize)
-        self.refreshFilterStatus()
 
         self.callbook_status = QtWidgets.QLabel(f'{self.tr("Callbook")}: {self.tr("None")}')
         self.statusBar().addPermanentWidget(self.callbook_status)
@@ -632,6 +631,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
                 self.connectDB(self.settings.value('lastDatabase', None))
             else:
                 self.log.warning(f'Opening last database {self.settings.value("lastDatabase", None)} failed!')
+
+        self.refreshFilterStatus()  # Refresh after DB is already opened
 
         self.watchAppSelect = AppSelect(self, f'{self.programName} - {self.tr("Watch application log")}',
                                         self.settings)
@@ -2931,7 +2932,8 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.exec('VACUUM;')
             self.__db_con__.exec('PRAGMA optimize;')
             self.log.debug('Closing database...')
-            self.__db_con__.close()
+            #self.__db_con__.close()  # Closing database leads to error messages?
+            self.__db_con__ = None
         if self.__local_cb__:
             self.__local_cb__.close()
 
