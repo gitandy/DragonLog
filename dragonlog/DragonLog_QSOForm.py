@@ -18,6 +18,7 @@ from .cty import Country
 from .local_callbook import LocalCallbook
 
 
+# noinspection PyPep8Naming
 class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def __init__(self, parent, dragonlog, bands: dict, modes: dict, prop: dict, settings: QtCore.QSettings,
                  settings_form: Settings, cb_channels: dict, logger: Logger, local_cb: LocalCallbook):
@@ -448,11 +449,17 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
     def identityChanged(self, checked):
         if checked:
             self.ownNameLineEdit.setText(self.settings.value('station/name', ''))
+            self.ownOpLineEdit.setEnabled(False)
 
             if self.bandComboBox.currentText() == '11m':
                 self.ownCallSignLineEdit.setText(self.settings.value('station_cb/callSign', ''))
             else:
                 self.ownCallSignLineEdit.setText(self.settings.value('station/callSign', ''))
+        else:
+            if self.bandComboBox.currentText() == '11m':
+                self.ownOpLineEdit.setEnabled(False)
+            else:
+                self.ownOpLineEdit.setEnabled(True)
 
     def channelChanged(self, ch):
         if ch and ch != '-':
@@ -608,9 +615,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
             date_time_on,
             date_time_off,
             self.ownCallSignLineEdit.text().strip().upper() if band != '11m' else self.ownCallSignLineEdit.text().strip(),
-            self.ownOpLineEdit.text().strip().upper(),
+            self.ownOpLineEdit.text().strip().upper() if band != '11m' else '',
             self.callSignLineEdit.text().strip().upper() if band != '11m' else self.callSignLineEdit.text().strip(),
-            self.operatorLineEdit.text().strip().upper(),
+            self.operatorLineEdit.text().strip().upper() if band != '11m' else '',
             self.nameLineEdit.text().strip(),
             self.QTHLineEdit.text().strip(),
             self.locatorLineEdit.text().strip(),
@@ -678,6 +685,9 @@ class QSOForm(QtWidgets.QDialog, DragonLog_QSOForm_ui.Ui_QSOForm):
 
         band = values['band']
         self.bandComboBox.setCurrentText(band)
+        if band == '11m':
+            self.operatorLineEdit.setEnabled(False)
+            self.ownOpLineEdit.setEnabled(False)
 
         self.ownCallSignLineEdit.setText(values['own_callsign'])
         self.ownOpLineEdit.setText(values['own_operator'])

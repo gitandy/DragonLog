@@ -1167,1047 +1167,1047 @@ Please check log for further information.</source>
   <context>
     <name>DragonLog</name>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1972" />
-      <location filename="../dragonlog/DragonLog.py" line="403" />
+      <location filename="../dragonlog/DragonLog.py" line="1980" />
+      <location filename="../dragonlog/DragonLog.py" line="411" />
       <source>Callbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="403" />
+      <location filename="../dragonlog/DragonLog.py" line="411" />
       <source>None</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2695" />
-      <location filename="../dragonlog/DragonLog.py" line="2689" />
-      <location filename="../dragonlog/DragonLog.py" line="2667" />
-      <location filename="../dragonlog/DragonLog.py" line="407" />
+      <location filename="../dragonlog/DragonLog.py" line="2703" />
+      <location filename="../dragonlog/DragonLog.py" line="2697" />
+      <location filename="../dragonlog/DragonLog.py" line="2675" />
+      <location filename="../dragonlog/DragonLog.py" line="415" />
       <source>Watching file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="409" />
-      <location filename="../dragonlog/DragonLog.py" line="407" />
+      <location filename="../dragonlog/DragonLog.py" line="417" />
+      <location filename="../dragonlog/DragonLog.py" line="415" />
       <source>inactiv</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2704" />
-      <location filename="../dragonlog/DragonLog.py" line="2702" />
-      <location filename="../dragonlog/DragonLog.py" line="409" />
+      <location filename="../dragonlog/DragonLog.py" line="2712" />
+      <location filename="../dragonlog/DragonLog.py" line="2710" />
+      <location filename="../dragonlog/DragonLog.py" line="417" />
       <source>Hamlib</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="433" />
+      <location filename="../dragonlog/DragonLog.py" line="441" />
       <source>Aircraft Scatter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="434" />
+      <location filename="../dragonlog/DragonLog.py" line="442" />
       <source>Aurora-E</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="435" />
+      <location filename="../dragonlog/DragonLog.py" line="443" />
       <source>Aurora</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="436" />
+      <location filename="../dragonlog/DragonLog.py" line="444" />
       <source>Back scatter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="437" />
+      <location filename="../dragonlog/DragonLog.py" line="445" />
       <source>EchoLink</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="438" />
+      <location filename="../dragonlog/DragonLog.py" line="446" />
       <source>Earth-Moon-Earth</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="439" />
+      <location filename="../dragonlog/DragonLog.py" line="447" />
       <source>Sporadic E</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="440" />
+      <location filename="../dragonlog/DragonLog.py" line="448" />
       <source>F2 Reflection</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="441" />
+      <location filename="../dragonlog/DragonLog.py" line="449" />
       <source>Field Aligned Irregularities</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="442" />
+      <location filename="../dragonlog/DragonLog.py" line="450" />
       <source>Ground Wave</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="443" />
+      <location filename="../dragonlog/DragonLog.py" line="451" />
       <source>Internet-assisted</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="444" />
+      <location filename="../dragonlog/DragonLog.py" line="452" />
       <source>Ionoscatter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="445" />
+      <location filename="../dragonlog/DragonLog.py" line="453" />
       <source>IRLP</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="446" />
+      <location filename="../dragonlog/DragonLog.py" line="454" />
       <source>Line of Sight</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="447" />
+      <location filename="../dragonlog/DragonLog.py" line="455" />
       <source>Meteor scatter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="448" />
+      <location filename="../dragonlog/DragonLog.py" line="456" />
       <source>Repeater or Transponder</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="449" />
+      <location filename="../dragonlog/DragonLog.py" line="457" />
       <source>Rain scatter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="450" />
+      <location filename="../dragonlog/DragonLog.py" line="458" />
       <source>Satellite</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="451" />
+      <location filename="../dragonlog/DragonLog.py" line="459" />
       <source>Trans-equatorial</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="452" />
+      <location filename="../dragonlog/DragonLog.py" line="460" />
       <source>Tropospheric ducting</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="466" />
+      <location filename="../dragonlog/DragonLog.py" line="474" />
       <source>QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="898" />
-      <location filename="../dragonlog/DragonLog.py" line="892" />
-      <location filename="../dragonlog/DragonLog.py" line="467" />
+      <location filename="../dragonlog/DragonLog.py" line="906" />
+      <location filename="../dragonlog/DragonLog.py" line="900" />
+      <location filename="../dragonlog/DragonLog.py" line="475" />
       <source>Date/Time start</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="468" />
+      <location filename="../dragonlog/DragonLog.py" line="476" />
       <source>Date/Time end</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="469" />
+      <location filename="../dragonlog/DragonLog.py" line="477" />
       <source>Own Station</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="470" />
+      <location filename="../dragonlog/DragonLog.py" line="478" />
       <source>Own Operator</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="471" />
+      <location filename="../dragonlog/DragonLog.py" line="479" />
       <source>Callsign</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="472" />
+      <location filename="../dragonlog/DragonLog.py" line="480" />
       <source>Operator</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="473" />
+      <location filename="../dragonlog/DragonLog.py" line="481" />
       <source>Name</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="474" />
+      <location filename="../dragonlog/DragonLog.py" line="482" />
       <source>QTH</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="475" />
+      <location filename="../dragonlog/DragonLog.py" line="483" />
       <source>Locator</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="476" />
+      <location filename="../dragonlog/DragonLog.py" line="484" />
       <source>RST sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="477" />
+      <location filename="../dragonlog/DragonLog.py" line="485" />
       <source>RST rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="478" />
+      <location filename="../dragonlog/DragonLog.py" line="486" />
       <source>Band</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="479" />
+      <location filename="../dragonlog/DragonLog.py" line="487" />
       <source>Mode</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="480" />
+      <location filename="../dragonlog/DragonLog.py" line="488" />
       <source>Submode</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="481" />
+      <location filename="../dragonlog/DragonLog.py" line="489" />
       <source>Frequency</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="482" />
+      <location filename="../dragonlog/DragonLog.py" line="490" />
       <source>Channel</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="483" />
+      <location filename="../dragonlog/DragonLog.py" line="491" />
       <source>Power</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="484" />
+      <location filename="../dragonlog/DragonLog.py" line="492" />
       <source>Propagation</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="485" />
+      <location filename="../dragonlog/DragonLog.py" line="493" />
       <source>Own Name</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="486" />
+      <location filename="../dragonlog/DragonLog.py" line="494" />
       <source>Own QTH</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="487" />
+      <location filename="../dragonlog/DragonLog.py" line="495" />
       <source>Own Locator</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="488" />
+      <location filename="../dragonlog/DragonLog.py" line="496" />
       <source>Radio</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="489" />
+      <location filename="../dragonlog/DragonLog.py" line="497" />
       <source>Antenna</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="490" />
+      <location filename="../dragonlog/DragonLog.py" line="498" />
       <source>Notes</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="491" />
+      <location filename="../dragonlog/DragonLog.py" line="499" />
       <source>Comment</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="492" />
+      <location filename="../dragonlog/DragonLog.py" line="500" />
       <source>Distance</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="493" />
+      <location filename="../dragonlog/DragonLog.py" line="501" />
       <source>QSL via</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="494" />
+      <location filename="../dragonlog/DragonLog.py" line="502" />
       <source>QSL path</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="495" />
+      <location filename="../dragonlog/DragonLog.py" line="503" />
       <source>QSL message</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="496" />
+      <location filename="../dragonlog/DragonLog.py" line="504" />
       <source>QSL sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="497" />
+      <location filename="../dragonlog/DragonLog.py" line="505" />
       <source>QSL rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="498" />
+      <location filename="../dragonlog/DragonLog.py" line="506" />
       <source>eQSL sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="499" />
+      <location filename="../dragonlog/DragonLog.py" line="507" />
       <source>eQSL rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="500" />
+      <location filename="../dragonlog/DragonLog.py" line="508" />
       <source>LoTW sent</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="501" />
+      <location filename="../dragonlog/DragonLog.py" line="509" />
       <source>LoTW rcvd</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="502" />
+      <location filename="../dragonlog/DragonLog.py" line="510" />
       <source>HamQTH</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="503" />
+      <location filename="../dragonlog/DragonLog.py" line="511" />
       <source>Contest</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="504" />
+      <location filename="../dragonlog/DragonLog.py" line="512" />
       <source>Tx QSO ID</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="505" />
+      <location filename="../dragonlog/DragonLog.py" line="513" />
       <source>Rx QSO ID</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="506" />
+      <location filename="../dragonlog/DragonLog.py" line="514" />
       <source>Rx data</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="507" />
+      <location filename="../dragonlog/DragonLog.py" line="515" />
       <source>Event</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="508" />
+      <location filename="../dragonlog/DragonLog.py" line="516" />
       <source>Tx Exch</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="509" />
+      <location filename="../dragonlog/DragonLog.py" line="517" />
       <source>Rx Exch</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="628" />
+      <location filename="../dragonlog/DragonLog.py" line="636" />
       <source>Watch application log</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="646" />
+      <location filename="../dragonlog/DragonLog.py" line="654" />
       <source>Initial startup</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="647" />
+      <location filename="../dragonlog/DragonLog.py" line="655" />
       <source>It seems you are running DragonLog for the first time
 Please configure some information first</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="661" />
+      <location filename="../dragonlog/DragonLog.py" line="669" />
       <source>Update available</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="662" />
+      <location filename="../dragonlog/DragonLog.py" line="670" />
       <source>A newer version of DragonLog is available</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="701" />
+      <location filename="../dragonlog/DragonLog.py" line="709" />
       <source>Select file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="703" />
+      <location filename="../dragonlog/DragonLog.py" line="711" />
       <source>QSO-Log (*.qlog);;All Files (*.*)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="716" />
+      <location filename="../dragonlog/DragonLog.py" line="724" />
       <source>Database error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="717" />
+      <location filename="../dragonlog/DragonLog.py" line="725" />
       <source>Checking database failed. Content is not accessible.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="732" />
+      <location filename="../dragonlog/DragonLog.py" line="740" />
       <source>Database structure out-dated</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="733" />
+      <location filename="../dragonlog/DragonLog.py" line="741" />
       <source>The database structure is out-dated and needs a conversion
 
 A backup will be generated:</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="744" />
+      <location filename="../dragonlog/DragonLog.py" line="752" />
       <source>Database backup error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="745" />
+      <location filename="../dragonlog/DragonLog.py" line="753" />
       <source>A database backup could not be created.
 The file already exists.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="806" />
+      <location filename="../dragonlog/DragonLog.py" line="814" />
       <source>Database conversion</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="807" />
+      <location filename="../dragonlog/DragonLog.py" line="815" />
       <source>Database conversion finished</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1382" />
-      <location filename="../dragonlog/DragonLog.py" line="1337" />
-      <location filename="../dragonlog/DragonLog.py" line="1283" />
-      <location filename="../dragonlog/DragonLog.py" line="879" />
+      <location filename="../dragonlog/DragonLog.py" line="1390" />
+      <location filename="../dragonlog/DragonLog.py" line="1345" />
+      <location filename="../dragonlog/DragonLog.py" line="1291" />
+      <location filename="../dragonlog/DragonLog.py" line="887" />
       <source>Error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="914" />
+      <location filename="../dragonlog/DragonLog.py" line="922" />
       <source>Show all</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="915" />
+      <location filename="../dragonlog/DragonLog.py" line="923" />
       <source>Last week</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="917" />
+      <location filename="../dragonlog/DragonLog.py" line="925" />
       <source>Last month</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="919" />
+      <location filename="../dragonlog/DragonLog.py" line="927" />
       <source>Last half year</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="921" />
+      <location filename="../dragonlog/DragonLog.py" line="929" />
       <source>Last year</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="948" />
+      <location filename="../dragonlog/DragonLog.py" line="956" />
       <source>Filter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2711" />
-      <location filename="../dragonlog/DragonLog.py" line="1032" />
+      <location filename="../dragonlog/DragonLog.py" line="2719" />
+      <location filename="../dragonlog/DragonLog.py" line="1040" />
       <source>Log QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2712" />
-      <location filename="../dragonlog/DragonLog.py" line="1033" />
+      <location filename="../dragonlog/DragonLog.py" line="2720" />
+      <location filename="../dragonlog/DragonLog.py" line="1041" />
       <source>No database opened for logging</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2544" />
-      <location filename="../dragonlog/DragonLog.py" line="1047" />
+      <location filename="../dragonlog/DragonLog.py" line="2552" />
+      <location filename="../dragonlog/DragonLog.py" line="1055" />
       <source>Saving QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2545" />
-      <location filename="../dragonlog/DragonLog.py" line="1048" />
+      <location filename="../dragonlog/DragonLog.py" line="2553" />
+      <location filename="../dragonlog/DragonLog.py" line="1056" />
       <source>No database opened for saving</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1092" />
+      <location filename="../dragonlog/DragonLog.py" line="1100" />
       <source>Change contest</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1093" />
+      <location filename="../dragonlog/DragonLog.py" line="1101" />
       <source>Select new contest</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1130" />
+      <location filename="../dragonlog/DragonLog.py" line="1138" />
       <source>Delete QSO</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1131" />
+      <location filename="../dragonlog/DragonLog.py" line="1139" />
       <source>Do you really want to delete the selected QSO(s)?</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1209" />
+      <location filename="../dragonlog/DragonLog.py" line="1217" />
       <source>All QSOs</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1210" />
+      <location filename="../dragonlog/DragonLog.py" line="1218" />
       <source>Filtered QSOs</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1211" />
+      <location filename="../dragonlog/DragonLog.py" line="1219" />
       <source>Selected QSOs</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1213" />
+      <location filename="../dragonlog/DragonLog.py" line="1221" />
       <source>QSO export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1214" />
+      <location filename="../dragonlog/DragonLog.py" line="1222" />
       <source>Select filter</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1229" />
+      <location filename="../dragonlog/DragonLog.py" line="1237" />
       <source>ADIF 3 (*.adi)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1230" />
+      <location filename="../dragonlog/DragonLog.py" line="1238" />
       <source>ADIF 3 zipped (*.zip)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2159" />
-      <location filename="../dragonlog/DragonLog.py" line="1231" />
+      <location filename="../dragonlog/DragonLog.py" line="2167" />
+      <location filename="../dragonlog/DragonLog.py" line="1239" />
       <source>ADIF 3 XML (*.adx)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2160" />
-      <location filename="../dragonlog/DragonLog.py" line="2073" />
-      <location filename="../dragonlog/DragonLog.py" line="2034" />
-      <location filename="../dragonlog/DragonLog.py" line="1232" />
+      <location filename="../dragonlog/DragonLog.py" line="2168" />
+      <location filename="../dragonlog/DragonLog.py" line="2081" />
+      <location filename="../dragonlog/DragonLog.py" line="2042" />
+      <location filename="../dragonlog/DragonLog.py" line="1240" />
       <source>CSV-File (*.csv)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2164" />
-      <location filename="../dragonlog/DragonLog.py" line="1236" />
+      <location filename="../dragonlog/DragonLog.py" line="2172" />
+      <location filename="../dragonlog/DragonLog.py" line="1244" />
       <source>Excel-File (*.xlsx)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1240" />
+      <location filename="../dragonlog/DragonLog.py" line="1248" />
       <source>Select export file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1289" />
+      <location filename="../dragonlog/DragonLog.py" line="1297" />
       <source>Exported QSO log</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1365" />
+      <location filename="../dragonlog/DragonLog.py" line="1373" />
       <source>ADX-Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1366" />
+      <location filename="../dragonlog/DragonLog.py" line="1374" />
       <source>ADX validation detected one or more error(s)
 See log for detail</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1617" />
-      <location filename="../dragonlog/DragonLog.py" line="1612" />
-      <location filename="../dragonlog/DragonLog.py" line="1607" />
-      <location filename="../dragonlog/DragonLog.py" line="1597" />
+      <location filename="../dragonlog/DragonLog.py" line="1625" />
+      <location filename="../dragonlog/DragonLog.py" line="1620" />
+      <location filename="../dragonlog/DragonLog.py" line="1615" />
+      <location filename="../dragonlog/DragonLog.py" line="1605" />
       <source>Upload eQSL error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1853" />
-      <location filename="../dragonlog/DragonLog.py" line="1674" />
-      <location filename="../dragonlog/DragonLog.py" line="1598" />
+      <location filename="../dragonlog/DragonLog.py" line="1861" />
+      <location filename="../dragonlog/DragonLog.py" line="1682" />
+      <location filename="../dragonlog/DragonLog.py" line="1606" />
       <source>Login failed for user</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1678" />
-      <location filename="../dragonlog/DragonLog.py" line="1608" />
+      <location filename="../dragonlog/DragonLog.py" line="1686" />
+      <location filename="../dragonlog/DragonLog.py" line="1616" />
       <source>User call does not match</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1613" />
+      <location filename="../dragonlog/DragonLog.py" line="1621" />
       <source>Error on upload</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1685" />
-      <location filename="../dragonlog/DragonLog.py" line="1618" />
+      <location filename="../dragonlog/DragonLog.py" line="1693" />
+      <location filename="../dragonlog/DragonLog.py" line="1626" />
       <source>eQSL request error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1684" />
-      <location filename="../dragonlog/DragonLog.py" line="1677" />
-      <location filename="../dragonlog/DragonLog.py" line="1673" />
+      <location filename="../dragonlog/DragonLog.py" line="1692" />
+      <location filename="../dragonlog/DragonLog.py" line="1685" />
+      <location filename="../dragonlog/DragonLog.py" line="1681" />
       <source>Check eQSL Inbox error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1691" />
+      <location filename="../dragonlog/DragonLog.py" line="1699" />
       <source>Select eQSL folder</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1816" />
-      <location filename="../dragonlog/DragonLog.py" line="1813" />
-      <location filename="../dragonlog/DragonLog.py" line="1810" />
-      <location filename="../dragonlog/DragonLog.py" line="1788" />
-      <location filename="../dragonlog/DragonLog.py" line="1782" />
-      <location filename="../dragonlog/DragonLog.py" line="1767" />
-      <location filename="../dragonlog/DragonLog.py" line="1744" />
+      <location filename="../dragonlog/DragonLog.py" line="1824" />
+      <location filename="../dragonlog/DragonLog.py" line="1821" />
+      <location filename="../dragonlog/DragonLog.py" line="1818" />
+      <location filename="../dragonlog/DragonLog.py" line="1796" />
+      <location filename="../dragonlog/DragonLog.py" line="1790" />
+      <location filename="../dragonlog/DragonLog.py" line="1775" />
+      <location filename="../dragonlog/DragonLog.py" line="1752" />
       <source>LoTW ADIF upload</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1745" />
+      <location filename="../dragonlog/DragonLog.py" line="1753" />
       <source>Missing station configuration in TQSL</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1768" />
+      <location filename="../dragonlog/DragonLog.py" line="1776" />
       <source>Select station</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1783" />
+      <location filename="../dragonlog/DragonLog.py" line="1791" />
       <source>No records for location</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1789" />
+      <location filename="../dragonlog/DragonLog.py" line="1797" />
       <source>TQSL signature password</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1811" />
+      <location filename="../dragonlog/DragonLog.py" line="1819" />
       <source>A field is missing for upload</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1814" />
+      <location filename="../dragonlog/DragonLog.py" line="1822" />
       <source>Connection error or network unreachable</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1817" />
+      <location filename="../dragonlog/DragonLog.py" line="1825" />
       <source>Server rejected log</source>
       <translation type="unfinished" />
     </message>
     <message>
+      <location filename="../dragonlog/DragonLog.py" line="1860" />
+      <location filename="../dragonlog/DragonLog.py" line="1856" />
       <location filename="../dragonlog/DragonLog.py" line="1852" />
-      <location filename="../dragonlog/DragonLog.py" line="1848" />
-      <location filename="../dragonlog/DragonLog.py" line="1844" />
       <source>Check LoTW Inbox error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1845" />
+      <location filename="../dragonlog/DragonLog.py" line="1853" />
       <source>Server communication error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1849" />
+      <location filename="../dragonlog/DragonLog.py" line="1857" />
       <source>Bad request result</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1901" />
-      <location filename="../dragonlog/DragonLog.py" line="1891" />
+      <location filename="../dragonlog/DragonLog.py" line="1909" />
+      <location filename="../dragonlog/DragonLog.py" line="1899" />
       <source>Upload log error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1892" />
+      <location filename="../dragonlog/DragonLog.py" line="1900" />
       <source>Login to HamQTH failed for user</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1902" />
+      <location filename="../dragonlog/DragonLog.py" line="1910" />
       <source>An error occured on uploading to HamQTH</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1963" />
-      <location filename="../dragonlog/DragonLog.py" line="1924" />
-      <location filename="../dragonlog/DragonLog.py" line="1917" />
-      <location filename="../dragonlog/DragonLog.py" line="1912" />
+      <location filename="../dragonlog/DragonLog.py" line="1971" />
+      <location filename="../dragonlog/DragonLog.py" line="1932" />
+      <location filename="../dragonlog/DragonLog.py" line="1925" />
+      <location filename="../dragonlog/DragonLog.py" line="1920" />
       <source>Select callbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1913" />
+      <location filename="../dragonlog/DragonLog.py" line="1921" />
       <source>There is no database opened for QSO logging.
 Please open the QSO database first.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1918" />
+      <location filename="../dragonlog/DragonLog.py" line="1926" />
       <source>No database opened for QSO logging</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1926" />
+      <location filename="../dragonlog/DragonLog.py" line="1934" />
       <source>Callbook DB (*.db);;All Files (*.*)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1937" />
+      <location filename="../dragonlog/DragonLog.py" line="1945" />
       <source>Empty callbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1938" />
+      <location filename="../dragonlog/DragonLog.py" line="1946" />
       <source>Should the callbook be initialsed with the existing QSO data?</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1945" />
+      <location filename="../dragonlog/DragonLog.py" line="1953" />
       <source>Empty call history</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1946" />
+      <location filename="../dragonlog/DragonLog.py" line="1954" />
       <source>Should the call history be initialsed with the existing contest data?</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1964" />
+      <location filename="../dragonlog/DragonLog.py" line="1972" />
       <source>Selected callbook could not be opend!</source>
       <translation type="unfinished" />
     </message>
     <message numerus="yes">
-      <location filename="../dragonlog/DragonLog.py" line="1970" />
+      <location filename="../dragonlog/DragonLog.py" line="1978" />
       <source>%n entry</source>
       <translation type="unfinished">
         <numerusform />
       </translation>
     </message>
     <message numerus="yes">
-      <location filename="../dragonlog/DragonLog.py" line="1971" />
+      <location filename="../dragonlog/DragonLog.py" line="1979" />
       <source>%n history entry</source>
       <translation type="unfinished">
         <numerusform />
       </translation>
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1977" />
+      <location filename="../dragonlog/DragonLog.py" line="1985" />
       <source>Refresh callbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="1978" />
+      <location filename="../dragonlog/DragonLog.py" line="1986" />
       <source>Usually the callbook should be initialised and updated automatically with new QSOs.
 Should the callbook be refreshed anyway?</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2001" />
+      <location filename="../dragonlog/DragonLog.py" line="2009" />
       <source>Refresh call history</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2002" />
+      <location filename="../dragonlog/DragonLog.py" line="2010" />
       <source>Usually the call history should be initialised and updated automatically with new QSOs.
 Should the call history be refreshed anyway?</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2030" />
+      <location filename="../dragonlog/DragonLog.py" line="2038" />
       <source>Select callbook export file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2044" />
+      <location filename="../dragonlog/DragonLog.py" line="2052" />
       <source>Callbook export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2045" />
+      <location filename="../dragonlog/DragonLog.py" line="2053" />
       <source>Error exporting callbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2050" />
+      <location filename="../dragonlog/DragonLog.py" line="2058" />
       <source>Select callbook import file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2092" />
-      <location filename="../dragonlog/DragonLog.py" line="2053" />
+      <location filename="../dragonlog/DragonLog.py" line="2100" />
+      <location filename="../dragonlog/DragonLog.py" line="2061" />
       <source>CSV-File (*.csv *.txt)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2062" />
+      <location filename="../dragonlog/DragonLog.py" line="2070" />
       <source>Callbook import</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2063" />
+      <location filename="../dragonlog/DragonLog.py" line="2071" />
       <source>Error importing callbook</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2069" />
+      <location filename="../dragonlog/DragonLog.py" line="2077" />
       <source>Select history export file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2083" />
+      <location filename="../dragonlog/DragonLog.py" line="2091" />
       <source>Call history export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2084" />
+      <location filename="../dragonlog/DragonLog.py" line="2092" />
       <source>Error exporting call history</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2089" />
+      <location filename="../dragonlog/DragonLog.py" line="2097" />
       <source>Select history import file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2101" />
+      <location filename="../dragonlog/DragonLog.py" line="2109" />
       <source>Call history import</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2102" />
+      <location filename="../dragonlog/DragonLog.py" line="2110" />
       <source>Error importing call history</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2139" />
+      <location filename="../dragonlog/DragonLog.py" line="2147" />
       <source>Do you really want to change all selected QSOs?</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2153" />
+      <location filename="../dragonlog/DragonLog.py" line="2161" />
       <source>Import</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2154" />
+      <location filename="../dragonlog/DragonLog.py" line="2162" />
       <source>No database opened for import</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2158" />
+      <location filename="../dragonlog/DragonLog.py" line="2166" />
       <source>ADIF 3 (*.adi *.adif *.zip)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2168" />
+      <location filename="../dragonlog/DragonLog.py" line="2176" />
       <source>Select import file</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2228" />
-      <location filename="../dragonlog/DragonLog.py" line="2206" />
-      <location filename="../dragonlog/DragonLog.py" line="2197" />
+      <location filename="../dragonlog/DragonLog.py" line="2236" />
+      <location filename="../dragonlog/DragonLog.py" line="2214" />
+      <location filename="../dragonlog/DragonLog.py" line="2205" />
       <source>Log import XLSX</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2284" />
-      <location filename="../dragonlog/DragonLog.py" line="2262" />
-      <location filename="../dragonlog/DragonLog.py" line="2253" />
+      <location filename="../dragonlog/DragonLog.py" line="2292" />
+      <location filename="../dragonlog/DragonLog.py" line="2270" />
+      <location filename="../dragonlog/DragonLog.py" line="2261" />
       <source>Log import CSV</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2254" />
+      <location filename="../dragonlog/DragonLog.py" line="2262" />
       <source>Row {} has too few columns.
 Skipped row.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2263" />
+      <location filename="../dragonlog/DragonLog.py" line="2271" />
       <source>QSO date/time or callsign missing in row {}.
 Skipped row.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2285" />
+      <location filename="../dragonlog/DragonLog.py" line="2293" />
       <source>Row {} import error ("{}").
 Skipped row.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2401" />
-      <location filename="../dragonlog/DragonLog.py" line="2369" />
-      <location filename="../dragonlog/DragonLog.py" line="2360" />
-      <location filename="../dragonlog/DragonLog.py" line="2316" />
+      <location filename="../dragonlog/DragonLog.py" line="2409" />
+      <location filename="../dragonlog/DragonLog.py" line="2377" />
+      <location filename="../dragonlog/DragonLog.py" line="2368" />
+      <location filename="../dragonlog/DragonLog.py" line="2324" />
       <source>Log import ADIF</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2361" />
+      <location filename="../dragonlog/DragonLog.py" line="2369" />
       <source>QSO date/time missing in record {}.
 Skipped record.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2370" />
+      <location filename="../dragonlog/DragonLog.py" line="2378" />
       <source>Callsign missing in record {}.
 Skipped record.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2402" />
+      <location filename="../dragonlog/DragonLog.py" line="2410" />
       <source>Record {} import error ("{}").
 Skipped record.</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2668" />
+      <location filename="../dragonlog/DragonLog.py" line="2676" />
       <source>No database opened for watching files</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2675" />
+      <location filename="../dragonlog/DragonLog.py" line="2683" />
       <source>Select file to watch</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2677" />
+      <location filename="../dragonlog/DragonLog.py" line="2685" />
       <source>ADIF 3 (*.adi *.adif)</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2704" />
-      <location filename="../dragonlog/DragonLog.py" line="2695" />
+      <location filename="../dragonlog/DragonLog.py" line="2712" />
+      <location filename="../dragonlog/DragonLog.py" line="2703" />
       <source>inactive</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2702" />
+      <location filename="../dragonlog/DragonLog.py" line="2710" />
       <source>active</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2739" />
-      <location filename="../dragonlog/DragonLog.py" line="2722" />
+      <location filename="../dragonlog/DragonLog.py" line="2747" />
+      <location filename="../dragonlog/DragonLog.py" line="2730" />
       <source>Contest Export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2723" />
+      <location filename="../dragonlog/DragonLog.py" line="2731" />
       <source>No database opened for contest export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2740" />
+      <location filename="../dragonlog/DragonLog.py" line="2748" />
       <source>No contest data available for export</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2806" />
+      <location filename="../dragonlog/DragonLog.py" line="2814" />
       <source>Log import QSL-QR-Code</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2815" />
+      <location filename="../dragonlog/DragonLog.py" line="2823" />
       <source>Statistic</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2843" />
+      <location filename="../dragonlog/DragonLog.py" line="2851" />
       <source>Ok</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2856" />
+      <location filename="../dragonlog/DragonLog.py" line="2864" />
       <source>Help</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2864" />
+      <location filename="../dragonlog/DragonLog.py" line="2872" />
       <source>Shortcuts</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2872" />
+      <location filename="../dragonlog/DragonLog.py" line="2880" />
       <source>CassiopeiaConsole</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2877" />
+      <location filename="../dragonlog/DragonLog.py" line="2885" />
       <source>Available Contests</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2900" />
+      <location filename="../dragonlog/DragonLog.py" line="2908" />
       <source>About</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2901" />
+      <location filename="../dragonlog/DragonLog.py" line="2909" />
       <source>Version</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2902" />
+      <location filename="../dragonlog/DragonLog.py" line="2910" />
       <source>Author</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog.py" line="2917" />
+      <location filename="../dragonlog/DragonLog.py" line="2925" />
       <source>About Qt</source>
       <translation type="unfinished" />
     </message>
@@ -2878,50 +2878,50 @@ Skipped record.</source>
   <context>
     <name>QSOForm</name>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="331" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="332" />
       <source>Station</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="334" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="335" />
       <source>Identity</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="../ui_files/DragonLog_QSOForm.ui" line="0" />
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="340" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="341" />
       <source>Configured station</source>
       <translation type="unfinished" />
     </message>
     <message>
       <location filename="../ui_files/DragonLog_QSOForm.ui" line="0" />
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="343" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="344" />
       <source>Configured identity</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="826" />
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="818" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="836" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="828" />
       <source>Callbook search error</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="819" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="829" />
       <source>Login failed for user</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="822" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="832" />
       <source>Callbook search result</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="823" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="833" />
       <source>Callsign not found</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="827" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="837" />
       <source>During callbook search an error occured</source>
       <translation type="unfinished" />
     </message>
@@ -2930,7 +2930,7 @@ Skipped record.</source>
       <location filename="../ui_files/DragonLog_QSOForm.ui" line="0" />
       <location filename="../ui_files/DragonLog_QSOForm.ui" line="0" />
       <location filename="../ui_files/DragonLog_QSOForm.ui" line="0" />
-      <location filename="../dragonlog/DragonLog_QSOForm.py" line="844" />
+      <location filename="../dragonlog/DragonLog_QSOForm.py" line="854" />
       <source>Rx Exchange</source>
       <translation type="unfinished" />
     </message>

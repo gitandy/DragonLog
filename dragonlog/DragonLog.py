@@ -12,7 +12,6 @@ from enum import Enum, auto
 import datetime
 from typing import Iterable, Iterator
 
-from PyQt6.QtGui import QPalette
 from packaging.version import parse, Version, InvalidVersion
 from PyQt6 import QtCore, QtWidgets, QtSql, QtGui
 import adif_file
@@ -154,6 +153,7 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
         self.prop_col = cols.index('propagation')
         self.prop_translation = prop_tr
 
+        self.band_col = cols.index('band')
         self.freq_col = cols.index('freq')
         self.pwr_col = cols.index('power')
         self.dist_col = cols.index('dist')
@@ -186,9 +186,15 @@ class TranslatedTableModel(QtSql.QSqlTableModel):
             elif idx.column() == self.contest_col and value in CONTEST_NAMES:
                 return CONTEST_NAMES[value]
             elif idx.column() == self.own_op_col and not value:
-                value = idx.siblingAtColumn(self.own_call_col).data()
+                if idx.siblingAtColumn(self.band_col).data() != '11m':
+                    value = idx.siblingAtColumn(self.own_call_col).data()
+                else:
+                    value = '-'
             elif idx.column() == self.op_col and not value:
-                value = idx.siblingAtColumn(self.call_col).data()
+                if idx.siblingAtColumn(self.band_col).data() != '11m':
+                    value = idx.siblingAtColumn(self.call_col).data()
+                else:
+                    value = '-'
 
         if role == QtCore.Qt.ItemDataRole.DecorationRole:
             txt = super().data(idx, QtCore.Qt.ItemDataRole.DisplayRole)

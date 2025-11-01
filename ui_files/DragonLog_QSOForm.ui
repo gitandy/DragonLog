@@ -29,7 +29,7 @@
    <item>
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="mainPage">
       <property name="geometry">
@@ -689,7 +689,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>432</width>
+        <width>442</width>
         <height>395</height>
        </rect>
       </property>
@@ -864,7 +864,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>432</width>
+        <width>442</width>
         <height>395</height>
        </rect>
       </property>
@@ -1055,7 +1055,7 @@ This is not the QSL manager/bureau address.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>432</width>
+        <width>442</width>
         <height>395</height>
        </rect>
       </property>
@@ -1326,6 +1326,12 @@ This is not the QSL manager/bureau address.</string>
  <tabstops>
   <tabstop>callSignLineEdit</tabstop>
   <tabstop>nameLineEdit</tabstop>
+  <tabstop>operatorLineEdit</tabstop>
+  <tabstop>QTHLineEdit</tabstop>
+  <tabstop>locatorLineEdit</tabstop>
+  <tabstop>searchHamQTHPushButton</tabstop>
+  <tabstop>searchQRZPushButton</tabstop>
+  <tabstop>searchQRZCQPushButton</tabstop>
   <tabstop>RSTSentLineEdit</tabstop>
   <tabstop>RSTRcvdLineEdit</tabstop>
   <tabstop>powerSpinBox</tabstop>
@@ -1345,6 +1351,9 @@ This is not the QSL manager/bureau address.</string>
   <tabstop>savePushButton</tabstop>
   <tabstop>cancelPushButton</tabstop>
   <tabstop>identityGroupBox</tabstop>
+  <tabstop>ownCallSignLineEdit</tabstop>
+  <tabstop>ownNameLineEdit</tabstop>
+  <tabstop>ownOpLineEdit</tabstop>
   <tabstop>stationGroupBox</tabstop>
   <tabstop>ownQTHComboBox</tabstop>
   <tabstop>radioComboBox</tabstop>
@@ -1848,22 +1857,6 @@ This is not the QSL manager/bureau address.</string>
     <hint type="destinationlabel">
      <x>249</x>
      <y>241</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>identityGroupBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ownOpLineEdit</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>224</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>125</x>
-     <y>155</y>
     </hint>
    </hints>
   </connection>
