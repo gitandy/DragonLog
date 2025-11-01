@@ -713,8 +713,11 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             options=QtWidgets.QFileDialog.Option.DontConfirmOverwrite)
 
         if res[0]:
-            self.log.info(f'Selected database {res[0]}')
-            self.connectDB(res[0])
+            fname = res[0]
+            if not os.path.exists(res[0]):
+                fname = res[0] + '.qlog' if not res[0].endswith('.qlog') else res[0]
+            self.log.info(f'Selected database {fname}')
+            self.connectDB(fname)
 
     def checkDB(self, db_file):
         # Check database for missing cols
@@ -2932,7 +2935,7 @@ class DragonLog(QtWidgets.QMainWindow, DragonLog_MainWindow_ui.Ui_MainWindow):
             self.__db_con__.exec('VACUUM;')
             self.__db_con__.exec('PRAGMA optimize;')
             self.log.debug('Closing database...')
-            #self.__db_con__.close()  # Closing database leads to error messages?
+            # self.__db_con__.close()  # Closing database leads to error messages?
             self.__db_con__ = None
         if self.__local_cb__:
             self.__local_cb__.close()
