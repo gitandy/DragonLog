@@ -16,4 +16,4 @@ Inhalt
 6. Konfiguration
 7. Conteste, Contest-Logs und Historie
 8. [Tastaturkürzel](DE_80_TASTENKUERZEL.md)
-9. Hamlib einrichten
+9. [Hamlib einrichten](DE_90_SETUP_HAMLIB.md)
