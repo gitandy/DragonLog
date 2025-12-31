@@ -1,3 +1,5 @@
+**Repository moved to [Codeberg](https://codeberg.org/dragoncode/DragonLog)**
+
 DragonLog
 =========
 
@@ -81,3 +83,4 @@ Anyway the Python version is currently stuck at 3.12 as the MSI packaging will n
 Copyright
 ---------
 DragonLog &copy; 2023 by Andreas Schawo is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) 
+
